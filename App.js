@@ -1,30 +1,17 @@
-/*import React from 'react';
-import Test from './components/test';
-import PruebaComponent from './components/prueba';
-import ActivityIndicatorScreen from './components/activity';
-
-const App = () => {
-	
-   return (
-		<ActivityIndicatorScreen />
-   )
-}
-export default App;
-*/
-
 import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator} from 'react-navigation-stack';
+import NavigationService from './src/services/navigationservice';
  
-import LoginScreen from './pages/loginscreen';
-/*import HomeScreen from './pages/homescreen';
-import RegisterUser from './pages/registeruser';
+import LoginScreen from './src/screens/loginscreen';
+import HomeScreen from './src/screens/homescreen';
+/*import RegisterUser from './pages/registeruser';
 import UpdateUser from './pages/updateuser';
 import ViewUser from './pages/ViewUser';
 import ViewAllUser from './pages/ViewAllUser';
 import DeleteUser from './pages/DeleteUser';*/
  
-const App = createStackNavigator({
+const TopLevelNavigator = createStackNavigator({
 	LoginScreen: {
 		screen: LoginScreen,
 		navigationOptions: {
@@ -35,14 +22,15 @@ const App = createStackNavigator({
 			}
 		},
 	},	
-	/*HomeScreen: {
+	HomeScreen: {
 		screen: HomeScreen,
 		navigationOptions: {
-			title: 'Inicio',
-			headerStyle: { backgroundColor: '#f05555' },
+			headerStyle: { backgroundColor: '#4285F4' },
 			headerTintColor: '#ffffff',
-		},
-	},View: {
+			headerLeft: null
+		}
+	},
+	/*View: {
 		screen: ViewUser,
 		navigationOptions: {
 			title: 'View User',
@@ -83,4 +71,18 @@ const App = createStackNavigator({
 		},
 	},*/
 });
-export default createAppContainer(App);
+const AppContainer = createAppContainer(TopLevelNavigator);
+
+export default class App extends React.Component {
+  // ...
+
+  render() {
+    return (
+      <AppContainer
+        ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}
+      />
+    );
+  }
+}

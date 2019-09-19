@@ -9,6 +9,8 @@
     "android-shake": "adb shell input keyevent 82"
   },
   "dependencies": {
+    "i18n-js": "^3.3.0",
+    "lodash.memoize": "^4.1.2",
     "react": "16.8.6",
     "react-loader-spinner": "^3.1.4",
     "react-native": "0.60.5",
@@ -19,6 +21,7 @@
     "react-native-localize": "^1.2.0",
     "react-native-sqlite-storage": "^4.1.0",
     "react-navigation": "^4.0.5",
+    "react-navigation-drawer": "^2.2.1",
     "react-navigation-stack": "^1.7.3",
     "react-promise-tracker": "^2.0.5"
   },
