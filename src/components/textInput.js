@@ -5,7 +5,7 @@ const CustomTextInput = props => {
   return (
     <View
       style={{
-        marginLeft: 35,
+        marginLeft: 10,
         marginRight: 35,
         marginTop: 10,
         borderColor: '#BDBDBD',

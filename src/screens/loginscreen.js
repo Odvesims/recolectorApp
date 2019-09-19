@@ -1,19 +1,19 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component, Alert} from 'react';
-import { View, StyleSheet, NativeModules } from 'react-native';
+import { View, StyleSheet, NativeModules, KeyboardAvoidingView } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import BoldLargeText from '../components/boldLargeText';
-import NormalText from '../components/normalText';
-import BottomButton from '../components/bottomButton';
-import CustomTextInput from '../components/textInput';
+import BoldLargeText from '../components/BoldLargeText';
+import NormalText from '../components/NormalText';
+import BottomButton from '../components/BottomButton';
+import CustomTextInput from '../components/TextInput';
 
 import { getTranslation } from '../helpers/translation_helper';
 	
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
-import NavigationService from '../services/navigationservice.js';
+import NavigationService from '../services/NavigationService.js';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
@@ -84,14 +84,19 @@ export default class LoginScreen extends Component {
 	customClickHandler = (cClick) => {
 		this.getUserLogin().then((result) => {
 			if(result[0]){
-				NavigationService.navigate('HomeScreen', {
+				/*NavigationService.navigate('HomeScreen', {
 					title: 'Inicio',
-			});
+				});*/				
+				this.goHome();
 			} else{
 				alert(getTranslation(this.state.deviceLanguage, result[1]));
 			}
 			this.setState({loading: false});				
 		});
+	}
+	
+	goHome = (cClick) => {
+		this.props.navigation.navigate('HomeScreen');
 	}
 	
     static navigationOptions = {
@@ -101,20 +106,31 @@ export default class LoginScreen extends Component {
 	render() {	
 		
 		return (
-			<View>
-				<Spinner
-				  visible={this.state.loading}
-				  textContent={this.state.loadingMessage}
-				/>
-				<BoldLargeText text="APP Name" style={{marginTop: 80, textAlign: "center"}} />
-				<NormalText text= {getTranslation(this.state.deviceLanguage, 4) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
-				<CustomTextInput onChangeText={(username) => {this.setState({username: username})}} />
-				<NormalText id = "password" text= {getTranslation(this.state.deviceLanguage, 5) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
-				<CustomTextInput onChangeText={(userPassword) => {this.setState({userPassword: userPassword})}} />
-				<BottomButton customClick={this.customClickHandler}
-					title= {getTranslation(this.state.deviceLanguage, 6)}
-				/>
-			</View>
+			<KeyboardAvoidingView behavior="padding" style={styles.container}>
+				<View>
+					<Spinner
+					  visible={this.state.loading}
+					  textContent={this.state.loadingMessage}
+					/>
+					<BoldLargeText text="APP Name" style={{textAlign: "center"}} />
+					<NormalText text= {getTranslation(this.state.deviceLanguage, 4) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
+					<CustomTextInput onChangeText={(username) => {this.setState({username: username})}} />
+					<NormalText id = "password" text= {getTranslation(this.state.deviceLanguage, 5) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
+					<CustomTextInput onChangeText={(userPassword) => {this.setState({userPassword: userPassword})}} />
+					<BottomButton customClick={this.customClickHandler}
+						title= {getTranslation(this.state.deviceLanguage, 6)}
+					/>
+				</View>
+			</KeyboardAvoidingView>
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		padding: 32,
+		alignContent: "center",
+		justifyContent: "center",
+	}
+});

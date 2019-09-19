@@ -23,6 +23,9 @@ export function getTranslation(language, message){
 				case 6 :
 					translatedString = "Iniciar Sesión"
 				break;
+				case 100:
+					translatedString = ""
+				break;
 				case 999 :
 					translatedString = "Respuesta en blanco. Por favor, revise la estructura de su petición"
 				break;
