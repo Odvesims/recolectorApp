@@ -13,7 +13,7 @@ import { getTranslation } from '../helpers/translation_helper';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
-import NavigationService from '../services/NavigationService.js';
+import NavigationService from '../services/NavigationService';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
@@ -26,6 +26,8 @@ export default class LoginScreen extends Component {
 			loadingMessage: "",
 			deviceLanguage: "en",
 			validLogin: true,
+			userName: "",
+			userPassword: "",
 		};
 		db.transaction(function(txn) {
 			txn.executeSql(
