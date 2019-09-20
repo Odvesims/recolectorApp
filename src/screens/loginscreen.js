@@ -11,6 +11,7 @@ import CustomTextInput from '../components/TextInput';
 import { getTranslation } from '../helpers/translation_helper';
 	
 import { openDatabase } from 'react-native-sqlite-storage';
+
 var db = openDatabase({ name: 'UserDatabase.db' });
 
 import NavigationService from '../services/NavigationService';
@@ -61,7 +62,7 @@ export default class LoginScreen extends Component {
 		this.setState({loadingMessage: getTranslation(this.state.deviceLanguage, 3)});
 		validNot = true;
 		responseError = 0;
-		getUrl = "http://updates.sojaca.net/apimobile?myOption=1&username=" + this.state.username + "&password=" + this.state.userPassword;
+		getUrl = "http://updates.sojaca.net/apimobile?myOption=1&username=" + this.state.userName + "&password=" + this.state.userPassword;
 		try {
 			let response = await fetch(getUrl, { method: 'GET' });
 			const responseJson =  await response.json();
@@ -116,7 +117,7 @@ export default class LoginScreen extends Component {
 					/>
 					<BoldLargeText text="APP Name" style={{textAlign: "center"}} />
 					<NormalText text= {getTranslation(this.state.deviceLanguage, 4) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
-					<CustomTextInput onChangeText={(username) => {this.setState({username: username})}} />
+					<CustomTextInput onChangeText={(userName) => {this.setState({userName: userName})}} />
 					<NormalText id = "password" text= {getTranslation(this.state.deviceLanguage, 5) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
 					<CustomTextInput onChangeText={(userPassword) => {this.setState({userPassword: userPassword})}} />
 					<BottomButton customClick={this.customClickHandler}
