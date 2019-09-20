@@ -36,7 +36,7 @@ const AppDrawerNavigator = createDrawerNavigator(
 		HomeScreen: { screen: HomeScreen },
 	},
 	{
-		initialRouteName: "LoginScreen",
+		initialRouteName: "HomeScreen",
 		drawerPosition: "left",
 		overlayColor: "#424242"
 	}

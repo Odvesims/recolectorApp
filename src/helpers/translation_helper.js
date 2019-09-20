@@ -24,7 +24,7 @@ export function getTranslation(language, message){
 					translatedString = "Iniciar Sesión"
 				break;
 				case 100:
-					translatedString = ""
+					translatedString = "Principal"
 				break;
 				case 999 :
 					translatedString = "Respuesta en blanco. Por favor, revise la estructura de su petición"
@@ -54,6 +54,9 @@ export function getTranslation(language, message){
 				case 6 :
 					translatedString = "Sign In"
 				break;
+				case 100:
+					translatedString = "Home"
+				break;
 				case 999 :
 					translatedString = "Empty response. Please check your fetch structure."
 				break;
@@ -81,6 +84,9 @@ export function getTranslation(language, message){
 				break;
 				case 6 :
 					translatedString = "Connecter"
+				break;
+				case 100:
+					translatedString = "Principale"
 				break;
 				case 999 :
 					translatedString = "Réponse vide. S'il vous plaît vérifier votre structure de chercher."
