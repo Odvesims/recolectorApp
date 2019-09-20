@@ -1,15 +1,15 @@
 const colors = {
-  accent: "#F3534A",
-  primary: "#4285F4",
-  secondary: "#92B4EB",
-  tertiary: "#FFE358",
-  black: "#323643",
-  white: "#FFFFFF",
-  gray: "#7D7D7D",
-  gray2: "#BDBDBD",
-  gray3: "#CCCCCC",
-  darkGray: "#424242",
-  lightGray: "#E4E7E8"
+  accent: '#F3534A',
+  primary: '#4285F4',
+  secondary: '#92B4EB',
+  tertiary: '#FFE358',
+  black: '#323643',
+  white: '#FFFFFF',
+  gray: '#7D7D7D',
+  gray2: '#BDBDBD',
+  gray3: '#CCCCCC',
+  darkGray: '#424242',
+  lightGray: '#E4E7E8',
 };
 
 const sizes = {
@@ -31,37 +31,37 @@ const sizes = {
   header: 20,
   body: 16,
   caption: 14,
-  small: 12
+  small: 12,
 };
 
 const fonts = {
   h1: {
-    fontSize: sizes.h1
+    fontSize: sizes.h1,
   },
   h2: {
-    fontSize: sizes.h2
+    fontSize: sizes.h2,
   },
   h3: {
-    fontSize: sizes.h3
+    fontSize: sizes.h3,
   },
   header: {
-    fontSize: sizes.header
+    fontSize: sizes.header,
   },
   title: {
-    fontSize: sizes.title
+    fontSize: sizes.title,
   },
   body: {
-    fontSize: sizes.body
+    fontSize: sizes.body,
   },
   caption: {
-    fontSize: sizes.caption
+    fontSize: sizes.caption,
   },
   text: {
-    fontSize: sizes.text
+    fontSize: sizes.text,
   },
   small: {
-    fontSize: sizes.small
-  }
+    fontSize: sizes.small,
+  },
 };
 
-export { colors, sizes, fonts };
+export {colors, sizes, fonts};

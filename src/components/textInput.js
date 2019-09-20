@@ -1,6 +1,6 @@
 /*Custom TextInput*/
 import React from 'react';
-import { View, TextInput } from 'react-native';
+import {View, TextInput} from 'react-native';
 const CustomTextInput = props => {
   return (
     <View
@@ -10,7 +10,7 @@ const CustomTextInput = props => {
         marginTop: 10,
         borderColor: '#BDBDBD',
         borderWidth: 1,
-		borderRadius: 7,
+        borderRadius: 7,
       }}>
       <TextInput
         underlineColorAndroid="transparent"

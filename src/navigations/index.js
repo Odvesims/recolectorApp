@@ -1,45 +1,64 @@
-import { createAppContainer } from "react-navigation";
-import { createDrawerNavigator } from "react-navigation-drawer";
-import { createStackNavigator} from 'react-navigation-stack';
-import theme from "../constants";
+import {createAppContainer} from 'react-navigation';
+import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createStackNavigator} from 'react-navigation-stack';
 
-import { Text,View, StyleSheet, ScrollView, FlatList, Platform, StatusBar, TouchableOpacity } from "react-native";
-import { Icon, Container, Content, Header, Left, Body, Right, List, ListItem } from "native-base";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  Platform,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 
-import LoginScreen from "../screens/LoginScreen";
-import HomeScreen from "../screens/HomeScreen";
+import {
+  Icon,
+  Container,
+  Content,
+  Header,
+  Left,
+  Body,
+  Right,
+  List,
+  ListItem,
+} from 'native-base';
 
-const AppStackNavigator = createStackNavigator({
-	LoginScreen: {
-		screen: LoginScreen,
-		navigationOptions: {
-			title: 'Inicio',
-			headerMode: 'none',
-			navigationOptions: {
-				headerVisible: false,
-			}
-		},
-	},	
-	HomeScreen: {
-		screen: HomeScreen,
-		navigationOptions: {
-			headerStyle: { backgroundColor: '#4285F4' },
-			headerTintColor: '#ffffff',
-			headerLeft: null
-		}
-	}
-});
+import LoginScreen from '../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
+
+// const AppStackNavigator = createStackNavigator({
+//   LoginScreen: {
+//     screen: LoginScreen,
+//     navigationOptions: {
+//       title: 'Inicio',
+//       headerMode: 'none',
+//       navigationOptions: {
+//         headerVisible: false,
+//       },
+//     },
+//   },
+//   HomeScreen: {
+//     screen: HomeScreen,
+//     navigationOptions: {
+//       headerStyle: {backgroundColor: '#4285F4'},
+//       headerTintColor: '#ffffff',
+//       headerLeft: null,
+//     },
+//   },
+// });
 
 const AppDrawerNavigator = createDrawerNavigator(
-	{
-		LoginScreen: { screen: LoginScreen },
-		HomeScreen: { screen: HomeScreen },
-	},
-	{
-		initialRouteName: "HomeScreen",
-		drawerPosition: "left",
-		overlayColor: "#424242"
-	}
+  {
+    LoginScreen: {screen: LoginScreen},
+    HomeScreen: {screen: HomeScreen},
+  },
+  {
+    initialRouteName: 'HomeScreen',
+    drawerPosition: 'left',
+    overlayColor: '#424242',
+  },
 );
 
 // const CustomDrawerContentComponent = () => {
@@ -68,18 +87,18 @@ const AppDrawerNavigator = createDrawerNavigator(
 // };
 
 const styles = StyleSheet.create({
-	menuProfile: { backgroundColor: "#4285F4" },
-	role: {
-		backgroundColor: "#4285F4",
-		borderRadius: 4
-	},
-	androidHeader: {
-		...Platform.select({
-			android: {
-				paddingTop: StatusBar.currentHeight
-			}
-		})
-	}
+  menuProfile: {backgroundColor: '#4285F4'},
+  role: {
+    backgroundColor: '#4285F4',
+    borderRadius: 4,
+  },
+  androidHeader: {
+    ...Platform.select({
+      android: {
+        paddingTop: StatusBar.currentHeight,
+      },
+    }),
+  },
 });
 
 export default createAppContainer(AppDrawerNavigator);
