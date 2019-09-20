@@ -9,7 +9,7 @@ export function getTranslation(language, message){
 					translatedString = "La conexión con el servidor no pudo realizarse. Compruebe su conectividad e intente de nuevo.";
 				break;
 				case 2 : 
-					translatedString = "Falló la autenticación del usuario/contraseña";
+					translatedString = "Falló la autenticación del usuario/contraseña.";
 				break;
 				case 3 :
 					translatedString = "Iniciando Sesión"
@@ -26,8 +26,11 @@ export function getTranslation(language, message){
 				case 100:
 					translatedString = "Principal"
 				break;
+				case 101:
+					translatedString = "Algunos de los datos no pudieron ser cargados."
+				break;
 				case 999 :
-					translatedString = "Respuesta en blanco. Por favor, revise la estructura de su petición"
+					translatedString = "Respuesta en blanco. Por favor, revise la estructura de su petición."
 				break;
 				default :
 					translatedString = "Traducción indefinida.";
@@ -40,7 +43,7 @@ export function getTranslation(language, message){
 					translatedString = "Connection was not succesful. Please check your connection status and try again.";
 				break;
 				case 2 : 
-					translatedString = "User/password authentication failed";
+					translatedString = "User/password authentication failed.";
 				break;
 				case 3 :
 					translatedString = "Signing In"
@@ -57,6 +60,9 @@ export function getTranslation(language, message){
 				case 100:
 					translatedString = "Home"
 				break;
+				case 101:
+					translatedString = "Some of the data could not be synchronized."
+				break;
 				case 999 :
 					translatedString = "Empty response. Please check your fetch structure."
 				break;
@@ -71,7 +77,7 @@ export function getTranslation(language, message){
 					translatedString = "Connection n'a pas réussi. Veuillez vérifier l'état de votre connexion et réessayer.";
 				break;
 				case 2 : 
-					translatedString = "L'authentification utilisateur/mot de passe a échoué";
+					translatedString = "L'authentification utilisateur/mot de passe a échoué.";
 				break;
 				case 3 :
 					translatedString = "Se Connecter";
@@ -87,6 +93,9 @@ export function getTranslation(language, message){
 				break;
 				case 100:
 					translatedString = "Principale"
+				break;
+				case 101:
+					translatedString = "Certaines données n'ont pas pu être chargées."
 				break;
 				case 999 :
 					translatedString = "Réponse vide. S'il vous plaît vérifier votre structure de chercher."

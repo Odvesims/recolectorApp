@@ -1,10 +1,13 @@
 import React, { Component } from "react";
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 import { Text, View, StyleSheet, ScrollView, Platform, StatusBar, NativeModules } from "react-native";
 import { Icon, Button, Container, Content, Header, Body, Left, Right, Title, Drawer } from "native-base";
 import NavigationHeader from '../components/NavigationHeader';
 
 import { getTranslation } from '../helpers/translation_helper';
+
+import FetchingData from '../components/FetchingData';
 
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -46,18 +49,25 @@ class Home extends Component {
 						<Title>{getTranslation(this.state.deviceLanguage, 100)}</Title>
 					</Body>
 					<Right>
-						<Button transparent>
-							<Icon name="sync" />
-						</Button>
+						<FetchingData userName = {"oscar"} userPassword= {"123456"} lastUpdate = {"2019-09-19 12:45:00"} userDataBase = {"UserDatabase.db"} deviceLanguage = {this.state.deviceLanguage} />
 						<Button transparent>
 							<Icon name="notifications" />
 						</Button>
 					</Right>
 				</Header>
+				<Toast
+					ref="toast"
+					style={{backgroundColor:'#CE2424', paddingLeft: 10}}
+					position='bottom'
+					fadeInDuration={750}
+					fadeOutDuration={1000}
+					opacity={0.8}
+					textStyle={{color:'white'}}
+				/>
 			</Container>
 		);
 	}
-}
+} export default Home;
 
 const styles = StyleSheet.create({
   androidHeader: {
@@ -69,4 +79,3 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Home;

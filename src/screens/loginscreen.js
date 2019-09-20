@@ -62,7 +62,7 @@ export default class LoginScreen extends Component {
 		this.setState({loadingMessage: getTranslation(this.state.deviceLanguage, 3)});
 		validNot = true;
 		responseError = 0;
-		getUrl = "http://updates.sojaca.net/apimobile?myOption=1&username=" + this.state.userName + "&password=" + this.state.userPassword;
+		getUrl = "http://updates.sojaca.net/apimobile?apiOption=1&username=" + this.state.userName + "&password=" + this.state.userPassword;
 		try {
 			let response = await fetch(getUrl, { method: 'GET' });
 			const responseJson =  await response.json();
@@ -112,8 +112,8 @@ export default class LoginScreen extends Component {
 			<KeyboardAvoidingView behavior="padding" style={styles.container}>
 				<View>
 					<Spinner
-					  visible={this.state.loading}
-					  textContent={this.state.loadingMessage}
+						visible={this.state.loading}
+						textContent={this.state.loadingMessage}
 					/>
 					<BoldLargeText text="APP Name" style={{textAlign: "center"}} />
 					<NormalText text= {getTranslation(this.state.deviceLanguage, 4) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
