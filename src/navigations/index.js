@@ -29,6 +29,8 @@ import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import Clients from '../screens/Clients/Clients';
 import NewClient from '../screens/Clients/NewClient';
+import Routes from '../screens/Routes/Routes';
+import NewRoute from '../screens/Routes/NewRoute';
 
 // const AppStackNavigator = createStackNavigator({
 //   LoginScreen: {
@@ -53,18 +55,26 @@ import NewClient from '../screens/Clients/NewClient';
 
 const AppDrawerNavigator = createDrawerNavigator(
   {
-    LoginScreen: {screen: LoginScreen},
-    HomeScreen: {screen: HomeScreen},
+    Home: {screen: HomeScreen},
     Clients: {screen: Clients},
+    Routes: {screen: Routes},
+    LoginScreen: {screen: LoginScreen},
     NewClient: {screen: NewClient},
+    NewRoute: {screen: NewRoute},
   },
   {
-    initialRouteName: 'LoginScreen',
+    initialRouteName: 'NewRoute',
     drawerPosition: 'left',
     drawerType: 'front',
     overlayColor: '#424242',
   },
 );
+
+// const AppNavigator = createStackNavigator({
+//   LoginScreen: {screen: LoginScreen},
+//   NewClient: {screen: NewClient},
+//   NewRoute: {screen: NewRoute},
+// });
 
 // const CustomDrawerContentComponent = () => {
 //   return (

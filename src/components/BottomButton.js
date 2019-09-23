@@ -27,8 +27,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#ffffff',
     fontWeight: 'bold',
-    fontSize: 16,
-    textTransform: 'uppercase',
+    fontSize: NormalizeText(18),
   },
 });
 export default BottomButton;

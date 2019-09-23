@@ -10,16 +10,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-import {
-  Container,
-  Header,
-  Content,
-  Left,
-  Right,
-  Body,
-  Button,
-  Icon,
-} from 'native-base';
+import {Container, Header, Right, Button, Icon} from 'native-base';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -85,7 +76,10 @@ export default class LoginScreen extends Component {
   async getUserLogin() {
     this.setState({loading: true});
     this.setState({
-      loadingMessage: getTranslation(this.state.deviceLanguage, 3),
+      loadingMessage: getTranslation(
+        this.state.deviceLanguage,
+        'MESSAGE_SIGNIN',
+      ),
     });
     let validNot = true;
     let responseError = 0;
@@ -124,7 +118,9 @@ export default class LoginScreen extends Component {
 
         this.goHome();
       } else {
-        alert(getTranslation(this.state.deviceLanguage, result[1]));
+        alert(
+          getTranslation(this.state.deviceLanguage, result['ALERT_CONNECTION']),
+        );
       }
       this.setState({loading: false});
     });
@@ -143,11 +139,7 @@ export default class LoginScreen extends Component {
       <Container>
         <Header transparent>
           <Right>
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigate.navigation('Settings');
-              }}>
+            <Button transparent onPress={() => {}}>
               <Icon
                 name="settings"
                 style={{color: theme.colors.gray, fontSize: 32}}
@@ -163,7 +155,9 @@ export default class LoginScreen extends Component {
             />
             <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
             <NormalText
-              text={getTranslation(this.state.deviceLanguage, 4) + ':'}
+              text={
+                getTranslation(this.state.deviceLanguage, 'TITLE_USER') + ':'
+              }
               style={styles.NormalText}
             />
             <CustomTextInput
@@ -173,7 +167,10 @@ export default class LoginScreen extends Component {
             />
             <NormalText
               id="password"
-              text={getTranslation(this.state.deviceLanguage, 5) + ':'}
+              text={
+                getTranslation(this.state.deviceLanguage, 'TITLE_PASSWORD') +
+                ':'
+              }
               style={styles.NormalText}
             />
             <CustomTextInput
@@ -183,7 +180,7 @@ export default class LoginScreen extends Component {
             />
             <BottomButton
               customClick={this.customClickHandler}
-              title={getTranslation(this.state.deviceLanguage, 6)}
+              title={getTranslation(this.state.deviceLanguage, 'TITLE_SIGNIN')}
             />
           </View>
         </KeyboardAvoidingView>

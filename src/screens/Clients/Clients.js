@@ -32,6 +32,8 @@ import {
   ActionSheet,
 } from 'native-base';
 
+import {getTranslation} from '../../helpers/translation_helper';
+
 export default class Clients extends Component {
   state = {
     data: [
@@ -90,6 +92,35 @@ export default class Clients extends Component {
     DESTRUCTIVE_INDEX: 3,
     CANCEL_INDEX: 4,
   };
+
+  async getClients() {
+    this.setState({loading: true});
+    this.setState({
+      loadingMessage: getTranslation(this.state.deviceLanguage, 3),
+    });
+    let validNot = true;
+    let responseError = 0;
+    let getUrl = 'http://updates.sojaca.net/apimobile?apiOption=2&username=';
+    try {
+      let response = await fetch(getUrl, {method: 'GET'});
+      const responseJson = await response.json();
+      if (JSON.stringify(responseJson) === '{}') {
+        validNot = false;
+        responseError = 999;
+      } else {
+        this.state.setState({data: responseJson.arr_clients});
+        if (responseJson.response !== 'valid') {
+          responseError = responseJson.error_message;
+          validNot = false;
+        }
+      }
+      this.setState({loadingMessage: ''});
+      return [validNot, responseError];
+    } catch (error) {
+      this.setState({loading: false});
+      return [false, 999];
+    }
+  }
 
   showHideSearchBar = () => {
     this.setState(previousState => ({show: !previousState.show}));

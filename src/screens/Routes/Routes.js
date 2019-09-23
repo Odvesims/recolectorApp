@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {AddButton, SearchBar} from '../../components';
+import {SearchBar} from '../../components';
 
 import {} from 'react-native-vector-icons';
 
@@ -30,54 +30,51 @@ import {
   Right,
   Title,
   ActionSheet,
+  Fab,
+  Tabs,
+  Tab,
 } from 'native-base';
+import Active from './Tabs/Active';
+import Close from './Tabs/Close';
+import Defeated from './Tabs/Defeated';
 
 export default class Clients extends Component {
   state = {
     data: [
       {
-        code: 12,
-        name: 'Lilli',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 14,
-        name: 'John',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 18,
-        name: 'Lavera',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 16,
-        name: 'Paul',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 13,
-        name: 'Jene',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 117,
-        name: 'Felipe',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este saaaaaaaaaaaaa',
       },
       {
-        code: 152,
-        name: 'Shawn',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 352,
-        name: 'Carey',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
       {
-        code: 12,
-        name: 'Mark',
+        name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
     ],
@@ -114,7 +111,7 @@ export default class Clients extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Clientes</Title>
+            <Title>Rutas</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -133,65 +130,25 @@ export default class Clients extends Component {
           </Right>
         </Header>
 
-        {/* SearchBar */}
-        <Header searchBar rounded>
-          <Item>
-            <Icon name="ios-search" />
-            <Input placeholder="Search" />
-            <Icon name="close" />
-          </Item>
-          <Button transparent>
-            <Text>Search</Text>
-          </Button>
-        </Header>
-        {/* SearchBar */}
+        {/* Tabs */}
+        <Tabs hasTabs>
+          <Tab heading="Activas">
+            <Active />
+          </Tab>
+          <Tab heading="Cerradas">
+            <Close />
+          </Tab>
+          <Tab heading="Vencidas">
+            <Defeated />
+          </Tab>
+        </Tabs>
 
-        {/* Header */}
-
-        {this.state.show ? <SearchBar /> : null}
-        <ScrollView>
-          {/* Content */}
-
-          <Content style={styles.content}>
-            <FlatList
-              style={{overflow: 'hidden'}}
-              data={data}
-              renderItem={({item}) => (
-                <Item style={styles.list}>
-                  <Text style={styles.code}>{item.code}</Text>
-                  <View style={{marginLeft: 8}}>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.address}>{item.address}</Text>
-                  </View>
-                  <Button
-                    transparent
-                    style={styles.more}
-                    onPress={() =>
-                      ActionSheet.show(
-                        {
-                          options: BUTTONS,
-                          cancelButtonIndex: CANCEL_INDEX,
-                          destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                          title: 'Opciones',
-                        },
-                        buttonIndex => {
-                          this.setState({clicked: BUTTONS[buttonIndex]});
-                        },
-                      )
-                    }>
-                    <Icon style={{color: 'gray'}} name="more" />
-                  </Button>
-                </Item>
-              )}
-            />
-          </Content>
-
-          {/* Content */}
-        </ScrollView>
-        <AddButton
-          style={{position: 'absolute'}}
-          onPress={() => this.props.navigation.navigate('NewClient')}
-        />
+        <Fab
+          style={{backgroundColor: theme.colors.primary}}
+          position="bottomRight"
+          onPress={() => this.props.navigation.navigate('NewRoute')}>
+          <Icon name="add" />
+        </Fab>
       </Container>
     );
   }
