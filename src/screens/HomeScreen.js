@@ -27,7 +27,7 @@ import NavigationHeader from '../components/NavigationHeader';
 import {getTranslation} from '../helpers/translation_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
-var db = openDatabase({name: 'UserDatabase.db'});
+let db = openDatabase({name: 'UserDatabase.db'});
 
 class Home extends Component {
   // static navigationOptions = {
@@ -66,8 +66,8 @@ class Home extends Component {
       <Container style={styles.androidHeader}>
         <Header>
           <Left>
-            <Button transparent>
-              <Icon name="menu" onPress={this.props.navigation.openDrawer} />
+            <Button transparent onPress={this.props.navigation.openDrawer}>
+              <Icon name="menu" />
             </Button>
           </Left>
           <Body>

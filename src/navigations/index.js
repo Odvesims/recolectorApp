@@ -27,6 +27,8 @@ import {
 
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
+import Clients from '../screens/Clients/Clients';
+import NewClient from '../screens/Clients/NewClient';
 
 // const AppStackNavigator = createStackNavigator({
 //   LoginScreen: {
@@ -53,10 +55,13 @@ const AppDrawerNavigator = createDrawerNavigator(
   {
     LoginScreen: {screen: LoginScreen},
     HomeScreen: {screen: HomeScreen},
+    Clients: {screen: Clients},
+    NewClient: {screen: NewClient},
   },
   {
-    initialRouteName: 'HomeScreen',
+    initialRouteName: 'NewClient',
     drawerPosition: 'left',
+    drawerType: 'front',
     overlayColor: '#424242',
   },
 );

@@ -18,7 +18,7 @@ import {getTranslation} from '../helpers/translation_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({name: 'UserDatabase.db'});
+let db = openDatabase({name: 'UserDatabase.db'});
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
@@ -135,7 +135,7 @@ export default class LoginScreen extends Component {
           <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
           <NormalText
             text={getTranslation(this.state.deviceLanguage, 4) + ':'}
-            style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
+            style={styles.NormalText}
           />
           <CustomTextInput
             onChangeText={userName => {
@@ -145,7 +145,7 @@ export default class LoginScreen extends Component {
           <NormalText
             id="password"
             text={getTranslation(this.state.deviceLanguage, 5) + ':'}
-            style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
+            style={styles.NormalText}
           />
           <CustomTextInput
             onChangeText={userPassword => {
@@ -168,5 +168,11 @@ const styles = StyleSheet.create({
     padding: 32,
     alignContent: 'center',
     justifyContent: 'center',
+  },
+
+  NormalText: {
+    marginLeft: 10,
+    marginTop: 20,
+    textAlign: 'left',
   },
 });
