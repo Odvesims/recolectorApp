@@ -59,7 +59,7 @@ const AppDrawerNavigator = createDrawerNavigator(
     NewClient: {screen: NewClient},
   },
   {
-    initialRouteName: 'NewClient',
+    initialRouteName: 'LoginScreen',
     drawerPosition: 'left',
     drawerType: 'front',
     overlayColor: '#424242',
