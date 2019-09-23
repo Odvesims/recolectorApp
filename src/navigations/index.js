@@ -8,6 +8,7 @@ import { Icon, Container, Content, Header, Left, Body, Right, List, ListItem } f
 
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
+import ConfigScreen from "../screens/ConfigScreen";
 
 const AppStackNavigator = createStackNavigator({
 	LoginScreen: {
@@ -27,6 +28,14 @@ const AppStackNavigator = createStackNavigator({
 			headerTintColor: '#ffffff',
 			headerLeft: null
 		}
+	},	
+	Settings: {
+		screen: ConfigScreen,
+		navigationOptions: {
+			headerStyle: { backgroundColor: '#4285F4' },
+			headerTintColor: '#ffffff',
+			headerLeft: true
+		}
 	}
 });
 
@@ -34,9 +43,10 @@ const AppDrawerNavigator = createDrawerNavigator(
 	{
 		LoginScreen: { screen: LoginScreen },
 		HomeScreen: { screen: HomeScreen },
+		Settings: { screen: ConfigScreen },
 	},
 	{
-		initialRouteName: "HomeScreen",
+		initialRouteName: "LoginScreen",
 		drawerPosition: "left",
 		overlayColor: "#424242"
 	}

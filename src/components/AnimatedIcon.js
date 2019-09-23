@@ -3,7 +3,7 @@ import { View, Container, Animated, Easing } from 'react-native';
 import { Icon, Button } from 'native-base';
 import Toast, {DURATION} from 'react-native-easy-toast';
 
-class FetchingData extends Component {
+class AnimatedIcon extends Component {
 	
 	constructor(props) {
 		super(props);
@@ -27,16 +27,18 @@ class FetchingData extends Component {
 	}
 	
 	render() {	
+	
 		const spin = this.spinValue.interpolate({
 			inputRange: [0, 1],
 			outputRange: ['0deg', '360deg']
 		});
+		
 		const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 		
 		return (
-			<Button onPress= {this.props.syncData} transparent>
-				<AnimatedIcon name="refresh" style = { this.props.fetching? {transform: [{rotate: spin}]} : {}} />
+			<Button onPress= {this.props.onPress} transparent>
+				<AnimatedIcon name = {this.props.name} style = { this.props.fecthing? { transform: [{rotate: spin}]} : {} } />
 			</Button>
 		);
 	}
-} export default FetchingData;
+} export default AnimatedIcon;

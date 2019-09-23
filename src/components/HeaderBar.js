@@ -20,7 +20,7 @@ class HeaderBar extends Component {
 		this.setState({loading: true});
 		let validNot = true;
 		let responseError = 0;
-		getUrl = "http://updates.sojaca.net/apimobile?apiOption=" +  apiOption + "&username=" + this.props.userName + "&password=" + this.props.userPassword + "&last_update=" + this.props.lastUpdate;
+		getUrl = "http://3.216.197.193/apimobile?apiOption=" +  apiOption + "&username=" + this.props.userName + "&password=" + this.props.userPassword + "&last_update=" + this.props.lastUpdate;
 		try {
 			let response = await fetch(getUrl, { method: 'GET' });
 			const responseJson =  await response.json();

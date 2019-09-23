@@ -34,7 +34,7 @@ class Home extends Component {
 	render() {
 		return (			
 			<Container style={styles.androidHeader}>
-				<HeaderBar headerTitle = {getTranslation(this.state.deviceLanguage, 100)} openDrawer = {this.props.navigation.openDrawer} deviceLanguage = {this.state.deviceLanguage} userName = {this.state.userName} userPassword = {this.state.userPassword} lastUpdate={this.state.lastUpdate} />
+				<HeaderBar headerTitle = {getTranslation(this.state.deviceLanguage, "TITLE_PRINCIPAL")} openDrawer = {this.props.navigation.openDrawer} deviceLanguage = {this.state.deviceLanguage} userName = {this.state.userName} userPassword = {this.state.userPassword} lastUpdate={this.state.lastUpdate} />
 				<Body>
 				</Body>
 			</Container>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   androidHeader: {
     ...Platform.select({
       android: {
-        //paddingTop: StatusBar.currentHeight
+        paddingTop: StatusBar.currentHeight
       }
     })
   }
