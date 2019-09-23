@@ -22,6 +22,7 @@
     "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-localize": "^1.2.0",
     "react-native-reanimated": "^1.2.0",
+    "react-native-screens": "^2.0.0-alpha.3",
     "react-native-sqlite-storage": "^4.1.0",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^4.0.5",

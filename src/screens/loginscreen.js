@@ -15,6 +15,8 @@ import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
 import NavigationService from '../services/NavigationService';
+import {BluetoothEscposPrinter} from "react-native-bluetooth-escpos-printer";
+
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
@@ -98,6 +100,13 @@ export default class LoginScreen extends Component {
 		});
 	}
 	
+	sendPrinterText = (p) => {
+		BluetoothEscposPrinter.printText("Imprimiendo desde React 1 \r\n\r\n\r\n", { encoding:'GBK', codepage:0, widthtimes:0.5, heigthtimes:0, fonttype:1});
+		BluetoothEscposPrinter.printText("Imprimiendo desde React 2 \r\n\r\n\r\n", { encoding:'GBK', codepage:0, widthtimes:0.7, heigthtimes:0, fonttype:1});
+		BluetoothEscposPrinter.printText("Imprimiendo desde React 3 \r\n\r\n\r\n", { encoding:'GBK', codepage:0, widthtimes:0.9, heigthtimes:0, fonttype:1});
+		BluetoothEscposPrinter.printText("Imprimiendo desde React 4 \r\n\r\n\r\n", { encoding:'GBK', codepage:0, widthtimes:1, heigthtimes:0, fonttype:1});
+	}
+	
 	goHome = (cClick) => {
 		this.props.navigation.navigate('HomeScreen');
 	}
@@ -120,7 +129,7 @@ export default class LoginScreen extends Component {
 					<CustomTextInput onChangeText={(userName) => {this.setState({userName: userName})}} />
 					<NormalText id = "password" text= {getTranslation(this.state.deviceLanguage, 5) + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
 					<CustomTextInput onChangeText={(userPassword) => {this.setState({userPassword: userPassword})}} />
-					<BottomButton customClick={this.customClickHandler}
+					<BottomButton customClick={this.sendPrinterText}
 						title= {getTranslation(this.state.deviceLanguage, 6)}
 					/>
 				</View>

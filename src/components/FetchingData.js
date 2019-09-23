@@ -1,81 +1,46 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Container, Animated, Easing } from 'react-native';
 import { Icon, Button } from 'native-base';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 class FetchingData extends Component {
 	
 	constructor(props) {
-		super(props);	
-		this.state = {
-			loading: false,		
-			userName : "",
-			userPassword : "",
-			lastUpdate: "",
-			userDataBase : "",
-			deviceLanguage : "",
-		}
-	}	
-	
-	async getRemoteData(apiOption){
-		this.setState({loading: true});
-		validNot = true;
-		responseError = 0;
-		getUrl = "http://updates.sojaca.net/apimobile?apiOption=" +  apiOption + "&username=" + this.props.userName + "&password=" + this.props.userPassword + "&last_update=" + this.props.lastUpdate;
-		try {
-			let response = await fetch(getUrl, { method: 'GET' });
-			const responseJson =  await response.json();
-			if(JSON.stringify(responseJson) == '{}'){
-				validNot = false;
-				responseError = 999;
-			} else{
-				if(responseJson.response != "valid"){
-					responseError = responseJson.error_message
-					validNot = false;
-				}
-			}
-			this.setState({loadingMessage: ""});
-			this.setState({validLogin: validNot});
-			return [validNot, responseError, apiOption];
-		} catch(error){
-			this.setState({loading: false});
-			return [false, 999, apiOption];
-		}
+		super(props);
+		this.spinValue = new Animated.Value(0);
 	}
 	
-	customClickHandler = (cClick) => {
-		validLoad = true;
-		this.getRemoteData(2).then((result) => {
-			if(!result[0]){
-				validLoad = false;
+	componentDidMount() {
+		this.fetchingSpin();
+	}
+	
+	fetchingSpin() {
+		this.spinValue.setValue(0)
+		Animated.timing(
+			this.spinValue,
+			{
+				toValue: 1,
+				duration: 1500,
+				easing: Easing.linear
 			}
-			this.getRemoteData(3).then((result) => {
-				if(!result[0]){
-					validLoad = false;
-				}
-				this.getRemoteData(4).then((result) => {
-					if(!result[0]){
-						validLoad = false;
-					}
-					validNot = false;
-					if(!validNot){
-						this.refs.toast.show('Algunos datos no se cargaron',DURATION.LENGTH_LONG);
-					} else{
-						alert("Todo bien")
-					}
-					this.setState({loading: false});
-				});								
-			});				
+		).start(() => this.fetchingSpin())
+	}
+	
+	async runSync(){
+		this.props.syncData();
+	}
+	
+	render() {	
+		const spin = this.spinValue.interpolate({
+			inputRange: [0, 1],
+			outputRange: ['360deg', '0deg']
 		});
-	}
-	
-	render() {
+		const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 		
 		return (
-			<View>
-				<Button onPress = {this.customClickHandler} transparent>
-					<Icon name="sync" />
-				</Button>
-			</View>
+			<Button onPress= {this.props.syncData} transparent>
+				<AnimatedIcon name="sync" style = { this.props.fetching? {transform: [{rotate: spin}]} : {}} />
+			</Button>
 		);
 	}
 } export default FetchingData;
