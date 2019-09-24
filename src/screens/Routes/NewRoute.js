@@ -31,7 +31,7 @@ export class NewRoute extends Component {
   }
   render() {
     return (
-      <Container>
+      <Container style={{flex: 1}}>
         <Header>
           <Left>
             <Button
@@ -52,7 +52,7 @@ export class NewRoute extends Component {
             </Button>
           </Right>
         </Header>
-        <Content>
+        <Content style={{flex: 1}}>
           <View style={styles.container}>
             <Form>
               <View style={styles.paddingBottom}>
@@ -82,13 +82,34 @@ export class NewRoute extends Component {
                   disabled={false}
                 />
               </View>
+              <View>
+                <Text style={styles.label}>Empleado</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Seleccione el empleado"
+                  returnKeyType="go"
+                  onChangeText={item => {}}
+                />
+              </View>
             </Form>
           </View>
           <View style={styles.addPoint}>
             <View>{}</View>
-            <TouchableOpacity style={styles.buttonGhost}>
-              <Icon name="add" />
-              <Text style={{marginLeft: 8}}>Punto</Text>
+            <TouchableOpacity
+              style={styles.buttonGhost}
+              onPress={() => {
+                this.props.navigation.navigate('NewPoint');
+              }}>
+              <Icon name="add" style={{color: theme.colors.primary}} />
+              <Text
+                style={{
+                  marginLeft: 12,
+                  fontSize: theme.sizes.base,
+                  color: theme.colors.primary,
+                  textTransform: 'uppercase',
+                }}>
+                Punto
+              </Text>
             </TouchableOpacity>
           </View>
         </Content>
@@ -163,5 +184,8 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: theme.colors.primary,
     borderWidth: 1,
+    paddingVertical: 12,
+    borderRadius: 4,
+    alignItems: 'center',
   },
 });

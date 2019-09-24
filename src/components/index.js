@@ -6,6 +6,7 @@ import BoldLargeText from './BoldLargeText';
 import NormalText from './NormalText';
 import AddButton from './AddButton';
 import SearchBar from './SearchBar';
+import FetchingData from './FetchingData';
 
 export {
   TextInput,
@@ -13,6 +14,7 @@ export {
   BottomButton,
   AddButton,
   SearchBar,
+  FetchingData,
   BoldLargeText,
   //   ContentCustom,
 

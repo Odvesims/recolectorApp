@@ -31,6 +31,7 @@ import Clients from '../screens/Clients/Clients';
 import NewClient from '../screens/Clients/NewClient';
 import Routes from '../screens/Routes/Routes';
 import NewRoute from '../screens/Routes/NewRoute';
+import NewPoint from '../screens/Routes/Point/NewPoint';
 
 // const AppStackNavigator = createStackNavigator({
 //   LoginScreen: {
@@ -61,6 +62,7 @@ const AppDrawerNavigator = createDrawerNavigator(
     LoginScreen: {screen: LoginScreen},
     NewClient: {screen: NewClient},
     NewRoute: {screen: NewRoute},
+    NewPoint: {screen: NewPoint},
   },
   {
     initialRouteName: 'NewRoute',

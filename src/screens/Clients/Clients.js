@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {AddButton, SearchBar} from '../../components';
+import {AddButton, SearchBar, FetchingData} from '../../components';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 import {} from 'react-native-vector-icons';
 
@@ -13,6 +14,7 @@ import {
   StatusBar,
   FlatList,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 
 // import ContentCustom from '../components';
@@ -36,54 +38,8 @@ import {getTranslation} from '../../helpers/translation_helper';
 
 export default class Clients extends Component {
   state = {
-    data: [
-      {
-        code: 12,
-        name: 'Lilli',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 14,
-        name: 'John',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 18,
-        name: 'Lavera',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 16,
-        name: 'Paul',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 13,
-        name: 'Jene',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 117,
-        name: 'Felipe',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este saaaaaaaaaaaaa',
-      },
-      {
-        code: 152,
-        name: 'Shawn',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 352,
-        name: 'Carey',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        code: 12,
-        name: 'Mark',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-    ],
-    show: true,
+    data: [],
+    loading: false,
     BUTTONS: [
       {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
       {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -108,8 +64,8 @@ export default class Clients extends Component {
         validNot = false;
         responseError = 999;
       } else {
-        this.state.setState({data: responseJson.arr_clients});
-        if (responseJson.response !== 'valid') {
+        this.setState({data: responseJson.arr_clients});
+        if (responseJson.response != 'valid') {
           responseError = responseJson.error_message;
           validNot = false;
         }
@@ -122,15 +78,33 @@ export default class Clients extends Component {
     }
   }
 
-  showHideSearchBar = () => {
-    this.setState(previousState => ({show: !previousState.show}));
+  componentDidMount() {
+    this.state = {
+      show: false,
+    };
+
+    this.refreshHandler();
+  }
+
+  refreshHandler = () => {
+    this.getClients().then(result => {
+      this.setState({loading: false});
+    });
   };
 
-  componentDidMount() {}
+  showHideSearchBar = () => {
+    // this.setState({show: true});
+    if (this.state.show == true) {
+      this.setState({show: false});
+    } else {
+      this.setState({show: true});
+    }
+  };
 
   render() {
     const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    const {loading} = this.state;
 
     return (
       <Container>
@@ -148,48 +122,41 @@ export default class Clients extends Component {
             <Title>Clientes</Title>
           </Body>
           <Right>
-            <Button transparent>
-              <Icon name="refresh" />
-            </Button>
+            <FetchingData syncData={this.refreshHandler} fetching={loading} />
             <Button transparent>
               <Icon name="funnel" />
             </Button>
-            <Button
-              transparent
-              onPress={() => {
-                this.showHideSearchBar;
-              }}>
+            <Button transparent onPress={this.showHideSearchBar}>
               <Icon name="search" />
             </Button>
           </Right>
         </Header>
+        <Toast
+          ref="toast"
+          style={{backgroundColor: '#CE2424'}}
+          position="bottom"
+          positionValue={0}
+          fadeInDuration={750}
+          fadeOutDuration={750}
+          opacity={0.8}
+          textStyle={{color: 'white'}}
+        />
 
         {/* SearchBar */}
-        <Header searchBar rounded>
-          <Item>
-            <Icon name="ios-search" />
-            <Input placeholder="Search" />
-            <Icon name="close" />
-          </Item>
-          <Button transparent>
-            <Text>Search</Text>
-          </Button>
-        </Header>
-        {/* SearchBar */}
-
-        {/* Header */}
 
         {this.state.show ? <SearchBar /> : null}
-        <ScrollView>
-          {/* Content */}
 
+        {/* SearchBar */}
+
+        {/* Content */}
+        <ScrollView>
           <Content style={styles.content}>
             <FlatList
               style={{overflow: 'hidden'}}
               data={data}
               renderItem={({item}) => (
                 <Item style={styles.list}>
-                  <Text style={styles.code}>{item.code}</Text>
+                  <Text style={styles.code}>{item.client_code}</Text>
                   <View style={{marginLeft: 8}}>
                     <Text style={styles.name}>{item.name}</Text>
                     <Text style={styles.address}>{item.address}</Text>
@@ -246,7 +213,7 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: theme.colors.lightGray,
     paddingHorizontal: 8,
-    paddingTop: 12,
+    paddingVertical: 12,
   },
   code: {
     width: 32,
