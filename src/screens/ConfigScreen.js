@@ -2,6 +2,7 @@
 import React, {Component, Alert} from 'react';
 import {theme} from '../constants';
 import { View, StyleSheet, NativeModules, KeyboardAvoidingView, Picker, StatusBar } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Container, Content, Icon, Button, Header, Left, Title, Body } from 'native-base';
 
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -153,7 +154,7 @@ export default class ConfigScreen extends Component {
 					</Body>
 				</Header>
 				<Content>
-					<KeyboardAvoidingView behavior="padding" style={styles.container}>
+					<KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} scrollEnabled>
 						<Spinner
 							visible={this.state.loading}
 							textContent={this.state.loadingMessage}
@@ -164,19 +165,19 @@ export default class ConfigScreen extends Component {
 						<CustomTextInput value={this.state.portNumber} onChangeText={(portNumber) => {this.setState({portNumber: portNumber}) }} />
 						<NormalText text= {getTranslation(this.state.deviceLanguage, "TITLE_USES_PRINTER") + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
 						<Picker
-						  selectedValue={this.state.usesPrinter}
-						  onValueChange={(itemValue, itemIndex) =>
-							this.setState({usesPrinter: itemValue})
-						  }>
-						  <Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_YES")} value="0" />
-						  <Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_NO")} value="1" />
+							selectedValue={this.state.usesPrinter}
+							onValueChange={(itemValue, itemIndex) =>
+								this.setState({usesPrinter: itemValue})
+							}>
+							<Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_YES")} value={'0'} />
+							<Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_NO")}  value={'1'} />
 						</Picker>	
 						<View>
 							<BottomButton customClick={this.saveUserConfig.bind(this)}
 								title= {getTranslation(this.state.deviceLanguage, "TITLE_SAVE")}
 							/>
 						</View>
-					</KeyboardAvoidingView>
+					</KeyboardAwareScrollView>
 				</Content>
 			</Container>
 		);

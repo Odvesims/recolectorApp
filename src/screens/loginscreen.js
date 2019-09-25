@@ -1,6 +1,11 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component} from 'react';
 import {theme} from '../constants';
+import RNCryptor from 'react-native-rncryptor';
+import nextFrame from 'next-frame';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+const encryptionKey = "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F";
 
 import {
   View,
@@ -27,8 +32,10 @@ import BoldLargeText from '../components/BoldLargeText';
 import NormalText from '../components/NormalText';
 import BottomButton from '../components/BottomButton';
 import CustomTextInput from '../components/TextInput';
+import ToastMessage from '../components/ToastMessage';
 
 import {getTranslation} from '../helpers/translation_helper';
+import {encryptData, decryptData} from '../helpers/encryption_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
 
@@ -46,6 +53,9 @@ export default class LoginScreen extends Component {
       validLogin: true,
       userName: '',
       userPassword: '',
+	  hostName: "",
+	  visible: false,
+	  toastMsg: "",
     };
     db.transaction(function(txn) {
       txn.executeSql(
@@ -81,53 +91,75 @@ export default class LoginScreen extends Component {
       });
     }
   }
-
+  
+  async getUserConfig(){
+  	db.transaction(tx => {
+  		tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
+  			for (let i = 0; i < results.rows.length; ++i) {
+  				let row = results.rows.item(i);
+  				this.setState({
+  					hostName: row.host_name,
+  				});
+  			}
+  		});
+  	});
+  }
+	
   async getUserLogin() {
-    this.setState({loading: true});
-    this.setState({
-      loadingMessage: getTranslation(this.state.deviceLanguage, "MESSAGE_SIGNIN"),
-    });
     let validNot = true;
     let responseError = 0;
-    let getUrl =
-      'http://updates.sojaca.net/apimobile?apiOption=1&username=' +
-      this.state.userName +
-      '&password=' +
-      this.state.userPassword;
-    try {
-      let response = await fetch(getUrl, {method: 'GET'});
-      const responseJson = await response.json();
-      if (JSON.stringify(responseJson) == '{}') {
-        validNot = false;
-        responseError = "ALERT_BLANK_RESPONSE";
-      } else {
-        if (responseJson.response != 'valid') {
-          responseError = responseJson.error_message;
-          validNot = false;
-        }
-      }
-      this.setState({loadingMessage: ''});
-      this.setState({validLogin: validNot});
-      return [validNot, responseError];
-    } catch (error) {
-      this.setState({loading: false});
-      return [false, "ALERT_BLANK_RESPONSE"];
-    }
+	let user_name = this.state.userName;
+	let user_pass = this.state.userPassword;
+	if(user_name){
+		if(user_pass){
+			if(this.state.hostName == ""){
+				await this.getUserConfig();
+			}
+			await nextFrame();
+			let getUrl =
+			  'https://' + this.state.hostName +
+			  '/apimobile?apiOption=' + "GET_LOGIN" +
+			  '&username=' + this.state.userName +
+			  '&password=' + this.state.userPassword;
+			try { 
+			  let response = await fetch(getUrl, {method: 'GET'});
+			  const responseJson = await response.json();
+			  if (JSON.stringify(responseJson) == '{}') {
+				validNot = false;
+				responseError = "ALERT_BLANK_RESPONSE";
+			  } else {
+				if (responseJson.response != 'valid') {
+				  responseError = responseJson.error_message;
+				  validNot = false;
+				}
+			  }
+			  this.setState({loadingMessage: ''});
+			  this.setState({validLogin: validNot});
+			  return [validNot, responseError];
+			} catch (error) {
+			  this.setState({loading: false});
+			  return [false, "ALERT_BLANK_RESPONSE"];
+			}
+		} else{
+			return [false, "ALERT_PASSWORD_BLANK"];
+		}
+	} else{
+		return [false, "ALERT_USER_BLANK"];
+	}
   }
 
   customClickHandler = cClick => {
-    this.getUserLogin().then(result => {
-      if (result[0]) {
-        /*NavigationService.navigate('HomeScreen', {
-					title: 'Inicio',
-				});*/
-
-        this.goHome();
-      } else {
-        alert(getTranslation(this.state.deviceLanguage, result[1]));
-      }
-      this.setState({loading: false});
-    });
+    this.setState({loading: true});
+    this.setState({ loadingMessage: getTranslation(this.state.deviceLanguage, "MESSAGE_SIGNIN"), });
+	this.getUserLogin().then(result => {
+	  if (result[0]) {
+		this.goHome();
+	  } else {
+		this.setState({visible: true, toastMsg: getTranslation(this.state.deviceLanguage, result[1])});
+		setTimeout(() => {this.setState({visible: false, toastMsg: ""})}, 2000);
+	  }
+	  this.setState({loading: false});
+	});
   };
 
   goHome = cClick => {
@@ -140,6 +172,12 @@ export default class LoginScreen extends Component {
 
   static navigationOptions = {
     header: null,
+  };
+    
+  inputs = {};
+  
+  focusTheField = (id) => {
+    this.inputs[id]._root.focus();
   };
 
   render() {
@@ -157,11 +195,14 @@ export default class LoginScreen extends Component {
             </Button>
           </Right>
         </Header>
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <KeyboardAwareScrollView contentContainerStyle = {styles.container} resetScrollToCoords={{ x: 0, y: 0 }} scrollEnabled = {false}>
           <View>
             <Spinner
               visible={this.state.loading}
               textContent={this.state.loadingMessage}
+			  color={"CE2424"}
+			  overlayColor={'rgba(255, 255, 255, 0.4)'}
+			  animation={'slide'}
             />
             <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
             <NormalText
@@ -182,13 +223,15 @@ export default class LoginScreen extends Component {
               onChangeText={userPassword => {
                 this.setState({userPassword: userPassword});
               }}
+			  getRef={input => { this.inputs['field2'] = input }}
             />
             <BottomButton
               customClick={this.customClickHandler}
               title={getTranslation(this.state.deviceLanguage, "TITLE_SIGNIN")}
             />
+			<ToastMessage visible = {this.state.visible} message = {this.state.toastMsg}/>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </Container>
     );
   }

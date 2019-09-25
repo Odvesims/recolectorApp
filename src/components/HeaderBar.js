@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, ScrollView, Platform, StatusBar } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Platform, StatusBar, ToastAndroid } from 'react-native';
 import { Icon, Button, Container, Content, Header, Body, Left, Right, Title, Drawer} from 'native-base';
 import Toast, {DURATION} from 'react-native-easy-toast';
 
 import { getTranslation } from '../helpers/translation_helper';
 import FetchingData from './FetchingData';
+import ToastMessage from './ToastMessage';
 
 class HeaderBar extends Component {
 	
@@ -13,6 +14,8 @@ class HeaderBar extends Component {
 		this.syncData = this.syncDataClickHandler.bind(this);
 		this.state = {
 			loading: false,
+			visible: false,
+			toastMsg : "",
 		}
 	}		
 	
@@ -20,7 +23,7 @@ class HeaderBar extends Component {
 		this.setState({loading: true});
 		let validNot = true;
 		let responseError = 0;
-		getUrl = "http://3.216.197.193/apimobile?apiOption=" +  apiOption + "&username=" + this.props.userName + "&password=" + this.props.userPassword + "&last_update=" + this.props.lastUpdate;
+		getUrl = "http://updates.sojaca.net/apimobile?apiOption=" +  apiOption + "&username=" + this.props.userName + "&password=" + this.props.userPassword + "&last_update=" + this.props.lastUpdate;
 		try {
 			let response = await fetch(getUrl, { method: 'GET' });
 			const responseJson =  await response.json();
@@ -45,23 +48,28 @@ class HeaderBar extends Component {
 	syncDataClickHandler = (cClick) => {
 		this.setState({loading: true});
 		validLoad = true;
-		this.getRemoteData(2).then((result) => {
+		this.getRemoteData("GET_CLIENTS").then((result) => {
 			if(!result[0]){
 				validLoad = false;
 			}
-			this.getRemoteData(3).then((result) => {
+			this.getRemoteData("GET_COLLECTORS").then((result) => {
 				if(!result[0]){
 					validLoad = false;
 				}
-				this.getRemoteData(4).then((result) => {
+				this.getRemoteData("GET_ARTICLES").then((result) => {
 					if(!result[0]){
 						validLoad = false;
 					}
-					validNot = false;
-					if(!validNot){
-						this.refs.toast.show(getTranslation(this.props.deviceLanguage, 101), 3000);
-					}
-					this.setState({loading: false});
+					this.getRemoteData("GET_ROUTES").then((result) => {
+						if(!result[0]){
+							validLoad = false;
+						}
+						if(!validLoad){
+							this.setState({visible: true, toastMsg: getTranslation(this.props.deviceLanguage, "ALERT_SYNC_INCOMPLETE")});
+							setTimeout(() => {this.setState({visible: false, toastMsg: ""})}, 2000);						
+						}
+						this.setState({loading: false});
+					});
 				});								
 			});				
 		});
@@ -85,16 +93,7 @@ class HeaderBar extends Component {
 						</Button>
 					</Right>
 				</Header>
-				<Toast
-					ref="toast"
-					style={{backgroundColor:'#CE2424'}}
-					position='bottom'
-					positionValue={0}
-					fadeInDuration={750}
-					fadeOutDuration={750}
-					opacity={0.8}
-					textStyle={{color:'white'}}
-				/>
+				<ToastMessage visible = {this.state.visible} message = {this.state.toastMsg}/>
 			</View>
 		);
 	}
