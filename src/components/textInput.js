@@ -22,6 +22,7 @@ const CustomTextInput = props => {
 	   	borderRadius: 7,
 	   }}
 	   blurOnSubmit={false}
+	   secureTextEntry={props.secured}
 	   value={props.value}
 	/>
   );

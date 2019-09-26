@@ -1,7 +1,6 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component} from 'react';
 import {theme} from '../constants';
-import RNCryptor from 'react-native-rncryptor';
 import nextFrame from 'next-frame';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -57,22 +56,6 @@ export default class LoginScreen extends Component {
 	  visible: false,
 	  toastMsg: "",
     };
-    db.transaction(function(txn) {
-      txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='app_configurations'",
-        [],
-        function(tx, res) {
-          console.log('item:', res.rows.length);
-          if (res.rows.length == 0) {
-            txn.executeSql('DROP TABLE IF EXISTS app_configurations', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer BOOLEAN)',
-              [],
-            );
-          }
-        },
-      );
-    });
   }
 
   componentDidMount() {
@@ -153,6 +136,8 @@ export default class LoginScreen extends Component {
     this.setState({ loadingMessage: getTranslation(this.state.deviceLanguage, "MESSAGE_SIGNIN"), });
 	this.getUserLogin().then(result => {
 	  if (result[0]) {
+		this.setState({userName: ""});
+		this.setState({userPassword: ""});
 		this.goHome();
 	  } else {
 		this.setState({visible: true, toastMsg: getTranslation(this.state.deviceLanguage, result[1])});
@@ -213,6 +198,8 @@ export default class LoginScreen extends Component {
               onChangeText={userName => {
                 this.setState({userName: userName});
               }}
+			  secured={false}
+			  value={this.state.userName}
             />
             <NormalText
               id="password"
@@ -223,7 +210,8 @@ export default class LoginScreen extends Component {
               onChangeText={userPassword => {
                 this.setState({userPassword: userPassword});
               }}
-			  getRef={input => { this.inputs['field2'] = input }}
+			  secured={true}
+			  value={this.state.userPassword}
             />
             <BottomButton
               customClick={this.customClickHandler}

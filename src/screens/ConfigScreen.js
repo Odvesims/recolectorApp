@@ -127,8 +127,8 @@ export default class ConfigScreen extends Component {
 		}
 	}
 	
-	goLogin = (cClick) => {
-		this.props.navigation.navigate('LoginScreen');
+	goBack = (cClick) => {
+		this.props.navigation.pop({n: 1})
 	}
 	
     static navigationOptions = {
@@ -138,12 +138,12 @@ export default class ConfigScreen extends Component {
 	render() {	
 		
 		return (
-			<Container>
-				<Header style = {headerStyles.androidHeader}>
+			<Container style = {headerStyles.androidHeader}>
+				<Header>
 				  <Left>
 					<Button
 					  transparent
-					  onPress={this.goLogin}>
+					  onPress={this.props.navigation.pop()}>
 					  <Icon
 						name="arrow-back"
 					  />
@@ -162,15 +162,15 @@ export default class ConfigScreen extends Component {
 						<NormalText text= {getTranslation(this.state.deviceLanguage, "TITLE_DOMAIN") + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
 						<CustomTextInput value={this.state.hostName} onChangeText={(hostName) => {this.setState({hostName: hostName}) }}/>
 						<NormalText text= {getTranslation(this.state.deviceLanguage, "TITLE_PORT") + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
-						<CustomTextInput value={this.state.portNumber} onChangeText={(portNumber) => {this.setState({portNumber: portNumber}) }} />
+						<CustomTextInput keyboardType = {"numeric"} value={this.state.portNumber} onChangeText={(portNumber) => {this.setState({portNumber: portNumber}) }} />
 						<NormalText text= {getTranslation(this.state.deviceLanguage, "TITLE_USES_PRINTER") + ":"} style={{marginLeft: 10, marginTop: 20, textAlign: "left"}} />
 						<Picker
 							selectedValue={this.state.usesPrinter}
 							onValueChange={(itemValue, itemIndex) =>
 								this.setState({usesPrinter: itemValue})
 							}>
-							<Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_YES")} value={'0'} />
-							<Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_NO")}  value={'1'} />
+							<Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_YES")} value='yes' />
+							<Picker.Item label= {getTranslation(this.state.deviceLanguage, "TITLE_NO")}  value='no' />
 						</Picker>	
 						<View>
 							<BottomButton customClick={this.saveUserConfig.bind(this)}

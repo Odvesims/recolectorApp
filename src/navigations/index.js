@@ -10,6 +10,8 @@ import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import ConfigScreen from "../screens/ConfigScreen";
 
+import DrawerContentComponents from '../components/DrawerContentComponents';
+
 const AppStackNavigator = createStackNavigator({
 	LoginScreen: {
 		screen: LoginScreen,
@@ -48,34 +50,10 @@ const AppDrawerNavigator = createDrawerNavigator(
 	{
 		initialRouteName: "LoginScreen",
 		drawerPosition: "left",
-		overlayColor: "#424242"
+		overlayColor: "#424242",
+        contentComponent: DrawerContentComponents,
 	}
 );
-
-// const CustomDrawerContentComponent = () => {
-//   return (
-//     <Container>
-//       <Header style={styles.androidHeader}>
-//         <Body>
-//           <Left style={styles.menuProfile}>
-//             <Text style={{ color: "white", fontWeight: "bold" }}>
-//               Andris Alberto Ramirez Chireno
-//             </Text>
-//             <TouchableOpacity style={styles.role}>
-//               <Text style={{ color: "white", fontWeight: "bold" }}>
-//                 Supervisor
-//               </Text>
-//             </TouchableOpacity>
-//           </Left>
-
-//           <Right>
-//             <Text>Editar Perfil</Text>
-//           </Right>
-//         </Body>
-//       </Header>
-//     </Container>
-//   );
-// };
 
 const styles = StyleSheet.create({
 	menuProfile: { backgroundColor: "#4285F4" },
@@ -86,7 +64,7 @@ const styles = StyleSheet.create({
 	androidHeader: {
 		...Platform.select({
 			android: {
-				paddingTop: StatusBar.currentHeight
+				//paddingTop: StatusBar.currentHeight
 			}
 		})
 	}
