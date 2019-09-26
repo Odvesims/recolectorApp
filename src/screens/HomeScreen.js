@@ -8,6 +8,8 @@ import {
   Platform,
   StatusBar,
   NativeModules,
+  RefreshControl,
+  ProgressBarAndroid,
 } from 'react-native';
 import {
   Icon,
@@ -71,7 +73,9 @@ class Home extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{getTranslation(this.state.deviceLanguage, 100)}</Title>
+            <Title>
+              {getTranslation(this.state.deviceLanguage, 'TITLE_PRINCIPAL')}
+            </Title>
           </Body>
           <Right>
             <Button transparent>
@@ -82,6 +86,7 @@ class Home extends Component {
             </Button>
           </Right>
         </Header>
+        <Content></Content>
       </Container>
     );
   }

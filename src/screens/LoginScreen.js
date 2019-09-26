@@ -2,6 +2,16 @@
 import React, {Component} from 'react';
 import {theme} from '../constants';
 
+import {Container, Header, Right, Button, Icon, Content} from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
+import BoldLargeText from '../components/BoldLargeText';
+import NormalText from '../components/NormalText';
+import BottomButton from '../components/BottomButton';
+import CustomTextInput from '../components/TextInput';
+import {getTranslation} from '../helpers/translation_helper';
+import {openDatabase} from 'react-native-sqlite-storage';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
 import {
   View,
   StyleSheet,
@@ -9,19 +19,6 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-
-import {Container, Header, Right, Button, Icon} from 'native-base';
-
-import Spinner from 'react-native-loading-spinner-overlay';
-
-import BoldLargeText from '../components/BoldLargeText';
-import NormalText from '../components/NormalText';
-import BottomButton from '../components/BottomButton';
-import CustomTextInput from '../components/TextInput';
-
-import {getTranslation} from '../helpers/translation_helper';
-
-import {openDatabase} from 'react-native-sqlite-storage';
 
 let db = openDatabase({name: 'UserDatabase.db'});
 
@@ -54,7 +51,19 @@ export default class LoginScreen extends Component {
         },
       );
     });
+
+    // this.focusNextField = this.focusNextField.bind(this);
+    // // to store our input refs
+    // this.inputs = {};
   }
+
+  static navigationOptions = {
+    header: null,
+  };
+
+  // focusNextField(key) {
+  //   this.inputs[key].focus();
+  // }
 
   componentDidMount() {
     this.setState({loading: false});
@@ -112,10 +121,6 @@ export default class LoginScreen extends Component {
   customClickHandler = cClick => {
     this.getUserLogin().then(result => {
       if (result[0]) {
-        /*NavigationService.navigate('HomeScreen', {
-					title: 'Inicio',
-				});*/
-
         this.goHome();
       } else {
         alert(
@@ -128,10 +133,6 @@ export default class LoginScreen extends Component {
 
   goHome = cClick => {
     this.props.navigation.navigate('HomeScreen');
-  };
-
-  static navigationOptions = {
-    header: null,
   };
 
   render() {
@@ -147,7 +148,11 @@ export default class LoginScreen extends Component {
             </Button>
           </Right>
         </Header>
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+
+        <KeyboardAwareScrollView
+          resetScrollToCoords={{x: 0, y: 0}}
+          behavior="padding"
+          contentContainerStyle={styles.container}>
           <View>
             <Spinner
               visible={this.state.loading}
@@ -161,6 +166,12 @@ export default class LoginScreen extends Component {
               style={styles.NormalText}
             />
             <CustomTextInput
+              blurOnSubmit={false}
+              returnKeyType="next"
+              ref={ref => {
+                this._nameinput = ref;
+              }}
+              onSubmitEditing={() => this._passinput.focus()}
               onChangeText={userName => {
                 this.setState({userName: userName});
               }}
@@ -174,6 +185,10 @@ export default class LoginScreen extends Component {
               style={styles.NormalText}
             />
             <CustomTextInput
+              blurOnSubmit={false}
+              ref={ref => {
+                this._passinput = ref;
+              }}
               onChangeText={userPassword => {
                 this.setState({userPassword: userPassword});
               }}
@@ -183,7 +198,7 @@ export default class LoginScreen extends Component {
               title={getTranslation(this.state.deviceLanguage, 'TITLE_SIGNIN')}
             />
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </Container>
     );
   }

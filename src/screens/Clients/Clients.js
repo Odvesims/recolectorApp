@@ -13,8 +13,8 @@ import {
   Platform,
   StatusBar,
   FlatList,
-  TouchableOpacity,
-  Animated,
+  // TouchableOpacity,
+  // Animated,
 } from 'react-native';
 
 // import ContentCustom from '../components';
@@ -28,7 +28,7 @@ import {
   Body,
   Left,
   Item,
-  Input,
+  // Input,
   Right,
   Title,
   ActionSheet,
@@ -65,7 +65,7 @@ export default class Clients extends Component {
         responseError = 999;
       } else {
         this.setState({data: responseJson.arr_clients});
-        if (responseJson.response != 'valid') {
+        if (responseJson.response !== 'valid') {
           responseError = responseJson.error_message;
           validNot = false;
         }
@@ -94,7 +94,7 @@ export default class Clients extends Component {
 
   showHideSearchBar = () => {
     // this.setState({show: true});
-    if (this.state.show == true) {
+    if (this.state.show === true) {
       this.setState({show: false});
     } else {
       this.setState({show: true});

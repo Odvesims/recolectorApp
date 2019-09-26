@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import {theme} from '../../../constants';
-import {View, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
+import styled from 'styled-components/native';
+import {ScrollView} from 'react-native-gesture-handler';
 
+import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import {
   Content,
   Container,
@@ -14,9 +16,18 @@ import {
   Icon,
   Text,
   Form,
-  DatePicker,
+  //   DatePicker,
 } from 'native-base';
-import {ScrollView} from 'react-native-gesture-handler';
+
+const CustomButton = styled(Button)`
+  background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
+  border-color: ${props =>
+    props.bordered ? theme.colors.gray : ' transparent'};
+  border: ${props => (props.bordered ? '3px solid gray' : '#4285f4')};
+  text-transform: uppercase;
+  flex-basis: 48%;
+  justify-content: center;
+`;
 
 export class NewPoint extends Component {
   render() {
@@ -24,7 +35,9 @@ export class NewPoint extends Component {
       <Container>
         <Header>
           <Left>
-            <Button transparent>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate('NewRoute')}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -32,63 +45,60 @@ export class NewPoint extends Component {
             <Title>Nuevo Punto</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate('NewRoute')}>
               <Icon name="checkmark" />
             </Button>
           </Right>
         </Header>
-        <Content style={styles.container}>
-          <ScrollView>
-            <Form>
-              <View style={styles.paddingBottom}>
-                <Text> Cliente</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Cliente"
-                  returnKeyType="go"
-                  onChangeText={item => {}}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text> Categoría o SubCategoría</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Cliente"
-                  returnKeyType="go"
-                  onChangeText={item => {}}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text> Artículo</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Cliente"
-                  returnKeyType="go"
-                  onChangeText={item => {}}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text> Cantidad</Text>
-                <TextInput
-                  style={styles.input}
-                  returnKeyType="go"
-                  onChangeText={item => {}}
-                />
-              </View>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Button
-                  bordered
-                  style={{flexBasis: '48%', justifyContent: 'center'}}>
-                  <Text>CANCELAR</Text>
-                </Button>
-                <Button style={{flexBasis: '48%', justifyContent: 'center'}}>
-                  <Text>GUARDAR</Text>
-                </Button>
-              </View>
-            </Form>
-          </ScrollView>
-        </Content>
+        <View style={{flexDirection: 'column', flex: 1}}>
+          <View style={{flex: 1}}>
+            <ScrollView style={styles.container}>
+              <Form>
+                <View style={styles.paddingBottom}>
+                  <Text> Cliente</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Cliente"
+                    returnKeyType="go"
+                    onChangeText={item => {}}
+                  />
+                </View>
+              </Form>
+            </ScrollView>
+          </View>
+          <View style={{flex: 3, backgroundColor: 'gray'}}>
+            <View>{}</View>
+            <View style={styles.addPoint}>
+              <TouchableOpacity
+                style={styles.buttonGhost}
+                onPress={() => {
+                  this.props.navigation.navigate('NewArticle');
+                }}>
+                <Icon name="add" style={{color: theme.colors.primary}} />
+                <Text
+                  style={{
+                    marginLeft: 24,
+                    fontSize: theme.sizes.base,
+                    color: theme.colors.primary,
+                    textTransform: 'uppercase',
+                  }}>
+                  Artículo
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.actionContainer}>
+          <CustomButton bordered>
+            <Text style={{color: theme.colors.darkGray}}>Cancelar</Text>
+          </CustomButton>
+          <CustomButton>
+            <Text>Guardar</Text>
+          </CustomButton>
+        </View>
       </Container>
     );
   }
@@ -149,13 +159,12 @@ const styles = StyleSheet.create({
   },
 
   addPoint: {
-    flex: 1,
+    flex: 2,
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.lightGray,
   },
 
   buttonGhost: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     borderStyle: 'solid',
@@ -164,5 +173,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 4,
     alignItems: 'center',
+  },
+
+  actionContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0,
+    flexBasis: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: 'white',
   },
 });

@@ -2,28 +2,18 @@ import {createAppContainer} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
 
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  Platform,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Platform, StatusBar} from 'react-native';
 
-import {
-  Icon,
-  Container,
-  Content,
-  Header,
-  Left,
-  Body,
-  Right,
-  List,
-  ListItem,
-} from 'native-base';
+import // Icon,
+// Container,
+// Content,
+// Header,
+// Left,
+// Body,
+// Right,
+// List,
+// ListItem,
+'native-base';
 
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -32,6 +22,7 @@ import NewClient from '../screens/Clients/NewClient';
 import Routes from '../screens/Routes/Routes';
 import NewRoute from '../screens/Routes/NewRoute';
 import NewPoint from '../screens/Routes/Point/NewPoint';
+import NewArticle from '../screens/Routes/Point/NewArticle/NewArticle';
 
 // const AppStackNavigator = createStackNavigator({
 //   LoginScreen: {
@@ -63,9 +54,10 @@ const AppDrawerNavigator = createDrawerNavigator(
     NewClient: {screen: NewClient},
     NewRoute: {screen: NewRoute},
     NewPoint: {screen: NewPoint},
+    NewArticle: {screen: NewArticle},
   },
   {
-    initialRouteName: 'NewRoute',
+    initialRouteName: 'LoginScreen',
     drawerPosition: 'left',
     drawerType: 'front',
     overlayColor: '#424242',
