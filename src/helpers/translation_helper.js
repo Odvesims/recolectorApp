@@ -1,5 +1,7 @@
+import {Alert} from 'react-native';
+
 export function getTranslation(language, message) {
-  let translatedString = '';
+  translatedString = '';
   switch (language) {
     case 'es':
       switch (message) {
@@ -9,6 +11,12 @@ export function getTranslation(language, message) {
           break;
         case 'ALERT_AUTHENTICATE':
           translatedString = 'Falló la autenticación del usuario/contraseña.';
+          break;
+        case 'ALERT_USER_BLANK':
+          translatedString = 'Usuario no puede estar en blanco.';
+          break;
+        case 'ALERT_PASSWORD_BLANK':
+          translatedString = 'Contraseña no puede estar en blanco.';
           break;
         case 'MESSAGE_SIGNIN':
           translatedString = 'Iniciando Sesión';
@@ -85,6 +93,12 @@ export function getTranslation(language, message) {
         case 'ALERT_AUTHENTICATE':
           translatedString = 'User/password authentication failed.';
           break;
+        case 'ALERT_USER_BLANK':
+          translatedString = "Username can't be blank.";
+          break;
+        case 'ALERT_PASSWORD_BLANK':
+          translatedString = "Password can't be blank.";
+          break;
         case 'MESSAGE_SIGNIN':
           translatedString = 'Signing In';
           break;
@@ -160,6 +174,12 @@ export function getTranslation(language, message) {
         case 'ALERT_AUTHENTICATE':
           translatedString =
             "L'authentification utilisateur/mot de passe a échoué.";
+          break;
+        case 'ALERT_USER_BLANK':
+          translatedString = "L'utilisateur ne peut pas être vide.";
+          break;
+        case 'ALERT_PASSWORD_BLANK':
+          translatedString = 'Le mot de passe ne peut pas être vide.';
           break;
         case 'MESSAGE_SIGNIN':
           translatedString = 'Se Connecter';

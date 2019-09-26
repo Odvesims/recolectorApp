@@ -2,16 +2,6 @@
 import React, {Component} from 'react';
 import {theme} from '../constants';
 
-import {Container, Header, Right, Button, Icon, Content} from 'native-base';
-import Spinner from 'react-native-loading-spinner-overlay';
-import BoldLargeText from '../components/BoldLargeText';
-import NormalText from '../components/NormalText';
-import BottomButton from '../components/BottomButton';
-import CustomTextInput from '../components/TextInput';
-import {getTranslation} from '../helpers/translation_helper';
-import {openDatabase} from 'react-native-sqlite-storage';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
 import {
   View,
   StyleSheet,
@@ -19,6 +9,28 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
+
+import {
+  Container,
+  Header,
+  Content,
+  Left,
+  Right,
+  Body,
+  Button,
+  Icon,
+} from 'native-base';
+
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import BoldLargeText from '../components/BoldLargeText';
+import NormalText from '../components/NormalText';
+import BottomButton from '../components/BottomButton';
+import CustomTextInput from '../components/TextInput';
+
+import {getTranslation} from '../helpers/translation_helper';
+
+import {openDatabase} from 'react-native-sqlite-storage';
 
 let db = openDatabase({name: 'UserDatabase.db'});
 
@@ -51,19 +63,7 @@ export default class LoginScreen extends Component {
         },
       );
     });
-
-    // this.focusNextField = this.focusNextField.bind(this);
-    // // to store our input refs
-    // this.inputs = {};
   }
-
-  static navigationOptions = {
-    header: null,
-  };
-
-  // focusNextField(key) {
-  //   this.inputs[key].focus();
-  // }
 
   componentDidMount() {
     this.setState({loading: false});
@@ -85,10 +85,7 @@ export default class LoginScreen extends Component {
   async getUserLogin() {
     this.setState({loading: true});
     this.setState({
-      loadingMessage: getTranslation(
-        this.state.deviceLanguage,
-        'MESSAGE_SIGNIN',
-      ),
+      loadingMessage: getTranslation(this.state.deviceLanguage, 3),
     });
     let validNot = true;
     let responseError = 0;
@@ -121,11 +118,13 @@ export default class LoginScreen extends Component {
   customClickHandler = cClick => {
     this.getUserLogin().then(result => {
       if (result[0]) {
+        /*NavigationService.navigate('HomeScreen', {
+					title: 'Inicio',
+				});*/
+
         this.goHome();
       } else {
-        alert(
-          getTranslation(this.state.deviceLanguage, result['ALERT_CONNECTION']),
-        );
+        alert(getTranslation(this.state.deviceLanguage, result[1]));
       }
       this.setState({loading: false});
     });
@@ -135,12 +134,20 @@ export default class LoginScreen extends Component {
     this.props.navigation.navigate('HomeScreen');
   };
 
+  static navigationOptions = {
+    header: null,
+  };
+
   render() {
     return (
       <Container>
         <Header transparent>
           <Right>
-            <Button transparent onPress={() => {}}>
+            <Button
+              transparent
+              onPress={() => {
+                this.props.navigate.navigation('Settings');
+              }}>
               <Icon
                 name="settings"
                 style={{color: theme.colors.gray, fontSize: 32}}
@@ -148,11 +155,7 @@ export default class LoginScreen extends Component {
             </Button>
           </Right>
         </Header>
-
-        <KeyboardAwareScrollView
-          resetScrollToCoords={{x: 0, y: 0}}
-          behavior="padding"
-          contentContainerStyle={styles.container}>
+        <KeyboardAvoidingView behavior="padding" style={styles.container}>
           <View>
             <Spinner
               visible={this.state.loading}
@@ -160,45 +163,30 @@ export default class LoginScreen extends Component {
             />
             <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
             <NormalText
-              text={
-                getTranslation(this.state.deviceLanguage, 'TITLE_USER') + ':'
-              }
+              text={getTranslation(this.state.deviceLanguage, 4) + ':'}
               style={styles.NormalText}
             />
             <CustomTextInput
-              blurOnSubmit={false}
-              returnKeyType="next"
-              ref={ref => {
-                this._nameinput = ref;
-              }}
-              onSubmitEditing={() => this._passinput.focus()}
               onChangeText={userName => {
                 this.setState({userName: userName});
               }}
             />
             <NormalText
               id="password"
-              text={
-                getTranslation(this.state.deviceLanguage, 'TITLE_PASSWORD') +
-                ':'
-              }
+              text={getTranslation(this.state.deviceLanguage, 5) + ':'}
               style={styles.NormalText}
             />
             <CustomTextInput
-              blurOnSubmit={false}
-              ref={ref => {
-                this._passinput = ref;
-              }}
               onChangeText={userPassword => {
                 this.setState({userPassword: userPassword});
               }}
             />
             <BottomButton
               customClick={this.customClickHandler}
-              title={getTranslation(this.state.deviceLanguage, 'TITLE_SIGNIN')}
+              title={getTranslation(this.state.deviceLanguage, 6)}
             />
           </View>
-        </KeyboardAwareScrollView>
+        </KeyboardAvoidingView>
       </Container>
     );
   }
