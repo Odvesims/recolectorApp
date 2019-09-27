@@ -25,6 +25,7 @@
     "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-localize": "^1.2.0",
     "react-native-reanimated": "^1.2.0",
+    "react-native-rncryptor": "^1.0.2",
     "react-native-screens": "^2.0.0-alpha.3",
     "react-native-sqlite-storage": "^4.1.0",
     "react-native-vector-icons": "^6.6.0",
@@ -32,6 +33,7 @@
     "react-navigation-drawer": "^2.2.1",
     "react-navigation-stack": "^1.7.3",
     "react-promise-tracker": "^2.0.5",
+    "react-redux": "^7.1.1",
     "styled-components": "^4.4.0"
   },
   "devDependencies": {

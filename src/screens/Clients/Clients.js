@@ -56,7 +56,8 @@ export default class Clients extends Component {
     });
     let validNot = true;
     let responseError = 0;
-    let getUrl = 'http://updates.sojaca.net/apimobile?apiOption=2&username=';
+    let getUrl =
+      'https://apimobile.sojaca.net:444/apimobile?apiOption=GET_CLIENTS&username=';
     try {
       let response = await fetch(getUrl, {method: 'GET'});
       const responseJson = await response.json();

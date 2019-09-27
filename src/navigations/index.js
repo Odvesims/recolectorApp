@@ -1,19 +1,12 @@
-import {createAppContainer} from 'react-navigation';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
 
-import {StyleSheet, Platform, StatusBar} from 'react-native';
+import React from 'react';
 
-import // Icon,
-// Container,
-// Content,
-// Header,
-// Left,
-// Body,
-// Right,
-// List,
-// ListItem,
-'native-base';
+import {Icon} from 'native-base';
+
+import {StyleSheet, Platform, StatusBar} from 'react-native';
 
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -23,77 +16,56 @@ import Routes from '../screens/Routes/Routes';
 import NewRoute from '../screens/Routes/NewRoute';
 import NewPoint from '../screens/Routes/Point/NewPoint';
 import NewArticle from '../screens/Routes/Point/NewArticle/NewArticle';
+import ConfigScreen from '../screens/ConfigScreen';
 
-// const AppStackNavigator = createStackNavigator({
-//   LoginScreen: {
-//     screen: LoginScreen,
-//     navigationOptions: {
-//       title: 'Inicio',
-//       headerMode: 'none',
-//       navigationOptions: {
-//         headerVisible: false,
-//       },
-//     },
-//   },
-//   HomeScreen: {
-//     screen: HomeScreen,
-//     navigationOptions: {
-//       headerStyle: {backgroundColor: '#4285F4'},
-//       headerTintColor: '#ffffff',
-//       headerLeft: null,
-//     },
-//   },
-// });
+import SideBar from './SideBar';
 
-const AppDrawerNavigator = createDrawerNavigator(
+const AuthNavigator = createStackNavigator(
   {
-    Home: {screen: HomeScreen},
-    Clients: {screen: Clients},
-    Routes: {screen: Routes},
-    LoginScreen: {screen: LoginScreen},
-    NewClient: {screen: NewClient},
-    NewRoute: {screen: NewRoute},
-    NewPoint: {screen: NewPoint},
-    NewArticle: {screen: NewArticle},
+    Login: {screen: LoginScreen},
+    Configuration: {screen: ConfigScreen},
   },
   {
-    initialRouteName: 'LoginScreen',
-    drawerPosition: 'left',
-    drawerType: 'front',
-    overlayColor: '#424242',
+    initialRouteName: 'Login',
   },
 );
 
-// const AppNavigator = createStackNavigator({
-//   LoginScreen: {screen: LoginScreen},
-//   NewClient: {screen: NewClient},
-//   NewRoute: {screen: NewRoute},
-// });
+const AppNavigator = createDrawerNavigator(
+  {
+    HomeScreen: {
+      screen: HomeScreen,
+    },
+    Clients: {
+      screen: Clients,
+    },
+    Routes: {
+      screen: Routes,
+    },
+    Configuration: {
+      screen: ConfigScreen,
+    },
+  },
+  {
+    contentComponent: props => <SideBar {...props} />,
+  },
+);
 
-// const CustomDrawerContentComponent = () => {
-//   return (
-//     <Container>
-//       <Header style={styles.androidHeader}>
-//         <Body>
-//           <Left style={styles.menuProfile}>
-//             <Text style={{ color: "white", fontWeight: "bold" }}>
-//               Andris Alberto Ramirez Chireno
-//             </Text>
-//             <TouchableOpacity style={styles.role}>
-//               <Text style={{ color: "white", fontWeight: "bold" }}>
-//                 Supervisor
-//               </Text>
-//             </TouchableOpacity>
-//           </Left>
+const Navigation = createSwitchNavigator(
+  {
+    App: AppNavigator,
+    Auth: AuthNavigator,
+  },
+  {
+    initialRouteName: 'App',
+  },
+  {
+    defaultNavigationOptions: {
+      headerTintColor: 'white',
+    },
+  },
+);
 
-//           <Right>
-//             <Text>Editar Perfil</Text>
-//           </Right>
-//         </Body>
-//       </Header>
-//     </Container>
-//   );
-// };
+export default createAppContainer(Navigation);
 
 const styles = StyleSheet.create({
   menuProfile: {backgroundColor: '#4285F4'},
@@ -109,5 +81,3 @@ const styles = StyleSheet.create({
     }),
   },
 });
-
-export default createAppContainer(AppDrawerNavigator);

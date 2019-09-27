@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {createDrawerNavigator} from 'react-navigation-drawer';
 
 import {
   Text,
@@ -29,6 +30,7 @@ import NavigationHeader from '../components/NavigationHeader';
 import {getTranslation} from '../helpers/translation_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
+import {thisExpression} from '@babel/types';
 let db = openDatabase({name: 'UserDatabase.db'});
 
 class Home extends Component {
@@ -63,12 +65,16 @@ class Home extends Component {
     }
   }
 
+  openDrawer = props => {
+    this.props.navigation.openDrawer();
+  };
+
   render() {
     return (
       <Container style={styles.androidHeader}>
         <Header>
           <Left>
-            <Button transparent onPress={this.props.navigation.openDrawer}>
+            <Button transparent onPress={this.openDrawer}>
               <Icon name="menu" />
             </Button>
           </Left>
@@ -101,5 +107,3 @@ const styles = StyleSheet.create({
     }),
   },
 });
-
-export default Home;

@@ -175,7 +175,7 @@ export default class ConfigScreen extends Component {
   }
 
   goBack = cClick => {
-    this.props.navigation.pop({n: 1});
+    this.props.navigation.goBack({n: 1});
   };
 
   static navigationOptions = {
@@ -187,7 +187,7 @@ export default class ConfigScreen extends Component {
       <Container style={headerStyles.androidHeader}>
         <Header>
           <Left>
-            <Button transparent onPress={this.props.navigation.pop()}>
+            <Button transparent onPress={this.goBack}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
