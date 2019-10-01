@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {AddButton, SearchBar, FetchingData} from '../../components';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import nextFrame from 'next-frame';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
@@ -11,6 +13,7 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
+  NativeModules,
   StatusBar,
   FlatList,
   // TouchableOpacity,
@@ -34,34 +37,42 @@ import {
   ActionSheet,
 } from 'native-base';
 
-import {getTranslation} from '../../helpers/translation_helper';
+import {saveClients} from '../../helpers/sql_helper';
+import {getStoredClients} from '../../helpers/sql_helper';
 
 export default class Clients extends Component {
-  state = {
-    data: [],
-    loading: false,
-    BUTTONS: [
-      {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-      {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-      {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
-    ],
-    DESTRUCTIVE_INDEX: 3,
-    CANCEL_INDEX: 4,
-  };
-
-  static navigationOptions = {
-    header: null,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      loading: true,
+      deviceLanguage: 'en',
+      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+      show: false,
+      BUTTONS: [
+        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
+        {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
+        {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      ],
+      DESTRUCTIVE_INDEX: 3,
+      CANCEL_INDEX: 4,
+    };
+    this.enterHandler();
+  }
 
   async getClients() {
-    this.setState({loading: true});
-    this.setState({
-      loadingMessage: getTranslation(this.state.deviceLanguage, 3),
-    });
+    await nextFrame();
     let validNot = true;
     let responseError = 0;
     let getUrl =
-      'https://apimobile.sojaca.net:444/apimobile?apiOption=GET_CLIENTS&username=';
+      'https://' +
+      global.hostName +
+      ':' +
+      global.portNumber +
+      '/apimobile?apiOption=GET_CLIENTS&username=' +
+      global.userName +
+      '&password=' +
+      global.userPassword;
     try {
       let response = await fetch(getUrl, {method: 'GET'});
       const responseJson = await response.json();
@@ -69,7 +80,7 @@ export default class Clients extends Component {
         validNot = false;
         responseError = 999;
       } else {
-        this.setState({data: responseJson.arr_clients});
+        saveClients(responseJson.arr_clients, {});
         if (responseJson.response !== 'valid') {
           responseError = responseJson.error_message;
           validNot = false;
@@ -83,15 +94,26 @@ export default class Clients extends Component {
     }
   }
 
-  componentDidMount() {
-    this.state = {
-      show: false,
-    };
+  componentDidMount() {}
 
-    this.refreshHandler();
+  enterHandler = () => {
+    //this.getClients().then(result => {
+    getStoredClients().then(clients => {
+      this.setState({data: clients, loading: false});
+    });
+    //});
+  };
+
+  async getLocalClients() {
+    let clients = await getStoredClients();
+    this.setState({data: clients, loading: false});
   }
 
   refreshHandler = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+    });
     this.getClients().then(result => {
       this.setState({loading: false});
     });
@@ -111,20 +133,27 @@ export default class Clients extends Component {
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     const {loading} = this.state;
 
+    let openDrawer = oDrawer => {
+      this.props.navigation.openDrawer;
+    };
     return (
-      <Container>
+      <Container style={styles.androidHeader}>
         {/* Header */}
-
+        <Spinner
+          visible={this.state.loading}
+          textContent={this.state.loadingMessage}
+          color={'CE2424'}
+          overlayColor={'rgba(255, 255, 255, 0.4)'}
+          animation={'slide'}
+        />
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('HomeScreen')}>
-              <Icon name="arrow-back" />
+            <Button transparent onPress={this.openDrawer}>
+              <Icon name="menu" />
             </Button>
           </Left>
           <Body>
-            <Title>Clientes</Title>
+            <Title>{global.translate('TITLE_CLIENTS')}</Title>
           </Body>
           <Right>
             <FetchingData syncData={this.refreshHandler} fetching={loading} />

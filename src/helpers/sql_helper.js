@@ -228,22 +228,25 @@ export async function saveClients(newRegisters, editRegisters) {
   }
 }
 
-export async function getStoredClients() {
+export function getStoredClients() {
   let arrClients = [];
-  return db.transaction(tx => {
-    tx.executeSql('SELECT * FROM clients', [], (tx, results) => {
-      for (let i = 0; i < results.rows.length; ++i) {
-        let row = results.rows.item(i);
-        let client = {};
-        client.client_code = row.client_code;
-        client.name = row.name;
-        client.address = row.address;
-        client.city = row.city;
-        client.province = row.province;
-        client.country = row.country;
-        arrClients.push(results.rows);
-      }
-      return arrClients;
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM clients', [], (tx, results) => {
+        for (let i = 0; i < results.rows.length; ++i) {
+          let row = results.rows.item(i);
+          let clientObject = {
+            client_code: row.client_code,
+            name: row.name,
+            address: row.address,
+            city: row.city,
+            province: row.province,
+            country: row.country,
+          };
+          arrClients.push(clientObject);
+        }
+        resolve(arrClients);
+      });
     });
   });
 }
