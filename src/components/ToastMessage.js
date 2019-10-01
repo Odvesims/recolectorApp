@@ -5,7 +5,7 @@ const Toast = props => {
   if (props.visible) {
     ToastAndroid.showWithGravityAndOffset(
       props.message,
-      ToastAndroid.LONG,
+      ToastAndroid.SHORT,
       ToastAndroid.BOTTOM,
       25,
       50,

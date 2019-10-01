@@ -92,7 +92,7 @@ const AppDrawerNavigator = createDrawerNavigator(
     RoutesScreen: {screen: RoutesScreen},
   },
   {
-    initialRouteName: 'LoginScreen',
+    initialRouteName: 'ClientsScreen',
     drawerPosition: 'left',
     overlayColor: '#E2E2E2',
     contentComponent: DrawerContentComponents,

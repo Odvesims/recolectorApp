@@ -98,13 +98,16 @@ export default class Clients extends Component {
 
   enterHandler = () => {
     //this.getClients().then(result => {
-      getStoredClients().then(clients => {
-        alert(clients);
-        this.setState({data: clients});
-        this.setState({loading: false});
-      });
+    getStoredClients().then(clients => {
+      this.setState({data: clients, loading: false});
+    });
     //});
   };
+
+  async getLocalClients() {
+    let clients = await getStoredClients();
+    this.setState({data: clients, loading: false});
+  }
 
   refreshHandler = () => {
     this.setState({
