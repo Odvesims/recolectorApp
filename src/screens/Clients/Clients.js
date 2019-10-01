@@ -49,6 +49,10 @@ export default class Clients extends Component {
     CANCEL_INDEX: 4,
   };
 
+  static navigationOptions = {
+    header: null,
+  };
+
   async getClients() {
     this.setState({loading: true});
     this.setState({

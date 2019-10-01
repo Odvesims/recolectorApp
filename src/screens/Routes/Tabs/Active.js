@@ -40,22 +40,6 @@ export class Active extends Component {
         name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este saaaaaaaaaaaaa',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
     ],
     show: true,
     BUTTONS: [

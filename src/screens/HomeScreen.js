@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
 import {createDrawerNavigator} from 'react-navigation-drawer';
+import {NavigationActions} from 'react-navigation';
 
 import {
   Text,
   View,
-  StyleSheet,
   ScrollView,
-  Platform,
   StatusBar,
-  NativeModules,
   RefreshControl,
   ProgressBarAndroid,
+  StyleSheet,
+  Platform,
+  NativeModules,
 } from 'react-native';
+
 import {
   Icon,
   Button,
@@ -30,16 +32,9 @@ import NavigationHeader from '../components/NavigationHeader';
 import {getTranslation} from '../helpers/translation_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
-import {thisExpression} from '@babel/types';
 let db = openDatabase({name: 'UserDatabase.db'});
 
-class Home extends Component {
-  // static navigationOptions = {
-  //   title: "Home",
-  //   drawerIcon: ({ focused }) => (
-  //     <Ionicons name="md-home" size={24} color={focused ? "blue" : "black"} />
-  //   )
-  // };
+export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,6 +42,10 @@ class Home extends Component {
       deviceLanguage: 'en',
     };
   }
+
+  static navigationOptions = {
+    header: null,
+  };
 
   componentDidMount() {
     this.setState({loading: false});
@@ -79,9 +78,7 @@ class Home extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>
-              {getTranslation(this.state.deviceLanguage, 'TITLE_PRINCIPAL')}
-            </Title>
+            <Title>Principal</Title>
           </Body>
           <Right>
             <Button transparent>

@@ -61,22 +61,6 @@ export default class Clients extends Component {
         name: 'Ruta Juan Bosh - La Caridad',
         address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
       },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este saaaaaaaaaaaaa',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
     ],
     show: true,
     BUTTONS: [
@@ -86,6 +70,10 @@ export default class Clients extends Component {
     ],
     DESTRUCTIVE_INDEX: 3,
     CANCEL_INDEX: 4,
+  };
+
+  static navigationOptions = {
+    header: null,
   };
 
   showHideSearchBar = () => {
@@ -104,9 +92,7 @@ export default class Clients extends Component {
 
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('HomeScreen')}>
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Icon name="arrow-back" />
             </Button>
           </Left>

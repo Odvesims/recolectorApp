@@ -26,6 +26,10 @@ export class NewRoute extends Component {
   state = {chosenDate: new Date()};
   setDate = this.setDate.bind(this);
 
+  static navigationOptions = {
+    header: null,
+  };
+
   setDate(newDate) {
     this.setState({chosenDate: newDate});
   }
@@ -34,9 +38,7 @@ export class NewRoute extends Component {
       <Container style={{flex: 1}}>
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('Routes')}>
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -46,7 +48,7 @@ export class NewRoute extends Component {
           <Right>
             <Button
               transparent
-              onPress={() => this.props.navigation.navigate('Routes')}>
+              onPress={() => this.props.navigation.navigate('RouteScreen')}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>Listo</Text>
             </Button>
@@ -98,7 +100,7 @@ export class NewRoute extends Component {
             <TouchableOpacity
               style={styles.buttonGhost}
               onPress={() => {
-                this.props.navigation.navigate('NewPoint');
+                this.props.navigation.navigate('');
               }}>
               <Icon name="add" style={{color: theme.colors.primary}} />
               <Text

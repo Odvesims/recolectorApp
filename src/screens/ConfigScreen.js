@@ -174,8 +174,8 @@ export default class ConfigScreen extends Component {
     }
   }
 
-  goBack = cClick => {
-    this.props.navigation.goBack({n: 1});
+  goBack = () => {
+    this.props.navigation.goBack();
   };
 
   static navigationOptions = {

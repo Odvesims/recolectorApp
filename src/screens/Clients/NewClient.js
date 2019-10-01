@@ -34,15 +34,17 @@ import {
 } from 'native-base';
 
 export default class NewClient extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   render() {
     return (
       <Container>
         {/* Header */}
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('Clients')}>
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -52,7 +54,7 @@ export default class NewClient extends Component {
           <Right>
             <Button
               transparent
-              onPress={() => this.props.navigation.navigate('Clients')}>
+              onPress={() => this.props.navigation.navigate('ClientScreen')}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>Listo</Text>
             </Button>

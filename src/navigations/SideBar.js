@@ -11,7 +11,30 @@ import {
   Icon,
 } from 'native-base';
 import {theme} from '../constants';
-const routes = ['HomeScreen', 'Clients', 'Routes', 'Configuration'];
+
+const routes = [
+  {
+    name: 'HomeScreen',
+    icon: 'home',
+    text: 'TITLE_PRINCIPAL',
+  },
+  {
+    name: 'ClientScreen',
+    icon: 'people',
+    text: 'TITLE_CLIENTS',
+  },
+  {
+    name: 'RouteScreen',
+    icon: 'navigate',
+    text: 'TITLE_ROUTES',
+  },
+  {
+    name: 'ConfigScreen',
+    icon: 'settings',
+    text: 'TITLE_CONFIGURATION',
+  },
+];
+
 export default class SideBar extends Component {
   render() {
     return (
@@ -63,9 +86,11 @@ export default class SideBar extends Component {
               return (
                 <ListItem
                   button
-                  onPress={() => this.props.navigation.navigate(data)}>
-                  <Icon name="arrow-back" />
-                  <Text>{data}</Text>
+                  onPress={() => this.props.navigation.navigate(data.name)}>
+                  <Icon name={data.icon} />
+                  <Text style={{marginLeft: 8}}>
+                    {global.translate(data.text)}
+                  </Text>
                 </ListItem>
               );
             }}

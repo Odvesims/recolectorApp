@@ -16,7 +16,7 @@ export default class DrawerContentComponents extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.headerContainer}></View>
+        <View style={styles.headerContainer} />
         <View style={styles.screenContainer}>
           <View
             style={[
