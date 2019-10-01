@@ -83,9 +83,6 @@ export default class Clients extends Component {
   componentDidMount() {}
 
   render() {
-    const {data} = this.state;
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-
     return (
       <Container>
         {/* Header */}

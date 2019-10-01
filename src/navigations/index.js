@@ -1,10 +1,17 @@
 import React from 'react';
 import {Icon, Header, Left, Right, Title, Button, Body} from 'native-base';
+import {Alert} from 'react-native';
 // import {StyleSheet, Platform, StatusBar} from 'react-native';
 
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import {
+  createAppContainer,
+  createSwitchNavigator,
+  NavigationActions,
+} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
+import SideBar from './SideBar';
+import {theme} from '../constants';
 
 // Clients
 import Clients from '../screens/Clients/Clients';
@@ -22,8 +29,7 @@ import NewOrder from '../screens/Orders/NewOrder';
 import NewArticle from '../screens/Orders/NewArticle';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
-
-import SideBar from './SideBar';
+import Logout from '../screens/Logout';
 
 const AuthNavigator = createStackNavigator(
   {
@@ -83,11 +89,21 @@ const AppNavigator = createDrawerNavigator(
     RouteScreen: RouteScreen,
     OrderScreen: OrdersScreen,
     ConfigScreen: ConfigScreen,
+    Logout: {
+      screen: Logout,
+    },
   },
   {
     contentComponent: props => <SideBar {...props} />,
+
     navigationOptions: {
       headerVisible: false,
+    },
+    contentOptions: {
+      activeTintColor: theme.colors.primary,
+      itemsContainerStyle: {
+        marginVertical: 25,
+      },
     },
   },
 );

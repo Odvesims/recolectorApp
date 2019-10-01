@@ -21,7 +21,7 @@ export default class DrawerContentComponents extends Component {
           <View
             style={[
               styles.screenStyle,
-              this.props.activeItemKey == 'HomeScreen'
+              this.props.activeItemKey === 'HomeScreen'
                 ? styles.activeBackgroundColor
                 : null,
             ]}>
@@ -55,7 +55,7 @@ export default class DrawerContentComponents extends Component {
             <Text
               style={[
                 styles.screenTextStyle,
-                this.props.activeItemKey == 'Settings'
+                this.props.activeItemKey === 'Settings'
                   ? styles.selectedTextStyle
                   : null,
               ]}

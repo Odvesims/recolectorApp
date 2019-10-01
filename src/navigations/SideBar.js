@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
-import {AppRegistry, Image, StatusBar} from 'react-native';
+import {DrawerNavigatorItems} from 'react-navigation-drawer';
+import {theme} from '../constants';
+import {
+  AppRegistry,
+  Image,
+  StatusBar,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import {
   Container,
   Content,
@@ -9,10 +17,10 @@ import {
   View,
   Badge,
   Icon,
+  Button,
 } from 'native-base';
-import {theme} from '../constants';
 
-const routes = [
+const primaryRoutes = [
   {
     name: 'HomeScreen',
     icon: 'home',
@@ -28,10 +36,18 @@ const routes = [
     icon: 'navigate',
     text: 'TITLE_ROUTES',
   },
+];
+
+const secondaryRoutes = [
   {
     name: 'ConfigScreen',
     icon: 'settings',
     text: 'TITLE_CONFIGURATION',
+  },
+  {
+    name: 'Logout',
+    icon: 'log-out',
+    text: 'TITLE_LOGOUT',
   },
 ];
 
@@ -39,55 +55,45 @@ export default class SideBar extends Component {
   render() {
     return (
       <Container>
-        <Content>
-          <View
-            style={{
-              backgroundColor: theme.colors.darkGray,
-              paddingHorizontal: theme.sizes.p12,
-              paddingVertical: theme.sizes.padding,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: theme.fonts.base,
-                  paddingBottom: theme.sizes.p8,
-                }}>
-                Andris Ramirez Chireno
-              </Text>
-              <Badge primary>
-                <Text>Supervisor</Text>
-              </Badge>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Icon
-                name="create"
-                style={{
-                  color: theme.colors.primary,
-                  fontSize: theme.sizes.base,
-                }}
-              />
-              <Text
-                style={{
-                  color: theme.colors.primary,
-                  fontSize: theme.sizes.small,
-                  marginLeft: theme.sizes.p8,
-                }}>
-                Editar Perfil
-              </Text>
-            </View>
+        <View style={styles.content}>
+          <View>
+            <Text style={styles.user}>Andris Ramirez Chireno</Text>
+            <Badge primary style={styles.role}>
+              <Text>Supervisor</Text>
+            </Badge>
           </View>
+
+          <Button transparent>
+            <Icon
+              name="create"
+              style={{
+                color: theme.colors.primary,
+              }}
+            />
+            {/* <Text style={{color: theme.colors.primary}}>Editar</Text> */}
+          </Button>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}>
           <List
-            dataArray={routes}
+            style={{marginTop: 16}}
+            dataArray={primaryRoutes}
             renderRow={data => {
               return (
                 <ListItem
+                  style={{
+                    borderColor: 'transparent',
+                  }}
                   button
                   onPress={() => this.props.navigation.navigate(data.name)}>
-                  <Icon name={data.icon} />
+                  <Button transparent style={styles.iconContainer}>
+                    <Icon name={data.icon} style={styles.menuIcon} />
+                  </Button>
                   <Text style={{marginLeft: 8}}>
                     {global.translate(data.text)}
                   </Text>
@@ -95,8 +101,60 @@ export default class SideBar extends Component {
               );
             }}
           />
-        </Content>
+          <View
+            style={{
+              justifyContent: 'flex-end',
+            }}>
+            <List
+              style={{
+                marginVertical: 16,
+              }}
+              dataArray={secondaryRoutes}
+              renderRow={data => {
+                return (
+                  <ListItem
+                    style={{
+                      borderColor: 'transparent',
+                    }}
+                    button
+                    onPress={() => this.props.navigation.navigate(data.name)}>
+                    <Button transparent style={styles.iconContainer}>
+                      <Icon name={data.icon} style={styles.menuIcon} />
+                    </Button>
+                    <Text style={{marginLeft: 8}}>
+                      {global.translate(data.text)}
+                    </Text>
+                  </ListItem>
+                );
+              }}
+            />
+          </View>
+        </View>
       </Container>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  content: {
+    backgroundColor: theme.colors.darkGray,
+    paddingHorizontal: theme.sizes.p12,
+    paddingVertical: theme.sizes.padding,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  user: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: theme.sizes.base,
+    paddingBottom: theme.sizes.p8,
+  },
+  role: {borderRadius: 4, backgroundColor: theme.colors.primary},
+  iconContainer: {
+    width: 55,
+    height: 25,
+  },
+  menuIcon: {
+    color: theme.colors.gray,
+  },
+});

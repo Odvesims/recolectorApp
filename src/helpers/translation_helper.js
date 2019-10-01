@@ -1,7 +1,7 @@
 import {Alert} from 'react-native';
 
 export function getTranslation(language, message) {
-  translatedString = '';
+  let translatedString = '';
   switch (language) {
     case 'es':
       switch (message) {

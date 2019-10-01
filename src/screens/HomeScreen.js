@@ -43,10 +43,6 @@ export default class Home extends Component {
     };
   }
 
-  static navigationOptions = {
-    header: null,
-  };
-
   componentDidMount() {
     this.setState({loading: false});
     if (Platform.OS === 'android') {
@@ -63,6 +59,10 @@ export default class Home extends Component {
       });
     }
   }
+
+  static navigationOptions = {
+    header: null,
+  };
 
   openDrawer = props => {
     this.props.navigation.openDrawer();
