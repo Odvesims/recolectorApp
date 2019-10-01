@@ -1,14 +1,19 @@
 import React, {Component} from 'react';
+import {createDrawerNavigator} from 'react-navigation-drawer';
+import {NavigationActions} from 'react-navigation';
 
 import {
   Text,
   View,
-  StyleSheet,
   ScrollView,
-  Platform,
   StatusBar,
+  RefreshControl,
+  ProgressBarAndroid,
+  StyleSheet,
+  Platform,
   NativeModules,
 } from 'react-native';
+
 import {
   Icon,
   Button,
@@ -27,15 +32,9 @@ import NavigationHeader from '../components/NavigationHeader';
 import {getTranslation} from '../helpers/translation_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
-var db = openDatabase({name: 'UserDatabase.db'});
+let db = openDatabase({name: 'UserDatabase.db'});
 
-class Home extends Component {
-  // static navigationOptions = {
-  //   title: "Home",
-  //   drawerIcon: ({ focused }) => (
-  //     <Ionicons name="md-home" size={24} color={focused ? "blue" : "black"} />
-  //   )
-  // };
+export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,17 +60,25 @@ class Home extends Component {
     }
   }
 
+  static navigationOptions = {
+    header: null,
+  };
+
+  openDrawer = props => {
+    this.props.navigation.openDrawer();
+  };
+
   render() {
     return (
       <Container style={styles.androidHeader}>
         <Header>
           <Left>
-            <Button transparent>
-              <Icon name="menu" onPress={this.props.navigation.openDrawer} />
+            <Button transparent onPress={this.openDrawer}>
+              <Icon name="menu" />
             </Button>
           </Left>
           <Body>
-            <Title>{getTranslation(this.state.deviceLanguage, 100)}</Title>
+            <Title>Principal</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -82,6 +89,7 @@ class Home extends Component {
             </Button>
           </Right>
         </Header>
+        <Content></Content>
       </Container>
     );
   }
@@ -96,5 +104,3 @@ const styles = StyleSheet.create({
     }),
   },
 });
-
-export default Home;

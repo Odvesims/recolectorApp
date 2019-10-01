@@ -1,5 +1,7 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component} from 'react';
+import {theme} from '../constants';
+
 import {
   View,
   StyleSheet,
@@ -7,6 +9,18 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
+
+import {
+  Container,
+  Header,
+  Content,
+  Left,
+  Right,
+  Body,
+  Button,
+  Icon,
+} from 'native-base';
+
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import BoldLargeText from '../components/BoldLargeText';
@@ -18,7 +32,7 @@ import {getTranslation} from '../helpers/translation_helper';
 
 import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({name: 'UserDatabase.db'});
+let db = openDatabase({name: 'UserDatabase.db'});
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
@@ -126,38 +140,54 @@ export default class LoginScreen extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <View>
-          <Spinner
-            visible={this.state.loading}
-            textContent={this.state.loadingMessage}
-          />
-          <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
-          <NormalText
-            text={getTranslation(this.state.deviceLanguage, 4) + ':'}
-            style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
-          />
-          <CustomTextInput
-            onChangeText={userName => {
-              this.setState({userName: userName});
-            }}
-          />
-          <NormalText
-            id="password"
-            text={getTranslation(this.state.deviceLanguage, 5) + ':'}
-            style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
-          />
-          <CustomTextInput
-            onChangeText={userPassword => {
-              this.setState({userPassword: userPassword});
-            }}
-          />
-          <BottomButton
-            customClick={this.customClickHandler}
-            title={getTranslation(this.state.deviceLanguage, 6)}
-          />
-        </View>
-      </KeyboardAvoidingView>
+      <Container>
+        <Header transparent>
+          <Right>
+            <Button
+              transparent
+              onPress={() => {
+                this.props.navigate.navigation('Settings');
+              }}>
+              <Icon
+                name="settings"
+                style={{color: theme.colors.gray, fontSize: 32}}
+              />
+            </Button>
+          </Right>
+        </Header>
+        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+          <View>
+            <Spinner
+              visible={this.state.loading}
+              textContent={this.state.loadingMessage}
+            />
+            <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
+            <NormalText
+              text={getTranslation(this.state.deviceLanguage, 4) + ':'}
+              style={styles.NormalText}
+            />
+            <CustomTextInput
+              onChangeText={userName => {
+                this.setState({userName: userName});
+              }}
+            />
+            <NormalText
+              id="password"
+              text={getTranslation(this.state.deviceLanguage, 5) + ':'}
+              style={styles.NormalText}
+            />
+            <CustomTextInput
+              onChangeText={userPassword => {
+                this.setState({userPassword: userPassword});
+              }}
+            />
+            <BottomButton
+              customClick={this.customClickHandler}
+              title={getTranslation(this.state.deviceLanguage, 6)}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </Container>
     );
   }
 }
@@ -168,5 +198,11 @@ const styles = StyleSheet.create({
     padding: 32,
     alignContent: 'center',
     justifyContent: 'center',
+  },
+
+  NormalText: {
+    marginLeft: 10,
+    marginTop: 20,
+    textAlign: 'left',
   },
 });

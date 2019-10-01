@@ -1,104 +1,121 @@
-import {createAppContainer} from 'react-navigation';
+import React from 'react';
+import {Icon, Header, Left, Right, Title, Button, Body} from 'native-base';
+import {Alert} from 'react-native';
+// import {StyleSheet, Platform, StatusBar} from 'react-native';
+
+import {
+  createAppContainer,
+  createSwitchNavigator,
+  NavigationActions,
+} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
+import SideBar from './SideBar';
+import {theme} from '../constants';
 
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  Platform,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
-
-import {
-  Icon,
-  Container,
-  Content,
-  Header,
-  Left,
-  Body,
-  Right,
-  List,
-  ListItem,
-} from 'native-base';
-
+// Clients
+import Clients from '../screens/Clients/Clients';
+import NewClient from '../screens/Clients/NewClient';
+// Login
 import LoginScreen from '../screens/LoginScreen';
+// Home
 import HomeScreen from '../screens/HomeScreen';
+// Routes
+import Routes from '../screens/Routes/Routes';
+import NewRoute from '../screens/Routes/NewRoute';
+// Orders
+import Orders from '../screens/Orders/Orders';
+import NewOrder from '../screens/Orders/NewOrder';
+import NewArticle from '../screens/Orders/NewArticle';
+// Configuration
+import ConfigScreen from '../screens/ConfigScreen';
+import Logout from '../screens/Logout';
 
-// const AppStackNavigator = createStackNavigator({
-//   LoginScreen: {
-//     screen: LoginScreen,
-//     navigationOptions: {
-//       title: 'Inicio',
-//       headerMode: 'none',
-//       navigationOptions: {
-//         headerVisible: false,
-//       },
-//     },
-//   },
-//   HomeScreen: {
-//     screen: HomeScreen,
-//     navigationOptions: {
-//       headerStyle: {backgroundColor: '#4285F4'},
-//       headerTintColor: '#ffffff',
-//       headerLeft: null,
-//     },
-//   },
-// });
-
-const AppDrawerNavigator = createDrawerNavigator(
+const AuthNavigator = createStackNavigator(
   {
-    LoginScreen: {screen: LoginScreen},
-    HomeScreen: {screen: HomeScreen},
+    Login: LoginScreen,
+    Configuration: ConfigScreen,
   },
   {
-    initialRouteName: 'HomeScreen',
-    drawerPosition: 'left',
-    overlayColor: '#424242',
+    navigationOptions: {
+      headerVisible: false,
+    },
   },
 );
 
-// const CustomDrawerContentComponent = () => {
-//   return (
-//     <Container>
-//       <Header style={styles.androidHeader}>
-//         <Body>
-//           <Left style={styles.menuProfile}>
-//             <Text style={{ color: "white", fontWeight: "bold" }}>
-//               Andris Alberto Ramirez Chireno
-//             </Text>
-//             <TouchableOpacity style={styles.role}>
-//               <Text style={{ color: "white", fontWeight: "bold" }}>
-//                 Supervisor
-//               </Text>
-//             </TouchableOpacity>
-//           </Left>
-
-//           <Right>
-//             <Text>Editar Perfil</Text>
-//           </Right>
-//         </Body>
-//       </Header>
-//     </Container>
-//   );
-// };
-
-const styles = StyleSheet.create({
-  menuProfile: {backgroundColor: '#4285F4'},
-  role: {
-    backgroundColor: '#4285F4',
-    borderRadius: 4,
+const ClientScreen = createStackNavigator(
+  {
+    Clients: Clients,
+    NewClient: NewClient,
   },
-  androidHeader: {
-    ...Platform.select({
-      android: {
-        paddingTop: StatusBar.currentHeight,
+  {
+    initialRouteName: 'Clients',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  },
+);
+
+const RouteScreen = createStackNavigator(
+  {
+    Routes: Routes,
+    NewRoute: NewRoute,
+  },
+  {
+    initialRouteName: 'Routes',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  },
+);
+
+const OrdersScreen = createStackNavigator(
+  {
+    Orders: Orders,
+    NewOrder: NewOrder,
+  },
+  {
+    initialRouteName: 'Orders',
+    navigationOptions: {
+      header: null,
+    },
+  },
+);
+
+const AppNavigator = createDrawerNavigator(
+  {
+    HomeScreen: HomeScreen,
+    ClientScreen: ClientScreen,
+    RouteScreen: RouteScreen,
+    OrderScreen: OrdersScreen,
+    ConfigScreen: ConfigScreen,
+    Logout: {
+      screen: Logout,
+    },
+  },
+  {
+    contentComponent: props => <SideBar {...props} />,
+
+    navigationOptions: {
+      headerVisible: false,
+    },
+    contentOptions: {
+      activeTintColor: theme.colors.primary,
+      itemsContainerStyle: {
+        marginVertical: 25,
       },
-    }),
+    },
   },
-});
+);
 
-export default createAppContainer(AppDrawerNavigator);
+const Navigation = createSwitchNavigator(
+  {
+    App: AppNavigator,
+    Auth: AuthNavigator,
+  },
+  {
+    initialRouteName: 'App',
+  },
+);
+
+export default createAppContainer(Navigation);
