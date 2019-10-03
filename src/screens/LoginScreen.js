@@ -16,7 +16,7 @@ import BottomButton from '../components/BottomButton';
 import CustomTextInput from '../components/TextInput';
 import ToastMessage from '../components/ToastMessage';
 
-import {getUserConfig} from '../helpers/sql_helper';
+import {getUserConfig, saveUserData} from '../helpers/sql_helper';
 import {getUserLogin} from '../helpers/apiconnection_helper';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
@@ -83,7 +83,12 @@ export default class LoginScreen extends Component {
                 global.userPassword = password;
                 global.apiHost = res.host;
                 global.apiPort = res.port_number;
-                this.goHome(l.displayName, l.userRole);
+                saveUserData(l.user_data).then(usr => {
+                  this.goHome(
+                    l.user_data.display_name,
+                    l.user_data.employee_cat_label,
+                  );
+                });
               } else {
                 alert(global.translate(l.responseError));
               }

@@ -1,18 +1,7 @@
 import React, {Component} from 'react';
-import {createDrawerNavigator} from 'react-navigation-drawer';
-import {NavigationActions} from 'react-navigation';
+import {FetchingData} from '../components';
 
-import {
-  Text,
-  View,
-  ScrollView,
-  StatusBar,
-  RefreshControl,
-  ProgressBarAndroid,
-  StyleSheet,
-  Platform,
-  NativeModules,
-} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 
 import {
   Icon,
@@ -24,41 +13,58 @@ import {
   Left,
   Right,
   Title,
-  Drawer,
 } from 'native-base';
 
-import NavigationHeader from '../components/NavigationHeader';
-
-import {getTranslation} from '../helpers/translation_helper';
-
-import {openDatabase} from 'react-native-sqlite-storage';
-let db = openDatabase({name: 'UserDatabase.db'});
+import {
+  getUserConfig,
+  saveClients,
+  getStoredClients,
+} from '../helpers/sql_helper';
+import {
+  getClients,
+  getEmployees,
+  getCategories,
+  getSubcategories,
+  getArticles,
+  getOrders,
+  getRoutes,
+} from '../helpers/apiconnection_helper';
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      deviceLanguage: 'en',
     };
   }
 
-  componentDidMount() {
-    this.setState({loading: false});
-    if (Platform.OS === 'android') {
-      this.setState({
-        deviceLanguage: NativeModules.I18nManager.localeIdentifier.split(
-          '_',
-        )[0],
-      });
-    } else {
-      this.setState({
-        deviceLanguage: NativeModules.SettingsManager.settings.AppleLocale.split(
-          '_',
-        )[0],
-      });
-    }
-  }
+  componentDidMount() {}
+
+  refreshHandler = () => {
+    this.setState({
+      loading: true,
+      request_timeout: false,
+      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+    });
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      }
+    }, 15000);
+    getClients().then(result => {
+      if (!this.state.request_timeout) {
+        this.setState({loading: false, request_timeout: false});
+        if (result.valid) {
+          saveClients(result.arrClients, []).then(res => {
+            this.storedClients();
+          });
+        }
+      } else {
+        this.setState({request_timeout: false});
+      }
+    });
+  };
 
   static navigationOptions = {
     header: null,
@@ -69,6 +75,7 @@ export default class Home extends Component {
   };
 
   render() {
+    const {loading} = this.state;
     return (
       <Container style={styles.androidHeader}>
         <Header>
@@ -78,12 +85,10 @@ export default class Home extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Principal</Title>
+            <Title>{global.translate('TITLE_PRINCIPAL')}</Title>
           </Body>
           <Right>
-            <Button transparent>
-              <Icon name="sync" />
-            </Button>
+            <FetchingData syncData={this.refreshHandler} fetching={loading} />
             <Button transparent>
               <Icon name="notifications" />
             </Button>

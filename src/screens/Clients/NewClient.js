@@ -56,7 +56,9 @@ export default class NewClient extends Component {
               transparent
               onPress={() => this.props.navigation.navigate('ClientScreen')}>
               <Icon name="checkmark" />
-              <Text style={{color: 'white', marginLeft: 8}}>Listo</Text>
+              <Text style={{color: 'white', marginLeft: 8}}>
+                {global.translate('TITLE_DONE')}
+              </Text>
             </Button>
           </Right>
         </Header>
@@ -73,28 +75,57 @@ export default class NewClient extends Component {
           <KeyboardAvoidingView>
             <Form>
               <View style={styles.paddingBottom}>
-                <Text style={styles.label}>Nombre Cliente</Text>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_NAME')}
+                </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Digite el cliente"
+                  placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
                   returnKeyType="go"
                   onChangeText={item => {}}
                 />
               </View>
               <View style={styles.paddingBottom}>
-                <Text style={styles.label}>Estado</Text>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_STATE')}
+                </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Digite el estado"
+                  placeholder={global.translate('PLACEHOLDER_TYPE_STATE')}
                   returnKeyType="go"
                   onChangeText={item => {}}
                 />
               </View>
               <View style={styles.paddingBottom}>
-                <Text style={styles.label}>Ciudad</Text>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_CITY')}
+                </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Ciudad"
+                  placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
+                  returnKeyType="go"
+                  onChangeText={item => {}}
+                />
+              </View>
+              <View style={styles.paddingBottom}>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_ADDRESS')}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
+                  returnKeyType="go"
+                  onChangeText={item => {}}
+                />
+              </View>
+              <View style={styles.paddingBottom}>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_PHONE')}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="phone-pad"
+                  placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
                   returnKeyType="go"
                   onChangeText={item => {}}
                 />

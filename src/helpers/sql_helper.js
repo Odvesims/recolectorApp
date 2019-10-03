@@ -83,13 +83,10 @@ export function setUserTable() {
         'INSERT INTO app_configurations(host_name, port_number, uses_printer) VALUES("apimobile.sojaca.net", 444, 1)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS users_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_id INTEGER, employee_cat VARCHAR, first_login INTEGER, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
+        'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS users_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_id INTEGER, employee_cat VARCHAR, first_login INTEGER, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
-      );
-      txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address, city, province, country)',
+        'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address TEXT, city TEXT, province TEXT, country TEXT, phone_number TEXT)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employee_code VARCHAR(10), name TEXT, category VARCHAR)',
@@ -110,7 +107,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_price NUMERIC)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, assigned_by INTEGER, assigned_to INTEGER, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, client_address VARCHAR, date_from TEXT, date_to TEXT)',
+        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, assigned_by INTEGER, assigned_to INTEGER, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, client_address VARCHAR, date_from TEXT, date_to TEXT, status VARCHAR(1))',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS route_details(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, order_id INTEGER)',
@@ -172,6 +169,34 @@ export function saveUserConfig(count, host, port, printer) {
       });
     }
     resolve(updated);
+  });
+}
+
+export function saveUserData(userData) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM user_data', [], (tx, results) => {});
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'INSERT INTO clients (user, employee_code, employee_cat, employee_cat_label, clients_update, employees_update, categories_update, subcategories_update, articles_update, orders_update, routes_update) VALUES (?, ?, ?, ?, ?, ?)',
+        [
+          userData.user,
+          userData.employee_code,
+          userData.employee_cat,
+          userData.employee_cat_label,
+          userData.clients_update,
+          userData.employees_update,
+          userData.categories_update,
+          userData.subcategories_update,
+          userData.articles_update,
+          userData.orders_update,
+          userData.routes_update,
+        ],
+        (tx, results) => {},
+      );
+    });
+    resolve(true);
   });
 }
 
@@ -241,6 +266,32 @@ export function getStoredClients() {
   });
 }
 
+export function getStoredRoutes(routes_status) {
+  let arrClients = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM routes WHERE status = '${routes_status}'`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let clientObject = {
+              client_code: row.route_cod,
+              name: row.name,
+              address: row.address,
+              city: row.city,
+              province: row.province,
+              country: row.country,
+            };
+            arrClients.push(clientObject);
+          }
+          resolve(arrClients);
+        },
+      );
+    });
+  });
+}
 export function getStoredArticles() {
   let arrArticles = [];
   return new Promise((resolve, reject) => {

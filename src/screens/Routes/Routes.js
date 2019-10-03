@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {SearchBar} from '../../components';
+import {SearchBar, FetchingData} from '../../components';
 
 import {} from 'react-native-vector-icons';
 
@@ -37,31 +37,12 @@ import {
 import Active from './Tabs/Active';
 import Close from './Tabs/Close';
 import Defeated from './Tabs/Defeated';
+import {saveRoutes, getStoredRoutes} from '../../helpers/sql_helper';
+import {getRoutes} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
   state = {
-    data: [
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-    ],
+    data: [],
     show: true,
     BUTTONS: [
       {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
@@ -82,11 +63,53 @@ export default class Clients extends Component {
 
   componentDidMount() {}
 
+  enterHandler = () => {
+    this.storedRoutes();
+  };
+
+  storedRoutes = () => {
+    getStoredRoutes().then(routes => {
+      if (routes.length > 0) {
+        this.setState({data: routes, loading: false});
+      } else {
+        this.setState({loading: false});
+      }
+    });
+  };
+
+  refreshHandler = () => {
+    this.setState({
+      loading: true,
+      request_timeout: false,
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+    });
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      }
+    }, 20000);
+    getRoutes('A').then(result => {
+      if (!this.state.request_timeout) {
+        this.setState({loading: false, request_timeout: false});
+        if (result.valid) {
+          saveRoutes(result.arrRoutes, []).then(res => {
+            this.storedRoutes('A');
+          });
+        }
+      } else {
+        this.setState({request_timeout: false});
+      }
+    });
+  };
+
   openDrawer = props => {
     this.props.navigation.openDrawer();
   };
 
   render() {
+    const {data} = this.state;
+    const {loading} = this.state;
     return (
       <Container>
         {/* Header */}
@@ -101,9 +124,7 @@ export default class Clients extends Component {
             <Title>Rutas</Title>
           </Body>
           <Right>
-            <Button transparent>
-              <Icon name="refresh" />
-            </Button>
+            <FetchingData syncData={this.refreshHandler} fetching={loading} />
             <Button transparent>
               <Icon name="funnel" />
             </Button>

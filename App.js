@@ -7,7 +7,7 @@ import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
 import Navigation from './src/navigations/';
 
-global.database_version = 1;
+global.database_version = 2;
 global.userDisplayName = '';
 global.userRole = '';
 global.userName = '';

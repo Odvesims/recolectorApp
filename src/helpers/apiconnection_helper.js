@@ -46,7 +46,8 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
         returnObject = {
           valid: true,
           displayName: responseJson.name,
-          userRole: responseJson.category_description,
+          userRole: responseJson.user_data.employee_cat_label,
+          user_data: responseJson.user_data,
         };
       }
     }
@@ -86,6 +87,47 @@ export async function getClients() {
         returnObject = {
           valid: true,
           arrClients: responseJson.arr_clients,
+        };
+      }
+    }
+  } catch (error) {
+    returnObject = {
+      valid: false,
+      responseError: error.message,
+    };
+  }
+  return returnObject;
+}
+
+export async function getRoutes(routes_status) {
+  let returnObject = {};
+  if (!global.apiHost) {
+    global.apiHost = 'apimobile.sojaca.net';
+    global.apiPort = 444;
+  }
+  let getUrl =
+    'https://' +
+    global.apiHost +
+    ':' +
+    global.apiPort +
+    '/apimobile?apiOption=GET_ACTIVE_ROUTES&username=' +
+    global.userName +
+    '&password=' +
+    global.userPassword +
+    '&routes_status=' +
+    routes_status;
+  try {
+    let response = await fetch(getUrl, {method: 'GET'});
+    const responseJson = await response.json();
+    if (JSON.stringify(responseJson) === '{}') {
+      returnObject = {valid: false, response: 'ALERT_BLANK_RESPONSE'};
+    } else {
+      if (responseJson.response !== 'valid') {
+        returnObject = {valid: false, response: responseJson.error_message};
+      } else {
+        returnObject = {
+          valid: true,
+          arrRoutes: responseJson.arr_routes,
         };
       }
     }
