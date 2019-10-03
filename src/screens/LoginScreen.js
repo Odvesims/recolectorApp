@@ -1,25 +1,12 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component} from 'react';
 import {theme} from '../constants';
+import nextFrame from 'next-frame';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import {
-  View,
-  StyleSheet,
-  NativeModules,
-  Platform,
-  KeyboardAvoidingView,
-} from 'react-native';
+import {View, StyleSheet, NativeModules, Platform} from 'react-native';
 
-import {
-  Container,
-  Header,
-  Content,
-  Left,
-  Right,
-  Body,
-  Button,
-  Icon,
-} from 'native-base';
+import {Container, Header, Right, Button, Icon} from 'native-base';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -27,46 +14,35 @@ import BoldLargeText from '../components/BoldLargeText';
 import NormalText from '../components/NormalText';
 import BottomButton from '../components/BottomButton';
 import CustomTextInput from '../components/TextInput';
+import ToastMessage from '../components/ToastMessage';
 
-import {getTranslation} from '../helpers/translation_helper';
-
-import {openDatabase} from 'react-native-sqlite-storage';
-
-let db = openDatabase({name: 'UserDatabase.db'});
+import {getUserConfig} from '../helpers/sql_helper';
+import {getUserLogin} from '../helpers/apiconnection_helper';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
 export default class LoginScreen extends Component {
   constructor(props) {
+    let firstLogin = '';
     super(props);
     this.state = {
       loading: false,
       loadingMessage: '',
-      deviceLanguage: 'en',
       validLogin: true,
       userName: '',
       userPassword: '',
+      hostName: '',
+      portNumber: 444,
+      visible: false,
+      toastMsg: '',
+      request_timeout: false,
     };
-    db.transaction(function(txn) {
-      txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='app_configurations'",
-        [],
-        function(tx, res) {
-          console.log('item:', res.rows.length);
-          if (res.rows.length == 0) {
-            txn.executeSql('DROP TABLE IF EXISTS app_configurations', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer BOOLEAN)',
-              [],
-            );
-          }
-        },
-      );
-    });
+    global.deviceLanguage = this.state.deviceLanguage;
   }
 
-  componentDidMount() {
-    this.setState({loading: false});
+  componentDidMount() {}
+
+  setLanguage = sLang => {
     if (Platform.OS === 'android') {
       this.setState({
         deviceLanguage: NativeModules.I18nManager.localeIdentifier.split(
@@ -80,62 +56,80 @@ export default class LoginScreen extends Component {
         )[0],
       });
     }
-  }
-
-  async getUserLogin() {
-    this.setState({loading: true});
-    this.setState({
-      loadingMessage: getTranslation(this.state.deviceLanguage, 3),
-    });
-    let validNot = true;
-    let responseError = 0;
-    let getUrl =
-      'http://updates.sojaca.net/apimobile?apiOption=1&username=' +
-      this.state.userName +
-      '&password=' +
-      this.state.userPassword;
-    try {
-      let response = await fetch(getUrl, {method: 'GET'});
-      const responseJson = await response.json();
-      if (JSON.stringify(responseJson) == '{}') {
-        validNot = false;
-        responseError = 999;
-      } else {
-        if (responseJson.response != 'valid') {
-          responseError = responseJson.error_message;
-          validNot = false;
-        }
-      }
-      this.setState({loadingMessage: ''});
-      this.setState({validLogin: validNot});
-      return [validNot, responseError];
-    } catch (error) {
-      this.setState({loading: false});
-      return [false, 999];
-    }
-  }
-
-  customClickHandler = cClick => {
-    this.getUserLogin().then(result => {
-      if (result[0]) {
-        /*NavigationService.navigate('HomeScreen', {
-					title: 'Inicio',
-				});*/
-
-        this.goHome();
-      } else {
-        alert(getTranslation(this.state.deviceLanguage, result[1]));
-      }
-      this.setState({loading: false});
-    });
   };
 
-  goHome = cClick => {
+  customClickHandler = cClick => {
+    let user = this.state.userName;
+    let password = this.state.userPassword;
+    if (user) {
+      if (password) {
+        this.setState({
+          loading: true,
+          loadingMessage: global.translate('MESSAGE_SIGNIN'),
+          request_timeout: false,
+        });
+        getUserConfig().then(res => {
+          setTimeout(() => {
+            if (this.state.loading) {
+              this.setState({loading: false, request_timeout: true});
+              alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+            }
+          }, 10000);
+          getUserLogin(res.host, res.port_number, user, password).then(l => {
+            if (!this.state.request_timeout) {
+              this.setState({loading: false, request_timeout: false});
+              if (l.valid) {
+                global.userName = user;
+                global.userPassword = password;
+                global.apiHost = res.host;
+                global.apiPort = res.port_number;
+                this.goHome(l.displayName, l.userRole);
+              } else {
+                alert(global.translate(l.responseError));
+              }
+            } else {
+              this.setState({request_timeout: false});
+            }
+          });
+        });
+      } else {
+        this.setState({
+          visible: true,
+          toastMsg: global.translate('ALERT_PASSWORD_BLANK'),
+        });
+        setTimeout(() => {
+          this.setState({visible: false, toastMsg: ''}), 500;
+        });
+      }
+    } else {
+      this.setState({
+        visible: true,
+        toastMsg: global.translate('ALERT_USER_BLANK'),
+      });
+      setTimeout(() => {
+        this.setState({visible: false, toastMsg: ''}), 500;
+      });
+    }
+  };
+
+  goHome(displayName, userRole) {
+    global.userDisplayName = displayName;
+    global.userRole = userRole;
     this.props.navigation.navigate('HomeScreen');
+  }
+
+  goConfig = cClick => {
+    this.props.navigation.navigate('Configuration');
   };
 
   static navigationOptions = {
     header: null,
+  };
+
+  inputs = {};
+
+  focusTheField = id => {
+    this.inputs[id]._root.focus();
   };
 
   render() {
@@ -143,11 +137,7 @@ export default class LoginScreen extends Component {
       <Container>
         <Header transparent>
           <Right>
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigate.navigation('Settings');
-              }}>
+            <Button transparent onPress={this.goConfig}>
               <Icon
                 name="settings"
                 style={{color: theme.colors.gray, fontSize: 32}}
@@ -155,38 +145,52 @@ export default class LoginScreen extends Component {
             </Button>
           </Right>
         </Header>
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.container}
+          resetScrollToCoords={{x: 0, y: 0}}
+          scrollEnabled={false}>
           <View>
             <Spinner
               visible={this.state.loading}
               textContent={this.state.loadingMessage}
+              color={'CE2424'}
+              overlayColor={'rgba(255, 255, 255, 0.4)'}
+              animation={'slide'}
             />
-            <BoldLargeText text="APP Name" style={{textAlign: 'center'}} />
+            <BoldLargeText text="RecolectorApp" style={{textAlign: 'center'}} />
             <NormalText
-              text={getTranslation(this.state.deviceLanguage, 4) + ':'}
+              text={global.translate('TITLE_USER') + ':'}
               style={styles.NormalText}
             />
             <CustomTextInput
               onChangeText={userName => {
                 this.setState({userName: userName});
               }}
+              secured={false}
+              value={this.state.userName}
             />
             <NormalText
               id="password"
-              text={getTranslation(this.state.deviceLanguage, 5) + ':'}
+              text={global.translate('TITLE_PASSWORD') + ':'}
               style={styles.NormalText}
             />
             <CustomTextInput
               onChangeText={userPassword => {
                 this.setState({userPassword: userPassword});
               }}
+              secured={true}
+              value={this.state.userPassword}
             />
             <BottomButton
               customClick={this.customClickHandler}
-              title={getTranslation(this.state.deviceLanguage, 6)}
+              title={global.translate('TITLE_SIGNIN')}
+            />
+            <ToastMessage
+              visible={this.state.visible}
+              message={this.state.toastMsg}
             />
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </Container>
     );
   }

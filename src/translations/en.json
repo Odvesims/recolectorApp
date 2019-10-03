@@ -5,6 +5,8 @@
   "ALERT_PASSWORD_BLANK": "Password can't be blank.",
   "MESSAGE_SIGNIN": "Signing In",
   "MESSAGE_LOADING_CLIENTS": "Loading Clients",
+  "MESSAGE_LOADING_DATA": "Loading Data",
+  "MESSAGE_SAVING_DATA": "Saving Data",
   "TITLE_USER": "Username",
   "TITLE_PASSWORD": "Password",
   "TITLE_SIGNIN": "Sign In",
@@ -20,11 +22,16 @@
   "ALERT_DOMAIN_BLANK": "Hostname can't be blank.",
   "ALERT_PORT_BLANK": "Port Number can't be blank",
   "ALERT_BLANK_RESPONSE": "Empty response. Please check your fetch structure.",
+  "ALERT_NO_CONNECTIVITY": "Device is not connected to the internet. Check your connectivity.",
+  "ALERT_REQUEST_TIMEOUT": "The request timed out. It may be related to problems with your connection. Please check.",
   "TITLE_YES": "Yes",
   "TITLE_NO": "No",
   "TITLE_SAVE": "Save",
   "ALERT_REGISTER_SUCCESFUL": "Data succesfully saved.",
   "ALERT_REGISTER_FAILED": "Data storing failed.",
   "ALERT_UPDATE_SUCCESFUL": "Data succesfully updated.",
-  "ALERT_UPDATE_FAILED": "Data updating failed."
+  "ALERT_UPDATE_FAILED": "Data updating failed.",
+  "ROLE_SUPERVISOR": "Supervisor",
+  "ROLE_RECOLLECTOR": "Recollector",
+  "ROLE_WAREHOUSE": "Warehouse"
 }

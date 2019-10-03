@@ -57,9 +57,9 @@ export default class SideBar extends Component {
       <Container>
         <View style={styles.content}>
           <View>
-            <Text style={styles.user}>Andris Ramirez Chireno</Text>
+            <Text style={styles.user}>{global.userDisplayName}</Text>
             <Badge primary style={styles.role}>
-              <Text>Supervisor</Text>
+              <Text>{global.translate(global.userRole)}</Text>
             </Badge>
           </View>
 

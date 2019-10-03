@@ -82,6 +82,10 @@ export default class Clients extends Component {
 
   componentDidMount() {}
 
+  openDrawer = props => {
+    this.props.navigation.openDrawer();
+  };
+
   render() {
     return (
       <Container>
@@ -89,8 +93,8 @@ export default class Clients extends Component {
 
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="arrow-back" />
+            <Button transparent onPress={this.openDrawer}>
+              <Icon name="menu" />
             </Button>
           </Left>
           <Body>

@@ -5,6 +5,8 @@
   "ALERT_PASSWORD_BLANK": "Contraseña no puede estar en blanco.",
   "MESSAGE_SIGNIN": "Iniciando Sesión",
   "MESSAGE_LOADING_CLIENTS": "Cargando Clientes",
+  "MESSAGE_LOADING_DATA": "Cargando Data",
+  "MESSAGE_SAVING_DATA": "Guardando Data",
   "TITLE_USER": "Usuario",
   "TITLE_PASSWORD": "Contraseña",
   "TITLE_SIGNIN": "Iniciar Sesión",
@@ -20,11 +22,16 @@
   "ALERT_DOMAIN_BLANK": "El Dominio no puede estar en blanco.",
   "ALERT_PORT_BLANK": "El Puerto no puede estar en blanco.",
   "ALERT_BLANK_RESPONSE": "Respuesta en blanco. Por favor, revise la estructura de su petición.",
+  "ALERT_NO_CONNECTIVITY": "El dispositivo no está conectado al internet. Revise su conexión.",
+  "ALERT_REQUEST_TIMEOUT": "La petición excedió el tiempo. Puede estar relacionado a problemas de conexión. Por favor, revisar.",
   "TITLE_YES": "Si",
   "TITLE_NO": "No",
   "TITLE_SAVE": "Guardar",
   "ALERT_REGISTER_SUCCESFUL": "Datos guardados satisfactoriamente.",
   "ALERT_REGISTER_FAILED": "Error al guardar los datos.",
   "ALERT_UPDATE_SUCCESFUL": "Datos actualizados satisfactoriamente.",
-  "ALERT_UPDATE_FAILED": "Error al actualizar los datos."
+  "ALERT_UPDATE_FAILED": "Error al actualizar los datos.",
+  "ROLE_SUPERVISOR": "Supervisor",
+  "ROLE_RECOLLECTOR": "Recolector",
+  "ROLE_WAREHOUSE": "Almacén"
 }

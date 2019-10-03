@@ -5,13 +5,15 @@ import NavigationService from './src/services/NavigationService';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
-import {
-  tableDatabaseVersion,
-  getDatabaseVersion,
-} from './src/helpers/sql_helper';
 import Navigation from './src/navigations/';
 
-global.database_version = 4;
+global.database_version = 1;
+global.userDisplayName = '';
+global.userRole = '';
+global.userName = '';
+global.userPassword = '';
+global.apiHost = '';
+global.apiPort = '';
 
 const translationGetters = {
   // lazy requires (metro bundler does not support symlinks)
@@ -48,8 +50,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     setI18nConfig(); // set initial config
-    tableDatabaseVersion();
-    getDatabaseVersion();
   }
 
   componentDidMount() {

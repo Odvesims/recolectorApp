@@ -9,6 +9,7 @@
     "android-shake": "adb shell input keyevent 82"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^4.3.0",
     "i18n-js": "^3.3.0",
     "lodash.memoize": "^4.1.2",
     "native-base": "^2.13.8",

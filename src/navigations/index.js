@@ -30,6 +30,7 @@ import NewArticle from '../screens/Orders/NewArticle';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
 import Logout from '../screens/Logout';
+import SplashScreen from '../screens/SplashScreen';
 
 const AuthNavigator = createStackNavigator(
   {
@@ -37,10 +38,15 @@ const AuthNavigator = createStackNavigator(
     Configuration: ConfigScreen,
   },
   {
-    navigationOptions: {
-      headerVisible: false,
-    },
+    headerMode: 'none',
   },
+);
+
+const Splash = createStackNavigator(
+  {
+    Splash: SplashScreen,
+  },
+  {headerMode: 'none'},
 );
 
 const ClientScreen = createStackNavigator(
@@ -50,9 +56,7 @@ const ClientScreen = createStackNavigator(
   },
   {
     initialRouteName: 'Clients',
-    navigationOptions: {
-      headerVisible: false,
-    },
+    headerMode: 'none',
   },
 );
 
@@ -63,9 +67,7 @@ const RouteScreen = createStackNavigator(
   },
   {
     initialRouteName: 'Routes',
-    navigationOptions: {
-      headerVisible: false,
-    },
+    headerMode: 'none',
   },
 );
 
@@ -76,9 +78,7 @@ const OrdersScreen = createStackNavigator(
   },
   {
     initialRouteName: 'Orders',
-    navigationOptions: {
-      header: null,
-    },
+    headerMode: 'none',
   },
 );
 
@@ -94,11 +94,8 @@ const AppNavigator = createDrawerNavigator(
     },
   },
   {
+    headerMode: 'none',
     contentComponent: props => <SideBar {...props} />,
-
-    navigationOptions: {
-      headerVisible: false,
-    },
     contentOptions: {
       activeTintColor: theme.colors.primary,
       itemsContainerStyle: {
@@ -110,11 +107,12 @@ const AppNavigator = createDrawerNavigator(
 
 const Navigation = createSwitchNavigator(
   {
+    Splash: Splash,
     App: AppNavigator,
     Auth: AuthNavigator,
   },
   {
-    initialRouteName: 'App',
+    initialRouteName: 'Auth',
   },
 );
 

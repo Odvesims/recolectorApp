@@ -1,14 +1,7 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component, Alert} from 'react';
 import {theme} from '../constants';
-import {
-  View,
-  StyleSheet,
-  NativeModules,
-  KeyboardAvoidingView,
-  Picker,
-  StatusBar,
-} from 'react-native';
+import {View, StyleSheet, Picker, StatusBar, Integer} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Container,
@@ -22,20 +15,11 @@ import {
 } from 'native-base';
 
 import Spinner from 'react-native-loading-spinner-overlay';
-
-import BoldLargeText from '../components/BoldLargeText';
 import NormalText from '../components/NormalText';
 import BottomButton from '../components/BottomButton';
 import CustomTextInput from '../components/TextInput';
 
-import {getTranslation} from '../helpers/translation_helper';
-
-import {openDatabase} from 'react-native-sqlite-storage';
-
-var db = openDatabase({name: 'UserDatabase.db'});
-
-import NavigationService from '../services/NavigationService';
-import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
+import {getUserConfig, saveUserConfig} from '../helpers/sql_helper';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
@@ -43,136 +27,44 @@ export default class ConfigScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
       hostName: '',
       portNumber: '',
       usesPrinter: '',
       configDone: false,
     };
-    db.transaction(function(txn) {
-      txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='app_configurations'",
-        [],
-        function(tx, res) {
-          console.log('item:', res.rows.length);
-          if (res.rows.length == 0) {
-            txn.executeSql('DROP TABLE IF EXISTS app_configurations', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer BOOLEAN)',
-              [],
-            );
-          }
-        },
-      );
+    getUserConfig().then(res => {
+      this.setState({
+        loading: false,
+        hostName: res.host,
+        portNumber: res.port_number,
+        usesPrinter: res.printer,
+      });
     });
   }
 
-  componentDidMount() {
-    this.setState({loading: true});
-    this.getUserConfig().then(() => {
+  componentDidMount() {}
+
+  saveUser = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_SAVING_DATA'),
+    });
+    saveUserConfig(
+      1,
+      this.state.hostName,
+      this.state.portNumber,
+      this.state.usesPrinter,
+    ).then(res => {
       this.setState({loading: false});
-    });
-    if (Platform.OS === 'android') {
-      this.setState({
-        deviceLanguage: NativeModules.I18nManager.localeIdentifier.split(
-          '_',
-        )[0],
-      });
-    } else {
-      this.setState({
-        deviceLanguage: NativeModules.SettingsManager.settings.AppleLocale.split(
-          '_',
-        )[0],
-      });
-    }
-  }
-
-  async getUserConfig() {
-    db.transaction(tx => {
-      tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
-        var temp = [];
-        if (results.rows.length > 0) {
-          this.setState({configDone: true});
-        }
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          this.setState({
-            hostName: row.host_name,
-            portNumber: row.port_number.toString(),
-            usesPrinter: row.uses_printer,
-          });
-        }
-      });
-    });
-  }
-
-  async deleteUserConfig() {
-    db.transaction(tx => {
-      tx.executeSql('DELETE FROM app_configurations', [], (tx, results) => {});
-    });
-  }
-
-  async saveUserConfig() {
-    const {hostName} = this.state;
-    const {portNumber} = this.state;
-    const {usesPrinter} = this.state;
-    if (hostName) {
-      if (portNumber) {
-        if (!this.state.configDone) {
-          db.transaction(function(tx) {
-            tx.executeSql(
-              'INSERT INTO app_configurations (host_name, port_number, uses_printer) VALUES (?,?,?)',
-              [hostName, portNumber, usesPrinter],
-              (tx, results) => {
-                if (results.rowsAffected > 0) {
-                  alert(
-                    getTranslation(
-                      this.state.deviceLanguage,
-                      'ALERT_REGISTER_SUCCESFUL',
-                    ),
-                  );
-                } else {
-                  alert(
-                    getTranslation(
-                      this.state.deviceLanguage,
-                      'ALERT_REGISTER_FAILED',
-                    ),
-                  );
-                }
-              },
-            );
-          });
-        } else {
-          db.transaction(tx => {
-            tx.executeSql(
-              'UPDATE app_configurations set host_name=?, port_number=? , uses_printer=?',
-              [hostName, portNumber, usesPrinter],
-              (tx, results) => {
-                if (results.rowsAffected > 0) {
-                  alert(
-                    getTranslation(
-                      this.state.deviceLanguage,
-                      'ALERT_UPDATE_SUCCESFUL',
-                    ),
-                  );
-                } else {
-                  alert(
-                    getTranslation(
-                      this.state.deviceLanguage,
-                      'ALERT_UPDATE_FAILED',
-                    ),
-                  );
-                }
-              },
-            );
-          });
-        }
+      if (res) {
+        alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
       } else {
-        alert(getTranslation(this.state.deviceLanguage, 'ALERT_PORT_BLANK'));
+        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
       }
-    } else {
-      alert(getTranslation(this.state.deviceLanguage, 'ALERT_DOMAIN_BLANK'));
-    }
-  }
+    });
+  };
 
   goBack = () => {
     this.props.navigation.goBack();
@@ -192,9 +84,7 @@ export default class ConfigScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>
-              {getTranslation(this.state.deviceLanguage, 'TITLE_CONFIGURATION')}
-            </Title>
+            <Title>{global.translate('TITLE_CONFIGURATION')}</Title>
           </Body>
         </Header>
         <Content>
@@ -206,9 +96,7 @@ export default class ConfigScreen extends Component {
               textContent={this.state.loadingMessage}
             />
             <NormalText
-              text={
-                getTranslation(this.state.deviceLanguage, 'TITLE_DOMAIN') + ':'
-              }
+              text={global.translate('TITLE_DOMAIN') + ':'}
               style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
             />
             <CustomTextInput
@@ -218,9 +106,7 @@ export default class ConfigScreen extends Component {
               }}
             />
             <NormalText
-              text={
-                getTranslation(this.state.deviceLanguage, 'TITLE_PORT') + ':'
-              }
+              text={global.translate('TITLE_PORT') + ':'}
               style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
             />
             <CustomTextInput
@@ -231,12 +117,7 @@ export default class ConfigScreen extends Component {
               }}
             />
             <NormalText
-              text={
-                getTranslation(
-                  this.state.deviceLanguage,
-                  'TITLE_USES_PRINTER',
-                ) + ':'
-              }
+              text={global.translate('TITLE_USES_PRINTER') + ':'}
               style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
             />
             <Picker
@@ -244,19 +125,13 @@ export default class ConfigScreen extends Component {
               onValueChange={(itemValue, itemIndex) =>
                 this.setState({usesPrinter: itemValue})
               }>
-              <Picker.Item
-                label={getTranslation(this.state.deviceLanguage, 'TITLE_YES')}
-                value="yes"
-              />
-              <Picker.Item
-                label={getTranslation(this.state.deviceLanguage, 'TITLE_NO')}
-                value="no"
-              />
+              <Picker.Item label={global.translate('TITLE_YES')} value="yes" />
+              <Picker.Item label={global.translate('TITLE_NO')} value="no" />
             </Picker>
             <View>
               <BottomButton
-                customClick={this.saveUserConfig.bind(this)}
-                title={getTranslation(this.state.deviceLanguage, 'TITLE_SAVE')}
+                customClick={this.saveUser}
+                title={global.translate('TITLE_SAVE')}
               />
             </View>
           </KeyboardAwareScrollView>

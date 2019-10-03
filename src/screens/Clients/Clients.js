@@ -37,8 +37,15 @@ import {
   ActionSheet,
 } from 'native-base';
 
-import {saveClients} from '../../helpers/sql_helper';
-import {getStoredClients} from '../../helpers/sql_helper';
+import {
+  getUserConfig,
+  saveClients,
+  getStoredClients,
+} from '../../helpers/sql_helper';
+import {
+  checkConnectivity,
+  getClients,
+} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
   constructor(props) {
@@ -48,6 +55,7 @@ export default class Clients extends Component {
       loading: true,
       deviceLanguage: 'en',
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+      request_timeout: false,
       show: false,
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
@@ -60,62 +68,45 @@ export default class Clients extends Component {
     this.enterHandler();
   }
 
-  async getClients() {
-    await nextFrame();
-    let validNot = true;
-    let responseError = 0;
-    let getUrl =
-      'https://' +
-      global.hostName +
-      ':' +
-      global.portNumber +
-      '/apimobile?apiOption=GET_CLIENTS&username=' +
-      global.userName +
-      '&password=' +
-      global.userPassword;
-    try {
-      let response = await fetch(getUrl, {method: 'GET'});
-      const responseJson = await response.json();
-      if (JSON.stringify(responseJson) === '{}') {
-        validNot = false;
-        responseError = 999;
-      } else {
-        saveClients(responseJson.arr_clients, {});
-        if (responseJson.response !== 'valid') {
-          responseError = responseJson.error_message;
-          validNot = false;
-        }
-      }
-      this.setState({loadingMessage: ''});
-      return [validNot, responseError];
-    } catch (error) {
-      this.setState({loading: false});
-      return [false, 999];
-    }
-  }
-
   componentDidMount() {}
 
   enterHandler = () => {
-    //this.getClients().then(result => {
-    getStoredClients().then(clients => {
-      this.setState({data: clients, loading: false});
-    });
-    //});
+    this.storedClients();
   };
 
-  async getLocalClients() {
-    let clients = await getStoredClients();
-    this.setState({data: clients, loading: false});
-  }
+  storedClients = () => {
+    getStoredClients().then(clients => {
+      if (clients.length > 0) {
+        this.setState({data: clients, loading: false});
+      } else {
+        this.setState({loading: false});
+      }
+    });
+  };
 
   refreshHandler = () => {
     this.setState({
       loading: true,
+      request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
     });
-    this.getClients().then(result => {
-      this.setState({loading: false});
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      }
+    }, 15000);
+    getClients().then(result => {
+      if (!this.state.request_timeout) {
+        this.setState({loading: false, request_timeout: false});
+        if (result.valid) {
+          saveClients(result.arrClients, []).then(res => {
+            this.storedClients();
+          });
+        }
+      } else {
+        this.setState({request_timeout: false});
+      }
     });
   };
 
@@ -128,14 +119,19 @@ export default class Clients extends Component {
     }
   };
 
+  goBack = () => {
+    this.props.navigation.goback();
+  };
+
+  openDrawer = props => {
+    this.props.navigation.openDrawer();
+  };
+
   render() {
     const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     const {loading} = this.state;
 
-    let openDrawer = oDrawer => {
-      this.props.navigation.openDrawer;
-    };
     return (
       <Container style={styles.androidHeader}>
         {/* Header */}
@@ -233,7 +229,7 @@ const styles = StyleSheet.create({
   androidHeader: {
     ...Platform.select({
       android: {
-        paddingTop: StatusBar.currentHeight,
+        paddingTop: 0,
       },
     }),
   },
