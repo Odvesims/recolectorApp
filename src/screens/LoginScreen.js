@@ -84,6 +84,7 @@ export default class LoginScreen extends Component {
                 global.apiHost = res.host;
                 global.apiPort = res.port_number;
                 saveUserData(l.user_data).then(usr => {
+                  global.token = l.token;
                   this.goHome(
                     l.user_data.display_name,
                     l.user_data.employee_cat_label,
@@ -172,6 +173,7 @@ export default class LoginScreen extends Component {
                 this.setState({userName: userName});
               }}
               secured={false}
+              returnKeyType="go"
               value={this.state.userName}
             />
             <NormalText
@@ -184,6 +186,7 @@ export default class LoginScreen extends Component {
                 this.setState({userPassword: userPassword});
               }}
               secured={true}
+              returnKeyType="go"
               value={this.state.userPassword}
             />
             <BottomButton

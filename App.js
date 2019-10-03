@@ -14,6 +14,7 @@ global.userName = '';
 global.userPassword = '';
 global.apiHost = '';
 global.apiPort = '';
+global.token = '';
 
 const translationGetters = {
   // lazy requires (metro bundler does not support symlinks)

@@ -86,7 +86,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address TEXT, city TEXT, province TEXT, country TEXT, phone_number TEXT)',
+        'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address TEXT, city TEXT, state TEXT, country TEXT, phone_number TEXT)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employee_code VARCHAR(10), name TEXT, category VARCHAR)',
@@ -209,14 +209,15 @@ export function saveClients(newRegisters, editRegisters) {
       let client = newRegisters[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO clients (client_code, name, address, city, province, country) VALUES (?, ?, ?, ?, ?, ?)',
+          'INSERT INTO clients (client_code, name, address, city, state, country, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?)',
           [
             client.client_code,
             client.name,
             client.address,
             client.city,
-            client.province,
+            client.state,
             client.country,
+            client.phone_number,
           ],
           (tx, results) => {},
         );
@@ -226,14 +227,15 @@ export function saveClients(newRegisters, editRegisters) {
       let client = editRegisters[i];
       db.transaction(tx => {
         tx.executeSql(
-          `UPDATE clients set name=?, address=? , city=?, province=, country=? WHERE client_code = 
+          `UPDATE clients set name=?, address=? , city=?, state=?, country=?, phone_number=? WHERE client_code = 
         ${client.client_code}`,
           [
             client.name,
             client.address,
             client.city,
-            client.province,
+            client.state,
             client.country,
+            client.phone_number,
           ],
           (tx, results) => {},
         );
@@ -255,8 +257,9 @@ export function getStoredClients() {
             name: row.name,
             address: row.address,
             city: row.city,
-            province: row.province,
+            state: row.state,
             country: row.country,
+            phone_number: row.phone_number,
           };
           arrClients.push(clientObject);
         }
@@ -281,8 +284,9 @@ export function getStoredRoutes(routes_status) {
               name: row.name,
               address: row.address,
               city: row.city,
-              province: row.province,
+              state: row.province,
               country: row.country,
+              phone: row.phone,
             };
             arrClients.push(clientObject);
           }

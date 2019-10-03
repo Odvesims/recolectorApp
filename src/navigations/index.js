@@ -15,7 +15,7 @@ import {theme} from '../constants';
 
 // Clients
 import Clients from '../screens/Clients/Clients';
-import NewClient from '../screens/Clients/NewClient';
+import Client from '../screens/Clients/Client';
 // Login
 import LoginScreen from '../screens/LoginScreen';
 // Home
@@ -52,7 +52,7 @@ const Splash = createStackNavigator(
 const ClientScreen = createStackNavigator(
   {
     Clients: Clients,
-    NewClient: NewClient,
+    Client: Client,
   },
   {
     initialRouteName: 'Clients',
@@ -112,7 +112,7 @@ const Navigation = createSwitchNavigator(
     Auth: AuthNavigator,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Splash',
   },
 );
 

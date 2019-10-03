@@ -23,6 +23,7 @@ class CustomTextInput extends Component {
           numberOfLines={this.props.numberOfLines}
           multiline={this.props.multiline}
           onSubmitEditing={this.props.onSubmitEditing}
+          secureTextEntry={this.props.secured}
           style={this.props.style}
           blurOnSubmit={false}
           value={this.props.value}

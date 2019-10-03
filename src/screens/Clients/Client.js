@@ -16,6 +16,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import {clientOperation} from '../../helpers/sql_helper';
+
 // import ContentCustom from '../components';
 
 import {
@@ -34,8 +36,34 @@ import {
 } from 'native-base';
 
 export default class NewClient extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      code: this.props.navigation.state.params.code,
+      name: this.props.navigation.state.params.name,
+      address: this.props.navigation.state.params.address,
+      city: this.props.navigation.state.params.city,
+      state: this.props.navigation.state.params.state,
+      country: this.props.navigation.state.params.country,
+      phone: this.props.navigation.state.params.phone,
+    };
+  }
+
   static navigationOptions = {
     header: null,
+  };
+
+  clientOperation = () => {
+    let client_data = {
+      code: this.state.code,
+      name: this.state.name,
+      address: this.state.address,
+      city: this.state.city,
+      state: this.state.state,
+      country: this.state.country,
+      phone: this.state.phone,
+    };
+    clientOperation(client_data);
   };
 
   render() {
@@ -49,12 +77,12 @@ export default class NewClient extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Nuevo Cliente</Title>
+            <Title>
+              {global.translate(this.props.navigation.state.params.operation)}
+            </Title>
           </Body>
           <Right>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('ClientScreen')}>
+            <Button transparent onPress={this.clientOperation}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>
                 {global.translate('TITLE_DONE')}
@@ -66,7 +94,7 @@ export default class NewClient extends Component {
         <Header style={styles.headerCode}>
           <Body>
             <Text style={styles.headerCodeText}>
-              Codigo: {Math.ceil(Math.random() * 1000)}
+              {global.translate('TITLE_CODE')} : {this.state.code}
             </Text>
           </Body>
         </Header>
@@ -79,32 +107,13 @@ export default class NewClient extends Component {
                   {global.translate('TITLE_NAME')}
                 </Text>
                 <TextInput
+                  value={this.state.name}
                   style={styles.input}
                   placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
                   returnKeyType="go"
-                  onChangeText={item => {}}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_STATE')}
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_STATE')}
-                  returnKeyType="go"
-                  onChangeText={item => {}}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_CITY')}
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
-                  returnKeyType="go"
-                  onChangeText={item => {}}
+                  onChangeText={name => {
+                    this.setState({name: name});
+                  }}
                 />
               </View>
               <View style={styles.paddingBottom}>
@@ -112,10 +121,41 @@ export default class NewClient extends Component {
                   {global.translate('TITLE_ADDRESS')}
                 </Text>
                 <TextInput
+                  value={this.state.address}
                   style={styles.input}
                   placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
                   returnKeyType="go"
-                  onChangeText={item => {}}
+                  onChangeText={address => {
+                    this.setState({address: address});
+                  }}
+                />
+              </View>
+              <View style={styles.paddingBottom}>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_STATE')}
+                </Text>
+                <TextInput
+                  value={this.state.state}
+                  style={styles.input}
+                  placeholder={global.translate('PLACEHOLDER_TYPE_STATE')}
+                  returnKeyType="go"
+                  onChangeText={address => {
+                    this.setState({address: address});
+                  }}
+                />
+              </View>
+              <View style={styles.paddingBottom}>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_CITY')}
+                </Text>
+                <TextInput
+                  value={this.state.city}
+                  style={styles.input}
+                  placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
+                  returnKeyType="go"
+                  onChangeText={city => {
+                    this.setState({city: city});
+                  }}
                 />
               </View>
               <View style={styles.paddingBottom}>
@@ -123,11 +163,14 @@ export default class NewClient extends Component {
                   {global.translate('TITLE_PHONE')}
                 </Text>
                 <TextInput
+                  value={this.state.phone}
                   style={styles.input}
                   keyboardType="phone-pad"
                   placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
                   returnKeyType="go"
-                  onChangeText={item => {}}
+                  onChangeText={phone => {
+                    this.setState({phone: phone});
+                  }}
                 />
               </View>
             </Form>
