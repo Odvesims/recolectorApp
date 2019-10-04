@@ -16,7 +16,7 @@ import {
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import NormalText from '../components/NormalText';
-import BottomButton from '../components/BottomButton';
+import CustomButtom from '../components/CustomButtom';
 import CustomTextInput from '../components/TextInput';
 
 import {getUserConfig, saveUserConfig} from '../helpers/sql_helper';
@@ -129,7 +129,7 @@ export default class ConfigScreen extends Component {
               <Picker.Item label={global.translate('TITLE_NO')} value="no" />
             </Picker>
             <View>
-              <BottomButton
+              <CustomButtom
                 customClick={this.saveUser}
                 title={global.translate('TITLE_SAVE')}
               />

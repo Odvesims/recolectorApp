@@ -1,6 +1,6 @@
 import {TextInput} from 'react-native-gesture-handler';
 import NavigationHeader from './NavigationHeader';
-import BottomButton from './BottomButton';
+import CustomButtom from './CustomButtom';
 import BoldLargeText from './BoldLargeText';
 // import ContentCustom from './ContentCustom';
 import NormalText from './NormalText';
@@ -12,7 +12,7 @@ import ButtonDone from './ButtonDone';
 export {
   TextInput,
   NavigationHeader,
-  BottomButton,
+  CustomButtom,
   AddButton,
   SearchBar,
   FetchingData,

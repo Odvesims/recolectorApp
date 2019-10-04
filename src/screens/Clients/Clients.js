@@ -71,9 +71,36 @@ export default class Clients extends Component {
     this.enterHandler();
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    /*const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        let new_record = navigation.state.params.new_record;
+        this.refreshHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });*/
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener before removing the screen from the stack
+    this.focusListener.remove();
+  }
+
+  refresh(value) {
+    if (value) {
+      this.refreshHandler();
+    } else {
+      this.enterHandler();
+    }
+  }
 
   enterHandler = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+    });
     this.storedClients();
   };
 
@@ -220,6 +247,9 @@ export default class Clients extends Component {
                                   state: item.state,
                                   country: item.country,
                                   phone: item.phone_number,
+                                  loading_message: 'MESSAGE_UPDATING_CLIENT',
+                                  new_record: false,
+                                  onGoBack: () => this.refresh(false),
                                 });
                                 break;
                               case 1:
@@ -243,6 +273,9 @@ export default class Clients extends Component {
             onPress={() =>
               this.props.navigation.navigate('Client', {
                 operation: 'TITLE_NEW_CLIENT',
+                loading_message: 'MESSAGE_REGISTERING_CLIENT',
+                onGoBack: () => this.refresh(true),
+                new_record: true,
               })
             }
           />

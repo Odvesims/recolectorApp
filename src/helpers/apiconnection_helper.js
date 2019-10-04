@@ -73,7 +73,9 @@ export async function getClients() {
     ':' +
     global.apiPort +
     '/apimobile?apiOption=GET_CLIENTS&token=' +
-    global.token;
+    global.token +
+    '&setma_id=' +
+    global.setma_id;
   try {
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();
@@ -105,16 +107,20 @@ export async function clientOperation(clientData) {
     global.apiPort = 444;
   }
   let getUrl =
-    'https://' +
-    global.apiHost +
-    ':' +
-    global.apiPort +
-    '/apimobile?apiOption=CLIENT_OPERATION&token=' +
-    global.token +
-    '&client_data=' +
-    clientData;
+    'https://' + global.apiHost + ':' + global.apiPort + '/apimobile?';
   try {
-    let response = await fetch(getUrl, {method: 'GET'});
+    let response = await fetch(getUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        apiOption: 'CLIENT_OPERATION',
+        token: global.token,
+        clientData: clientData,
+      }),
+    });
     const responseJson = await response.json();
     if (JSON.stringify(responseJson) === '{}') {
       returnObject = {valid: false, response: 'ALERT_BLANK_RESPONSE'};
@@ -124,7 +130,7 @@ export async function clientOperation(clientData) {
       } else {
         returnObject = {
           valid: true,
-          arrClients: responseJson.arr_clients,
+          client: responseJson.client,
         };
       }
     }

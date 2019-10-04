@@ -245,6 +245,56 @@ export function saveClients(newRegisters, editRegisters) {
   });
 }
 
+export function updateClient(client) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      try {
+        tx.executeSql(
+          `UPDATE clients set name=?, address=? , city=?, state=?, country=?, phone_number=? WHERE client_code = 
+        ${client.client_code}`,
+          [
+            client.name,
+            client.address,
+            client.city,
+            client.state,
+            client.country,
+            client.phone_number,
+          ],
+          (tx, results) => {},
+        );
+        resolve('ALERT_UPDATE_SUCCESFUL');
+      } catch (err) {
+        resolve('ALERT_UPDATE_FAILED');
+      }
+    });
+  });
+}
+
+export function saveClient(client) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      try {
+        tx.executeSql(
+          'INSERT INTO clients(client_code, name, address, city, state, country, phone_number, VALUES(?, ?, ?, ?, ?, ?, ?) ',
+          [
+            client.code,
+            client.name,
+            client.address,
+            client.city,
+            client.state,
+            client.country,
+            client.phone_number,
+          ],
+          (tx, results) => {},
+        );
+        resolve('ALERT_REGISTER_SUCCESFUL');
+      } catch (err) {
+        resolve('ALERT_REGISTER_FAILED');
+      }
+    });
+  });
+}
+
 export function getStoredClients() {
   let arrClients = [];
   return new Promise((resolve, reject) => {

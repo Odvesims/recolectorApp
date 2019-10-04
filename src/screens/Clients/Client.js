@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {TextInput} from '../../components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
@@ -16,7 +17,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-import {clientOperation} from '../../helpers/sql_helper';
+import {clientOperation} from '../../helpers/apiconnection_helper';
+import {updateClient} from '../../helpers/sql_helper';
 
 // import ContentCustom from '../components';
 
@@ -39,6 +41,9 @@ export default class NewClient extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
+      loadingMessage: this.props.navigation.state.params.loading_message,
+      new_record: this.props.navigation.state.params.new_record,
       code: this.props.navigation.state.params.code,
       name: this.props.navigation.state.params.name,
       address: this.props.navigation.state.params.address,
@@ -53,7 +58,7 @@ export default class NewClient extends Component {
     header: null,
   };
 
-  clientOperation = () => {
+  execOperation = () => {
     let client_data = {
       code: this.state.code,
       name: this.state.name,
@@ -62,8 +67,23 @@ export default class NewClient extends Component {
       state: this.state.state,
       country: this.state.country,
       phone: this.state.phone,
+      phone_old: this.state.phone,
+      country_id: global.country_id,
+      setma_id: global.setma_id,
     };
-    clientOperation(client_data);
+    this.setState({loading: true});
+    clientOperation(client_data).then(res => {
+      updateClient(res.client).then(result => {
+        this.setState({loading: false});
+        alert(global.translate(result));
+      });
+    });
+  };
+
+  goBack = () => {
+    let value = this.state.new_record;
+    this.props.navigation.state.params.onGoBack(value);
+    this.props.navigation.goBack();
   };
 
   render() {
@@ -71,8 +91,15 @@ export default class NewClient extends Component {
       <Container>
         {/* Header */}
         <Header>
+          <Spinner
+            visible={this.state.loading}
+            textContent={global.translate(this.state.loadingMessage)}
+            color={'CE2424'}
+            overlayColor={'rgba(255, 255, 255, 0.4)'}
+            animation={'slide'}
+          />
           <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
+            <Button transparent onPress={this.goBack}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -82,7 +109,7 @@ export default class NewClient extends Component {
             </Title>
           </Body>
           <Right>
-            <Button transparent onPress={this.clientOperation}>
+            <Button transparent onPress={this.execOperation}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>
                 {global.translate('TITLE_DONE')}
@@ -132,20 +159,6 @@ export default class NewClient extends Component {
               </View>
               <View style={styles.paddingBottom}>
                 <Text style={styles.label}>
-                  {global.translate('TITLE_STATE')}
-                </Text>
-                <TextInput
-                  value={this.state.state}
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_STATE')}
-                  returnKeyType="go"
-                  onChangeText={address => {
-                    this.setState({address: address});
-                  }}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
                   {global.translate('TITLE_CITY')}
                 </Text>
                 <TextInput
@@ -155,6 +168,20 @@ export default class NewClient extends Component {
                   returnKeyType="go"
                   onChangeText={city => {
                     this.setState({city: city});
+                  }}
+                />
+              </View>
+              <View style={styles.paddingBottom}>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_STATE')}
+                </Text>
+                <TextInput
+                  value={this.state.state}
+                  style={styles.input}
+                  placeholder={global.translate('PLACEHOLDER_TYPE_STATE')}
+                  returnKeyType="go"
+                  onChangeText={state => {
+                    this.setState({state: state});
                   }}
                 />
               </View>

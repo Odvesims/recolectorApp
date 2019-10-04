@@ -3,7 +3,7 @@ import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {NormalizeText} from '../helpers/components_helper';
 
-const BottomButton = props => {
+const CustomButtom = props => {
   return (
     <TouchableOpacity style={styles.button} onPress={props.customClick}>
       <Text style={styles.text}>{props.title}</Text>
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
     fontSize: NormalizeText(18),
   },
 });
-export default BottomButton;
+export default CustomButtom;
