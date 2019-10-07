@@ -1,6 +1,37 @@
-{
-  "STD": "Santo Domingo",
-  "SPM": "San Pedro",
-  "STG": "Santiago",
-  "STR": "Santiago Rodríguez"
-}
+[
+  {"Name": "Azua", "Code": "AZ"},
+  {
+    "Name": "Bahoruco",
+    "Code": "BA"
+  },
+  {"Name": "Barahona", "Code": "BAR"},
+  {"Name": "Dajabón", "Code": "DA"},
+  {"Name": "Distrito Nacional", "Code": "DN"},
+  {"Name": "Duarte", "Code": "DT"},
+  {"Name": "Elías Piña", "Code": "DAJ"},
+  {"Name": "El Seibo", "Code": "ES"},
+  {"Name": "Espaillat", "Code": "ESP"},
+  {"Name": "Hato Mayor", "Code": "HM"},
+  {"Name": "Hermanas Mirabal", "Code": "HEM"},
+  {"Name": "Independencia", "Code": "IN"},
+  {"Name": "La Altagracia", "Code": "LA"},
+  {"Name": "La Romana", "Code": "LR"},
+  {"Name": "La Vega", "Code": "LV"},
+  {"Name": "María Trinidad Sánchez", "Code": "MTS"},
+  {"Name": "Monseñor Nouel", "Code": "MN"},
+  {"Name": "Monte Cristi", "Code": "MC"},
+  {"Name": "Monte Plata", "Code": "MP"},
+  {"Name": "Pedernales", "Code": "PED"},
+  {"Name": "Peravia", "Code": "PER"},
+  {"Name": "Puerto Plata", "Code": "PP"},
+  {"Name": "Samaná", "Code": "SA"},
+  {"Name": "San Cristóbal", "Code": "SC"},
+  {"Name": "San José de Ocoa", "Code": "SJO"},
+  {"Name": "San Juan", "Code": "SJ"},
+  {"Name": "San Pedro de Macorís", "Code": "SPM"},
+  {"Name": "Sánchez Ramírez", "Code": "SRA"},
+  {"Name": "Santiago", "Code": "SAN"},
+  {"Name": "Santiago Rodríguez", "Code": "SRO"},
+  {"Name": "Santo Domingo", "Code": "SD"},
+  {"Name": "Valverde", "Code": "VA"}
+]

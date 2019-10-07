@@ -19,6 +19,9 @@ import {
 
 import {clientOperation} from '../../helpers/apiconnection_helper';
 import {updateClient} from '../../helpers/sql_helper';
+import CustomPicker from '../../components/CustomPicker';
+import usStates from '../../country_states/us.json';
+import drStates from '../../country_states/dr.json';
 
 // import ContentCustom from '../components';
 
@@ -36,6 +39,7 @@ import {
   ActionSheet,
   Form,
 } from 'native-base';
+import {bigIntLiteral} from '@babel/types';
 
 export default class NewClient extends Component {
   constructor(props) {
@@ -52,11 +56,18 @@ export default class NewClient extends Component {
       country: this.props.navigation.state.params.country,
       phone: this.props.navigation.state.params.phone,
     };
+    this.selectedItem = this.selectedItem.bind(this);
   }
 
   static navigationOptions = {
     header: null,
   };
+
+  selectedItem(item) {
+    this.setState({
+      state: item.Name,
+    });
+  }
 
   execOperation = () => {
     let client_data = {
@@ -87,6 +98,15 @@ export default class NewClient extends Component {
   };
 
   render() {
+    let states = {};
+    switch (global.states_collection) {
+      case 'us':
+        states = usStates;
+        break;
+      case 'dr':
+        states = drStates;
+        break;
+    }
     return (
       <Container>
         {/* Header */}
@@ -175,14 +195,10 @@ export default class NewClient extends Component {
                 <Text style={styles.label}>
                   {global.translate('TITLE_STATE')}
                 </Text>
-                <TextInput
-                  value={this.state.state}
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_STATE')}
-                  returnKeyType="go"
-                  onChangeText={state => {
-                    this.setState({state: state});
-                  }}
+                <CustomPicker
+                  placeholder={this.state.state}
+                  items={states}
+                  selectedItem={this.selectedItem}
                 />
               </View>
               <View style={styles.paddingBottom}>

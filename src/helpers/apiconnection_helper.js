@@ -75,7 +75,9 @@ export async function getClients() {
     '/apimobile?apiOption=GET_CLIENTS&token=' +
     global.token +
     '&setma_id=' +
-    global.setma_id;
+    global.setma_id +
+    '&country_id=' +
+    global.country_id;
   try {
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();

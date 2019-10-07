@@ -25,7 +25,7 @@ import Routes from '../screens/Routes/Routes';
 import NewRoute from '../screens/Routes/NewRoute';
 // Orders
 import Orders from '../screens/Orders/Orders';
-import NewOrder from '../screens/Orders/NewOrder';
+import Order from '../screens/Orders/Order';
 import NewArticle from '../screens/Orders/NewArticle';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
@@ -74,7 +74,7 @@ const RouteScreen = createStackNavigator(
 const OrdersScreen = createStackNavigator(
   {
     Orders: Orders,
-    NewOrder: NewOrder,
+    NewOrder: Order,
   },
   {
     initialRouteName: 'Orders',

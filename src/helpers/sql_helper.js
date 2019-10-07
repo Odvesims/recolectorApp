@@ -86,7 +86,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address TEXT, city TEXT, state TEXT, country TEXT, phone_number TEXT)',
+        'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address TEXT, city TEXT, state TEXT, country TEXT, phone_number TEXT, country_id integer)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employee_code VARCHAR(10), name TEXT, category VARCHAR)',
@@ -209,7 +209,7 @@ export function saveClients(newRegisters, editRegisters) {
       let client = newRegisters[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO clients (client_code, name, address, city, state, country, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO clients (client_code, name, address, city, state, country, phone_number, country_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
           [
             client.client_code,
             client.name,
@@ -218,6 +218,7 @@ export function saveClients(newRegisters, editRegisters) {
             client.state,
             client.country,
             client.phone_number,
+            client.country_id,
           ],
           (tx, results) => {},
         );
@@ -250,7 +251,7 @@ export function updateClient(client) {
     db.transaction(tx => {
       try {
         tx.executeSql(
-          `UPDATE clients set name=?, address=? , city=?, state=?, country=?, phone_number=? WHERE client_code = 
+          `UPDATE clients set name=?, address=? , city=?, state=?, country=?, phone_number=?, country_id = ? WHERE client_code = 
         ${client.client_code}`,
           [
             client.name,
@@ -259,6 +260,7 @@ export function updateClient(client) {
             client.state,
             client.country,
             client.phone_number,
+            client.country_id,
           ],
           (tx, results) => {},
         );
@@ -275,7 +277,7 @@ export function saveClient(client) {
     db.transaction(tx => {
       try {
         tx.executeSql(
-          'INSERT INTO clients(client_code, name, address, city, state, country, phone_number, VALUES(?, ?, ?, ?, ?, ?, ?) ',
+          'INSERT INTO clients(client_code, name, address, city, state, country, phone_number, country_id VALUES(?, ?, ?, ?, ?, ?, ?, ?) ',
           [
             client.code,
             client.name,
@@ -284,6 +286,7 @@ export function saveClient(client) {
             client.state,
             client.country,
             client.phone_number,
+            client.country_id,
           ],
           (tx, results) => {},
         );
@@ -299,22 +302,27 @@ export function getStoredClients() {
   let arrClients = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM clients', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let clientObject = {
-            client_code: row.client_code,
-            name: row.name,
-            address: row.address,
-            city: row.city,
-            state: row.state,
-            country: row.country,
-            phone_number: row.phone_number,
-          };
-          arrClients.push(clientObject);
-        }
-        resolve(arrClients);
-      });
+      tx.executeSql(
+        `SELECT * FROM clients WHERE country_id = ${global.country_id}`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let clientObject = {
+              client_code: row.client_code,
+              name: row.name,
+              address: row.address,
+              city: row.city,
+              state: row.state,
+              country: row.country,
+              phone_number: row.phone_number,
+              country_id: row.country_id,
+            };
+            arrClients.push(clientObject);
+          }
+          resolve(arrClients);
+        },
+      );
     });
   });
 }

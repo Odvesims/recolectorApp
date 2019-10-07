@@ -29,7 +29,7 @@ const CustomButton = styled(Button)`
   justify-content: center;
 `;
 
-export default class NewOrder extends Component {
+export default class Order extends Component {
   static navigationOptions = {
     header: null,
   };

@@ -32,6 +32,11 @@ const primaryRoutes = [
     text: 'TITLE_CLIENTS',
   },
   {
+    name: 'OrderScreen',
+    icon: 'shopping_basket',
+    text: 'TITLE_ORDERS',
+  },
+  {
     name: 'RouteScreen',
     icon: 'navigate',
     text: 'TITLE_ROUTES',

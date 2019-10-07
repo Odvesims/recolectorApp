@@ -23,6 +23,7 @@
   "MESSAGE_SAVING_DATA": "Guardando Data",
   "MESSAGE_UPDATING_CLIENT": "Actualizando Cliente",
   "MESSAGE_REGISTERING_CLIENT": "Registrando Cliente",
+  "MESSAGE_SELECT_STATE": "Seleccione un estado/provincia",
   "PLACEHOLDER_TYPE_NAME": "Digite el nombre",
   "PLACEHOLDER_TYPE_ADDRESS": "Digite la dirección",
   "PLACEHOLDER_TYPE_STATE": "Digite provincia/estado",
@@ -57,5 +58,6 @@
   "TITLE_ADDRESS": "Dirección",
   "TITLE_CITY": "Ciudad",
   "TITLE_STATE": "Estado",
-  "TITLE_PHONE": "Teléfono"
+  "TITLE_PHONE": "Teléfono",
+  "TITLE_ORDERS": "Órdenes"
 }

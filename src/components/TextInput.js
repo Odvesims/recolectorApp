@@ -1,8 +1,21 @@
 /*Custom TextInput*/
 import React, {Component} from 'react';
 import {View, TextInput} from 'react-native';
-class CustomTextInput extends Component {
+export default class CustomTextInput extends Component {
   render() {
+    const {
+      keyboardType,
+      onChangeText,
+      placeholder,
+      returnKeyType,
+      numberOfLines,
+      multiline,
+      onSubmitEditing,
+      secured,
+      style,
+      value,
+    } = this.props;
+
     return (
       <View
         style={{
@@ -15,21 +28,20 @@ class CustomTextInput extends Component {
         }}>
         <TextInput
           underlineColorAndroid="transparent"
-          placeholder={this.props.placeholder}
+          placeholder={placeholder}
           placeholderTextColor="#007FFF"
-          keyboardType={this.props.keyboardType}
-          onChangeText={this.props.onChangeText}
-          returnKeyType={this.props.returnKeyType}
-          numberOfLines={this.props.numberOfLines}
-          multiline={this.props.multiline}
-          onSubmitEditing={this.props.onSubmitEditing}
-          secureTextEntry={this.props.secured}
-          style={this.props.style}
+          keyboardType={keyboardType}
+          onChangeText={onChangeText}
+          returnKeyType={returnKeyType}
+          numberOfLines={numberOfLines}
+          multiline={multiline}
+          onSubmitEditing={onSubmitEditing}
+          secureTextEntry={secured}
+          style={style}
           blurOnSubmit={false}
-          value={this.props.value}
+          value={value}
         />
       </View>
     );
   }
 }
-export default CustomTextInput;

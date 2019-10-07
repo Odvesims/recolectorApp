@@ -85,6 +85,7 @@ export default class LoginScreen extends Component {
                 global.apiPort = res.port_number;
                 saveUserData(l.user_data).then(usr => {
                   global.token = l.token;
+                  global.states_collection = l.user_data.country_code;
                   global.country_id = l.user_data.country_id;
                   global.setma_id = l.user_data.setma_id;
                   this.goHome(
