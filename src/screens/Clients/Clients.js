@@ -37,11 +37,7 @@ import {
   getStoredClients,
   editStoredClient,
 } from '../../helpers/sql_helper';
-import {
-  checkConnectivity,
-  getClients,
-  editClient,
-} from '../../helpers/apiconnection_helper';
+import {checkConnectivity, getData} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
   constructor(props) {
@@ -84,7 +80,6 @@ export default class Clients extends Component {
   }
 
   componentWillUnmount() {
-    // Remove the event listener before removing the screen from the stack
     this.focusListener.remove();
   }
 
@@ -126,11 +121,11 @@ export default class Clients extends Component {
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 15000);
-    getClients().then(result => {
+    getData('GET_CLIENTS').then(result => {
       if (!this.state.request_timeout) {
         this.setState({loading: false, request_timeout: false});
         if (result.valid) {
-          saveClients(result.arrClients, []).then(res => {
+          saveClients(result.arrResponse, []).then(res => {
             this.storedClients();
           });
         } else {

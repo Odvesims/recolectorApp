@@ -17,7 +17,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-import {clientOperation} from '../../helpers/apiconnection_helper';
+import {dataOperation} from '../../helpers/apiconnection_helper';
 import {updateClient} from '../../helpers/sql_helper';
 import CustomPicker from '../../components/CustomPicker';
 import usStates from '../../country_states/us.json';
@@ -83,8 +83,8 @@ export default class NewClient extends Component {
       setma_id: global.setma_id,
     };
     this.setState({loading: true});
-    clientOperation(client_data).then(res => {
-      updateClient(res.client).then(result => {
+    dataOperation('SET_CLIENT', client_data).then(res => {
+      updateClient(res.returnObject).then(result => {
         this.setState({loading: false});
         alert(global.translate(result));
       });

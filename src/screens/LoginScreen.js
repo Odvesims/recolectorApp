@@ -88,6 +88,7 @@ export default class LoginScreen extends Component {
                   global.states_collection = l.user_data.country_code;
                   global.country_id = l.user_data.country_id;
                   global.setma_id = l.user_data.setma_id;
+                  global.employee_code = l.user_data.employee_code;
                   this.goHome(
                     l.user_data.display_name,
                     l.user_data.employee_cat_label,

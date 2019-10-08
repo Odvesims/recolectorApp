@@ -16,19 +16,12 @@ import {
 } from 'native-base';
 
 import {
-  getUserConfig,
-  saveClients,
-  getStoredClients,
+  saveCategories,
+  saveSubcategories,
+  saveArticles,
+  saveEmployees,
 } from '../helpers/sql_helper';
-import {
-  getClients,
-  getEmployees,
-  getCategories,
-  getSubcategories,
-  getArticles,
-  getOrders,
-  getRoutes,
-} from '../helpers/apiconnection_helper';
+import {getData} from '../helpers/apiconnection_helper';
 
 export default class Home extends Component {
   constructor(props) {
@@ -44,24 +37,40 @@ export default class Home extends Component {
     this.setState({
       loading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+      loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
     });
     setTimeout(() => {
       if (this.state.loading) {
         this.setState({loading: false, request_timeout: true});
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
-    }, 15000);
-    getClients().then(result => {
+    }, 30000);
+    getData('GET_EMPLOYEES').then(emp => {
       if (!this.state.request_timeout) {
-        this.setState({loading: false, request_timeout: false});
-        if (result.valid) {
-          saveClients(result.arrClients, []).then(res => {
-            this.storedClients();
+        saveEmployees(emp.arrResponse).then(res => {
+          getData('GET_ARTICLES_CATEGORIES').then(cat => {
+            if (!this.state.request_timeout) {
+              saveCategories(cat.arrResponse).then(res => {
+                getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
+                  if (!this.state.request_timeout) {
+                    saveSubcategories(sub.arrResponse).then(res => {
+                      getData('GET_ARTICLES').then(art => {
+                        if (!this.state.request_timeout) {
+                          saveArticles(art.arrResponse).then(res => {
+                            this.setState({
+                              request_timeout: false,
+                              loading: false,
+                            });
+                          });
+                        }
+                      });
+                    });
+                  }
+                });
+              });
+            }
           });
-        }
-      } else {
-        this.setState({request_timeout: false});
+        });
       }
     });
   };

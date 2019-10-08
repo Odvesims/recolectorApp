@@ -7,7 +7,7 @@ import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
 import Navigation from './src/navigations/';
 
-global.database_version = 4;
+global.database_version = 6;
 global.userDisplayName = '';
 global.userRole = '';
 global.userName = '';
@@ -17,6 +17,7 @@ global.apiPort = '';
 global.token = '';
 global.country_id = 0;
 global.setma_id = 0;
+global.employee_code = 0;
 global.states_collection = {};
 
 const translationGetters = {

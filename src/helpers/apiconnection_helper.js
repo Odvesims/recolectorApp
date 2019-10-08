@@ -61,7 +61,7 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   return returnObject;
 }
 
-export async function getClients() {
+export async function getData(apiOption) {
   let returnObject = {};
   if (!global.apiHost) {
     global.apiHost = 'apimobile.sojaca.net';
@@ -72,10 +72,12 @@ export async function getClients() {
     global.apiHost +
     ':' +
     global.apiPort +
-    '/apimobile?apiOption=GET_CLIENTS&token=' +
+    `/apimobile?apiOption=${apiOption}&token=` +
     global.token +
     '&setma_id=' +
     global.setma_id +
+    '&employee_code=' +
+    global.employee_code +
     '&country_id=' +
     global.country_id;
   try {
@@ -89,7 +91,7 @@ export async function getClients() {
       } else {
         returnObject = {
           valid: true,
-          arrClients: responseJson.arr_clients,
+          arrResponse: responseJson.arr_response,
         };
       }
     }
@@ -102,7 +104,7 @@ export async function getClients() {
   return returnObject;
 }
 
-export async function clientOperation(clientData) {
+export async function dataOperation(apiOption, theData) {
   let returnObject = {};
   if (!global.apiHost) {
     global.apiHost = 'apimobile.sojaca.net';
@@ -118,9 +120,9 @@ export async function clientOperation(clientData) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        apiOption: 'CLIENT_OPERATION',
+        apiOption: apiOption,
         token: global.token,
-        clientData: clientData,
+        operationData: theData,
       }),
     });
     const responseJson = await response.json();
@@ -132,46 +134,7 @@ export async function clientOperation(clientData) {
       } else {
         returnObject = {
           valid: true,
-          client: responseJson.client,
-        };
-      }
-    }
-  } catch (error) {
-    returnObject = {
-      valid: false,
-      responseError: error.message,
-    };
-  }
-  return returnObject;
-}
-
-export async function getRoutes(routes_status) {
-  let returnObject = {};
-  if (!global.apiHost) {
-    global.apiHost = 'apimobile.sojaca.net';
-    global.apiPort = 444;
-  }
-  let getUrl =
-    'https://' +
-    global.apiHost +
-    ':' +
-    global.apiPort +
-    '/apimobile?apiOption=GET_ACTIVE_ROUTES&token=' +
-    global.token +
-    '&routes_status=' +
-    routes_status;
-  try {
-    let response = await fetch(getUrl, {method: 'GET'});
-    const responseJson = await response.json();
-    if (JSON.stringify(responseJson) === '{}') {
-      returnObject = {valid: false, response: 'ALERT_BLANK_RESPONSE'};
-    } else {
-      if (responseJson.response !== 'valid') {
-        returnObject = {valid: false, response: responseJson.error_message};
-      } else {
-        returnObject = {
-          valid: true,
-          arrRoutes: responseJson.arr_routes,
+          responseObject: responseJson.response_object,
         };
       }
     }

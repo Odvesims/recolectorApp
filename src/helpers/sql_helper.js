@@ -89,16 +89,16 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY AUTOINCREMENT, client_code VARCHAR(10), name TEXT, address TEXT, city TEXT, state TEXT, country TEXT, phone_number TEXT, country_id integer)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employee_code VARCHAR(10), name TEXT, category VARCHAR)',
+        'CREATE TABLE IF NOT EXISTS employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employee_code VARCHAR(10), name TEXT, category VARCHAR, phone_number VARCHAR, country_id INTEGER)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY AUTOINCREMENT, category_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS subcategories(id INTEGER PRIMARY KEY AUTOINCREMENT, subcategory_code VARCHAR(10), description TEXT, price numeric)',
+        'CREATE TABLE IF NOT EXISTS subcategories(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, article_code VARCHAR(10), category_id INTEGER, subcategory_id INTEGER, description TEXT, price numeric)',
+        'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, date_register TEXT, order_total NUMERIC, registered by INTEGER, registered_at TEXT)',
@@ -107,7 +107,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_price NUMERIC)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, assigned_by INTEGER, assigned_to INTEGER, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, client_address VARCHAR, date_from TEXT, date_to TEXT, status VARCHAR(1))',
+        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, assigned_by  VARCHAR(10), assigned_to  VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, document_id INTEGER, document_number INTEGER, date_from TEXT, date_to TEXT, status VARCHAR(1))',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS route_details(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, order_id INTEGER)',
@@ -277,7 +277,7 @@ export function saveClient(client) {
     db.transaction(tx => {
       try {
         tx.executeSql(
-          'INSERT INTO clients(client_code, name, address, city, state, country, phone_number, country_id VALUES(?, ?, ?, ?, ?, ?, ?, ?) ',
+          'INSERT INTO clients(client_code, name, address, city, state, country, phone_number, country_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?) ',
           [
             client.code,
             client.name,
@@ -324,6 +324,99 @@ export function getStoredClients() {
         },
       );
     });
+  });
+}
+
+export function saveEmployees(employees) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM employees', [], (tx, results) => {});
+    });
+    for (let i = 0; i < employees.length; i++) {
+      let employee = employees[i];
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO employees(employee_code, name, category, phone_number, country_id) VALUES(?, ?, ?, ?, ?) ',
+          [
+            employee.code,
+            employee.name,
+            employee.category,
+            employee.phone_number,
+            employee.country_id,
+          ],
+          (tx, results) => {},
+        );
+      });
+    }
+    resolve(true);
+  });
+}
+
+export function saveCategories(categories) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM categories', [], (tx, results) => {});
+    });
+    for (let i = 0; i < categories.length; i++) {
+      let category = categories[i];
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO categories(category_code, description, price) VALUES(?, ?, ?) ',
+          [category.code, category.name, category.price],
+          (tx, results) => {},
+        );
+      });
+    }
+    resolve(true);
+  });
+}
+
+export function saveSubcategories(subcategories) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM subcategories', [], (tx, results) => {});
+    });
+    for (let i = 0; i < subcategories.length; i++) {
+      let subcategory = subcategories[i];
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO subcategories(category_id, category_code, description, price) VALUES(?, ?, ?, ?) ',
+          [
+            subcategory.category_id,
+            subcategory.code,
+            subcategory.name,
+            subcategory.price,
+          ],
+          (tx, results) => {},
+        );
+      });
+    }
+    resolve(true);
+  });
+}
+
+export function saveArticles(articles) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM articles', [], (tx, results) => {});
+    });
+    for (let i = 0; i < articles.length; i++) {
+      let article = articles[i];
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO articles(category_id, subcategory_id, category_code, description, price) VALUES(?, ?, ?, ?, ?) ',
+          [
+            article.category_id,
+            article.subcategory_id,
+            article.code,
+            article.name,
+            article.price,
+          ],
+          (tx, results) => {},
+        );
+      });
+    }
+    resolve(true);
   });
 }
 
