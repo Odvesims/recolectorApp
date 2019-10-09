@@ -29,6 +29,8 @@
   "PLACEHOLDER_TYPE_STATE": "Type in the state",
   "PLACEHOLDER_TYPE_CITY": "Type in the city",
   "PLACEHOLDER_TYPE_PHONE": "Type in the phone number",
+  "PLACEHOLDER_SELECT_CLIENT": "Select client",
+  "PLACEHOLDER_SELECT_ARTICLE": "Select article",
   "ROLE_SUPERVISOR": "Supervisor",
   "ROLE_RECOLLECTOR": "Recollector",
   "ROLE_WAREHOUSE": "Warehouse",
@@ -59,5 +61,18 @@
   "TITLE_CITY": "City",
   "TITLE_STATE": "State",
   "TITLE_PHONE": "Phone Number",
-  "TITLE_ORDERS": "Orders"
+  "TITLE_ORDERS": "Orders",
+  "TITLE_CLIENT": "Client",
+  "TITLE_DETAILS": "Details",
+  "TITLE_DATE": "Date",
+  "TITLE_ORDER": "Order",
+  "TITLE_ARTICLE": "Article",
+  "TITLE_CATEGORY": "Category",
+  "TITLE_SUBCATEGORY": "Subcategory",
+  "TITLE_SELECT": "Select",
+  "TITLE_DESCRIPTION": "Description",
+  "TITLE_PRICE": "Price",
+  "TITLE_QUANTITY": "Quantity",
+  "TITLE_ACCEPT": "Accept",
+  "TITLE_NEW_ORDER": "New Order"
 }

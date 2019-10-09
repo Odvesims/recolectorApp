@@ -29,6 +29,8 @@
   "PLACEHOLDER_TYPE_STATE": "Digite provincia/estado",
   "PLACEHOLDER_TYPE_CITY": "Digite la ciudad",
   "PLACEHOLDER_TYPE_PHONE": "Digite el número de teléfono",
+  "PLACEHOLDER_SELECT_CLIENT": "Seleccione el cliente",
+  "PLACEHOLDER_SELECT_ARTICLE": "Seleccione el artículo",
   "ROLE_SUPERVISOR": "Supervisor",
   "ROLE_RECOLLECTOR": "Recolector",
   "ROLE_WAREHOUSE": "Almacén",
@@ -59,5 +61,18 @@
   "TITLE_CITY": "Ciudad",
   "TITLE_STATE": "Estado",
   "TITLE_PHONE": "Teléfono",
-  "TITLE_ORDERS": "Órdenes"
+  "TITLE_ORDERS": "Órdenes",
+  "TITLE_CLIENT": "Cliente",
+  "TITLE_DETAILS": "Detalles",
+  "TITLE_DATE": "Fecha",
+  "TITLE_ORDER": "Orden",
+  "TITLE_ARTICLE": "Artículo",
+  "TITLE_CATEGORY": "Categoría",
+  "TITLE_SUBCATEGORY": "Subcategoría",
+  "TITLE_SELECT": "Seleccione",
+  "TITLE_DESCRIPTION": "Descripción",
+  "TITLE_PRICE": "Precio",
+  "TITLE_QUANTITY": "Cantidad",
+  "TITLE_ACCEPT": "Aceptar",
+  "TITLE_NEW_ORDER": "Nueva Orden"
 }

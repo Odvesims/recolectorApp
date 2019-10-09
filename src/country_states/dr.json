@@ -1,9 +1,6 @@
 [
   {"Name": "Azua", "Code": "AZ"},
-  {
-    "Name": "Bahoruco",
-    "Code": "BA"
-  },
+  {"Name": "Bahoruco", "Code": "BA"},
   {"Name": "Barahona", "Code": "BAR"},
   {"Name": "Dajabón", "Code": "DA"},
   {"Name": "Distrito Nacional", "Code": "DN"},

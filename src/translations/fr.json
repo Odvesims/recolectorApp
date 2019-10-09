@@ -29,6 +29,8 @@
   "PLACEHOLDER_TYPE_STATE": "Tapez dans l'état",
   "PLACEHOLDER_TYPE_CITY": "Tapez dans la ville",
   "PLACEHOLDER_TYPE_PHONE": "Tapez le téléphone",
+  "PLACEHOLDER_SELECT_CLIENT": "Sélectionner le client",
+  "PLACEHOLDER_SELECT_ARTICLE": "Sélectionner le article",
   "ROLE_SUPERVISOR": "Superviseur",
   "ROLE_RECOLLECTOR": "Collecteur",
   "ROLE_WAREHOUSE": "Entrepôt",
@@ -59,5 +61,18 @@
   "TITLE_CITY": "Ville",
   "TITLE_STATE": "Etat",
   "TITLE_PHONE": "Numéro de téléphone",
-  "TITLE_ORDERS": "Les Commandes"
+  "TITLE_ORDERS": "Les Commandes",
+  "TITLE_CLIENT": "Client",
+  "TITLE_DETAILS": "Les details",
+  "TITLE_DATE": "Date",
+  "TITLE_ORDER": "La commande",
+  "TITLE_ARTICLE": "Le article",
+  "TITLE_CATEGORY": "Catégorie",
+  "TITLE_SUBCATEGORY": "Sous catégorie",
+  "TITLE_SELECT": "Sélectionner",
+  "TITLE_DESCRIPTION": "Description",
+  "TITLE_PRICE": "Prix",
+  "TITLE_QUANTITY": "Quantité",
+  "TITLE_ACCEPT": "Accepter",
+  "TITLE_NEW_ORDER": "Nouvelle commande"
 }

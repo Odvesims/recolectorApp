@@ -3,6 +3,9 @@ import {theme} from '../../constants';
 // import ButtonDone from '../../../../components'
 import styled from 'styled-components/native';
 import {ScrollView} from 'react-native-gesture-handler';
+import CustomPicker from '../../components/CustomPicker';
+
+import {ButtonGroup} from '../../components';
 
 import {View, StyleSheet, TextInput} from 'react-native';
 import {
@@ -17,9 +20,18 @@ import {
   Button,
   Icon,
   Text,
+  List,
+  Order,
+  Radio,
   Form,
+
   //   DatePicker,
 } from 'native-base';
+import {
+  getStoredCategories,
+  getStoredSubcategories,
+  getStoredArticles,
+} from '../../helpers/sql_helper';
 
 const CustomButton = styled(Button)`
   background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
@@ -31,32 +43,85 @@ const CustomButton = styled(Button)`
   justify-content: center;
 `;
 
-export default class NewArticle extends Component {
-  state = {language: ''};
-  updateUser = user => {
-    this.setState({language: user});
+export default class Detail extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {selectedIndex: 2};
+    this.getArticlesData();
+    this.selectedItem = this.selectedItem.bind(this);
+  }
+
+  getClientsHandler() {
+    getStoredCategories().then(categories => {
+      getStoredSubcategories().then(subcategories => {
+        getStoredArticles().then(articles => {
+          this.setArticlesPicker(categories).then(res => {
+            this.setState({clients: res});
+          });
+        });
+      });
+    });
+  }
+
+  setClientsPicker(clients) {
+    return new Promise((resolve, reject) => {
+      let arrClients = [];
+      for (let i = 0; i < clients.length; ++i) {
+        let client = clients[i];
+        arrClients.push({
+          Name: client.client_code + '- ' + client.name,
+          Code: client.client_code,
+          Address: client.address,
+          City: client.city,
+          State: client.state,
+          Phone: client.phone_number,
+        });
+      }
+      resolve(arrClients);
+    });
+  }
+
+  updateIndex = selectedIndex => {
+    this.setState({selectedIndex});
   };
 
   static navigationOptions = {
     header: null,
   };
 
+  selectedItem(item) {
+    this.setState({
+      article: item.Description,
+      article_price: item.Price,
+    });
+  }
+
   render() {
+    const {close} = this.props;
+    const buttons = [
+      global.translate('TITLE_CATEGORY'),
+      global.translate('TITLE_SUBCATEGORY'),
+      global.translate('TITLE_ARTICLE'),
+    ];
+    const {selectedIndex} = this.state;
+
     return (
       <Container>
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.goBack(null)}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
           <Body>
-            <Title>Nuevo Articulo</Title>
+            <Title>{global.translate('TITLE_ARTICLE')}</Title>
           </Body>
           <Right>
             <Button
               transparent
-              onPress={() => this.props.navigation.navigate('NewOrder')}>
+              onPress={() => this.props.navigation.navigate('Order')}>
               <Icon name="checkmark" />
             </Button>
           </Right>
@@ -65,52 +130,32 @@ export default class NewArticle extends Component {
           <ScrollView>
             <Form>
               <View style={styles.paddingBottom}>
-                <Text> Categoría o SubCategoría</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Cliente"
-                  returnKeyType="go"
-                  onChangeText={item => {}}
+                <Text>{global.translate('TITLE_SELECT')}</Text>
+                <ButtonGroup
+                  onPress={this.updateIndex}
+                  selectedIndex={selectedIndex}
+                  buttons={buttons}
+                  containerStyle={{height: 40}}
                 />
-                <View
-                  style={{
-                    borderColor: 'black',
-                    borderStyle: 'solid',
-                    borderWidth: 1,
-                  }}>
-                  <Picker
-                    prompt="Articulo"
-                    placeholder="Select the client"
-                    selectedValue={this.state.language}
-                    style={{}}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({language: itemValue})
-                    }>
-                    <Picker.Item label="Java" value="java" />
-                    <Picker.Item label="JavaScript" value="js" />
-                    <Picker.Item label="JavaScript" value="js" />
-                    <Picker.Item label="JavaScript" value="js" />
-                    <Picker.Item label="JavaScript" value="js" />
-                    <Picker.Item label="JavaScript" value="js" />
-                    <Picker.Item label="JavaScript" value="js" />
-                    <Picker.Item label="JavaScript" value="js" />
-                  </Picker>
-                </View>
               </View>
               <View style={styles.paddingBottom}>
-                <Text> Artículo</Text>
+                <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
+                <CustomPicker />
+              </View>
+
+              <View style={styles.paddingBottom}>
+                <Text>{global.translate('TITLE_PRICE')}</Text>
                 <TextInput
-                  style={styles.input}
-                  placeholder="Cliente"
-                  returnKeyType="next"
+                  style={styles.inputNumber}
+                  keyboardType="number-pad"
                   onChangeText={item => {}}
                 />
               </View>
-              <View style={(styles.paddingBottom, {width: 80})}>
-                <Text> Cantidad</Text>
+
+              <View style={styles.paddingBottom}>
+                <Text>{global.translate('TITLE_QUANTITY')}</Text>
                 <TextInput
-                  style={styles.input}
-                  returnKeyType="go"
+                  style={styles.inputNumber}
                   keyboardType="number-pad"
                   onChangeText={item => {}}
                 />
@@ -119,11 +164,17 @@ export default class NewArticle extends Component {
           </ScrollView>
         </Content>
         <View style={styles.actionContainer}>
-          <CustomButton bordered>
-            <Text style={{color: theme.colors.darkGray}}>Cancelar</Text>
+          <CustomButton
+            bordered
+            onPress={() => {
+              this.props.navigation.goBack();
+            }}>
+            <Text style={{color: theme.colors.darkGray}}>
+              {global.translate('TITLE_CANCEL')}
+            </Text>
           </CustomButton>
           <CustomButton>
-            <Text>Guardar</Text>
+            <Text>{global.translate('TITLE_ACCEPT')}</Text>
           </CustomButton>
         </View>
       </Container>
@@ -132,6 +183,9 @@ export default class NewArticle extends Component {
 }
 
 const styles = StyleSheet.create({
+  marginLeft: {
+    marginLeft: 4,
+  },
   headerCodeText: {
     color: theme.colors.gray,
     fontSize: theme.sizes.base,
@@ -171,6 +225,12 @@ const styles = StyleSheet.create({
 
   inputNumber: {
     flexBasis: '50%',
+    marginVertical: theme.sizes.p8,
+    padding: theme.sizes.p12,
+    borderWidth: 1,
+    borderColor: theme.colors.gray2,
+    borderRadius: 4,
+    color: '#000',
   },
 
   label: {
@@ -216,5 +276,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     backgroundColor: 'white',
+  },
+
+  radioButton: {
+    flexDirection: 'row',
   },
 });

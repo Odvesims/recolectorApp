@@ -12,7 +12,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import BoldLargeText from '../components/BoldLargeText';
 import NormalText from '../components/NormalText';
-import CustomButtom from '../components/CustomButtom';
+import CustomButton from '../components/CustomButton';
 import CustomTextInput from '../components/TextInput';
 import ToastMessage from '../components/ToastMessage';
 
@@ -193,7 +193,7 @@ export default class LoginScreen extends Component {
               returnKeyType="go"
               value={this.state.userPassword}
             />
-            <CustomButtom
+            <CustomButton
               customClick={this.customClickHandler}
               title={global.translate('TITLE_SIGNIN')}
             />

@@ -101,16 +101,16 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, date_register TEXT, order_total NUMERIC, registered by INTEGER, registered_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, document_id INTEGER, document_number INTEGER, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, date_register TEXT, order_total NUMERIC, registered by TEXT, registered_at TEXT)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_price NUMERIC)',
+        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, assigned_by  VARCHAR(10), assigned_to  VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, document_id INTEGER, document_number INTEGER, date_from TEXT, date_to TEXT, status VARCHAR(1))',
+        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, document_id INTEGER, document_number INTEGER, assigned_by  VARCHAR(10), assigned_to  VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, document_id INTEGER, document_number INTEGER, date_from TEXT, date_to TEXT, status VARCHAR(1))',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS route_details(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, order_id INTEGER)',
+        'CREATE TABLE IF NOT EXISTS route_details(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, order_id INTEGER, routedetail_id INTEGER)',
       );
       resolve(true);
     });
@@ -352,6 +352,50 @@ export function saveEmployees(employees) {
   });
 }
 
+export function saveOrders(orders) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM orders', [], (tx, results) => {});
+      tx.executeSql('DELETE FROM orders_details', [], (tx, results) => {});
+    });
+    for (let i = 0; i < orders.length; i++) {
+      let order = orders[i];
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO orders(document_id, document_number, client_id, client_code, client_name, date_register, order_total, registered by, registered_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [
+            order.code,
+            order.name,
+            order.category,
+            order.phone_number,
+            order.country_id,
+            order.country_id,
+          ],
+          (tx, results) => {},
+        );
+      });
+      for (let e = 0; e < orders.order_details.length; e++) {
+        let order_detail = orders.order_details[e];
+        db.transaction(tx => {
+          tx.executeSql(
+            'INSERT INTO orders(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price) VALUES(?, ?, ?, ?, ?, ?)',
+            [
+              order_detail.order_id,
+              order_detail.orderdetail_id,
+              order_detail.detail_type,
+              order_detail.detail_id,
+              order_detail.detail_quantity,
+              order_detail.detail_price,
+            ],
+            (tx, results) => {},
+          );
+        });
+      }
+    }
+    resolve(true);
+  });
+}
+
 export function saveCategories(categories) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -447,6 +491,48 @@ export function getStoredRoutes(routes_status) {
     });
   });
 }
+
+export function getStoredCategories() {
+  let arrCategories = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM categories', [], (tx, results) => {
+        for (let i = 0; i < results.rows.length; ++i) {
+          let row = results.rows.item(i);
+          let categoryObject = {
+            category_code: row.category_code,
+            description: row.description,
+            price: row.price,
+          };
+          arrCategories.push(categoryObject);
+        }
+        resolve(arrCategories);
+      });
+    });
+  });
+}
+
+export function getStoredSubcategories() {
+  let arrSubcategories = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM subcategories', [], (tx, results) => {
+        for (let i = 0; i < results.rows.length; ++i) {
+          let row = results.rows.item(i);
+          let subcategoryObject = {
+            category_id: row.category_id,
+            subcategory_code: row.subcategory_code
+            description: row.description,
+            price: row.price,
+          };
+          arrSubcategories.push(subcategoryObject);
+        }
+        resolve(arrSubcategories);
+      });
+    });
+  });
+}
+
 export function getStoredArticles() {
   let arrArticles = [];
   return new Promise((resolve, reject) => {
@@ -455,12 +541,11 @@ export function getStoredArticles() {
         for (let i = 0; i < results.rows.length; ++i) {
           let row = results.rows.item(i);
           let articleObject = {
-            client_code: row.client_code,
-            name: row.name,
-            address: row.address,
-            city: row.city,
-            province: row.province,
-            country: row.country,
+            category_id: row.category_id,
+            subcategory_id: row.subcategory_id,
+            article_code: row.article_code,
+            description: row.description,
+            price: row.price,
           };
           arrArticles.push(articleObject);
         }

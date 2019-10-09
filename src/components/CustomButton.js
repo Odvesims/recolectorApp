@@ -1,9 +1,8 @@
 /*Custom Button*/
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
-import {NormalizeText} from '../helpers/components_helper';
 
-const CustomButtom = props => {
+const CustomButton = props => {
   return (
     <TouchableOpacity style={styles.button} onPress={props.customClick}>
       <Text style={styles.text}>{props.title}</Text>
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#ffffff',
     fontWeight: 'bold',
-    fontSize: NormalizeText(18),
+    fontSize: 18,
   },
 });
-export default CustomButtom;
+export default CustomButton;

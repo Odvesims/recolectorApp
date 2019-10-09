@@ -197,6 +197,7 @@ export default class NewClient extends Component {
                 </Text>
                 <CustomPicker
                   placeholder={this.state.state}
+                  selectedHolder={this.selectedItem.Name}
                   items={states}
                   selectedItem={this.selectedItem}
                 />

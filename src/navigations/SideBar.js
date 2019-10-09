@@ -33,7 +33,7 @@ const primaryRoutes = [
   },
   {
     name: 'OrderScreen',
-    icon: 'shopping_basket',
+    icon: 'cube',
     text: 'TITLE_ORDERS',
   },
   {

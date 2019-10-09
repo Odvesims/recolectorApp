@@ -18,6 +18,7 @@ import {
 // import ContentCustom from '../components';
 
 import {
+  Root,
   Icon,
   Button,
   Container,
@@ -33,31 +34,31 @@ import {
   Fab,
 } from 'native-base';
 
+import {getOrders, saveOrders} from '../../helpers/sql_helper';
+import {getData} from '../../helpers/apiconnection_helper';
+
 export default class Orders extends Component {
-  state = {
-    data: [
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-    ],
-    show: true,
-    BUTTONS: [
-      {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-      {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-      {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
-    ],
-    DESTRUCTIVE_INDEX: 3,
-    CANCEL_INDEX: 4,
-  };
+  constructor(props) {
+    super(props);
+    let day = new Date().getDate();
+    if (parseInt(day) < 10) {
+      day = '0' + day;
+    }
+    let month = new Date().getMonth() + 1;
+    let year = new Date().getFullYear();
+    this.state = {
+      data: [],
+      show: true,
+      date: `${day}/${month}/${year}`,
+      BUTTONS: [
+        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
+        {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
+        {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      ],
+      DESTRUCTIVE_INDEX: 3,
+      CANCEL_INDEX: 4,
+    };
+  }
 
   static navigationOptions = {
     header: null,
@@ -68,6 +69,68 @@ export default class Orders extends Component {
   };
 
   componentDidMount() {}
+
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
+
+  refresh(value) {
+    if (value) {
+      this.refreshHandler();
+    } else {
+      this.enterHandler();
+    }
+  }
+
+  enterHandler = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
+    });
+    this.storedOrders();
+  };
+
+  storedOrders = () => {
+    getOrders().then(orders => {
+      if (orders.length > 0) {
+        this.setState({data: orders, loading: false});
+      } else {
+        this.setState({loading: false});
+      }
+    });
+  };
+
+  refreshHandler = () => {
+    this.setState({
+      loading: true,
+      request_timeout: false,
+      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
+    });
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      }
+    }, 15000);
+    getData('GET_ORDERS').then(result => {
+      if (!this.state.request_timeout) {
+        this.setState({loading: false, request_timeout: false});
+        if (result.valid) {
+          saveOrders(result.arrResponse, []).then(res => {
+            this.storedOrders();
+          });
+        } else {
+          alert(global.translate(result.response));
+        }
+      } else {
+        this.setState({request_timeout: false});
+      }
+    });
+  };
+
+  openDrawer = props => {
+    this.props.navigation.openDrawer();
+  };
 
   render() {
     const {data} = this.state;
@@ -101,53 +164,59 @@ export default class Orders extends Component {
     );
 
     return (
-      <Container>
-        {/* Header */}
-
-        <Header>
-          <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('HomeScreen')}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Rutas</Title>
-          </Body>
-          <Right>
-            <Button transparent>
-              <Icon name="refresh" />
-            </Button>
-            <Button transparent>
-              <Icon name="funnel" />
-            </Button>
-            <Button
-              transparent
-              onPress={() => {
-                this.showHideSearchBar;
-              }}>
-              <Icon name="search" />
-            </Button>
-          </Right>
-        </Header>
-        <ScrollView>
-          <Content style={styles.content}>
-            <FlatList
-              style={{overflow: 'hidden'}}
-              data={data}
-              keyExtractor={item => item.id}
-              renderItem={renderItem}
-            />
-          </Content>
-        </ScrollView>
-        <Fab
-          style={{backgroundColor: theme.colors.primary}}
-          position="bottomRight"
-          onPress={() => this.props.navigation.navigate('NewOrder')}>
-          <Icon name="add" />
-        </Fab>
-      </Container>
+      <Root>
+        <Container>
+          <Header>
+            <Left>
+              <Button transparent onPress={this.openDrawer}>
+                <Icon name="menu" />
+              </Button>
+            </Left>
+            <Body>
+              <Title>{global.translate('TITLE_ORDERS')}</Title>
+            </Body>
+            <Right>
+              <Button transparent>
+                <Icon name="refresh" />
+              </Button>
+              <Button transparent>
+                <Icon name="funnel" />
+              </Button>
+              <Button
+                transparent
+                onPress={() => {
+                  this.showHideSearchBar;
+                }}>
+                <Icon name="search" />
+              </Button>
+            </Right>
+          </Header>
+          <ScrollView>
+            <Content style={styles.content}>
+              <FlatList
+                style={{overflow: 'hidden'}}
+                data={data}
+                keyExtractor={item => item.id}
+                renderItem={renderItem}
+              />
+            </Content>
+          </ScrollView>
+          <Fab
+            style={{backgroundColor: theme.colors.primary}}
+            position="bottomRight"
+            onPress={() =>
+              this.props.navigation.navigate('Order', {
+                operation: 'TITLE_NEW_ORDER',
+                loading_message: 'MESSAGE_REGISTERING_ORDER',
+                date: this.state.date,
+                onGoBack: () => this.refresh(true),
+                new_record: true,
+              })
+            }>
+            <Icon name="add" />
+          </Fab>
+        </Container>
+      </Root>
     );
   }
 }

@@ -26,7 +26,7 @@ import NewRoute from '../screens/Routes/NewRoute';
 // Orders
 import Orders from '../screens/Orders/Orders';
 import Order from '../screens/Orders/Order';
-import NewArticle from '../screens/Orders/NewArticle';
+import Detail from '../screens/Orders/Detail';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
 import Logout from '../screens/Logout';
@@ -74,11 +74,13 @@ const RouteScreen = createStackNavigator(
 const OrdersScreen = createStackNavigator(
   {
     Orders: Orders,
-    NewOrder: Order,
+    Order: Order,
+    Detail: Detail,
   },
   {
     initialRouteName: 'Orders',
     headerMode: 'none',
+    mode: 'modal',
   },
 );
 
