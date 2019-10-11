@@ -20,7 +20,7 @@ import {
   ActionSheet,
 } from 'native-base';
 
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {getStoredClients} from '../../helpers/sql_helper';
 
 class Order extends Component {
@@ -46,6 +46,7 @@ class Order extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
+    this.arrData = [];
     this.getClientsHandler();
     this.selectedItem = this.selectedItem.bind(this);
   }
@@ -85,7 +86,24 @@ class Order extends Component {
       resolve(arrClients);
     });
   }
-  componentDidMount() {}
+
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      try {
+        let item = this.props.navigation.state.params.selItem;
+        if (item != undefined) {
+          this.arrData.push(item);
+          this.setState({data: this.arrData});
+        }
+      } catch (err) {
+        alert(err);
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
@@ -195,6 +213,14 @@ class Order extends Component {
                       {global.translate('TITLE_DETAILS')}
                     </Text>
                   </View>
+                  <ScrollView>
+                    <FlatList
+                      style={{overflow: 'hidden'}}
+                      data={data}
+                      keyExtractor={item => item.id}
+                      renderItem={renderItem}
+                    />
+                  </ScrollView>
                   <TouchableOpacity
                     style={styles.buttonGhost}
                     onPress={() => {
@@ -210,12 +236,6 @@ class Order extends Component {
                       }}>
                       {global.translate('TITLE_DETAILS')}
                     </Text>
-                    <FlatList
-                      style={{overflow: 'hidden'}}
-                      data={data}
-                      keyExtractor={item => item.id}
-                      renderItem={renderItem}
-                    />
                   </TouchableOpacity>
                 </View>
               </View>

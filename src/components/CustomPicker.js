@@ -11,6 +11,10 @@ export default class CustomPicker extends Component {
     };
   }
 
+  clearHolder = () => {
+    this.setState({placeholder: ''});
+  };
+
   onSelected = selected => {
     this.setState({
       placeholder: selected.Name,

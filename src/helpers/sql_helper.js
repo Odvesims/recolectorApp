@@ -76,11 +76,14 @@ export function setUserTable() {
       txn.executeSql('DROP TABLE IF EXISTS order_details');
       txn.executeSql('DROP TABLE IF EXISTS routes');
       txn.executeSql('DROP TABLE IF EXISTS route_details');
+      txn.executeSql('DROP VIEW IF EXISTS view_orders');
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer BOOLEAN)',
+        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no")',
       );
       txn.executeSql(
-        'INSERT INTO app_configurations(host_name, port_number, uses_printer) VALUES("apimobile.sojaca.net", 444, 1)',
+        'INSERT INTO app_configurations(host_name, port_number) VALUES(?, ?)',
+        ['apimobile.sojaca.net', 444],
+        (tx, results) => {},
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
@@ -101,19 +104,19 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, document_id INTEGER, document_number INTEGER, client_id INTEGER, client_code VARCHAR(10), client_name VARCHAR, date_register TEXT, order_total NUMERIC, registered by TEXT, registered_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC)',
+        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, document_id INTEGER, document_number INTEGER, assigned_by  VARCHAR(10), assigned_to  VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, document_id INTEGER, document_number INTEGER, date_from TEXT, date_to TEXT, status VARCHAR(1))',
+        'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, document_id INTEGER, document_acronym VARCHAR, document_number INTEGER, assigned_by  VARCHAR(10), assigned_to  VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, date_from TEXT, date_to TEXT, status VARCHAR(1))',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS route_details(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, order_id INTEGER, routedetail_id INTEGER)',
       );
-      resolve(true);
     });
+    resolve(true);
   });
 }
 
@@ -356,36 +359,86 @@ export function saveOrders(orders) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql('DELETE FROM orders', [], (tx, results) => {});
-      tx.executeSql('DELETE FROM orders_details', [], (tx, results) => {});
+      tx.executeSql('DELETE FROM order_details', [], (tx, results) => {});
     });
     for (let i = 0; i < orders.length; i++) {
       let order = orders[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO orders(document_id, document_number, client_id, client_code, client_name, date_register, order_total, registered by, registered_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO orders (order_id, order_document, client, date_register, order_total, address, assigned) VALUES (?, ?, ?, ?, ?, ?, ?)',
           [
-            order.code,
-            order.name,
-            order.category,
-            order.phone_number,
-            order.country_id,
-            order.country_id,
+            order.order_id,
+            order.order_document,
+            order.client,
+            order.date_register,
+            order.order_total,
+            order.address,
+            order.assigned,
+          ],
+          (tx, results) => {
+            for (let e = 0; e < order.order_details.length; e++) {
+              let order_detail = order.order_details[e];
+              tx.executeSql(
+                'INSERT INTO order_details(order_id, orderdetail_id, detail_id, detail_type, detail_description, detail_quantity, detail_price, collected_quantity, collected_amount) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                  order_detail.order_id,
+                  order_detail.orderdetail_id,
+                  order_detail.detail_id,
+                  order_detail.detail_type,
+                  order_detail.detail_description,
+                  order_detail.quantity,
+                  order_detail.price,
+                  order_detail.collected_quantity,
+                  order_detail.collected_amount,
+                ],
+                (tx, results) => {},
+              );
+            }
+          },
+        );
+      });
+    }
+    resolve(true);
+  });
+}
+
+export function saveRoutes(routes) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM routes', [], (tx, results) => {});
+      tx.executeSql('DELETE FROM routes_details', [], (tx, results) => {});
+    });
+    for (let i = 0; i < routes.length; i++) {
+      let route = routes[i];
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO routes(route_id, document_id, document_acronym, document_number, assigned_by , assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [
+            route.route_id,
+            route.document_id,
+            route.document_acronym,
+            route.document_number,
+            route.assigned_by,
+            route.assigned_to,
+            route.supervisor_name,
+            route.employee_name,
+            route.phone_number,
+            route.date_from,
+            route.date_to,
+            route.status,
           ],
           (tx, results) => {},
         );
       });
-      for (let e = 0; e < orders.order_details.length; e++) {
-        let order_detail = orders.order_details[e];
+      for (let e = 0; e < route.route_details.length; e++) {
+        let route_detail = route.route_details[e];
         db.transaction(tx => {
           tx.executeSql(
-            'INSERT INTO orders(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price) VALUES(?, ?, ?, ?, ?, ?)',
+            'INSERT INTO routes_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
             [
-              order_detail.order_id,
-              order_detail.orderdetail_id,
-              order_detail.detail_type,
-              order_detail.detail_id,
-              order_detail.detail_quantity,
-              order_detail.detail_price,
+              route_detail.route_id,
+              route_detail.order_id,
+              route_detail.routedetail_id,
             ],
             (tx, results) => {},
           );
@@ -424,7 +477,7 @@ export function saveSubcategories(subcategories) {
       let subcategory = subcategories[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO subcategories(category_id, category_code, description, price) VALUES(?, ?, ?, ?) ',
+          'INSERT INTO subcategories(category_id, subcategory_code, description, price) VALUES(?, ?, ?, ?) ',
           [
             subcategory.category_id,
             subcategory.code,
@@ -448,7 +501,7 @@ export function saveArticles(articles) {
       let article = articles[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO articles(category_id, subcategory_id, category_code, description, price) VALUES(?, ?, ?, ?, ?) ',
+          'INSERT INTO articles(category_id, subcategory_id, article_code, description, price) VALUES(?, ?, ?, ?, ?) ',
           [
             article.category_id,
             article.subcategory_id,
@@ -492,9 +545,83 @@ export function getStoredRoutes(routes_status) {
   });
 }
 
-export function getStoredCategories() {
-  let arrCategories = [];
+export function getOrders() {
+  let arrOrders = [];
   return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(`SELECT * FROM orders`, [], (tx, results) => {
+        for (let i = 0; i < results.rows.length; ++i) {
+          let row = results.rows.item(i);
+          let orderObject = {
+            document: row.order_document,
+            client: row.client,
+            address: row.address,
+            order_total: row.order_total,
+            assigned: row.assigned,
+          };
+          arrOrders.push(orderObject);
+        }
+      });
+      resolve(arrOrders);
+    });
+  });
+}
+
+export function getAssignedOrders() {
+  let arrOrders = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              document: row.order_document,
+              client: row.client,
+              address: row.address,
+              name: row.name,
+              order_total: row.order_total,
+            };
+            arrOrders.push(orderObject);
+          }
+          resolve(arrOrders);
+        },
+      );
+    });
+  });
+}
+
+export function getNotAssignedOrders() {
+  return new Promise((resolve, reject) => {
+    let arrOrders = [];
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              document: row.order_document,
+              client: row.client,
+              name: row.name,
+              address: row.address,
+              order_total: row.order_total,
+            };
+            arrOrders.push(orderObject);
+          }
+          resolve(arrOrders);
+        },
+      );
+    });
+  });
+}
+
+export function getStoredCategories() {
+  return new Promise((resolve, reject) => {
+    let arrCategories = [];
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM categories', [], (tx, results) => {
         for (let i = 0; i < results.rows.length; ++i) {
@@ -521,7 +648,7 @@ export function getStoredSubcategories() {
           let row = results.rows.item(i);
           let subcategoryObject = {
             category_id: row.category_id,
-            subcategory_code: row.subcategory_code
+            subcategory_code: row.subcategory_code,
             description: row.description,
             price: row.price,
           };

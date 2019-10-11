@@ -79,7 +79,9 @@ export async function getData(apiOption) {
     '&employee_code=' +
     global.employee_code +
     '&country_id=' +
-    global.country_id;
+    global.country_id +
+    '&username=' +
+    global.userName;
   try {
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();

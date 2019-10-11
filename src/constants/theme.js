@@ -10,6 +10,7 @@ const colors = {
   gray3: '#CCCCCC',
   darkGray: '#424242',
   lightGray: '#E4E7E8',
+  success: '#2E9432',
 };
 
 const sizes = {

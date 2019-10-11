@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import {Available, Assigned} from './Tabs';
 // import {SearchBar} from '../../components';
+import {FetchingData} from '../../components';
 
 import {} from 'react-native-vector-icons';
 
@@ -32,9 +34,16 @@ import {
   Title,
   ActionSheet,
   Fab,
+  Tabs,
+  Tab,
 } from 'native-base';
 
-import {getOrders, saveOrders} from '../../helpers/sql_helper';
+import {
+  getOrders,
+  getAssignedOrders,
+  getNotAssignedOrders,
+  saveOrders,
+} from '../../helpers/sql_helper';
 import {getData} from '../../helpers/apiconnection_helper';
 
 export default class Orders extends Component {
@@ -49,6 +58,9 @@ export default class Orders extends Component {
     this.state = {
       data: [],
       show: true,
+      assigned: [],
+      not_assigned: [],
+      loading: false,
       date: `${day}/${month}/${year}`,
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
@@ -58,6 +70,9 @@ export default class Orders extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
+    this.availableTab = React.createRef();
+    this.notAvailableTab = React.createRef();
+    this.enterHandler();
   }
 
   static navigationOptions = {
@@ -68,7 +83,9 @@ export default class Orders extends Component {
     this.setState(previousState => ({show: !previousState.show}));
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.enterHandler();
+  }
 
   componentWillUnmount() {
     this.focusListener.remove();
@@ -84,19 +101,20 @@ export default class Orders extends Component {
 
   enterHandler = () => {
     this.setState({
-      loading: true,
+      loading: false,
       loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
     });
     this.storedOrders();
   };
 
   storedOrders = () => {
-    getOrders().then(orders => {
-      if (orders.length > 0) {
-        this.setState({data: orders, loading: false});
-      } else {
-        this.setState({loading: false});
-      }
+    getNotAssignedOrders().then(not_assigned => {
+      getAssignedOrders().then(assigned => {
+        this.setState({
+          not_assigned: not_assigned,
+          assigned: assigned,
+        });
+      });
     });
   };
 
@@ -116,7 +134,7 @@ export default class Orders extends Component {
       if (!this.state.request_timeout) {
         this.setState({loading: false, request_timeout: false});
         if (result.valid) {
-          saveOrders(result.arrResponse, []).then(res => {
+          saveOrders(result.arrResponse).then(res => {
             this.storedOrders();
           });
         } else {
@@ -139,7 +157,7 @@ export default class Orders extends Component {
     let renderItem = ({item}) => (
       <Item style={styles.list}>
         <View key={item.key} style={{marginLeft: 8}}>
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.client}</Text>
           <Text style={styles.address}>{item.address}</Text>
         </View>
         <Button
@@ -176,31 +194,26 @@ export default class Orders extends Component {
               <Title>{global.translate('TITLE_ORDERS')}</Title>
             </Body>
             <Right>
-              <Button transparent>
-                <Icon name="refresh" />
-              </Button>
-              <Button transparent>
-                <Icon name="funnel" />
-              </Button>
-              <Button
-                transparent
-                onPress={() => {
-                  this.showHideSearchBar;
-                }}>
-                <Icon name="search" />
-              </Button>
+              <FetchingData
+                syncData={this.refreshHandler}
+                fetching={this.state.loading}
+              />
             </Right>
           </Header>
-          <ScrollView>
-            <Content style={styles.content}>
-              <FlatList
-                style={{overflow: 'hidden'}}
-                data={data}
-                keyExtractor={item => item.id}
-                renderItem={renderItem}
+          <Tabs hasTabs>
+            <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
+              <Available
+                tab_data={this.state.not_assigned}
+                ref={this.availableTab}
               />
-            </Content>
-          </ScrollView>
+            </Tab>
+            <Tab heading={global.translate('TITLE_ASSIGNED')}>
+              <Assigned
+                tab_data={this.state.assigned}
+                ref={this.notAvailableTab}
+              />
+            </Tab>
+          </Tabs>
           <Fab
             style={{backgroundColor: theme.colors.primary}}
             position="bottomRight"

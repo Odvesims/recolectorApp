@@ -20,6 +20,8 @@ import {
   saveSubcategories,
   saveArticles,
   saveEmployees,
+  saveRoutes,
+  saveOrders,
 } from '../helpers/sql_helper';
 import {getData} from '../helpers/apiconnection_helper';
 
@@ -39,12 +41,6 @@ export default class Home extends Component {
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
     });
-    setTimeout(() => {
-      if (this.state.loading) {
-        this.setState({loading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
-      }
-    }, 30000);
     getData('GET_EMPLOYEES').then(emp => {
       if (!this.state.request_timeout) {
         saveEmployees(emp.arrResponse).then(res => {
@@ -57,9 +53,21 @@ export default class Home extends Component {
                       getData('GET_ARTICLES').then(art => {
                         if (!this.state.request_timeout) {
                           saveArticles(art.arrResponse).then(res => {
-                            this.setState({
-                              request_timeout: false,
-                              loading: false,
+                            getData('GET_ORDERS').then(ord => {
+                              if (!this.state.request_timeout) {
+                                saveOrders(ord.arrResponse).then(res => {
+                                  getData('GET_ROUTES').then(rte => {
+                                    if (!this.state.request_timeout) {
+                                      saveRoutes(rte.arrResponse).then(res => {
+                                        this.setState({
+                                          request_timeout: false,
+                                          loading: false,
+                                        });
+                                      });
+                                    }
+                                  });
+                                });
+                              }
                             });
                           });
                         }

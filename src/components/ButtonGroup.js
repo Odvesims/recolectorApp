@@ -161,8 +161,8 @@ const styles = {
     alignItems: 'center',
   },
   container: {
-    marginLeft: 10,
-    marginRight: 10,
+    // marginLeft: 10,
+    // marginRight: 10,
     marginBottom: 5,
     marginTop: 5,
     borderColor: '#e3e3e3',
@@ -174,7 +174,7 @@ const styles = {
     height: 40,
   },
   buttonText: {
-    fontSize: 13,
+    fontSize: 14,
     color: theme.colors.gray2,
     ...Platform.select({
       android: {},

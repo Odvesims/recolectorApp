@@ -74,5 +74,8 @@
   "TITLE_PRICE": "Precio",
   "TITLE_QUANTITY": "Cantidad",
   "TITLE_ACCEPT": "Aceptar",
-  "TITLE_NEW_ORDER": "Nueva Orden"
+  "TITLE_NEW_ORDER": "Nueva Orden",
+  "TITLE_NOT_ASSIGNED": "No Asignadas",
+  "TITLE_ASSIGNED": "Asignadas",
+  "TITLE_TOTAL": "Total"
 }

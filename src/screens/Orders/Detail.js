@@ -1,9 +1,13 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-// import ButtonDone from '../../../../components'
 import styled from 'styled-components/native';
-import {ScrollView} from 'react-native-gesture-handler';
 import CustomPicker from '../../components/CustomPicker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {
+  getStoredCategories,
+  getStoredSubcategories,
+  getStoredArticles,
+} from '../../helpers/sql_helper';
 
 import {ButtonGroup} from '../../components';
 
@@ -11,7 +15,6 @@ import {View, StyleSheet, TextInput} from 'react-native';
 import {
   Content,
   Container,
-  Picker,
   Left,
   Right,
   Title,
@@ -20,18 +23,9 @@ import {
   Button,
   Icon,
   Text,
-  List,
-  Order,
-  Radio,
   Form,
-
-  //   DatePicker,
 } from 'native-base';
-import {
-  getStoredCategories,
-  getStoredSubcategories,
-  getStoredArticles,
-} from '../../helpers/sql_helper';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const CustomButton = styled(Button)`
   background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
@@ -46,43 +40,137 @@ const CustomButton = styled(Button)`
 export default class Detail extends Component {
   constructor(props) {
     super(props);
-    this.state = {selectedIndex: 2};
-    this.getArticlesData();
+    this.state = {
+      theItem: {},
+      selectedIndex: 2,
+      categories: [],
+      subcategories: [],
+      articles: [],
+      picker_data: [],
+      article: '',
+      article_price: '',
+      quantity: 1,
+      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+    };
     this.selectedItem = this.selectedItem.bind(this);
+    this.getArticlesData();
   }
 
-  getClientsHandler() {
+  getArticlesData() {
     getStoredCategories().then(categories => {
       getStoredSubcategories().then(subcategories => {
         getStoredArticles().then(articles => {
-          this.setArticlesPicker(categories).then(res => {
-            this.setState({clients: res});
+          this.setArticlesPicker(articles).then(res => {
+            this.setState({
+              categories: categories,
+              subcategories: subcategories,
+              articles: articles,
+              picker_data: res,
+            });
           });
         });
       });
     });
   }
 
-  setClientsPicker(clients) {
+  changeQuantity(theQuantity) {
+    this.setState({
+      quantity: theQuantity,
+      total: this.state.article_price * theQuantity,
+      selItem: {
+        item: this.state.theItem.Name.split('-')[0],
+        description: this.state.theItem.Name.split('-')[1],
+        price: this.state.theItem.Code,
+        quantity: theQuantity,
+      },
+    });
+  }
+
+  setCategoriesPicker(categories) {
     return new Promise((resolve, reject) => {
-      let arrClients = [];
-      for (let i = 0; i < clients.length; ++i) {
-        let client = clients[i];
-        arrClients.push({
-          Name: client.client_code + '- ' + client.name,
-          Code: client.client_code,
-          Address: client.address,
-          City: client.city,
-          State: client.state,
-          Phone: client.phone_number,
+      let arrCategories = [];
+      for (let i = 0; i < categories.length; ++i) {
+        let category = categories[i];
+        arrCategories.push({
+          Name: category.category_code + '- ' + category.description,
+          Code: category.price,
         });
       }
-      resolve(arrClients);
+      resolve(arrCategories);
+    });
+  }
+
+  setSubcategoriesPicker(subcategories) {
+    return new Promise((resolve, reject) => {
+      let arrSubcategories = [];
+      for (let i = 0; i < subcategories.length; ++i) {
+        let subcategory = subcategories[i];
+        arrSubcategories.push({
+          Name: subcategory.subcategory_code + '- ' + subcategory.description,
+          Code: subcategory.price,
+        });
+      }
+      resolve(arrSubcategories);
+    });
+  }
+
+  setArticlesPicker(articles) {
+    return new Promise((resolve, reject) => {
+      let arrArticles = [];
+      for (let i = 0; i < articles.length; ++i) {
+        let article = articles[i];
+        arrArticles.push({
+          Name: article.article_code + '- ' + article.description,
+          Code: article.price,
+        });
+      }
+      resolve(arrArticles);
     });
   }
 
   updateIndex = selectedIndex => {
-    this.setState({selectedIndex});
+    switch (selectedIndex) {
+      case 0:
+        this.setCategoriesPicker(this.state.categories).then(res => {
+          this.setState({
+            selectedIndex,
+            picker_data: res,
+            theItem: {},
+            selectedItem: {Name: '', Code: ''},
+            placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
+            article_price: '',
+            total: 0,
+            quantity: '',
+          });
+        });
+        break;
+      case 1:
+        this.setSubcategoriesPicker(this.state.subcategories).then(res => {
+          this.setState({
+            selectedIndex,
+            picker_data: res,
+            theItem: {},
+            placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
+            article_price: '',
+            total: 0,
+            quantity: '',
+          });
+        });
+        break;
+      case 2:
+        this.setArticlesPicker(this.state.articles).then(res => {
+          this.setState({
+            selectedIndex,
+            picker_data: res,
+            theItem: {},
+            placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+            article_price: '',
+            total: 0,
+            quantity: '',
+          });
+        });
+        break;
+    }
   };
 
   static navigationOptions = {
@@ -91,19 +179,26 @@ export default class Detail extends Component {
 
   selectedItem(item) {
     this.setState({
-      article: item.Description,
-      article_price: item.Price,
+      theItem: item,
+      article: item.Name,
+      article_price: item.Code,
+      total: item.Code * this.state.quantity,
+      selItem: {
+        item: item.Name.split('-')[0],
+        description: item.Name.split('-')[1],
+        price: item.Code,
+        quantity: this.state.quantity,
+      },
     });
   }
 
   render() {
-    const {close} = this.props;
     const buttons = [
       global.translate('TITLE_CATEGORY'),
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
-    const {selectedIndex} = this.state;
+    const {selectedIndex, article_price, quantity} = this.state;
 
     return (
       <Container>
@@ -118,16 +213,10 @@ export default class Detail extends Component {
           <Body>
             <Title>{global.translate('TITLE_ARTICLE')}</Title>
           </Body>
-          <Right>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('Order')}>
-              <Icon name="checkmark" />
-            </Button>
-          </Right>
+          <Right />
         </Header>
         <Content style={styles.container}>
-          <ScrollView>
+          <KeyboardAwareScrollView>
             <Form>
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_SELECT')}</Text>
@@ -139,29 +228,50 @@ export default class Detail extends Component {
                 />
               </View>
               <View style={styles.paddingBottom}>
-                <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
-                <CustomPicker />
-              </View>
-
-              <View style={styles.paddingBottom}>
-                <Text>{global.translate('TITLE_PRICE')}</Text>
-                <TextInput
-                  style={styles.inputNumber}
-                  keyboardType="number-pad"
-                  onChangeText={item => {}}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{color: theme.colors.success}}>
+                      {global.translate('TITLE_PRICE')}:{' '}
+                    </Text>
+                    <Text
+                      style={{color: theme.colors.success, fontWeight: 'bold'}}>
+                      $ {article_price}
+                    </Text>
+                  </View>
+                </View>
+                <CustomPicker
+                  placeholder={this.state.placeholder}
+                  selectedHolder={this.selectedItem.Name}
+                  items={this.state.picker_data}
+                  selectedItem={this.selectedItem}
                 />
               </View>
 
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_QUANTITY')}</Text>
                 <TextInput
+                  ref={input => {
+                    this.secondTextInput = input;
+                  }}
                   style={styles.inputNumber}
                   keyboardType="number-pad"
-                  onChangeText={item => {}}
+                  onChangeText={quantity => {
+                    this.changeQuantity(quantity);
+                  }}
                 />
               </View>
             </Form>
-          </ScrollView>
+            <View style={styles.totalPriceContainer}>
+              <Text style={styles.totalPrice}>
+                {global.translate('TITLE_TOTAL')}: $ {this.state.total}
+              </Text>
+            </View>
+          </KeyboardAwareScrollView>
         </Content>
         <View style={styles.actionContainer}>
           <CustomButton
@@ -173,7 +283,12 @@ export default class Detail extends Component {
               {global.translate('TITLE_CANCEL')}
             </Text>
           </CustomButton>
-          <CustomButton>
+          <CustomButton
+            onPress={() => {
+              this.props.navigation.navigate('Order', {
+                selItem: this.state.selItem,
+              });
+            }}>
             <Text>{global.translate('TITLE_ACCEPT')}</Text>
           </CustomButton>
         </View>
@@ -183,35 +298,9 @@ export default class Detail extends Component {
 }
 
 const styles = StyleSheet.create({
-  marginLeft: {
-    marginLeft: 4,
-  },
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
-  },
-
   container: {
     flex: 1,
     padding: theme.sizes.padding,
-  },
-
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  button: {
-    fontSize: theme.sizes.caption,
-    textTransform: 'uppercase',
-    backgroundColor: '#4285F4',
-  },
-
-  textCenter: {
-    alignItems: 'center',
   },
 
   input: {
@@ -224,45 +313,17 @@ const styles = StyleSheet.create({
   },
 
   inputNumber: {
-    flexBasis: '50%',
+    width: '25%',
     marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
+    padding: theme.sizes.p8,
     borderWidth: 1,
     borderColor: theme.colors.gray2,
     borderRadius: 4,
     color: '#000',
   },
 
-  label: {
-    fontSize: theme.sizes.base,
-    color: theme.colors.darkGray,
-  },
-
-  labelForgot: {
-    color: theme.colors.primary,
-    fontSize: theme.fonts.caption.fontSize,
-    alignSelf: 'flex-end',
-  },
   paddingBottom: {
     paddingBottom: theme.sizes.padding,
-  },
-
-  addPoint: {
-    flex: 1,
-    padding: theme.sizes.padding,
-    backgroundColor: theme.colors.lightGray,
-  },
-
-  buttonGhost: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: theme.colors.primary,
-    borderWidth: 1,
-    paddingVertical: 12,
-    borderRadius: 4,
-    alignItems: 'center',
   },
 
   actionContainer: {
@@ -278,7 +339,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-  radioButton: {
-    flexDirection: 'row',
+  totalPrice: {
+    color: theme.colors.success,
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
   },
+  totalPriceContainer: {
+    borderColor: theme.colors.success,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    padding: theme.sizes.p12,
+
+    alignItems: 'center',
+    backgroundColor: 'rgba(7, 139, 117, 0.05)',
+  },
+  price: {},
 });
