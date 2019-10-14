@@ -88,7 +88,7 @@ export default class Orders extends Component {
   }
 
   componentWillUnmount() {
-    this.focusListener.remove();
+    // this.focusListener.remove();
   }
 
   refresh(value) {

@@ -30,8 +30,8 @@ import Order from '../screens/Orders/Order';
 import Detail from '../screens/Orders/Detail';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
-import Logout from '../screens/Logout';
 import SplashScreen from '../screens/SplashScreen';
+import Home from '../screens/HomeScreen';
 
 const AuthNavigator = createStackNavigator(
   {
@@ -88,17 +88,19 @@ const OrdersScreen = createStackNavigator(
 
 const AppNavigator = createDrawerNavigator(
   {
-    HomeScreen: HomeScreen,
+    HomeScreen: {
+      screen: HomeScreen,
+      navigationOptions: {
+        drawerLockMode: 'unlocked',
+      },
+    },
     ClientScreen: ClientScreen,
     RouteScreen: RouteScreen,
     OrderScreen: OrdersScreen,
     ConfigScreen: ConfigScreen,
-    Logout: {
-      screen: Logout,
-    },
   },
   {
-    headerMode: 'none',
+    // headerMode: 'none',
     contentComponent: props => <SideBar {...props} />,
     contentOptions: {
       activeTintColor: theme.colors.primary,

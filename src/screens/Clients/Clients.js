@@ -68,7 +68,7 @@ export default class Clients extends Component {
   }
 
   componentDidMount() {
-    /*const {navigation} = this.props;
+    const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       try {
         let new_record = navigation.state.params.new_record;
@@ -76,7 +76,7 @@ export default class Clients extends Component {
       } catch (err) {
         this.enterHandler();
       }
-    });*/
+    });
   }
 
   componentWillUnmount() {

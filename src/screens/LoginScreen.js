@@ -29,8 +29,8 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: 'ovaldez',
-      userPassword: '901090',
+      userName: 'aramirez',
+      userPassword: '101010',
       hostName: '',
       portNumber: 444,
       visible: false,
@@ -194,6 +194,7 @@ export default class LoginScreen extends Component {
               value={this.state.userPassword}
             />
             <CustomButton
+              style={{marginTop: 50}}
               customClick={this.customClickHandler}
               title={global.translate('TITLE_SIGNIN')}
             />
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   },
 
   NormalText: {
-    marginLeft: 10,
+    // marginLeft: 10,
     marginTop: 20,
     textAlign: 'left',
   },

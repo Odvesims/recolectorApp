@@ -19,8 +19,9 @@ export default class CustomTextInput extends Component {
     return (
       <View
         style={{
-          marginLeft: 10,
-          marginRight: 35,
+          // marginLeft: 10,
+          // marginRight: 35,
+          paddingLeft: 8,
           marginTop: 10,
           borderColor: '#BDBDBD',
           borderWidth: 1,
