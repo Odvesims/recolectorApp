@@ -23,6 +23,7 @@ import HomeScreen from '../screens/HomeScreen';
 // Routes
 import Routes from '../screens/Routes/Routes';
 import NewRoute from '../screens/Routes/NewRoute';
+import OrderList from '../screens/Routes/OrderList';
 // Orders
 import Orders from '../screens/Orders/Orders';
 import Order from '../screens/Orders/Order';
@@ -55,7 +56,7 @@ const ClientScreen = createStackNavigator(
     Client: Client,
   },
   {
-    initialRouteName: 'Clients',
+    initialRouteParams: 'Clients',
     headerMode: 'none',
   },
 );
@@ -64,9 +65,10 @@ const RouteScreen = createStackNavigator(
   {
     Routes: Routes,
     NewRoute: NewRoute,
+    OrderList: OrderList,
   },
   {
-    initialRouteName: 'Routes',
+    initialRouteParams: 'Routes',
     headerMode: 'none',
   },
 );
@@ -78,7 +80,7 @@ const OrdersScreen = createStackNavigator(
     Detail: Detail,
   },
   {
-    initialRouteName: 'Orders',
+    initialRouteParams: 'Orderss',
     headerMode: 'none',
     mode: 'modal',
   },
@@ -114,7 +116,7 @@ const Navigation = createSwitchNavigator(
     Auth: AuthNavigator,
   },
   {
-    initialRouteName: 'Splash',
+    initialRouteName: 'Auth',
   },
 );
 

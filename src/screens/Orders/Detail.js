@@ -353,5 +353,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(7, 139, 117, 0.05)',
   },
-  price: {},
+  code: {
+    textAlign: 'left',
+    fontSize: 14,
+    color: theme.colors.gray,
+    fontWeight: 'bold',
+  },
+
+  name: {
+    flexBasis: 150,
+    fontSize: 16,
+    color: 'black',
+    fontWeight: 'bold',
+    overflow: 'scroll',
+    flexGrow: 2,
+
+    flexWrap: 'nowrap',
+  },
+
+  price: {
+    flexShrink: 10,
+    color: theme.colors.success,
+    fontSize: 14,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
+  },
+
+  address: {
+    fontSize: 12,
+    color: 'gray',
+    overflow: 'hidden',
+    flexWrap: 'nowrap',
+  },
 });

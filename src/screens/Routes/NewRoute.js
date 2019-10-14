@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import PickerModal from 'react-native-picker-modal-view';
+import employees from '../../country_states/dr.json';
+import CustomPicker from '../../components/CustomPicker';
 import {
   Text,
   View,
@@ -20,10 +23,19 @@ import {
   Icon,
   Form,
   DatePicker,
+  Picker,
 } from 'native-base';
 
 export class NewRoute extends Component {
-  state = {chosenDate: new Date()};
+  constructor(props) {
+    super(props);
+    this.selectedItem = this.selectedItem.bind(this);
+  }
+
+  state = {
+    chosenDate: new Date(),
+  };
+
   setDate = this.setDate.bind(this);
 
   static navigationOptions = {
@@ -33,7 +45,21 @@ export class NewRoute extends Component {
   setDate(newDate) {
     this.setState({chosenDate: newDate});
   }
+
+  // selectedItem = item => {
+  //   this.selectedItem(item);
+  // };
+
+  selectedItem(item) {
+    alert(item.Name);
+    this.setState({
+      selected_item: item,
+    });
+  }
+
   render() {
+    const {selectedItem, employeeText} = this.state;
+
     return (
       <Container style={{flex: 1}}>
         <Header>
@@ -54,7 +80,7 @@ export class NewRoute extends Component {
             </Button>
           </Right>
         </Header>
-        <Content style={{flex: 1}}>
+        <Content style={{backgroundColor: theme.colors.lightGray}}>
           <View style={styles.container}>
             <Form>
               <View style={styles.paddingBottom}>
@@ -68,39 +94,46 @@ export class NewRoute extends Component {
               </View>
               <View style={styles.paddingBottom}>
                 <Text style={styles.label}>Fecha límite</Text>
-                <DatePicker
-                  defaultDate={new Date(2018, 4, 4)}
-                  minimumDate={new Date(2018, 1, 1)}
-                  maximumDate={new Date(2018, 12, 31)}
-                  locale={'es'}
-                  timeZoneOffsetInMinutes={undefined}
-                  modalTransparent={false}
-                  animationType={'fade'}
-                  androidMode={'default'}
-                  placeHolderText="Select date"
-                  textStyle={{color: 'green'}}
-                  placeHolderTextStyle={{color: '#d3d3d3'}}
-                  onDateChange={this.setDate}
-                  disabled={false}
-                />
+                <View style={styles.datepicker}>
+                  <DatePicker
+                    defaultDate={new Date(2018, 4, 4)}
+                    minimumDate={new Date(2018, 1, 1)}
+                    maximumDate={new Date(2018, 12, 31)}
+                    locale={'es'}
+                    timeZoneOffsetInMinutes={undefined}
+                    modalTransparent={false}
+                    animationType={'fade'}
+                    androidMode={'default'}
+                    placeHolderText="Select date"
+                    textStyle={{color: theme.colors.gray, fontSize: 14}}
+                    placeHolderTextStyle={{
+                      color: theme.colors.gray2,
+                      fontSize: 14,
+                    }}
+                    onDateChange={this.setDate}
+                    disabled={false}
+                  />
+                </View>
               </View>
+
               <View>
                 <Text style={styles.label}>Empleado</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Seleccione el empleado"
-                  returnKeyType="go"
-                  onChangeText={item => {}}
+                {/* CustomPicker */}
+                <CustomPicker
+                  placeholder="Seleccione un elemento"
+                  items={employees}
+                  selectedItem={this.selectedItem}
                 />
               </View>
             </Form>
           </View>
+
           <View style={styles.addPoint}>
             <View>{}</View>
             <TouchableOpacity
               style={styles.buttonGhost}
               onPress={() => {
-                this.props.navigation.navigate('');
+                this.props.navigation.navigate('OrderList');
               }}>
               <Icon name="add" style={{color: theme.colors.primary}} />
               <Text
@@ -110,7 +143,7 @@ export class NewRoute extends Component {
                   color: theme.colors.primary,
                   textTransform: 'uppercase',
                 }}>
-                Punto
+                Orden
               </Text>
             </TouchableOpacity>
           </View>
@@ -131,6 +164,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: theme.sizes.padding,
+    backgroundColor: theme.colors.white,
   },
 
   title: {
@@ -159,6 +193,15 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 
+  datepicker: {
+    marginVertical: theme.sizes.p8,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: theme.colors.gray2,
+    borderRadius: 4,
+    color: '#000',
+  },
+
   label: {
     fontSize: theme.sizes.base,
     color: theme.colors.darkGray,
@@ -169,12 +212,12 @@ const styles = StyleSheet.create({
     fontSize: theme.fonts.caption.fontSize,
     alignSelf: 'flex-end',
   },
+
   paddingBottom: {
     paddingBottom: theme.sizes.padding,
   },
 
   addPoint: {
-    flex: 1,
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.lightGray,
   },

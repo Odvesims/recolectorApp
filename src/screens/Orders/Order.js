@@ -18,6 +18,7 @@ import {
   Root,
   Item,
   ActionSheet,
+  Content,
 } from 'native-base';
 
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
@@ -110,19 +111,36 @@ class Order extends Component {
   }
 
   render() {
+    let ClientInfo = null;
+    const {client} = this.state;
+
+    if (!client == '') {
+      ClientInfo = (
+        <View>
+          <Text style={styles.client_data}>{this.state.client_address}</Text>
+          <Text style={styles.client_data}>{this.state.client_city}</Text>
+          <Text style={styles.client_data}>{this.state.client_state}</Text>
+          <Text style={styles.client_data}>{this.state.client_phone}</Text>
+        </View>
+      );
+    }
+
     let renderItem = ({item}) => (
       <Item style={styles.list}>
-        <View
-          key={item.key}
-          style={{
-            marginRight: 12,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexBasis: '100%',
-          }}>
-          <Text style={styles.name}>{item.description}</Text>
-          <Text style={styles.address}>{item.quantity}</Text>
+        <View key={item.key} style={styles.listContainer}>
+          <View
+            key={item.key}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <Text numberOfLines={1} style={styles.name}>
+              {item.description}
+            </Text>
+            <Text numberOfLines={1} style={styles.quantity}>
+              {item.quantity}
+            </Text>
+          </View>
         </View>
         <Button
           transparent
@@ -171,56 +189,52 @@ class Order extends Component {
               </Button>
             </Right>
           </Header>
-          <View style={{flexDirection: 'column', flex: 1}}>
+
+          {/* Content */}
+          <View
+            style={{
+              flexDirection: 'column',
+              flex: 1,
+              backgroundColor: theme.colors.lightGray,
+            }}>
             <View>
-              <View>
-                <View style={styles.currentDate}>
-                  <Text style={styles.currentDateText}>
-                    {global.translate('TITLE_DATE')}
-                  </Text>
-                  <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                    {`: ${this.props.navigation.state.params.date}`}
+              <View style={styles.currentDate}>
+                <Text style={styles.currentDateText}>
+                  {global.translate('TITLE_DATE')}
+                </Text>
+                <Text style={({marginLeft: 4}, styles.currentDateText)}>
+                  {`: ${this.props.navigation.state.params.date}`}
+                </Text>
+              </View>
+              <Form style={styles.container}>
+                <View>
+                  <Text>{global.translate('TITLE_CLIENT')}</Text>
+                  <CustomPicker
+                    items={this.state.clients}
+                    placeholder={this.state.placeholder}
+                    value={this.state.client}
+                    selectedItem={this.selectedItem}
+                  />
+                </View>
+                {ClientInfo}
+              </Form>
+            </View>
+            <View style={{flex: 1}}>
+              <View style={styles.addPoint}>
+                <View style={{paddingBottom: 8}}>
+                  <Text style={styles.detailText}>
+                    {global.translate('TITLE_DETAILS')}
                   </Text>
                 </View>
-                <Form style={styles.container}>
-                  <View style={styles.paddingBottom}>
-                    <Text>{global.translate('TITLE_CLIENT')}</Text>
-                    <CustomPicker
-                      items={this.state.clients}
-                      placeholder={this.state.placeholder}
-                      value={this.state.client}
-                      selectedItem={this.selectedItem}
-                    />
-                    <Text style={styles.client_data}>
-                      {this.state.client_address}
-                    </Text>
-                    <Text style={styles.client_data}>
-                      {this.state.client_city}
-                    </Text>
-                    <Text style={styles.client_data}>
-                      {this.state.client_state}
-                    </Text>
-                    <Text style={styles.client_data}>
-                      {this.state.client_phone}
-                    </Text>
-                  </View>
-                </Form>
-              </View>
-              <View style={{backgroundColor: 'gray'}}>
-                <View style={styles.addPoint}>
-                  <View style={{paddingBottom: 8}}>
-                    <Text style={styles.detailText}>
-                      {global.translate('TITLE_DETAILS')}
-                    </Text>
-                  </View>
-                  <ScrollView>
+                <ScrollView>
+                  <View>
                     <FlatList
-                      style={{overflow: 'hidden'}}
+                      style={{overflow: 'hidden', marginBottom: 12}}
                       data={data}
                       keyExtractor={item => item.id}
                       renderItem={renderItem}
                     />
-                  </ScrollView>
+                  </View>
                   <TouchableOpacity
                     style={styles.buttonGhost}
                     onPress={() => {
@@ -237,7 +251,7 @@ class Order extends Component {
                       {global.translate('TITLE_DETAILS')}
                     </Text>
                   </TouchableOpacity>
-                </View>
+                </ScrollView>
               </View>
             </View>
           </View>
@@ -265,6 +279,7 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     padding: theme.sizes.padding,
+    backgroundColor: theme.colors.white,
   },
 
   client_data: {
@@ -275,10 +290,16 @@ const styles = StyleSheet.create({
 
   list: {
     margin: 5,
+    flex: 1,
     backgroundColor: 'white',
-    height: 80,
+    alignItems: 'center',
     paddingLeft: 12,
     elevation: 1,
+  },
+
+  listContainer: {
+    flex: 1,
+    paddingVertical: 12,
   },
 
   title: {
@@ -318,14 +339,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
 
-  paddingBottom: {
-    paddingBottom: theme.sizes.padding,
-  },
-
   addPoint: {
-    // flex: 2,
     padding: theme.sizes.padding,
-    backgroundColor: theme.colors.lightGray,
+    marginBottom: 24,
   },
 
   actionContainer: {
@@ -350,6 +366,24 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 4,
     alignItems: 'center',
+  },
+
+  name: {
+    flexBasis: 150,
+    fontSize: 16,
+    color: 'black',
+    fontWeight: 'bold',
+    overflow: 'scroll',
+    flexGrow: 2,
+    flexWrap: 'nowrap',
+  },
+
+  quantity: {
+    flexShrink: 10,
+    color: theme.colors.success,
+    fontSize: 14,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
   },
 });
 

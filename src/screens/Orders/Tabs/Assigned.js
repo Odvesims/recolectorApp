@@ -77,17 +77,16 @@ export class Assigned extends Component {
     );
 
     return (
-      <ScrollView>
-        <Content style={styles.content}>
+      <Content style={styles.content}>
+        <ScrollView>
           <FlatList
             style={{overflow: 'hidden'}}
             data={this.props.tab_data}
             keyExtractor={item => item.id}
             renderItem={renderItem}
           />
-        </Content>
-        {/* Content */}
-      </ScrollView>
+        </ScrollView>
+      </Content>
     );
   }
 }
@@ -107,7 +106,6 @@ const styles = StyleSheet.create({
     margin: 5,
     flex: 1,
     backgroundColor: 'white',
-    height: 80,
     alignItems: 'center',
     paddingLeft: 12,
     elevation: 1,
@@ -140,7 +138,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     overflow: 'scroll',
     flexGrow: 2,
-
     flexWrap: 'nowrap',
   },
 
