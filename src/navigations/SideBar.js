@@ -42,6 +42,11 @@ const primaryRoutes = [
     icon: 'navigate',
     text: 'TITLE_ROUTES',
   },
+  {
+    name: 'MyRoutesScreen',
+    icon: 'list-box',
+    text: 'TITLE_MYROUTES',
+  },
 ];
 
 const secondaryRoutes = [

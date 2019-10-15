@@ -32,6 +32,10 @@ import Detail from '../screens/Orders/Detail';
 import ConfigScreen from '../screens/ConfigScreen';
 import SplashScreen from '../screens/SplashScreen';
 import Home from '../screens/HomeScreen';
+//MyRoutes
+import MyRoutes from '../screens/MyRoutes/MyRoutes';
+import RouteDetail from '../screens/MyRoutes/RouteDetail';
+import Registry from '../screens/MyRoutes/Registry';
 
 const AuthNavigator = createStackNavigator(
   {
@@ -39,6 +43,18 @@ const AuthNavigator = createStackNavigator(
     Configuration: ConfigScreen,
   },
   {
+    headerMode: 'none',
+  },
+);
+
+const MyRoutesScreen = createStackNavigator(
+  {
+    MyRoutes: MyRoutes,
+    RouteDetail: RouteDetail,
+    Registry: Registry,
+  },
+  {
+    initialRouteParams: 'MyRoutes',
     headerMode: 'none',
   },
 );
@@ -98,6 +114,7 @@ const AppNavigator = createDrawerNavigator(
     RouteScreen: RouteScreen,
     OrderScreen: OrdersScreen,
     ConfigScreen: ConfigScreen,
+    MyRoutesScreen: MyRoutesScreen,
   },
   {
     // headerMode: 'none',
