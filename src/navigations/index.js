@@ -23,6 +23,7 @@ import HomeScreen from '../screens/HomeScreen';
 // Routes
 import Routes from '../screens/Routes/Routes';
 import NewRoute from '../screens/Routes/NewRoute';
+import OrderList from '../screens/Routes/OrderList';
 // Orders
 import Orders from '../screens/Orders/Orders';
 import Order from '../screens/Orders/Order';
@@ -64,6 +65,7 @@ const RouteScreen = createStackNavigator(
   {
     Routes: Routes,
     NewRoute: NewRoute,
+    OrderList: OrderList,
   },
   {
     initialRouteName: 'Routes',

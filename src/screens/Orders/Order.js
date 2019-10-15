@@ -18,16 +18,20 @@ import {
   Root,
   Item,
   ActionSheet,
+  Content,
 } from 'native-base';
 
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {getStoredClients} from '../../helpers/sql_helper';
+import {dataOperation} from '../../helpers/apiconnection_helper';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      loading: false,
       modalVisible: false,
       show: false,
       date: '',
@@ -68,6 +72,36 @@ class Order extends Component {
       });
     });
   }
+
+  execOperation = () => {
+    let order_data = {
+      setma_id: global.setma_id,
+      client_code: this.state.client.split('-')[0],
+      supervisor_code: global.employee_code,
+      order_state: 'A',
+      order_completed: false,
+      order_details: this.state.data,
+    };
+    this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
+    dataOperation('ORDER_OPERATION', order_data).then(res => {
+      if (res.valid) {
+        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        this.setState({
+          clients: [],
+          client: '',
+          client_address: '',
+          client_city: '',
+          client_state: '',
+          client_phone: '',
+          placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+          data: [],
+          loading: false,
+        });
+      } else {
+        this.setState({loading: false});
+      }
+    });
+  };
 
   setClientsPicker(clients) {
     return new Promise((resolve, reject) => {
@@ -110,19 +144,36 @@ class Order extends Component {
   }
 
   render() {
+    let ClientInfo = null;
+    const {client} = this.state;
+
+    if (!client == '') {
+      ClientInfo = (
+        <View>
+          <Text style={styles.client_data}>{this.state.client_address}</Text>
+          <Text style={styles.client_data}>{this.state.client_city}</Text>
+          <Text style={styles.client_data}>{this.state.client_state}</Text>
+          <Text style={styles.client_data}>{this.state.client_phone}</Text>
+        </View>
+      );
+    }
+
     let renderItem = ({item}) => (
       <Item style={styles.list}>
-        <View
-          key={item.key}
-          style={{
-            marginRight: 12,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexBasis: '100%',
-          }}>
-          <Text style={styles.name}>{item.description}</Text>
-          <Text style={styles.address}>{item.quantity}</Text>
+        <View key={item.key} style={styles.listContainer}>
+          <View
+            key={item.key}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <Text numberOfLines={1} style={styles.name}>
+              {item.description}
+            </Text>
+            <Text numberOfLines={1} style={styles.quantity}>
+              {item.quantity}
+            </Text>
+          </View>
         </View>
         <Button
           transparent
@@ -151,6 +202,13 @@ class Order extends Component {
       <Root>
         <Container>
           <Header>
+            <Spinner
+              visible={this.state.loading}
+              textContent={global.translate(this.state.loadingMessage)}
+              color={'CE2424'}
+              overlayColor={'rgba(255, 255, 255, 0.4)'}
+              animation={'slide'}
+            />
             <Left>
               <Button
                 transparent
@@ -164,63 +222,57 @@ class Order extends Component {
               </Title>
             </Body>
             <Right>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.navigate('OrderScreen')}>
+              <Button transparent onPress={this.execOperation}>
                 <Icon name="checkmark" />
               </Button>
             </Right>
           </Header>
-          <View style={{flexDirection: 'column', flex: 1}}>
+
+          {/* Content */}
+          <View
+            style={{
+              flexDirection: 'column',
+              flex: 1,
+              backgroundColor: theme.colors.lightGray,
+            }}>
             <View>
-              <View>
-                <View style={styles.currentDate}>
-                  <Text style={styles.currentDateText}>
-                    {global.translate('TITLE_DATE')}
-                  </Text>
-                  <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                    {`: ${this.props.navigation.state.params.date}`}
+              <View style={styles.currentDate}>
+                <Text style={styles.currentDateText}>
+                  {global.translate('TITLE_DATE')}
+                </Text>
+                <Text style={({marginLeft: 4}, styles.currentDateText)}>
+                  {`: ${this.props.navigation.state.params.date}`}
+                </Text>
+              </View>
+              <Form style={styles.container}>
+                <View>
+                  <Text>{global.translate('TITLE_CLIENT')}</Text>
+                  <CustomPicker
+                    items={this.state.clients}
+                    placeholder={this.state.placeholder}
+                    value={this.state.client}
+                    selectedItem={this.selectedItem}
+                  />
+                </View>
+                {ClientInfo}
+              </Form>
+            </View>
+            <View style={{flex: 1}}>
+              <View style={styles.addPoint}>
+                <View style={{paddingBottom: 8}}>
+                  <Text style={styles.detailText}>
+                    {global.translate('TITLE_DETAILS')}
                   </Text>
                 </View>
-                <Form style={styles.container}>
-                  <View style={styles.paddingBottom}>
-                    <Text>{global.translate('TITLE_CLIENT')}</Text>
-                    <CustomPicker
-                      items={this.state.clients}
-                      placeholder={this.state.placeholder}
-                      value={this.state.client}
-                      selectedItem={this.selectedItem}
-                    />
-                    <Text style={styles.client_data}>
-                      {this.state.client_address}
-                    </Text>
-                    <Text style={styles.client_data}>
-                      {this.state.client_city}
-                    </Text>
-                    <Text style={styles.client_data}>
-                      {this.state.client_state}
-                    </Text>
-                    <Text style={styles.client_data}>
-                      {this.state.client_phone}
-                    </Text>
-                  </View>
-                </Form>
-              </View>
-              <View style={{backgroundColor: 'gray'}}>
-                <View style={styles.addPoint}>
-                  <View style={{paddingBottom: 8}}>
-                    <Text style={styles.detailText}>
-                      {global.translate('TITLE_DETAILS')}
-                    </Text>
-                  </View>
-                  <ScrollView>
+                <ScrollView>
+                  <View>
                     <FlatList
-                      style={{overflow: 'hidden'}}
+                      style={{overflow: 'hidden', marginBottom: 12}}
                       data={data}
                       keyExtractor={item => item.id}
                       renderItem={renderItem}
                     />
-                  </ScrollView>
+                  </View>
                   <TouchableOpacity
                     style={styles.buttonGhost}
                     onPress={() => {
@@ -237,7 +289,7 @@ class Order extends Component {
                       {global.translate('TITLE_DETAILS')}
                     </Text>
                   </TouchableOpacity>
-                </View>
+                </ScrollView>
               </View>
             </View>
           </View>
@@ -265,6 +317,7 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     padding: theme.sizes.padding,
+    backgroundColor: theme.colors.white,
   },
 
   client_data: {
@@ -275,10 +328,16 @@ const styles = StyleSheet.create({
 
   list: {
     margin: 5,
+    flex: 1,
     backgroundColor: 'white',
-    height: 80,
+    alignItems: 'center',
     paddingLeft: 12,
     elevation: 1,
+  },
+
+  listContainer: {
+    flex: 1,
+    paddingVertical: 12,
   },
 
   title: {
@@ -318,14 +377,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
 
-  paddingBottom: {
-    paddingBottom: theme.sizes.padding,
-  },
-
   addPoint: {
-    // flex: 2,
     padding: theme.sizes.padding,
-    backgroundColor: theme.colors.lightGray,
+    marginBottom: 24,
   },
 
   actionContainer: {
@@ -350,6 +404,24 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 4,
     alignItems: 'center',
+  },
+
+  name: {
+    flexBasis: 150,
+    fontSize: 16,
+    color: 'black',
+    fontWeight: 'bold',
+    overflow: 'scroll',
+    flexGrow: 2,
+    flexWrap: 'nowrap',
+  },
+
+  quantity: {
+    flexShrink: 10,
+    color: theme.colors.success,
+    fontSize: 14,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
   },
 });
 

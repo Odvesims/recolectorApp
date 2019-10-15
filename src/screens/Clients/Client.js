@@ -83,8 +83,8 @@ export default class NewClient extends Component {
       setma_id: global.setma_id,
     };
     this.setState({loading: true});
-    dataOperation('SET_CLIENT', client_data).then(res => {
-      updateClient(res.returnObject).then(result => {
+    dataOperation('CLIENT_OPERATION', client_data).then(res => {
+      updateClient(res.responseObject).then(result => {
         this.setState({loading: false});
         alert(global.translate(result));
       });

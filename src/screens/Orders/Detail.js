@@ -82,6 +82,8 @@ export default class Detail extends Component {
         description: this.state.theItem.Name.split('-')[1],
         price: this.state.theItem.Code,
         quantity: theQuantity,
+        line_type: this.state.theItem.Type,
+        line_id: this.state.theItem.Id,
       },
     });
   }
@@ -94,6 +96,8 @@ export default class Detail extends Component {
         arrCategories.push({
           Name: category.category_code + '- ' + category.description,
           Code: category.price,
+          Type: 'C',
+          Id: category.category_id,
         });
       }
       resolve(arrCategories);
@@ -108,6 +112,8 @@ export default class Detail extends Component {
         arrSubcategories.push({
           Name: subcategory.subcategory_code + '- ' + subcategory.description,
           Code: subcategory.price,
+          Type: 'S',
+          Id: subcategory.subcategory_id,
         });
       }
       resolve(arrSubcategories);
@@ -122,6 +128,8 @@ export default class Detail extends Component {
         arrArticles.push({
           Name: article.article_code + '- ' + article.description,
           Code: article.price,
+          Type: 'A',
+          Id: article.article_id,
         });
       }
       resolve(arrArticles);
@@ -188,6 +196,8 @@ export default class Detail extends Component {
         description: item.Name.split('-')[1],
         price: item.Code,
         quantity: this.state.quantity,
+        line_type: item.Type,
+        line_id: item.Id,
       },
     });
   }

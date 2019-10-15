@@ -37,7 +37,7 @@ import {
   getStoredClients,
   editStoredClient,
 } from '../../helpers/sql_helper';
-import {checkConnectivity, getData} from '../../helpers/apiconnection_helper';
+import {getData} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
   constructor(props) {

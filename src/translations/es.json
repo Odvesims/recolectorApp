@@ -23,6 +23,8 @@
   "MESSAGE_SAVING_DATA": "Guardando Data",
   "MESSAGE_UPDATING_CLIENT": "Actualizando Cliente",
   "MESSAGE_REGISTERING_CLIENT": "Registrando Cliente",
+  "MESSAGE_REGISTERING_ORDER": "Registrando Orden",
+  "MESSAGE_UPDATING_ORDER": "Actualizando Orden",
   "MESSAGE_SELECT_STATE": "Seleccione un estado/provincia",
   "PLACEHOLDER_TYPE_NAME": "Digite el nombre",
   "PLACEHOLDER_TYPE_ADDRESS": "Digite la dirección",
@@ -43,6 +45,7 @@
   "TITLE_USES_PRINTER": "Usa Printer?",
   "TITLE_PRINCIPAL": "Principal",
   "TITLE_CLIENTS": "Clientes",
+  "TITLE_COLLECTOR": "Recolector",
   "TITLE_ROUTES": "Rutas",
   "TITLE_LOGOUT": "Cerrar Sesión",
   "TITLE_CODE": "Código",
@@ -75,7 +78,9 @@
   "TITLE_QUANTITY": "Cantidad",
   "TITLE_ACCEPT": "Aceptar",
   "TITLE_NEW_ORDER": "Nueva Orden",
+  "TITLE_NEW_ROUTE": "Nueva Ruta",
   "TITLE_NOT_ASSIGNED": "No Asignadas",
   "TITLE_ASSIGNED": "Asignadas",
-  "TITLE_TOTAL": "Total"
+  "TITLE_TOTAL": "Total",
+  "TITLE_AVAILABLE": "Disponible"
 }

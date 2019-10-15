@@ -77,17 +77,16 @@ export class Assigned extends Component {
     );
 
     return (
-      <ScrollView>
-        <Content style={styles.content}>
+      <Content style={styles.content}>
+        <ScrollView>
           <FlatList
             style={{overflow: 'hidden'}}
             data={this.props.tab_data}
             keyExtractor={item => item.id}
             renderItem={renderItem}
           />
-        </Content>
-        {/* Content */}
-      </ScrollView>
+        </ScrollView>
+      </Content>
     );
   }
 }

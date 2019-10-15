@@ -95,13 +95,13 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employee_code VARCHAR(10), name TEXT, category VARCHAR, phone_number VARCHAR, country_id INTEGER)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY AUTOINCREMENT, category_code VARCHAR(10), description TEXT, price numeric)',
+        'CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, category_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS subcategories(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_code VARCHAR(10), description TEXT, price numeric)',
+        'CREATE TABLE IF NOT EXISTS subcategories(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, subcategory_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
+        'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0)',
@@ -269,7 +269,7 @@ export function updateClient(client) {
         );
         resolve('ALERT_UPDATE_SUCCESFUL');
       } catch (err) {
-        resolve('ALERT_UPDATE_FAILED');
+        resolve(err);
       }
     });
   });
@@ -341,7 +341,7 @@ export function saveEmployees(employees) {
         tx.executeSql(
           'INSERT INTO employees(employee_code, name, category, phone_number, country_id) VALUES(?, ?, ?, ?, ?) ',
           [
-            employee.code,
+            employee.employee_code,
             employee.name,
             employee.category,
             employee.phone_number,
@@ -352,6 +352,30 @@ export function saveEmployees(employees) {
       });
     }
     resolve(true);
+  });
+}
+
+export function getStoredEmployees() {
+  let arrEmployees = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM employees WHERE country_id = ${global.country_id}`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let employeeObject = {
+              employee_code: row.employee_code,
+              name: row.name,
+              phone_number: row.phone_number,
+            };
+            arrEmployees.push(employeeObject);
+          }
+          resolve(arrEmployees);
+        },
+      );
+    });
   });
 }
 
@@ -458,8 +482,8 @@ export function saveCategories(categories) {
       let category = categories[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO categories(category_code, description, price) VALUES(?, ?, ?) ',
-          [category.code, category.name, category.price],
+          'INSERT INTO categories(category_code, category_id, description, price) VALUES(?, ?, ?, ?) ',
+          [category.code, category.category_id, category.name, category.price],
           (tx, results) => {},
         );
       });
@@ -477,9 +501,10 @@ export function saveSubcategories(subcategories) {
       let subcategory = subcategories[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO subcategories(category_id, subcategory_code, description, price) VALUES(?, ?, ?, ?) ',
+          'INSERT INTO subcategories(category_id, subcategory_id, subcategory_code, description, price) VALUES(?, ?, ?, ?, ?) ',
           [
             subcategory.category_id,
+            subcategory.subcategory_id,
             subcategory.code,
             subcategory.name,
             subcategory.price,
@@ -501,10 +526,11 @@ export function saveArticles(articles) {
       let article = articles[i];
       db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO articles(category_id, subcategory_id, article_code, description, price) VALUES(?, ?, ?, ?, ?) ',
+          'INSERT INTO articles(category_id, subcategory_id, article_id, article_code, description, price) VALUES(?, ?, ?, ?, ?, ?) ',
           [
             article.category_id,
             article.subcategory_id,
+            article.article_id,
             article.code,
             article.name,
             article.price,
@@ -572,12 +598,13 @@ export function getAssignedOrders() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client`,
+        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {
+              id: row.id,
               document: row.order_document,
               client: row.client,
               address: row.address,
@@ -598,12 +625,13 @@ export function getNotAssignedOrders() {
     let arrOrders = [];
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client',
+        'SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client',
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {
+              id: row.id,
               document: row.order_document,
               client: row.client,
               name: row.name,

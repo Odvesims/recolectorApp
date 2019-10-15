@@ -23,6 +23,8 @@
   "MESSAGE_SAVING_DATA": "Chargement des données",
   "MESSAGE_UPDATING_CLIENT": "Mise à jour du client",
   "MESSAGE_REGISTERING_CLIENT": "Client inscrit",
+  "MESSAGE_REGISTERING_ORDER": "Command inscrit",
+  "MESSAGE_UPDATING_ORDER": "Mise à jour du command",
   "MESSAGE_SELECT_STATE": "Sélectionner un état / une province",
   "PLACEHOLDER_TYPE_NAME": "Tapez le nom",
   "PLACEHOLDER_TYPE_ADDRESS": "Tapez l'adresse",
@@ -75,7 +77,9 @@
   "TITLE_QUANTITY": "Quantité",
   "TITLE_ACCEPT": "Accepter",
   "TITLE_NEW_ORDER": "Nouvelle commande",
+  "TITLE_NEW_ROUTE": "Nouvelle itinéraire",
   "TITLE_ASSIGNED": "Assigné",
   "TITLE_NOT_ASSIGNED": "Non attribué",
-  "TITLE_TOTAL": "Total"
+  "TITLE_TOTAL": "Total",
+  "TITLE_AVAILABLE": "Disponible"
 }
