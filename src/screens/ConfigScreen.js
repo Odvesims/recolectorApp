@@ -87,7 +87,7 @@ export default class ConfigScreen extends Component {
             <Title>{global.translate('TITLE_CONFIGURATION')}</Title>
           </Body>
         </Header>
-        <Content>
+        <Content style={{marginHorizontal: 24}}>
           <KeyboardAwareScrollView
             resetScrollToCoords={{x: 0, y: 0}}
             scrollEnabled>
