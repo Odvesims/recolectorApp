@@ -61,8 +61,6 @@ export default class Clients extends Component {
     this.setState(previousState => ({show: !previousState.show}));
   };
 
-  componentDidMount() {}
-
   enterHandler = () => {
     this.storedRoutes();
   };

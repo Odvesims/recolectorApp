@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     margin: 5,
     flex: 1,
     backgroundColor: 'white',
+    height: 80,
     alignItems: 'center',
     paddingLeft: 12,
     elevation: 1,
@@ -138,6 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     overflow: 'scroll',
     flexGrow: 2,
+
     flexWrap: 'nowrap',
   },
 

@@ -172,27 +172,73 @@ export default class LoginScreen extends Component {
               text={global.translate('TITLE_USER') + ':'}
               style={styles.NormalText}
             />
-            <CustomTextInput
-              onChangeText={userName => {
-                this.setState({userName: userName});
-              }}
-              secured={false}
-              returnKeyType="go"
-              value={this.state.userName}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+
+                alignItems: 'center',
+                margin: 10,
+                paddingHorizontal: 12,
+                marginTop: 10,
+                borderColor: '#BDBDBD',
+                borderWidth: 1,
+                borderRadius: 7,
+                backgroundColor: 'white',
+              }}>
+              <CustomTextInput
+                onChangeText={userName => {
+                  this.setState({userName: userName});
+                }}
+                secured={false}
+                returnKeyType="go"
+                value={this.state.userName}
+                style={{flex: 1}}
+              />
+              <Icon
+                name="person"
+                style={{
+                  color: theme.colors.gray2,
+                  alignItems: 'center',
+                  fontSize: 24,
+                }}
+              />
+            </View>
             <NormalText
               id="password"
               text={global.translate('TITLE_PASSWORD') + ':'}
               style={styles.NormalText}
             />
-            <CustomTextInput
-              onChangeText={userPassword => {
-                this.setState({userPassword: userPassword});
-              }}
-              secured={true}
-              returnKeyType="go"
-              value={this.state.userPassword}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                // justifyContent: 'center',
+                paddingHorizontal: 12,
+                alignItems: 'center',
+                margin: 10,
+                marginTop: 10,
+                borderColor: '#BDBDBD',
+                borderWidth: 1,
+                borderRadius: 7,
+                backgroundColor: 'white',
+              }}>
+              <CustomTextInput
+                onChangeText={userPassword => {
+                  this.setState({userPassword: userPassword});
+                }}
+                secured={true}
+                returnKeyType="go"
+                value={this.state.userPassword}
+                style={{flex: 1}}
+              />
+              <Icon
+                name="eye-off"
+                style={{
+                  color: theme.colors.gray2,
+                  alignItems: 'center',
+                  fontSize: 24,
+                }}
+              />
+            </View>
             <CustomButton
               style={{marginTop: 50}}
               customClick={this.customClickHandler}

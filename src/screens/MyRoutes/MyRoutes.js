@@ -29,7 +29,7 @@ class Order extends Component {
       data: [],
       modalVisible: false,
       show: false,
-      date: '',
+      date: '10/12/19',
       clients: [],
       client: '',
       client_address: '',
@@ -50,21 +50,21 @@ class Order extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      try {
-        let item = this.props.navigation.state.params.selItem;
-        if (item !== undefined) {
-          this.arrData.push(item);
-          this.setState({data: this.arrData});
-        }
-      } catch (err) {
-        alert(err);
-      }
-    });
+    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
+    //   try {
+    //     let item = this.props.navigation.state.params.selItem;
+    //     if (item !== undefined) {
+    //       this.arrData.push(item);
+    //       this.setState({data: this.arrData});
+    //     }
+    //   } catch (err) {
+    //     alert(err);
+    //   }
+    // });
   }
 
   componentWillUnmount() {
-    this.focusListener.remove();
+    // this.focusListener.remove();
   }
 
   setModalVisible(visible) {
@@ -77,9 +77,6 @@ class Order extends Component {
       .then(response => response.json())
       .then(responseJson => {
         responseJson = responseJson.map(item => {
-          item.isSelect = false;
-          item.isChecked = false;
-          item.selectAll = false;
           item.selectedClass = styles.list;
           return item;
         });
@@ -94,56 +91,61 @@ class Order extends Component {
       });
   };
 
-  renderItem = dataList => (
-    <Item
-      style={[styles.list, dataList.item.selectedClass]}
-      onPress={() =>
-        this.props.navigation.navigate('RouteDetail', {
-          operation: 'TITLE_NEW_ORDER',
-          loading_message: 'MESSAGE_REGISTERING_ORDER',
-          date: this.state.date,
-          onGoBack: () => this.refresh(true),
-          new_record: true,
-        })
-      }>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-        }}>
-        <View key={dataList.item.key} style={styles.listContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text numberOfLines={1} style={styles.name}>
-              {dataList.item.name}
+  openDrawer = () => {
+    this.props.navigation.openDrawer();
+  };
+
+  renderItem = dataList => {
+    const {navigate} = this.props.navigation;
+    return (
+      <Item
+        style={[styles.list, dataList.item.selectedClass]}
+        onPress={() =>
+          navigate('RouteDetail', {
+            routeName: dataList.item.name,
+            date: this.state.date,
+            onGoBack: () => this.refresh(true),
+            email: dataList.item.email,
+            zipcode: dataList.item.address.zipcode,
+            info: dataList.item,
+          })
+        }>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 12,
+          }}>
+          <View key={dataList.item.key} style={styles.listContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text numberOfLines={1} style={styles.name}>
+                {dataList.item.name}
+              </Text>
+            </View>
+            <Text numberOfLines={1} style={styles.address}>
+              {dataList.item.address.street}
             </Text>
           </View>
-          <Text numberOfLines={1} style={styles.address}>
-            {dataList.item.address.street}
-          </Text>
         </View>
-      </View>
-    </Item>
-  );
+      </Item>
+    );
+  };
 
   render() {
     const {modalVisible, data} = this.state;
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
     return (
       <Root>
         <Container>
           <Header>
             <Left>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.goBack()}>
-                <Icon name="arrow-back" />
+              <Button transparent onPress={this.openDrawer}>
+                <Icon name="menu" />
               </Button>
             </Left>
             <Body>

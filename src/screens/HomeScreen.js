@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {FetchingData} from '../components';
 
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, BackHandler, Alert} from 'react-native';
 
 import {
   Icon,
@@ -32,8 +32,6 @@ export default class Home extends Component {
       loading: false,
     };
   }
-
-  componentDidMount() {}
 
   refreshHandler = () => {
     this.setState({
@@ -90,6 +88,39 @@ export default class Home extends Component {
   openDrawer = props => {
     this.props.navigation.openDrawer();
   };
+
+  componentDidMount() {
+    this.backButton = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButton,
+    );
+  }
+
+  handleBackButton = () => {
+    Alert.alert(
+      'Cerrar Sesión',
+      'Seguro que desea salir?',
+      [
+        {
+          text: 'Volver',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Salir',
+          onPress: () => BackHandler.exitApp(),
+        },
+      ],
+      {
+        cancelable: false,
+      },
+    );
+    return true;
+  };
+
+  componentWillUnmount() {
+    this.backButton.remove();
+  }
 
   render() {
     const {loading} = this.state;

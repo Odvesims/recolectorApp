@@ -1,4 +1,4 @@
-import {TextInput} from 'react-native-gesture-handler';
+import CustomTextInput from './TextInput';
 import NavigationHeader from './NavigationHeader';
 import CustomButton from './CustomButton';
 import BoldLargeText from './BoldLargeText';
@@ -12,7 +12,7 @@ import ButtonDone from './ButtonDone';
 import CustomPicker from './CustomPicker';
 
 export {
-  TextInput,
+  CustomTextInput,
   NavigationHeader,
   CustomButton,
   AddButton,

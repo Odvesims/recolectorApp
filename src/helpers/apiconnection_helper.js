@@ -125,6 +125,7 @@ export async function dataOperation(apiOption, theData) {
         apiOption: apiOption,
         token: global.token,
         operationData: theData,
+        username: global.userName,
       }),
     });
     const responseJson = await response.json();

@@ -26,7 +26,7 @@ export default class RouteDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      data: this.props.navigation.state.params.info,
       modalVisible: false,
       show: false,
       date: '',
@@ -48,9 +48,8 @@ export default class RouteDetail extends Component {
     this.arrData = [];
   }
 
-  componentDidMount() {
-    this.fetchData();
-    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+  //   componentDidMount() {
+  /*this.focusListener = this.props.navigation.addListener('didFocus', () => {
       try {
         let item = this.props.navigation.state.params.selItem;
         if (item !== undefined) {
@@ -60,42 +59,19 @@ export default class RouteDetail extends Component {
       } catch (err) {
         alert(err);
       }
-    });
-  }
+    });*/
+  //   }
 
-  componentWillUnmount() {
-    this.focusListener.remove();
-  }
+  //   componentWillUnmount() {
+  //     // this.focusListener.remove();
+  //   }
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-  fetchData = () => {
-    this.setState({loading: true});
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(responseJson => {
-        responseJson = responseJson.map(item => {
-          item.isSelect = false;
-          item.isChecked = false;
-          item.selectAll = false;
-          item.selectedClass = styles.list;
-          return item;
-        });
-
-        this.setState({
-          loading: false,
-          data: responseJson,
-        });
-      })
-      .catch(error => {
-        this.setState({loading: false});
-      });
-  };
-
   renderItem = dataList => (
-    <Item style={[styles.list, dataList.item.selectedClass]} onPress={() => {}}>
+    <Item style={[styles.list, dataList.selectedClass]} onPress={() => {}}>
       <View
         style={{
           flex: 1,
@@ -103,18 +79,18 @@ export default class RouteDetail extends Component {
           alignItems: 'center',
           paddingHorizontal: 12,
         }}>
-        <View key={dataList.item.key} style={styles.listContainer}>
+        <View key={dataList.key} style={styles.listContainer}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
             <Text numberOfLines={1} style={styles.name}>
-              {dataList.item.name}
+              {dataList.name}
             </Text>
           </View>
           <Text numberOfLines={1} style={styles.address}>
-            {dataList.item.address.street}
+            {dataList.address.street}
           </Text>
         </View>
       </View>
@@ -124,6 +100,9 @@ export default class RouteDetail extends Component {
   render() {
     const {modalVisible, data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    const {state, navigate} = this.props.navigation;
+
+    let info = state.params.info;
 
     return (
       <Root>
@@ -137,12 +116,10 @@ export default class RouteDetail extends Component {
               </Button>
             </Left>
             <Body>
-              <Title>{global.translate('TITLE_MYROUTES')}</Title>
+              <Title>{`${state.params.routeName}`}</Title>
             </Body>
             <Right>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.navigate('')}>
+              <Button transparent onPress={() => navigate('')}>
                 <Icon name="checkmark" />
               </Button>
             </Right>
@@ -163,7 +140,7 @@ export default class RouteDetail extends Component {
                     ({marginLeft: 4, backgroundColor: 'blue'},
                     styles.currentDateText)
                   }>
-                  {`: ${this.props.navigation.state.params.date}`}
+                  {`: ${state.params.routeName}`}
                 </Text>
               </View>
               <View style={styles.currentDate}>
@@ -171,7 +148,7 @@ export default class RouteDetail extends Component {
                   {global.translate('TITLE_DATE')}
                 </Text>
                 <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                  {`: ${this.props.navigation.state.params.date}`}
+                  {`: ${state.params.date}`}
                 </Text>
               </View>
             </View>
@@ -186,10 +163,12 @@ export default class RouteDetail extends Component {
                     <FlatList
                       style={{overflow: 'hidden', marginBottom: 12}}
                       data={data}
-                      extraData={this.state}
                       keyExtractor={item => item.id.toString()}
                       renderItem={item => this.renderItem(item)}
                     />
+                    <Button onPress={() => navigate('Registry')}>
+                      <Text>Ir</Text>
+                    </Button>
                   </View>
                 </ScrollView>
               </View>

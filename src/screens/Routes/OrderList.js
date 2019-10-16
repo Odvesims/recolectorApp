@@ -30,41 +30,114 @@ import {
   Body,
   Title,
 } from 'native-base';
+import {getNotAssignedOrders} from '../../helpers/sql_helper';
 
+const selectedData = [];
 export default class Active extends Component {
   state = {
     data: [],
+    dataSelected: [],
     isChecked: null,
     loading: false,
     show: true,
   };
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchData().then(result => {
+      if (this.props.navigation.state.params.checkedItems !== undefined) {
+        this.checkItems(
+          this.props.navigation.state.params.checkedItems,
+          result,
+        ).then(res => {
+          this.setState({
+            data: res,
+            isChecked: true,
+          });
+        });
+      }
+    });
   }
 
-  fetchData = () => {
-    this.setState({loading: true});
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(responseJson => {
-        responseJson = responseJson.map(item => {
+  /*fetchData() {
+    return new Promise((resolve, reject) => {
+      let not_assigned;
+      getNotAssignedOrders().then(not_assigned => {
+        not_assigned = not_assigned.map(item => {
           item.isSelect = false;
           item.isChecked = false;
           item.selectAll = false;
           item.selectedClass = styles.list;
           return item;
         });
-
-        this.setState({
-          loading: false,
-          data: responseJson,
-        });
-      })
-      .catch(error => {
-        this.setState({loading: false});
       });
+      resolve(not_assigned);
+    });
+  }*/
+
+  fetchData = () => {
+    return new Promise((resolve, reject) => {
+      this.setState({loading: true});
+      getNotAssignedOrders()
+        .then(not_assigned => {
+          not_assigned = not_assigned.map(item => {
+            item.isSelect = false;
+            item.isChecked = false;
+            item.selectAll = false;
+            item.selectedClass = styles.list;
+            return item;
+          });
+
+          this.setState({
+            loading: false,
+            data: not_assigned,
+          });
+          resolve(not_assigned);
+        })
+        .catch(error => {
+          this.setState({loading: false});
+        });
+    });
   };
+
+  checkItems(dataList, data) {
+    return new Promise((resolve, reject) => {
+      dataList.map(i => {
+        const index = this.state.data.findIndex(item => i.id === item.id);
+        data[index] = i;
+      });
+      resolve(data);
+    });
+  }
+
+  insertInArr(selected) {
+    return new Promise((resolve, reject) => {
+      selectedData.push(selected);
+      resolve(selectedData);
+    });
+  }
+
+  removeDuplicates(myArr, prop) {
+    return new Promise((resolve, reject) => {
+      resolve(
+        myArr.filter((obj, pos, arr) => {
+          return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+        }),
+      );
+    });
+  }
+
+  setSelectedArr(selected) {
+    return new Promise((resolve, reject) => {
+      let list = selectedData;
+      let newArr = [];
+      list.map(item => {
+        if (item.isChecked) {
+          newArr.push(item);
+        }
+      });
+      resolve(newArr);
+    });
+  }
 
   selectItem = dataList => {
     const {data} = this.state;
@@ -79,11 +152,29 @@ export default class Active extends Component {
     );
 
     data[index] = dataList.item;
-
-    this.setState({
-      data: this.state.data,
-      isChecked: true,
-    });
+    if (dataList.item.isSelect) {
+      this.insertInArr(dataList.item).then(s => {
+        this.setSelectedArr(dataList.item).then(res => {
+          this.removeDuplicates(res, 'id').then(result => {
+            this.setState({
+              dataSelected: result,
+              data: this.state.data,
+              isChecked: true,
+            });
+          });
+        });
+      });
+    } else {
+      this.setSelectedArr(dataList.item).then(res => {
+        this.removeDuplicates(res, 'id').then(result => {
+          this.setState({
+            dataSelected: result,
+            data: this.state.data,
+            isChecked: true,
+          });
+        });
+      });
+    }
   };
 
   selectAll = dataList => {
@@ -128,21 +219,23 @@ export default class Active extends Component {
           //   isChecked={isChecked[index]}
         />
         <View key={dataList.item.key} style={styles.listContainer}>
-          <Text style={styles.code}>Codigo: {dataList.item.id}</Text>
+          <Text style={styles.code}>
+            {global.translate('TITLE_CODE')}: {dataList.item.document}
+          </Text>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
             <Text numberOfLines={1} style={styles.name}>
-              {dataList.item.name}
+              {dataList.item.client} - {dataList.item.name}
             </Text>
             <Text numberOfLines={1} style={styles.price}>
-              $ {dataList.item.username}
+              $ {dataList.item.order_total}
             </Text>
           </View>
           <Text numberOfLines={1} style={styles.address}>
-            {dataList.item.address.street}
+            {dataList.item.address}
           </Text>
         </View>
       </View>
@@ -150,7 +243,7 @@ export default class Active extends Component {
   );
 
   render() {
-    const {data, loading} = this.state;
+    const {data, loading, dataSelected} = this.state;
     const itemNumber = data.filter(item => item.isSelect).length;
     const selectedItems = data.filter(item => {
       item.isSelect;
@@ -185,16 +278,20 @@ export default class Active extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Órdenes disponibles</Title>
+            <Title>{global.translate('TITLE_AVAILABLE')}</Title>
           </Body>
           <Right>
             <Button
               transparent
               onPress={() => {
-                this.goToNewRoute(data);
+                this.props.navigation.navigate('NewRoute', {
+                  orders: dataSelected,
+                });
               }}>
               <Icon name="checkmark" />
-              <Text style={{color: 'white', marginLeft: 8}}>Listo</Text>
+              <Text style={{color: 'white', marginLeft: 8}}>
+                {global.translate('TITLE_DONE')}
+              </Text>
             </Button>
           </Right>
         </Header>

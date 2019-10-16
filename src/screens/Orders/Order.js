@@ -23,12 +23,15 @@ import {
 
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {getStoredClients} from '../../helpers/sql_helper';
+import {dataOperation} from '../../helpers/apiconnection_helper';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      loading: false,
       modalVisible: false,
       show: false,
       date: '',
@@ -70,6 +73,36 @@ class Order extends Component {
     });
   }
 
+  execOperation = () => {
+    let order_data = {
+      setma_id: global.setma_id,
+      client_code: this.state.client.split('-')[0],
+      supervisor_code: global.employee_code,
+      order_state: 'A',
+      order_completed: false,
+      order_details: this.state.data,
+    };
+    this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
+    dataOperation('ORDER_OPERATION', order_data).then(res => {
+      if (res.valid) {
+        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        this.setState({
+          clients: [],
+          client: '',
+          client_address: '',
+          client_city: '',
+          client_state: '',
+          client_phone: '',
+          placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+          data: [],
+          loading: false,
+        });
+      } else {
+        this.setState({loading: false});
+      }
+    });
+  };
+
   setClientsPicker(clients) {
     return new Promise((resolve, reject) => {
       let arrClients = [];
@@ -96,6 +129,7 @@ class Order extends Component {
           this.arrData.push(item);
           this.setState({data: this.arrData});
         }
+        this.props.navigation.state.params.selItem = undefined;
       } catch (err) {
         alert(err);
       }
@@ -169,6 +203,13 @@ class Order extends Component {
       <Root>
         <Container>
           <Header>
+            <Spinner
+              visible={this.state.loading}
+              textContent={global.translate(this.state.loadingMessage)}
+              color={'CE2424'}
+              overlayColor={'rgba(255, 255, 255, 0.4)'}
+              animation={'slide'}
+            />
             <Left>
               <Button
                 transparent
@@ -182,9 +223,7 @@ class Order extends Component {
               </Title>
             </Body>
             <Right>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.navigate('OrderScreen')}>
+              <Button transparent onPress={this.execOperation}>
                 <Icon name="checkmark" />
               </Button>
             </Right>

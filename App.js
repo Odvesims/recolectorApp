@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {I18nManager} from 'react-native';
-import {createAppContainer} from 'react-navigation';
-import NavigationService from './src/services/NavigationService';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
 import Navigation from './src/navigations/';
+import {createAppContainer} from 'react-navigation';
+import NavigationService from './src/services/NavigationService';
 
 global.database_version = 12;
 global.userDisplayName = '';
@@ -51,7 +51,7 @@ const setI18nConfig = () => {
 
 console.disableYellowBox = true;
 
-class App extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
     setI18nConfig(); // set initial config
@@ -74,4 +74,3 @@ class App extends Component {
     return <Navigation />;
   }
 }
-export default App;

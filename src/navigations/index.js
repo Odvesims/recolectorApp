@@ -1,13 +1,7 @@
 import React from 'react';
-import {Icon, Header, Left, Right, Title, Button, Body} from 'native-base';
-import {Alert} from 'react-native';
 // import {StyleSheet, Platform, StatusBar} from 'react-native';
 
-import {
-  createAppContainer,
-  createSwitchNavigator,
-  NavigationActions,
-} from 'react-navigation';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
 import SideBar from './SideBar';
