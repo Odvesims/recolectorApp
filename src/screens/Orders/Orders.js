@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {Available, Assigned} from './Tabs';
-// import {SearchBar} from '../../components';
 import {FetchingData} from '../../components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
@@ -84,7 +84,14 @@ export default class Orders extends Component {
   };
 
   componentDidMount() {
-    this.enterHandler();
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        this.refreshHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -184,6 +191,13 @@ export default class Orders extends Component {
     return (
       <Root>
         <Container>
+          <Spinner
+            visible={this.state.loading}
+            textContent={this.state.loadingMessage}
+            color={'CE2424'}
+            overlayColor={'rgba(255, 255, 255, 0.4)'}
+            animation={'slide'}
+          />
           <Header>
             <Left>
               <Button transparent onPress={this.openDrawer}>

@@ -19,24 +19,6 @@ import {Icon, Button, Content, Item, ActionSheet} from 'native-base';
 
 export class Defeated extends Component {
   state = {
-    data: [
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-      {
-        name: 'Ruta Juan Bosh - La Caridad',
-        address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-      },
-    ],
     show: true,
     BUTTONS: [
       {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
@@ -53,8 +35,8 @@ export class Defeated extends Component {
     let renderItem = ({item}) => (
       <Item style={styles.list}>
         <View key={item.key} style={{marginLeft: 8}}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.address}>{item.address}</Text>
+          <Text style={styles.name}>{item.description}</Text>
+          <Text style={styles.address}>{item.employee_name}</Text>
         </View>
         <Button
           transparent
@@ -82,7 +64,7 @@ export class Defeated extends Component {
         <Content style={styles.content}>
           <FlatList
             style={{overflow: 'hidden'}}
-            data={data}
+            data={this.props.tab_data}
             keyExtractor={item => item.id}
             renderItem={renderItem}
           />

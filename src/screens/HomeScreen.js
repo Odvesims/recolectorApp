@@ -22,6 +22,8 @@ import {
   saveEmployees,
   saveRoutes,
   saveOrders,
+  saveActiveRoutes,
+  saveInactiveRoutes,
 } from '../helpers/sql_helper';
 import {getData} from '../helpers/apiconnection_helper';
 
@@ -58,12 +60,18 @@ export default class Home extends Component {
                                 saveOrders(ord.arrResponse).then(res => {
                                   getData('GET_ROUTES').then(rte => {
                                     if (!this.state.request_timeout) {
-                                      saveRoutes(rte.arrResponse).then(res => {
-                                        this.setState({
-                                          request_timeout: false,
-                                          loading: false,
-                                        });
-                                      });
+                                      saveActiveRoutes(rte.arrResponse[0]).then(
+                                        res => {
+                                          saveInactiveRoutes(
+                                            rte.arrResponse[1],
+                                          ).then(resi => {
+                                            this.setState({
+                                              request_timeout: false,
+                                              loading: false,
+                                            });
+                                          });
+                                        },
+                                      );
                                     }
                                   });
                                 });

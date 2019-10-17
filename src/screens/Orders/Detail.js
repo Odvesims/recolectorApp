@@ -202,6 +202,16 @@ export default class Detail extends Component {
     });
   }
 
+  onPresHandler = () => {
+    if (this.state.quantity) {
+      this.props.navigation.navigate('Order', {
+        selItem: this.state.selItem,
+      });
+    } else {
+      alert(global.translate('ALERT_QUANTITY_BLANK'));
+    }
+  };
+
   render() {
     const buttons = [
       global.translate('TITLE_CATEGORY'),
@@ -216,7 +226,9 @@ export default class Detail extends Component {
           <Left>
             <Button
               transparent
-              onPress={() => this.props.navigation.goBack(null)}>
+              onPress={() =>
+                this.props.navigation.navigate('Order', {selItem: undefined})
+              }>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -293,12 +305,7 @@ export default class Detail extends Component {
               {global.translate('TITLE_CANCEL')}
             </Text>
           </CustomButton>
-          <CustomButton
-            onPress={() => {
-              this.props.navigation.navigate('Order', {
-                selItem: this.state.selItem,
-              });
-            }}>
+          <CustomButton onPress={this.onPresHandler}>
             <Text>{global.translate('TITLE_ACCEPT')}</Text>
           </CustomButton>
         </View>
