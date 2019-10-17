@@ -90,36 +90,37 @@ export default class Home extends Component {
   };
 
   componentDidMount() {
-    this.backButton = BackHandler.addEventListener(
+    this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackButton,
     );
   }
 
   handleBackButton = () => {
-    Alert.alert(
-      'Cerrar Sesión',
-      'Seguro que desea salir?',
-      [
+    if (this.props.navigation.state.routeName === 'HomeScreen') {
+      Alert.alert(
+        'Cerrar Sesión',
+        'Seguro que desea salir?',
+        [
+          {
+            text: 'Volver',
+            style: 'cancel',
+          },
+          {
+            text: 'Salir',
+            onPress: () => BackHandler.exitApp(),
+          },
+        ],
         {
-          text: 'Volver',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
+          cancelable: false,
         },
-        {
-          text: 'Salir',
-          onPress: () => BackHandler.exitApp(),
-        },
-      ],
-      {
-        cancelable: false,
-      },
-    );
+      );
+    }
     return true;
   };
 
   componentWillUnmount() {
-    this.backButton.remove();
+    this.backHandler.remove();
   }
 
   render() {

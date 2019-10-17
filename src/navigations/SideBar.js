@@ -119,6 +119,7 @@ export default class SideBar extends Component {
                 <ListItem
                   style={{
                     borderColor: 'transparent',
+                    zz,
                   }}
                   button
                   onPress={() => this.props.navigation.navigate(data.name)}>

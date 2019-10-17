@@ -154,7 +154,7 @@ const headerStyles = StyleSheet.create({
   androidHeader: {
     ...Platform.select({
       android: {
-        paddingTop: StatusBar.currentHeight,
+        // paddingTop: StatusBar.currentHeight,
       },
     }),
   },

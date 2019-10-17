@@ -177,7 +177,7 @@ export default class LoginScreen extends Component {
                 flexDirection: 'row',
 
                 alignItems: 'center',
-                margin: 10,
+
                 paddingHorizontal: 12,
                 marginTop: 10,
                 borderColor: '#BDBDBD',
@@ -214,7 +214,7 @@ export default class LoginScreen extends Component {
                 // justifyContent: 'center',
                 paddingHorizontal: 12,
                 alignItems: 'center',
-                margin: 10,
+
                 marginTop: 10,
                 borderColor: '#BDBDBD',
                 borderWidth: 1,
