@@ -3,36 +3,35 @@ import React, {Component} from 'react';
 import {theme} from '../constants';
 import nextFrame from 'next-frame';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {View, StyleSheet, NativeModules, Platform} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  NativeModules,
+  Platform,
+  TextInput,
+} from 'react-native';
 import {Container, Header, Right, Button, Icon} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
-import BoldLargeText from '../components/BoldLargeText';
-import NormalText from '../components/NormalText';
-import CustomButton from '../components/CustomButton';
-import CustomTextInput from '../components/TextInput';
-import ToastMessage from '../components/ToastMessage';
+import {
+  CustomButton,
+  CustomTextInput,
+  ToastMessage,
+  BoldLargeText,
+  NormalText,
+  InputLogin,
+} from '../components';
+
 import {getUserConfig, saveUserData} from '../helpers/sql_helper';
 import {getUserLogin} from '../helpers/apiconnection_helper';
 import styled from 'styled-components/native';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
 
-const Input = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding-horizontal: 12px;
-  margin-top: 10px;
-  border-color: #bdbdbd;
-  border-width: 1px;
-  border-radius: 7px;
-  background-color: white;
-`;
-
-const InputIcon = styled(Icon)`
-  color: ${theme.colors.gray2};
-  align-items: center;
-  font-size: 24px;
-  margin-right: 12px;
+const AppTitle = styled.Text`
+  text-align: center;
+  font-size: 24;
+  font-weight: bold;
+  color: #111825;
 `;
 
 export default class LoginScreen extends Component {
@@ -169,6 +168,8 @@ export default class LoginScreen extends Component {
             </Button>
           </Right>
         </Header>
+
+        {/* Login */}
         <KeyboardAwareScrollView
           contentContainerStyle={styles.container}
           resetScrollToCoords={{x: 0, y: 0}}
@@ -181,8 +182,60 @@ export default class LoginScreen extends Component {
               overlayColor={'rgba(255, 255, 255, 0.4)'}
               animation={'slide'}
             />
-            <BoldLargeText text="RecolectorApp" style={{textAlign: 'center'}} />
-            <NormalText
+            <AppTitle>RecolectorApp</AppTitle>
+            <InputLogin
+              iconName="person"
+              textLabel={global.translate('TITLE_USER') + ':'}
+              onChangeText={userName => {
+                this.setState({userName: userName});
+              }}
+              returnKeyType="go"
+              value={this.state.userName}
+            />
+            <InputLogin
+              id="password"
+              iconName="lock"
+              textLabel={global.translate('TITLE_PASSWORD') + ':'}
+              onChangeText={userPassword => {
+                this.setState({userPassword: userPassword});
+              }}
+              secured={true}
+              returnKeyType="go"
+              value={this.state.userPassword}
+            />
+            <CustomButton
+              style={{marginTop: 50}}
+              customClick={this.customClickHandler}
+              title={global.translate('TITLE_SIGNIN')}
+            />
+            <ToastMessage
+              visible={this.state.visible}
+              message={this.state.toastMsg}
+            />
+          </View>
+        </KeyboardAwareScrollView>
+      </Container>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 32,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+
+  NormalText: {
+    // marginLeft: 10,
+    marginTop: 20,
+    textAlign: 'left',
+  },
+});
+
+{
+  /* <NormalText
               text={global.translate('TITLE_USER') + ':'}
               style={styles.NormalText}
             />
@@ -214,34 +267,5 @@ export default class LoginScreen extends Component {
                 value={this.state.userPassword}
                 style={{flex: 1}}
               />
-            </Input>
-            <CustomButton
-              style={{marginTop: 50}}
-              customClick={this.customClickHandler}
-              title={global.translate('TITLE_SIGNIN')}
-            />
-            <ToastMessage
-              visible={this.state.visible}
-              message={this.state.toastMsg}
-            />
-          </View>
-        </KeyboardAwareScrollView>
-      </Container>
-    );
-  }
+            </Input> */
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 32,
-    alignContent: 'center',
-    justifyContent: 'center',
-  },
-
-  NormalText: {
-    // marginLeft: 10,
-    marginTop: 20,
-    textAlign: 'left',
-  },
-});

@@ -10,9 +10,13 @@ import SearchBar from './SearchBar';
 import FetchingData from './FetchingData';
 import ButtonDone from './ButtonDone';
 import CustomPicker from './CustomPicker';
+import InputLogin from './forms/InputLogin';
+import ToastMessage from './ToastMessage';
 
 export {
   CustomTextInput,
+  ToastMessage,
+  InputLogin,
   NavigationHeader,
   CustomButton,
   AddButton,
