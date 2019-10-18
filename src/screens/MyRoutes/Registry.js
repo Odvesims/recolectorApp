@@ -44,6 +44,10 @@ const ItemsContainer = styled.View`
 const InputValues = styled(CustomTextInput)`
   width: 100px;
   margin-left: 8px;
+  background-color: #fff;
+  border-color: #bdbdbd;
+  border-width: 1px;
+  border-radius: 4px;
 `;
 
 const HeaderItems = styled.View`

@@ -54,6 +54,7 @@ export default class Active extends Component {
             isChecked: true,
           });
         });
+        this.props.navigation.state.params.checkedItems = undefined;
       }
     });
   }
@@ -99,46 +100,6 @@ export default class Active extends Component {
     });
   };
 
-  checkItems(dataList, data) {
-    return new Promise((resolve, reject) => {
-      dataList.map(i => {
-        const index = this.state.data.findIndex(item => i.id === item.id);
-        data[index] = i;
-      });
-      resolve(data);
-    });
-  }
-
-  insertInArr(selected) {
-    return new Promise((resolve, reject) => {
-      selectedData.push(selected);
-      resolve(selectedData);
-    });
-  }
-
-  removeDuplicates(myArr, prop) {
-    return new Promise((resolve, reject) => {
-      resolve(
-        myArr.filter((obj, pos, arr) => {
-          return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
-        }),
-      );
-    });
-  }
-
-  setSelectedArr(selected) {
-    return new Promise((resolve, reject) => {
-      let list = selectedData;
-      let newArr = [];
-      list.map(item => {
-        if (item.isChecked) {
-          newArr.push(item);
-        }
-      });
-      resolve(newArr);
-    });
-  }
-
   selectItem = dataList => {
     const {data} = this.state;
     dataList.item.isSelect = !dataList.item.isSelect;
@@ -152,29 +113,11 @@ export default class Active extends Component {
     );
 
     data[index] = dataList.item;
-    if (dataList.item.isSelect) {
-      this.insertInArr(dataList.item).then(s => {
-        this.setSelectedArr(dataList.item).then(res => {
-          this.removeDuplicates(res, 'id').then(result => {
-            this.setState({
-              dataSelected: result,
-              data: this.state.data,
-              isChecked: true,
-            });
-          });
-        });
-      });
-    } else {
-      this.setSelectedArr(dataList.item).then(res => {
-        this.removeDuplicates(res, 'id').then(result => {
-          this.setState({
-            dataSelected: result,
-            data: this.state.data,
-            isChecked: true,
-          });
-        });
-      });
-    }
+    this.setState({
+      dataSelected: this.state.data,
+      data: this.state.data,
+      isChecked: true,
+    });
   };
 
   selectAll = dataList => {
@@ -242,6 +185,12 @@ export default class Active extends Component {
     </Item>
   );
 
+  onPressHandler = () => {
+    this.props.navigation.navigate('NewRoute', {
+      orders: this.state.dataSelected,
+    });
+  };
+
   render() {
     const {data, loading, dataSelected} = this.state;
     const itemNumber = data.filter(item => item.isSelect).length;
@@ -281,13 +230,7 @@ export default class Active extends Component {
             <Title>{global.translate('TITLE_AVAILABLE')}</Title>
           </Body>
           <Right>
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigation.navigate('NewRoute', {
-                  orders: dataSelected,
-                });
-              }}>
+            <Button transparent onPress={this.onPressHandler}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>
                 {global.translate('TITLE_DONE')}

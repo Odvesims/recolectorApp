@@ -47,11 +47,12 @@ import Detail from '../screens/Orders/Detail';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
 import SplashScreen from '../screens/SplashScreen';
-import Home from '../screens/HomeScreen';
 //MyRoutes
 import MyRoutes from '../screens/MyRoutes/MyRoutes';
 import RouteDetail from '../screens/MyRoutes/RouteDetail';
 import Registry from '../screens/MyRoutes/Registry';
+
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const AuthNavigator = createStackNavigator({
   Login: {screen: LoginScreen},
@@ -157,7 +158,6 @@ const AppNavigator = createDrawerNavigator(
         drawerLabel: `Ordenes`, //${global.translate('TITLE_ORDERS')}
       },
     },
-
     MyRoutesScreen: {
       screen: MyRoutesScreen,
       navigationOptions: {
@@ -212,28 +212,27 @@ const AppNavigator = createDrawerNavigator(
             fontWeight: '200',
           }}
         />
-
-        <View
-          style={{
-            flexDirection: 'row',
-          }}
-          onPress={() => {
+        <TouchableOpacity
+          onPress={() =>
             Alert.alert(
               'Cerrar Sesión',
               'Seguro que desea cerrar sesión?',
               [
                 {
                   text: 'Si',
-                  onPress: () => this.props.navigation.navigate('Auth'),
+                  onPress: () => props.navigation.navigate('Auth'),
                 },
                 {
                   text: 'No',
-                  onPress: () => this.props.navigation.goBack(),
+                  onPress: () => props.navigation.goBack(null),
                   style: 'cancel',
                 },
               ],
               {cancelable: false},
-            );
+            )
+          }
+          style={{
+            flexDirection: 'row',
           }}>
           <Button transparent style={styles.iconContainer}>
             <Icon name="log-out" style={styles.menuIcon} />
@@ -241,7 +240,7 @@ const AppNavigator = createDrawerNavigator(
           <Text style={{marginLeft: 8, color: theme.colors.black}}>
             {global.translate('TITLE_LOGOUT')}
           </Text>
-        </View>
+        </TouchableOpacity>
       </ScrollView>
     ),
     contentOptions: {

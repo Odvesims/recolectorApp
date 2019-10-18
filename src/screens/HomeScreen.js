@@ -26,11 +26,22 @@ import {
 import {getData} from '../helpers/apiconnection_helper';
 
 export default class Home extends Component {
+  _didFocusSubscription;
+  _willBlurSubscription;
+
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
     };
+    this._didFocusSubscription = props.navigation.addListener(
+      'didFocus',
+      payload =>
+        BackHandler.addEventListener(
+          'hardwareBackPress',
+          this.handleBackButton,
+        ),
+    );
   }
 
   refreshHandler = () => {
@@ -81,47 +92,60 @@ export default class Home extends Component {
     });
   };
 
-  static navigationOptions = {
-    header: null,
-  };
-
   openDrawer = props => {
     this.props.navigation.openDrawer();
   };
 
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackButton,
+    this._willBlurSubscription = this.props.navigation.addListener(
+      'willBlur',
+      payload =>
+        BackHandler.removeEventListener(
+          'hardwareBackPress',
+          this.handleBackPress,
+        ),
     );
   }
 
+  componentWillUnmount() {
+    this._didFocusSubscription && this._didFocusSubscription.remove();
+    this._willBlurSubscription && this._willBlurSubscription.remove();
+  }
+
+  // componentDidMount() {
+  //   this.backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     this.handleBackButton,
+  //   );
+  // }
+
   handleBackButton = () => {
-    if (this.props.navigation.state.routeName === 'HomeScreen') {
-      Alert.alert(
-        'Cerrar Sesión',
-        'Seguro que desea salir?',
-        [
-          {
-            text: 'Volver',
-            style: 'cancel',
-          },
-          {
-            text: 'Salir',
-            onPress: () => BackHandler.exitApp(),
-          },
-        ],
+    Alert.alert(
+      'Cerrar Sesión',
+      'Seguro que desea salir?',
+      [
         {
-          cancelable: false,
+          text: 'Volver',
+          onPress: () => console.log('NO Pressed'),
         },
-      );
-    }
+        {
+          text: 'Salir',
+          onPress: () => BackHandler.exitApp(),
+        },
+      ],
+      {
+        cancelable: false,
+      },
+    );
     return true;
   };
 
-  componentWillUnmount() {
-    this.backHandler.remove();
-  }
+  // componentWillUnmount() {
+  //   this.backHandler = BackHandler.removeEventListener(
+  //     'hardwareBackPress',
+  //     this.handleBackButton,
+  //   );
+  // }
 
   render() {
     const {loading} = this.state;

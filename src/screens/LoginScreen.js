@@ -3,23 +3,37 @@ import React, {Component} from 'react';
 import {theme} from '../constants';
 import nextFrame from 'next-frame';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
 import {View, StyleSheet, NativeModules, Platform} from 'react-native';
-
 import {Container, Header, Right, Button, Icon} from 'native-base';
-
 import Spinner from 'react-native-loading-spinner-overlay';
-
 import BoldLargeText from '../components/BoldLargeText';
 import NormalText from '../components/NormalText';
 import CustomButton from '../components/CustomButton';
 import CustomTextInput from '../components/TextInput';
 import ToastMessage from '../components/ToastMessage';
-
 import {getUserConfig, saveUserData} from '../helpers/sql_helper';
 import {getUserLogin} from '../helpers/apiconnection_helper';
+import styled from 'styled-components/native';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
+
+const Input = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-horizontal: 12px;
+  margin-top: 10px;
+  border-color: #bdbdbd;
+  border-width: 1px;
+  border-radius: 7px;
+  background-color: white;
+`;
+
+const InputIcon = styled(Icon)`
+  color: ${theme.colors.gray2};
+  align-items: center;
+  font-size: 24px;
+  margin-right: 12px;
+`;
 
 export default class LoginScreen extends Component {
   constructor(props) {
@@ -172,19 +186,8 @@ export default class LoginScreen extends Component {
               text={global.translate('TITLE_USER') + ':'}
               style={styles.NormalText}
             />
-            <View
-              style={{
-                flexDirection: 'row',
-
-                alignItems: 'center',
-
-                paddingHorizontal: 12,
-                marginTop: 10,
-                borderColor: '#BDBDBD',
-                borderWidth: 1,
-                borderRadius: 7,
-                backgroundColor: 'white',
-              }}>
+            <Input>
+              <InputIcon name="person" />
               <CustomTextInput
                 onChangeText={userName => {
                   this.setState({userName: userName});
@@ -194,33 +197,14 @@ export default class LoginScreen extends Component {
                 value={this.state.userName}
                 style={{flex: 1}}
               />
-              <Icon
-                name="person"
-                style={{
-                  color: theme.colors.gray2,
-                  alignItems: 'center',
-                  fontSize: 24,
-                }}
-              />
-            </View>
+            </Input>
             <NormalText
               id="password"
               text={global.translate('TITLE_PASSWORD') + ':'}
               style={styles.NormalText}
             />
-            <View
-              style={{
-                flexDirection: 'row',
-                // justifyContent: 'center',
-                paddingHorizontal: 12,
-                alignItems: 'center',
-
-                marginTop: 10,
-                borderColor: '#BDBDBD',
-                borderWidth: 1,
-                borderRadius: 7,
-                backgroundColor: 'white',
-              }}>
+            <Input>
+              <InputIcon name="eye-off" />
               <CustomTextInput
                 onChangeText={userPassword => {
                   this.setState({userPassword: userPassword});
@@ -230,15 +214,7 @@ export default class LoginScreen extends Component {
                 value={this.state.userPassword}
                 style={{flex: 1}}
               />
-              <Icon
-                name="eye-off"
-                style={{
-                  color: theme.colors.gray2,
-                  alignItems: 'center',
-                  fontSize: 24,
-                }}
-              />
-            </View>
+            </Input>
             <CustomButton
               style={{marginTop: 50}}
               customClick={this.customClickHandler}

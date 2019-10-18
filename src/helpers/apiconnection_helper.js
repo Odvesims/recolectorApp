@@ -1,19 +1,5 @@
 import React from 'react';
 import {Platform} from 'react-native';
-import {NetInfo} from '@react-native-community/netinfo';
-
-export function checkConnectivity() {
-  // For Android devices
-  if (Platform.OS === 'android') {
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (isConnected) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-  }
-}
 
 export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   let returnObject = {};
@@ -138,6 +124,7 @@ export async function dataOperation(apiOption, theData) {
         returnObject = {
           valid: true,
           responseObject: responseJson.response_object,
+          message: responseJson.error_message,
         };
       }
     }

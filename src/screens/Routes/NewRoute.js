@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {theme} from '../../constants';
 import PickerModal from 'react-native-picker-modal-view';
 import CustomPicker from '../../components/CustomPicker';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   Text,
   View,
@@ -27,7 +28,11 @@ import {
   DatePicker,
   Picker,
 } from 'native-base';
-import {getStoredEmployees} from '../../helpers/sql_helper';
+import {
+  getStoredEmployees,
+  updateOrderAssigned,
+} from '../../helpers/sql_helper';
+import {dataOperation} from '../../helpers/apiconnection_helper';
 
 export class NewRoute extends Component {
   constructor(props) {
@@ -36,6 +41,10 @@ export class NewRoute extends Component {
       employees: [],
       employee: '',
       data: [],
+      clear_data: [],
+      route_description: '',
+      chosenDate: new Date(),
+      chosenDate2: new Date(),
     };
     this.selectedItem = this.selectedItem.bind(this);
     this.getEmployeesHandler();
@@ -43,6 +52,7 @@ export class NewRoute extends Component {
 
   state = {
     chosenDate: new Date(),
+    chosenDate2: new Date(),
   };
 
   setDate = this.setDate.bind(this);
@@ -69,8 +79,9 @@ export class NewRoute extends Component {
         let orders = this.props.navigation.state.params.orders;
         if (orders !== undefined) {
           this.cleanArr(orders).then(res => {
-            this.setState({data: res});
+            this.setState({data: res, clear_data: res});
           });
+          this.props.navigation.state.params.orders = undefined;
         }
       } catch (err) {}
     });
@@ -99,6 +110,66 @@ export class NewRoute extends Component {
     this.setState({chosenDate: newDate});
   }
 
+  setDate2(newDate) {
+    this.setState({chosenDate2: newDate});
+  }
+
+  saveRoute = () => {
+    let {
+      route_description,
+      chosenDate,
+      chosenDate2,
+      selected_item,
+      clear_data,
+    } = this.state;
+    if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
+      let ordersArr = [];
+      clear_data.map(order => {
+        let orderObject = {
+          code: order.document.split('-')[1],
+          order_id: order.order_id,
+        };
+        ordersArr.push(orderObject);
+      });
+      let order_data = {
+        setma_id: global.setma_id,
+        description: route_description,
+        supervisor_code: global.employee_code,
+        collector_code: selected_item.Code,
+        start_date: chosenDate,
+        end_date: chosenDate2,
+        route_state: 'A',
+        orders_list: ordersArr,
+      };
+      this.setState({
+        loading: true,
+        loadingMessage: 'MESSAGE_REGISTERING_ROUTE',
+      });
+      dataOperation('ROUTE_OPERATION', order_data).then(res => {
+        if (res.valid) {
+          updateOrderAssigned(ordersArr).then(up => {
+            alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+            this.setState({
+              employees: [],
+              client: '',
+              client_address: '',
+              client_city: '',
+              client_state: '',
+              client_phone: '',
+              placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+              data: [],
+              loading: false,
+            });
+          });
+        } else {
+          this.setState({loading: false});
+        }
+      });
+    } else {
+      alert(global.translate('ALERT_COMPLETE_DATA'));
+    }
+  };
+
   getEmployeesHandler() {
     getStoredEmployees().then(employees => {
       this.setEmployeesPicker(employees).then(res => {
@@ -117,7 +188,7 @@ export class NewRoute extends Component {
     const {selectedItem, employeeText} = this.state;
 
     let renderItem = ({item}) => (
-      <Item style={[styles.list, item.selectedClass]} onPress={() => {}}>
+      <Item style={[styles.list]} onPress={() => {}}>
         <View
           style={{
             flex: 1,
@@ -160,6 +231,13 @@ export class NewRoute extends Component {
 
     return (
       <Container style={{flex: 1}}>
+        <Spinner
+          visible={this.state.loading}
+          textContent={global.translate(this.state.loadingMessage)}
+          color={'CE2424'}
+          overlayColor={'rgba(255, 255, 255, 0.4)'}
+          animation={'slide'}
+        />
         <Header>
           <Left>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
@@ -167,14 +245,14 @@ export class NewRoute extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Nueva Ruta</Title>
+            <Title>{global.translate('TITLE_ROUTE')}</Title>
           </Body>
           <Right>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate('RouteScreen')}>
+            <Button transparent onPress={this.saveRoute}>
               <Icon name="checkmark" />
-              <Text style={{color: 'white', marginLeft: 8}}>Listo</Text>
+              <Text style={{color: 'white', marginLeft: 8}}>
+                {global.translate('TITLE_DONE')}
+              </Text>
             </Button>
           </Right>
         </Header>
@@ -182,16 +260,22 @@ export class NewRoute extends Component {
           <View style={styles.container}>
             <Form>
               <View style={styles.paddingBottom}>
-                <Text style={styles.label}>Nombre Ruta</Text>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_DESCRIPTION')}
+                </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Digite el nombre de la ruta"
+                  placeholder={global.translate('PLACEHOLDER_TYPE_DESCRIPTION')}
                   returnKeyType="go"
-                  onChangeText={item => {}}
+                  onChangeText={route_description => {
+                    this.setState({route_description: route_description});
+                  }}
                 />
               </View>
               <View style={styles.paddingBottom}>
-                <Text style={styles.label}>Fecha límite</Text>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_START_DATE')}
+                </Text>
                 <View style={styles.datepicker}>
                   <DatePicker
                     defaultDate={new Date()}
@@ -201,7 +285,7 @@ export class NewRoute extends Component {
                     modalTransparent={false}
                     animationType={'fade'}
                     androidMode={'default'}
-                    placeHolderText="Select date"
+                    placeHolderText={global.translate('TITLE_SELECT_DATE')}
                     textStyle={{color: theme.colors.gray, fontSize: 14}}
                     placeHolderTextStyle={{
                       color: theme.colors.gray2,
@@ -212,7 +296,30 @@ export class NewRoute extends Component {
                   />
                 </View>
               </View>
-
+              <View style={styles.paddingBottom}>
+                <Text style={styles.label}>
+                  {global.translate('TITLE_END_DATE')}
+                </Text>
+                <View style={styles.datepicker}>
+                  <DatePicker
+                    defaultDate={new Date()}
+                    minimumDate={new Date()}
+                    locale={'es'}
+                    timeZoneOffsetInMinutes={undefined}
+                    modalTransparent={false}
+                    animationType={'fade'}
+                    androidMode={'default'}
+                    placeHolderText={global.translate('TITLE_SELECT_DATE')}
+                    textStyle={{color: theme.colors.gray, fontSize: 14}}
+                    placeHolderTextStyle={{
+                      color: theme.colors.gray2,
+                      fontSize: 14,
+                    }}
+                    onDateChange={this.setDate2}
+                    disabled={false}
+                  />
+                </View>
+              </View>
               <View>
                 <Text style={styles.label}>
                   {global.translate('TITLE_COLLECTOR')}
@@ -227,7 +334,6 @@ export class NewRoute extends Component {
               </View>
             </Form>
           </View>
-
           <ScrollView style={{marginBottom: 24}}>
             {/* FLATLIST */}
             {orderList}

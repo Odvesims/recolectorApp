@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {SearchBar, FetchingData} from '../../components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
@@ -37,21 +38,32 @@ import {
 import Active from './Tabs/Active';
 import Close from './Tabs/Close';
 import Defeated from './Tabs/Defeated';
-import {saveRoutes, getStoredRoutes} from '../../helpers/sql_helper';
-import {getRoutes} from '../../helpers/apiconnection_helper';
+import {
+  saveActiveRoutes,
+  saveInactiveRoutes,
+  getStoredRoutes,
+  clearRoutesCab,
+  clearRoutesDetails,
+} from '../../helpers/sql_helper';
+import {getData} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
-  state = {
-    data: [],
-    show: true,
-    BUTTONS: [
-      {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-      {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-      {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
-    ],
-    DESTRUCTIVE_INDEX: 3,
-    CANCEL_INDEX: 4,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      data2: [],
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      show: true,
+      BUTTONS: [
+        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
+        {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
+        {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      ],
+      DESTRUCTIVE_INDEX: 3,
+      CANCEL_INDEX: 4,
+    };
+  }
 
   static navigationOptions = {
     header: null,
@@ -61,17 +73,30 @@ export default class Clients extends Component {
     this.setState(previousState => ({show: !previousState.show}));
   };
 
+  componentDidMount() {
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        this.refreshHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
+
   enterHandler = () => {
     this.storedRoutes();
   };
 
   storedRoutes = () => {
-    getStoredRoutes().then(routes => {
-      if (routes.length > 0) {
-        this.setState({data: routes, loading: false});
-      } else {
-        this.setState({loading: false});
-      }
+    getStoredRoutes('A').then(active => {
+      getStoredRoutes('I').then(expired => {
+        this.setState({active: active, expired: expired, loading: false});
+      });
     });
   };
 
@@ -80,6 +105,8 @@ export default class Clients extends Component {
       loading: true,
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      expired: [],
+      active: [],
     });
     setTimeout(() => {
       if (this.state.loading) {
@@ -87,12 +114,19 @@ export default class Clients extends Component {
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 20000);
-    getRoutes('A').then(result => {
+    getData('GET_ROUTES').then(result => {
       if (!this.state.request_timeout) {
-        this.setState({loading: false, request_timeout: false});
         if (result.valid) {
-          saveRoutes(result.arrRoutes, []).then(res => {
-            this.storedRoutes('A');
+          clearRoutesCab('A').then(clear => {
+            clearRoutesDetails().then(det => {
+              saveActiveRoutes(result.arrResponse[0]).then(act => {
+                clearRoutesCab('I').then(clear => {
+                  saveInactiveRoutes(result.arrResponse[1]).then(inac => {
+                    this.storedRoutes();
+                  });
+                });
+              });
+            });
           });
         }
       } else {
@@ -110,8 +144,14 @@ export default class Clients extends Component {
     const {loading} = this.state;
     return (
       <Container>
+        <Spinner
+          visible={this.state.loading}
+          textContent={this.state.loadingMessage}
+          color={'CE2424'}
+          overlayColor={'rgba(255, 255, 255, 0.4)'}
+          animation={'slide'}
+        />
         {/* Header */}
-
         <Header>
           <Left>
             <Button transparent onPress={this.openDrawer}>
@@ -119,7 +159,7 @@ export default class Clients extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Rutas</Title>
+            <Title>{global.translate('TITLE_ROUTES')}</Title>
           </Body>
           <Right>
             <FetchingData syncData={this.refreshHandler} fetching={loading} />
@@ -138,14 +178,11 @@ export default class Clients extends Component {
 
         {/* Tabs */}
         <Tabs hasTabs>
-          <Tab heading="Activas">
-            <Active />
+          <Tab heading={global.translate('TITLE_ACTIVE')}>
+            <Active tab_data={this.state.active} />
           </Tab>
-          <Tab heading="Cerradas">
-            <Close />
-          </Tab>
-          <Tab heading="Vencidas">
-            <Defeated />
+          <Tab heading={global.translate('TITLE_EXPIRED')}>
+            <Defeated tab_data={this.state.expired} />
           </Tab>
         </Tabs>
 
