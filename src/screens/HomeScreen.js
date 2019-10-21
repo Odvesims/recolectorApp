@@ -26,22 +26,22 @@ import {
 import {getData} from '../helpers/apiconnection_helper';
 
 export default class Home extends Component {
-  _didFocusSubscription;
-  _willBlurSubscription;
+  // _didFocusSubscription;
+  // _willBlurSubscription;
 
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
     };
-    this._didFocusSubscription = props.navigation.addListener(
-      'didFocus',
-      payload =>
-        BackHandler.addEventListener(
-          'hardwareBackPress',
-          this.handleBackButton,
-        ),
-    );
+    // this._didFocusSubscription = props.navigation.addListener(
+    //   'didFocus',
+    //   payload =>
+    //     BackHandler.addEventListener(
+    //       'hardwareBackPress',
+    //       this.handleBackButton,
+    //     ),
+    // );
   }
 
   refreshHandler = () => {
@@ -96,21 +96,21 @@ export default class Home extends Component {
     this.props.navigation.openDrawer();
   };
 
-  componentDidMount() {
-    this._willBlurSubscription = this.props.navigation.addListener(
-      'willBlur',
-      payload =>
-        BackHandler.removeEventListener(
-          'hardwareBackPress',
-          this.handleBackPress,
-        ),
-    );
-  }
+  // componentDidMount() {
+  //   this._willBlurSubscription = this.props.navigation.addListener(
+  //     'willBlur',
+  //     payload =>
+  //       BackHandler.removeEventListener(
+  //         'hardwareBackPress',
+  //         this.handleBackPress,
+  //       ),
+  //   );
+  // }
 
-  componentWillUnmount() {
-    this._didFocusSubscription && this._didFocusSubscription.remove();
-    this._willBlurSubscription && this._willBlurSubscription.remove();
-  }
+  // componentWillUnmount() {
+  //   this._didFocusSubscription && this._didFocusSubscription.remove();
+  //   this._willBlurSubscription && this._willBlurSubscription.remove();
+  // }
 
   // componentDidMount() {
   //   this.backHandler = BackHandler.addEventListener(
@@ -119,26 +119,26 @@ export default class Home extends Component {
   //   );
   // }
 
-  handleBackButton = () => {
-    Alert.alert(
-      'Cerrar Sesión',
-      'Seguro que desea salir?',
-      [
-        {
-          text: 'Volver',
-          onPress: () => console.log('NO Pressed'),
-        },
-        {
-          text: 'Salir',
-          onPress: () => BackHandler.exitApp(),
-        },
-      ],
-      {
-        cancelable: false,
-      },
-    );
-    return true;
-  };
+  // handleBackButton = () => {
+  //   Alert.alert(
+  //     'Cerrar Sesión',
+  //     'Seguro que desea salir?',
+  //     [
+  //       {
+  //         text: 'Volver',
+  //         onPress: () => console.log('NO Pressed'),
+  //       },
+  //       {
+  //         text: 'Salir',
+  //         onPress: () => BackHandler.exitApp(),
+  //       },
+  //     ],
+  //     {
+  //       cancelable: false,
+  //     },
+  //   );
+  //   return true;
+  // };
 
   // componentWillUnmount() {
   //   this.backHandler = BackHandler.removeEventListener(

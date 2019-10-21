@@ -51,9 +51,12 @@ export default class LoginScreen extends Component {
       request_timeout: false,
     };
     global.deviceLanguage = this.state.deviceLanguage;
+    this.inputs = {};
   }
 
-  componentDidMount() {}
+  focusNextField = id => {
+    this.inputs[id].focus();
+  };
 
   setLanguage = sLang => {
     if (Platform.OS === 'android') {
@@ -149,11 +152,9 @@ export default class LoginScreen extends Component {
     header: null,
   };
 
-  inputs = {};
-
-  focusTheField = id => {
-    this.inputs[id]._root.focus();
-  };
+  // focusTheField = id => {
+  //   this.inputs[id]._root.focus();
+  // };
 
   render() {
     return (
@@ -175,42 +176,56 @@ export default class LoginScreen extends Component {
           resetScrollToCoords={{x: 0, y: 0}}
           scrollEnabled={false}>
           <View>
+            <AppTitle>RecolectorApp</AppTitle>
+            <InputLogin
+              iconName="person"
+              label={global.translate('TITLE_USER') + ':'}
+              onChangeText={userName => {
+                this.setState({userName: userName});
+              }}
+              // returnKeyType={'next'}
+              // onSubmitEditing={() => {
+              //   this.inputs['dsad'].focus();
+              // }}
+              // ref={input => {
+              //   this.inputs['user'] = input;
+              // }}
+              blurOnSubmit={false}
+              value={this.state.userName}
+            />
+            <InputLogin
+              id="password"
+              iconName="lock"
+              label={global.translate('TITLE_PASSWORD') + ':'}
+              onChangeText={userPassword => {
+                this.setState({userPassword: userPassword});
+              }}
+              ref={input => {
+                this.inputs['dsad'] = input;
+              }}
+              blurOnSubmit={true}
+              secured={true}
+              returnKeyType={'done'}
+              value={this.state.userPassword}
+            />
+
+            <CustomButton
+              style={{marginTop: 50}}
+              customClick={this.customClickHandler}
+              title={global.translate('TITLE_SIGNIN')}
+            />
+
+            {/* Toast and Spinner */}
+            <ToastMessage
+              visible={this.state.visible}
+              message={this.state.toastMsg}
+            />
             <Spinner
               visible={this.state.loading}
               textContent={this.state.loadingMessage}
               color={'CE2424'}
               overlayColor={'rgba(255, 255, 255, 0.4)'}
               animation={'slide'}
-            />
-            <AppTitle>RecolectorApp</AppTitle>
-            <InputLogin
-              iconName="person"
-              textLabel={global.translate('TITLE_USER') + ':'}
-              onChangeText={userName => {
-                this.setState({userName: userName});
-              }}
-              returnKeyType="go"
-              value={this.state.userName}
-            />
-            <InputLogin
-              id="password"
-              iconName="lock"
-              textLabel={global.translate('TITLE_PASSWORD') + ':'}
-              onChangeText={userPassword => {
-                this.setState({userPassword: userPassword});
-              }}
-              secured={true}
-              returnKeyType="go"
-              value={this.state.userPassword}
-            />
-            <CustomButton
-              style={{marginTop: 50}}
-              customClick={this.customClickHandler}
-              title={global.translate('TITLE_SIGNIN')}
-            />
-            <ToastMessage
-              visible={this.state.visible}
-              message={this.state.toastMsg}
             />
           </View>
         </KeyboardAwareScrollView>

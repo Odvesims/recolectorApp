@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {Text, View, TextInput} from 'react-native';
-import {Container, Header, Content, Item, Input, Icon} from 'native-base';
+import {Icon} from 'native-base';
 import styled from 'styled-components/native';
 import {theme} from '../../constants';
-import {CustomTextInput} from '../../components';
+import proptypes from 'prop-types';
 
 const LabelForm = styled.Text`
   margin-top: 20px;
@@ -43,11 +43,13 @@ export default class InputLogin extends Component {
       numberOfLines,
       onChangeText,
       onSubmitEditing,
+      blurOnSubmit,
       placeholder,
       returnKeyType,
       secured,
-      textLabel,
+      label,
       value,
+      ref,
       id,
       ...props
     } = this.props;
@@ -55,7 +57,7 @@ export default class InputLogin extends Component {
     return (
       <View>
         <LabelForm style={labelStyle} id={id}>
-          {textLabel}
+          {label}
         </LabelForm>
         <InputForm>
           <InputIcon name={iconName} />
@@ -70,7 +72,8 @@ export default class InputLogin extends Component {
             multiline={multiline}
             onSubmitEditing={onSubmitEditing}
             secureTextEntry={secured}
-            blurOnSubmit={false}
+            blurOnSubmit={blurOnSubmit}
+            ref={ref}
             value={value}
             {...props}
             style={inputstyle}
@@ -80,3 +83,22 @@ export default class InputLogin extends Component {
     );
   }
 }
+
+InputLogin.proptypes = {
+  inputstyle: proptypes.style,
+  iconName: proptypes.string,
+  labelStyle: proptypes.style,
+  keyboardType: proptypes.string,
+  multiline: proptypes.boolstring,
+  numberOfLines: proptypes.numberstring,
+  onChangeText: proptypes.funcstring,
+  onSubmitEditing: proptypes.funcstring,
+  blurOnSubmit: proptypes.boolstring,
+  placeholder: proptypes.string,
+  returnKeyType: proptypes.string,
+  secured: proptypes.boolstring,
+  textLabel: proptypes.string,
+  value: proptypes.funcstring,
+  ref: proptypes.func,
+  id: proptypes.string,
+};
