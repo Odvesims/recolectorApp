@@ -5,13 +5,15 @@ import NavigationService from './src/services/NavigationService';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
-import Navigation from './src/navigations/';
 
-global.database_version = 18;
+global.database_version = 3;
 global.userDisplayName = '';
 global.userRole = '';
 global.userName = '';
 global.userPassword = '';
+global.usesPrinter = 0;
+global.printer_address = '';
+global.printer_name = '';
 global.apiHost = '';
 global.apiPort = '';
 global.token = '';
@@ -50,6 +52,8 @@ const setI18nConfig = () => {
 };
 
 console.disableYellowBox = true;
+
+import Navigation from './src/navigations/';
 
 class App extends Component {
   constructor(props) {

@@ -1,7 +1,15 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component, Alert} from 'react';
 import {theme} from '../constants';
-import {View, StyleSheet, Picker, StatusBar, Integer} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Picker,
+  StatusBar,
+  Integer,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Container,
@@ -32,6 +40,8 @@ export default class ConfigScreen extends Component {
       hostName: '',
       portNumber: '',
       usesPrinter: '',
+      printerName: '',
+      printerAddress: '',
       configDone: false,
     };
     getUserConfig().then(res => {
@@ -40,11 +50,20 @@ export default class ConfigScreen extends Component {
         hostName: res.host,
         portNumber: res.port_number,
         usesPrinter: res.printer,
+        printerName: res.printer_name,
+        printerAddress: res.printer_address,
       });
     });
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    if (this.props.navigation.state.params.printer_name !== undefined) {
+      this.setState({
+        printerName: this.props.navigation.state.params.printer_name,
+        printerAddress: this.props.navigation.state.params.printer_address,
+      });
+    }
+  }
 
   saveUser = () => {
     this.setState({
@@ -56,8 +75,17 @@ export default class ConfigScreen extends Component {
       this.state.hostName,
       this.state.portNumber,
       this.state.usesPrinter,
+      this.props.navigation.state.params.printer_name,
+      this.props.navigation.state.params.printer_address,
     ).then(res => {
-      this.setState({loading: false});
+      this.setState({
+        loading: false,
+        hostName: res.host,
+        portNumber: res.port.toString(),
+        usesPrinter: res.printer,
+        printerName: res.printer_name,
+        printerAddress: res.printer_address,
+      });
       if (res) {
         alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
       } else {
@@ -74,7 +102,42 @@ export default class ConfigScreen extends Component {
     header: null,
   };
 
+  IsPrinting(use) {
+    const uses = use;
+    if (uses === 'yes') {
+      return (
+        <View>
+          <TouchableOpacity style={styles.button}>
+            <Text>{global.translate('TITLE_CONFIGURE_PRINTER')}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return;
+    }
+  }
+
+  configBTPrinter = () => {
+    this.props.navigation.navigate('BluetoothPrinter', {
+      printer_name: this.state.printerName,
+      printer_address: this.state.printerAddress,
+    });
+  };
   render() {
+    let configPrinter;
+    if (this.state.usesPrinter === 'yes') {
+      configPrinter = (
+        <View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.configBTPrinter}>
+            <Text>{global.translate('TITLE_CONFIGURE_PRINTER')}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      configPrinter = <View />;
+    }
     return (
       <Container style={headerStyles.androidHeader}>
         <Header>
@@ -128,6 +191,7 @@ export default class ConfigScreen extends Component {
               <Picker.Item label={global.translate('TITLE_YES')} value="yes" />
               <Picker.Item label={global.translate('TITLE_NO')} value="no" />
             </Picker>
+            {configPrinter}
             <View>
               <CustomButton
                 customClick={this.saveUser}
@@ -148,13 +212,20 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
   },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#E1E1E5',
+    color: '#000000',
+    paddingBottom: 5,
+    paddingTop: 5,
+  },
 });
 
 const headerStyles = StyleSheet.create({
   androidHeader: {
     ...Platform.select({
       android: {
-        paddingTop: StatusBar.currentHeight,
+        //paddingTop: StatusBar.currentHeight,
       },
     }),
   },

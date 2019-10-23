@@ -84,6 +84,8 @@ export class Assigned extends Component {
             data={this.props.tab_data}
             keyExtractor={item => item.id}
             renderItem={renderItem}
+            maxToRenderPerBatch={10}
+            windowSize={10}
           />
         </ScrollView>
       </Content>

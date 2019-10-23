@@ -79,6 +79,7 @@ export async function getData(apiOption) {
       } else {
         returnObject = {
           valid: true,
+          response: responseJson.error_message,
           arrResponse: responseJson.arr_response,
         };
       }

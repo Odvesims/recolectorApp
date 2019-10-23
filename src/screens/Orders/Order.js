@@ -24,6 +24,11 @@ import {
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {getStoredClients} from '../../helpers/sql_helper';
 import {dataOperation} from '../../helpers/apiconnection_helper';
+import {
+  printText,
+  enableBT,
+  connectBluetooth,
+} from '../../helpers/bluetooth_helper';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 class Order extends Component {
@@ -85,15 +90,26 @@ class Order extends Component {
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
       if (res.valid) {
+        if (global.printer_address === '') {
+          alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
+        } else {
+          enableBT().then(e => {
+            connectBluetooth(global.printer_name, global.printer_address).then(
+              c => {
+                printText(res.responseObject).then(p => {});
+              },
+            );
+          });
+        }
         alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
         this.setState({
-          clients: [],
           client: '',
           client_address: '',
           client_city: '',
           client_state: '',
           client_phone: '',
-          placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+          placeholder: '',
+          selectedItem: [],
           data: [],
           loading: false,
         });
@@ -250,7 +266,7 @@ class Order extends Component {
                   <CustomPicker
                     items={this.state.clients}
                     placeholder={this.state.placeholder}
-                    value={this.state.client}
+                    selectedHolder={this.selectedItem.Name}
                     selectedItem={this.selectedItem}
                   />
                 </View>

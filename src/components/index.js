@@ -1,4 +1,4 @@
-import {TextInput} from 'react-native-gesture-handler';
+import CustomTextInput from './TextInput';
 import NavigationHeader from './NavigationHeader';
 import CustomButton from './CustomButton';
 import BoldLargeText from './BoldLargeText';
@@ -10,9 +10,13 @@ import SearchBar from './SearchBar';
 import FetchingData from './FetchingData';
 import ButtonDone from './ButtonDone';
 import CustomPicker from './CustomPicker';
+import InputLogin from './forms/InputLogin';
+import ToastMessage from './ToastMessage';
 
 export {
-  TextInput,
+  CustomTextInput,
+  ToastMessage,
+  InputLogin,
   NavigationHeader,
   CustomButton,
   AddButton,

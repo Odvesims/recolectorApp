@@ -72,7 +72,6 @@ export default class Orders extends Component {
     };
     this.availableTab = React.createRef();
     this.notAvailableTab = React.createRef();
-    this.enterHandler();
   }
 
   static navigationOptions = {
@@ -87,7 +86,7 @@ export default class Orders extends Component {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       try {
-        this.refreshHandler();
+        this.enterHandler();
       } catch (err) {
         this.enterHandler();
       }
@@ -108,7 +107,7 @@ export default class Orders extends Component {
 
   enterHandler = () => {
     this.setState({
-      loading: false,
+      loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
     });
     this.storedOrders();
@@ -118,6 +117,7 @@ export default class Orders extends Component {
     getNotAssignedOrders().then(not_assigned => {
       getAssignedOrders().then(assigned => {
         this.setState({
+          loading: false,
           not_assigned: not_assigned,
           assigned: assigned,
         });

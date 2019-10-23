@@ -34,26 +34,33 @@ import {
 } from '../../helpers/sql_helper';
 import {dataOperation} from '../../helpers/apiconnection_helper';
 
-export class NewRoute extends Component {
+export class Route extends Component {
   constructor(props) {
     super(props);
+    alert(this.props.navigation.state.params.date_to);
     this.state = {
       employees: [],
       employee: '',
       data: [],
       clear_data: [],
-      route_description: '',
-      chosenDate: new Date(),
-      chosenDate2: new Date(),
+      loading: false,
+      loadingMessage: this.props.navigation.state.params.loading_message,
+      new_record: this.props.navigation.state.params.new_record,
+      route_description: this.props.navigation.state.params.description,
+      document_id: this.props.navigation.state.params.document_id,
+      document_acronym: this.props.navigation.state.params.acronym,
+      document_number: this.props.navigation.state.params.document_number,
+      assigned_by: this.props.navigation.state.params.assigned_by,
+      supervisor_name: this.props.navigation.state.params.supervisor_name,
+      selectedItem: this.props.navigation.state.params.employee_name,
+      chosenDate: this.props.navigation.state.params.date_to,
+      chosenDate2: new Date(this.props.navigation.state.params.date_from),
     };
     this.selectedItem = this.selectedItem.bind(this);
     this.getEmployeesHandler();
   }
 
-  state = {
-    chosenDate: new Date(),
-    chosenDate2: new Date(),
-  };
+  state = {};
 
   setDate = this.setDate.bind(this);
 
@@ -245,7 +252,9 @@ export class NewRoute extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_ROUTE')}</Title>
+            <Title>
+              {global.translate(this.props.navigation.state.params.operation)}
+            </Title>
           </Body>
           <Right>
             <Button transparent onPress={this.saveRoute}>
@@ -267,6 +276,7 @@ export class NewRoute extends Component {
                   style={styles.input}
                   placeholder={global.translate('PLACEHOLDER_TYPE_DESCRIPTION')}
                   returnKeyType="go"
+                  value={this.state.route_description}
                   onChangeText={route_description => {
                     this.setState({route_description: route_description});
                   }}
@@ -278,8 +288,9 @@ export class NewRoute extends Component {
                 </Text>
                 <View style={styles.datepicker}>
                   <DatePicker
-                    defaultDate={new Date()}
-                    minimumDate={new Date()}
+                    defaultDate={this.state.chosenDate}
+                    minimumDate={this.state.chosenDate}
+                    selected={this.state.chosenDate}
                     locale={'es'}
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
@@ -307,6 +318,7 @@ export class NewRoute extends Component {
                     locale={'es'}
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
+                    value={this.state.date_to}
                     animationType={'fade'}
                     androidMode={'default'}
                     placeHolderText={global.translate('TITLE_SELECT_DATE')}
@@ -328,7 +340,6 @@ export class NewRoute extends Component {
                 <CustomPicker
                   items={this.state.employees}
                   placeholder={this.state.placeholder}
-                  value={this.state.employee}
                   selectedItem={this.selectedItem}
                 />
               </View>
@@ -366,8 +377,8 @@ export class NewRoute extends Component {
     );
   }
 }
+export default Route;
 
-export default NewRoute;
 const styles = StyleSheet.create({
   headerCodeText: {
     color: theme.colors.gray,

@@ -64,14 +64,13 @@ export default class Clients extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.enterHandler();
   }
 
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       try {
-        this.refreshHandler();
+        this.enterHandler();
       } catch (err) {
         this.enterHandler();
       }

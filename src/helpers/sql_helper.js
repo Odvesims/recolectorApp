@@ -78,11 +78,11 @@ export function setUserTable() {
       txn.executeSql('DROP TABLE IF EXISTS route_details');
       txn.executeSql('DROP VIEW IF EXISTS view_orders');
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no")',
+        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no", printer_name VARCHAR, printer_address VARCHAR)',
       );
       txn.executeSql(
-        'INSERT INTO app_configurations(host_name, port_number) VALUES(?, ?)',
-        ['apimobile.sojaca.net', 444],
+        'INSERT INTO app_configurations(host_name, port_number, printer_name, printer_address) VALUES(?, ?, ?, ?)',
+        ['apimobile.sojaca.net', 444, '', ''],
         (tx, results) => {},
       );
       txn.executeSql(
@@ -132,6 +132,8 @@ export function getUserConfig() {
             port_number: row.port_number.toString(),
             host: row.host_name,
             printer: row.uses_printer,
+            printer_name: row.printer_name,
+            printer_address: row.printer_address,
           };
         }
         resolve(userConfig);
@@ -149,15 +151,23 @@ export function deleteUserConfig() {
   });
 }
 
-export function saveUserConfig(count, host, port, printer) {
+export function saveUserConfig(
+  count,
+  host,
+  port,
+  printer,
+  printer_name,
+  printer_address,
+) {
   return new Promise((resolve, reject) => {
     let updated;
+    let objResult = {};
     if (count == 0) {
       updated = false;
       db.transaction(function(tx) {
         tx.executeSql(
-          'INSERT INTO app_configurations (host_name, port_number, uses_printer) VALUES (?,?,?)',
-          [host, port, printer],
+          'INSERT INTO app_configurations (host_name, port_number, uses_printer) VALUES (?,?,?,?,?)',
+          [host, port, printer, printer_name, printer_address],
           (tx, results) => {},
         );
       });
@@ -165,13 +175,27 @@ export function saveUserConfig(count, host, port, printer) {
       updated = true;
       db.transaction(tx => {
         tx.executeSql(
-          'UPDATE app_configurations set host_name=?, port_number=? , uses_printer=?',
-          [host, port, printer],
+          'UPDATE app_configurations set host_name=?, port_number=? , uses_printer=?, printer_name=?, printer_address=?',
+          [host, port, printer, printer_name, printer_address],
           (tx, results) => {},
         );
       });
     }
-    resolve(updated);
+    db.transaction(function(tx) {
+      tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
+        for (let i = 0; i < results.rows.length; ++i) {
+          let result = results.rows.item(i);
+          objResult = {
+            host: result.host_name,
+            port: result.port_number,
+            printer: result.uses_printer,
+            printer_name: result.printer_name,
+            printer_address: result.printer_address,
+          };
+        }
+        resolve(objResult);
+      });
+    });
   });
 }
 
@@ -306,7 +330,7 @@ export function getStoredClients() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM clients WHERE country_id = ${global.country_id}`,
+        `SELECT * FROM clients WHERE country_id = ${global.country_id} ORDER BY CAST(client_code AS INTEGER)`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -360,7 +384,7 @@ export function getStoredEmployees() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM employees WHERE country_id = ${global.country_id}`,
+        `SELECT * FROM employees WHERE country_id = ${global.country_id} ORDER BY CAST(employee_code AS INTEGER)`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -713,7 +737,7 @@ export function saveArticles(articles) {
 export function getStoredRoutes(routes_status) {
   return new Promise((resolve, reject) => {
     let arrRoutes = [];
-    let sqlStr = `SELECT * FROM routes WHERE status = '${routes_status}'`;
+    let sqlStr = `SELECT * FROM routes WHERE status = '${routes_status}' ORDER BY CAST(document_number AS INTEGER) DESC`;
     db.transaction(tx => {
       tx.executeSql(sqlStr, [], (tx, results) => {
         for (let i = 0; i < results.rows.length; ++i) {
@@ -745,19 +769,23 @@ export function getOrders() {
   let arrOrders = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql(`SELECT * FROM orders`, [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let orderObject = {
-            document: row.order_document,
-            client: row.client,
-            address: row.address,
-            order_total: row.order_total,
-            assigned: row.assigned,
-          };
-          arrOrders.push(orderObject);
-        }
-      });
+      tx.executeSql(
+        `SELECT * FROM orders ORDER BY id DESC`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              document: row.order_document,
+              client: row.client,
+              address: row.address,
+              order_total: row.order_total,
+              assigned: row.assigned,
+            };
+            arrOrders.push(orderObject);
+          }
+        },
+      );
       resolve(arrOrders);
     });
   });
@@ -768,7 +796,7 @@ export function getAssignedOrders() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client`,
+        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client ORDER BY o.order_id DESC`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -795,7 +823,7 @@ export function getNotAssignedOrders() {
     let arrOrders = [];
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client',
+        'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -822,18 +850,22 @@ export function getStoredCategories() {
   return new Promise((resolve, reject) => {
     let arrCategories = [];
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM categories', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let categoryObject = {
-            category_code: row.category_code,
-            description: row.description,
-            price: row.price,
-          };
-          arrCategories.push(categoryObject);
-        }
-        resolve(arrCategories);
-      });
+      tx.executeSql(
+        'SELECT * FROM categories ORDER BY CAST(category_code AS INTEGER) ASC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let categoryObject = {
+              category_code: row.category_code,
+              description: row.description,
+              price: row.price,
+            };
+            arrCategories.push(categoryObject);
+          }
+          resolve(arrCategories);
+        },
+      );
     });
   });
 }
@@ -842,19 +874,23 @@ export function getStoredSubcategories() {
   let arrSubcategories = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM subcategories', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let subcategoryObject = {
-            category_id: row.category_id,
-            subcategory_code: row.subcategory_code,
-            description: row.description,
-            price: row.price,
-          };
-          arrSubcategories.push(subcategoryObject);
-        }
-        resolve(arrSubcategories);
-      });
+      tx.executeSql(
+        'SELECT * FROM subcategories ORDER BY CAST(subcategory_code AS INTEGER) ASC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let subcategoryObject = {
+              category_id: row.category_id,
+              subcategory_code: row.subcategory_code,
+              description: row.description,
+              price: row.price,
+            };
+            arrSubcategories.push(subcategoryObject);
+          }
+          resolve(arrSubcategories);
+        },
+      );
     });
   });
 }
@@ -863,20 +899,24 @@ export function getStoredArticles() {
   let arrArticles = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM articles', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let articleObject = {
-            category_id: row.category_id,
-            subcategory_id: row.subcategory_id,
-            article_code: row.article_code,
-            description: row.description,
-            price: row.price,
-          };
-          arrArticles.push(articleObject);
-        }
-        resolve(arrArticles);
-      });
+      tx.executeSql(
+        'SELECT * FROM articles ORDER BY CAST(article_code AS INTEGER) ASC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let articleObject = {
+              category_id: row.category_id,
+              subcategory_id: row.subcategory_id,
+              article_code: row.article_code,
+              description: row.description,
+              price: row.price,
+            };
+            arrArticles.push(articleObject);
+          }
+          resolve(arrArticles);
+        },
+      );
     });
   });
 }

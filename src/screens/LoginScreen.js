@@ -83,6 +83,9 @@ export default class LoginScreen extends Component {
                 global.userPassword = password;
                 global.apiHost = res.host;
                 global.apiPort = res.port_number;
+                global.usesPrinter = res.printer;
+                global.printer_name = res.printer_name;
+                global.printer_address = res.printer_address;
                 saveUserData(l.user_data).then(usr => {
                   global.token = l.token;
                   global.states_collection = l.user_data.country_code;
@@ -129,7 +132,7 @@ export default class LoginScreen extends Component {
   }
 
   goConfig = cClick => {
-    this.props.navigation.navigate('Configuration');
+    this.props.navigation.navigate('userConfig');
   };
 
   static navigationOptions = {

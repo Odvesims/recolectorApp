@@ -35,9 +35,7 @@ import {
   Tabs,
   Tab,
 } from 'native-base';
-import Active from './Tabs/Active';
-import Close from './Tabs/Close';
-import Defeated from './Tabs/Defeated';
+import RoutesTab from './Tabs/RoutesTab';
 import {
   saveActiveRoutes,
   saveInactiveRoutes,
@@ -47,7 +45,7 @@ import {
 } from '../../helpers/sql_helper';
 import {getData} from '../../helpers/apiconnection_helper';
 
-export default class Clients extends Component {
+export default class Routes extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -77,7 +75,7 @@ export default class Clients extends Component {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       try {
-        this.refreshHandler();
+        this.enterHandler();
       } catch (err) {
         this.enterHandler();
       }
@@ -89,6 +87,10 @@ export default class Clients extends Component {
   }
 
   enterHandler = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+    });
     this.storedRoutes();
   };
 
@@ -114,21 +116,27 @@ export default class Clients extends Component {
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 20000);
-    getData('GET_ROUTES').then(result => {
+    getData('GET_ACTIVE_ROUTES').then(active => {
       if (!this.state.request_timeout) {
-        if (result.valid) {
-          clearRoutesCab('A').then(clear => {
-            clearRoutesDetails().then(det => {
-              saveActiveRoutes(result.arrResponse[0]).then(act => {
-                clearRoutesCab('I').then(clear => {
-                  saveInactiveRoutes(result.arrResponse[1]).then(inac => {
-                    this.storedRoutes();
-                  });
+        clearRoutesCab('A').then(ca => {
+          clearRoutesDetails().then(cd => {
+            if (active.arrResponse !== []) {
+              saveActiveRoutes(active.arrResponse);
+            }
+            getData('GET_INACTIVE_ROUTES').then(inactive => {
+              if (!this.state.request_timeout) {
+                clearRoutesCab('I').then(ci => {
+                  if (inactive.arrResponse !== []) {
+                    saveInactiveRoutes(inactive.arrResponse);
+                  }
+                  this.storedRoutes();
                 });
-              });
+              } else {
+                this.setState({request_timeout: false});
+              }
             });
           });
-        }
+        });
       } else {
         this.setState({request_timeout: false});
       }
@@ -179,17 +187,43 @@ export default class Clients extends Component {
         {/* Tabs */}
         <Tabs hasTabs>
           <Tab heading={global.translate('TITLE_ACTIVE')}>
-            <Active tab_data={this.state.active} />
+            <RoutesTab
+              tab_data={this.state.active}
+              navigation={this.props.navigation}
+            />
           </Tab>
           <Tab heading={global.translate('TITLE_EXPIRED')}>
-            <Defeated tab_data={this.state.expired} />
+            <RoutesTab
+              tab_data={this.state.expired}
+              navigation={this.props.navigation}
+            />
           </Tab>
         </Tabs>
 
         <Fab
-          style={{backgroundColor: theme.colors.primary}}
+          style={{backgroundColor: theme.colors.primary, right: 20}}
           position="bottomRight"
-          onPress={() => this.props.navigation.navigate('NewRoute')}>
+          onPress={() =>
+            this.props.navigation.navigate('Route', {
+              operation: 'TITLE_NEW_ROUTE',
+              route_id: '',
+              description: '',
+              document_id: '',
+              document_acronym: '',
+              document_number: '',
+              assigned_by: '',
+              assigned_to: '',
+              supervisor_name: '',
+              employee_name: '',
+              phone_number: '',
+              date_from: '',
+              date_to: '',
+              status: '',
+              loading_message: 'MESSAGE_REGISTERING_ROUTE',
+              new_record: false,
+              onGoBack: () => this.refresh(false),
+            })
+          }>
           <Icon name="add" />
         </Fab>
       </Container>

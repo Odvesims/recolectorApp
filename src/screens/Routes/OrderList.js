@@ -33,7 +33,7 @@ import {
 import {getNotAssignedOrders} from '../../helpers/sql_helper';
 
 const selectedData = [];
-export default class Active extends Component {
+export default class OrderList extends Component {
   state = {
     data: [],
     dataSelected: [],
