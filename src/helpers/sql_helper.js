@@ -454,84 +454,8 @@ export function saveRoutes(routes, inactiveRoutes) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql('DELETE FROM routes', [], (tx, results) => {});
-      tx.executeSql('DELETE FROM routes_details', [], (tx, results) => {});
-    }); /*
-    for (let i = 0; i < routes.length; i++) {
-      let route = routes[i];
-      db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO routes(route_id, document_id, document_acronym, document_number, assigned_by , assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [
-            route.route_id,
-            route.document_id,
-            route.document_acronym,
-            route.document_number,
-            route.assigned_by,
-            route.assigned_to,
-            route.supervisor_name,
-            route.employee_name,
-            route.phone_number,
-            route.date_from,
-            route.date_to,
-            route.status,
-          ],
-          (tx, results) => {},
-        );
-      });
-      for (let e = 0; e < route.route_details.length; e++) {
-        let route_detail = route.route_details[e];
-        db.transaction(tx => {
-          tx.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id, status) VALUES(?, ?, ?, ?)',
-            [
-              route_detail.route_id,
-              route_detail.order_id,
-              route_detail.routedetail_id,
-              route.status,
-            ],
-            (tx, results) => {},
-          );
-        });
-      }
-    }
-    for (let i = 0; i < inactiveRoutes.length; i++) {
-      let route = inactiveRoutes[i];
-      db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO routes(route_id, document_id, document_acronym, document_number, assigned_by , assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [
-            route.route_id,
-            route.document_id,
-            route.document_acronym,
-            route.document_number,
-            route.assigned_by,
-            route.assigned_to,
-            route.supervisor_name,
-            route.employee_name,
-            route.phone_number,
-            route.date_from,
-            route.date_to,
-            route.status,
-          ],
-          (tx, results) => {},
-        );
-      });
-      for (let e = 0; e < route.route_details.length; e++) {
-        let route_detail = route.route_details[e];
-        db.transaction(tx => {
-          tx.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id, status) VALUES(?, ?, ?, ?)',
-            [
-              route_detail.route_id,
-              route_detail.order_id,
-              route_detail.routedetail_id,
-              route.status,
-            ],
-            (tx, results) => {},
-          );
-        });
-      }
-    }*/
+      tx.executeSql('DELETE FROM route_details', [], (tx, results) => {});
+    });
     resolve(true);
   });
 }
@@ -552,7 +476,7 @@ export function clearRoutesCab(status_route) {
 export function clearRoutesDetails() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('DELETE FROM routes_details');
+      tx.executeSql('DELETE FROM route_details');
     });
     resolve(true);
   });
@@ -602,7 +526,7 @@ export function saveActiveRoutes(routes) {
         let route_detail = route.route_details[e];
         db.transaction(td => {
           td.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
+            'INSERT INTO route_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
             [
               route_detail.route_id,
               route_detail.order_id,
@@ -649,7 +573,7 @@ export function saveInactiveRoutes(routes) {
         let route_detail = route.route_details[e];
         db.transaction(td => {
           td.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
+            'INSERT INTO route_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
             [
               route_detail.route_id,
               route_detail.order_id,
@@ -760,6 +684,32 @@ export function getStoredRoutes(routes_status) {
           arrRoutes.push(routeObject);
         }
         resolve(arrRoutes);
+      });
+    });
+  });
+}
+
+export function getRouteDetails(route_id) {
+  return new Promise((resolve, reject) => {
+    let arrDetails = [];
+    let sqlStr2 = `SELECT r.order_id, r.routedetail_id, o.order_id, o.order_document, o.client, o.address, o.order_total, c.name FROM route_details r, orders o, clients c WHERE route_id = ${route_id} AND o.order_id = r.order_id AND c.client_code = o.client`;
+    db.transaction(tx => {
+      tx.executeSql(sqlStr2, [], (tx, results_det) => {
+        for (let e = 0; e < results_det.rows.length; ++e) {
+          let orderRow = results_det.rows.item(e);
+          let detObject = {
+            route_id: route_id,
+            order_id: orderRow.order_id,
+            routedetail_id: orderRow.routedetail_id,
+            order_document: orderRow.order_document,
+            client: orderRow.client,
+            name: orderRow.name,
+            address: orderRow.address,
+            order_total: orderRow.order_total,
+          };
+          arrDetails.push(detObject);
+        }
+        resolve(arrDetails);
       });
     });
   });

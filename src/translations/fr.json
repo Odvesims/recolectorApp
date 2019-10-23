@@ -64,6 +64,7 @@
   "TITLE_OPTIONS": "Les options",
   "TITLE_DELETE": "Enlever",
   "TITLE_EDIT": "Éditer",
+  "TITLE_VIEW": "Vue",
   "TITLE_CANCEL": "Sortir",
   "TITLE_DONE": "Prêt",
   "TITLE_NAME": "Nom",
@@ -100,5 +101,7 @@
   "TITLE_QUESTION_SIGN_OUT": "Êtes-vous certain de vouloir vous déconnecter?",
   "TITLE_MY_ROUTES": "Mes itinéraires",
   "TITLE_NEW_ROUTE": "Nouvelle itinéraire",
-  "TITLE_EDIT_ROUTE": "Modifier itinéraire"
+  "TITLE_EDIT_ROUTE": "Modifier itinéraire",
+  "TITLE_VIEW_ROUTE": "Vue itinéraire",
+  "TITLE_SELECTED": "Choisie"
 }

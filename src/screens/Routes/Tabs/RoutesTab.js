@@ -31,8 +31,8 @@ export class Defeated extends Component {
     show: true,
     BUTTONS: [
       {
-        text: global.translate('TITLE_EDIT'),
-        icon: 'create',
+        text: global.translate('TITLE_VIEW'),
+        icon: 'eye',
         iconColor: theme.colors.primary,
       },
       {
@@ -58,7 +58,27 @@ export class Defeated extends Component {
                 data={tab_data}
                 renderItem={({item}) => (
                   <Item style={styles.list}>
-                    <Text style={styles.name}>{item.description}</Text>
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingHorizontal: 12,
+                      }}>
+                      <View key={item.key} style={styles.listContainer}>
+                        <Text style={styles.name}>{item.description}</Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}>
+                          <Text style={styles.address}>
+                            {global.translate('TITLE_COLLECTOR')}:{' '}
+                            {item.employee_name}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
                     <Button
                       transparent
                       style={styles.more}
@@ -74,7 +94,7 @@ export class Defeated extends Component {
                             switch (buttonIndex) {
                               case 0:
                                 this.props.navigation.navigate('Route', {
-                                  operation: 'TITLE_EDIT_ROUTE',
+                                  operation: 'TITLE_VIEW_ROUTE',
                                   route_id: item.route_id,
                                   description: item.description,
                                   document_id: item.document_id,
@@ -88,9 +108,10 @@ export class Defeated extends Component {
                                   date_from: item.date_from,
                                   date_to: item.date_to,
                                   status: item.status,
+                                  disabled_date_from: true,
                                   loading_message: 'MESSAGE_UPDATING_ROUTE',
                                   new_record: false,
-                                  onGoBack: () => this.refresh(false),
+                                  details: item.details,
                                 });
                                 break;
                               case 1:

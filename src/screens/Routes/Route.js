@@ -3,6 +3,7 @@ import {theme} from '../../constants';
 import PickerModal from 'react-native-picker-modal-view';
 import CustomPicker from '../../components/CustomPicker';
 import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
 import {
   Text,
   View,
@@ -31,13 +32,14 @@ import {
 import {
   getStoredEmployees,
   updateOrderAssigned,
+  getRouteDetails,
 } from '../../helpers/sql_helper';
 import {dataOperation} from '../../helpers/apiconnection_helper';
 
 export class Route extends Component {
   constructor(props) {
     super(props);
-    alert(this.props.navigation.state.params.date_to);
+    //alert(JSON.stringify(this.props.navigation.state.params.details));
     this.state = {
       employees: [],
       employee: '',
@@ -51,11 +53,18 @@ export class Route extends Component {
       document_acronym: this.props.navigation.state.params.acronym,
       document_number: this.props.navigation.state.params.document_number,
       assigned_by: this.props.navigation.state.params.assigned_by,
-      supervisor_name: this.props.navigation.state.params.supervisor_name,
-      selectedItem: this.props.navigation.state.params.employee_name,
+      placeholder: this.props.navigation.state.params.employee_name,
       chosenDate: this.props.navigation.state.params.date_to,
-      chosenDate2: new Date(this.props.navigation.state.params.date_from),
+      chosenDate2: this.props.navigation.state.params.date_from,
+      disabled_date_from: this.props.navigation.state.params.disabled_date_from,
     };
+    if (!this.props.navigation.state.params.new_record) {
+      getRouteDetails(this.props.navigation.state.params.route_id).then(
+        dets => {
+          this.setState({data: dets});
+        },
+      );
+    }
     this.selectedItem = this.selectedItem.bind(this);
     this.getEmployeesHandler();
   }
@@ -114,66 +123,75 @@ export class Route extends Component {
   }
 
   setDate(newDate) {
-    this.setState({chosenDate: newDate});
+    this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
   }
 
   setDate2(newDate) {
-    this.setState({chosenDate2: newDate});
+    this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
   }
 
   saveRoute = () => {
-    let {
-      route_description,
-      chosenDate,
-      chosenDate2,
-      selected_item,
-      clear_data,
-    } = this.state;
-    if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
-      let ordersArr = [];
-      clear_data.map(order => {
-        let orderObject = {
-          code: order.document.split('-')[1],
-          order_id: order.order_id,
+    if (this.state.new_record) {
+      let {
+        route_description,
+        chosenDate,
+        chosenDate2,
+        selected_item,
+        clear_data,
+      } = this.state;
+      if (
+        route_description &&
+        chosenDate &&
+        chosenDate2 &&
+        selected_item.Code
+      ) {
+        let ordersArr = [];
+        clear_data.map(order => {
+          let orderObject = {
+            code: order.document.split('-')[1],
+            order_id: order.order_id,
+          };
+          ordersArr.push(orderObject);
+        });
+        let order_data = {
+          setma_id: global.setma_id,
+          description: route_description,
+          supervisor_code: global.employee_code,
+          collector_code: selected_item.Code,
+          start_date: chosenDate,
+          end_date: chosenDate2,
+          route_state: 'A',
+          orders_list: ordersArr,
         };
-        ordersArr.push(orderObject);
-      });
-      let order_data = {
-        setma_id: global.setma_id,
-        description: route_description,
-        supervisor_code: global.employee_code,
-        collector_code: selected_item.Code,
-        start_date: chosenDate,
-        end_date: chosenDate2,
-        route_state: 'A',
-        orders_list: ordersArr,
-      };
-      this.setState({
-        loading: true,
-        loadingMessage: 'MESSAGE_REGISTERING_ROUTE',
-      });
-      dataOperation('ROUTE_OPERATION', order_data).then(res => {
-        if (res.valid) {
-          updateOrderAssigned(ordersArr).then(up => {
-            alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
-            this.setState({
-              employees: [],
-              client: '',
-              client_address: '',
-              client_city: '',
-              client_state: '',
-              client_phone: '',
-              placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
-              data: [],
-              loading: false,
+        this.setState({
+          loading: true,
+          loadingMessage: 'MESSAGE_REGISTERING_ROUTE',
+        });
+        dataOperation('ROUTE_OPERATION', order_data).then(res => {
+          if (res.valid) {
+            updateOrderAssigned(ordersArr).then(up => {
+              alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+              this.setState({
+                employees: [],
+                client: '',
+                client_address: '',
+                client_city: '',
+                client_state: '',
+                client_phone: '',
+                placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+                data: [],
+                loading: false,
+              });
             });
-          });
-        } else {
-          this.setState({loading: false});
-        }
-      });
+          } else {
+            this.setState({loading: false});
+          }
+        });
+      } else {
+        alert(global.translate('ALERT_COMPLETE_DATA'));
+      }
     } else {
-      alert(global.translate('ALERT_COMPLETE_DATA'));
+      this.props.navigation.goBack();
     }
   };
 
@@ -288,22 +306,22 @@ export class Route extends Component {
                 </Text>
                 <View style={styles.datepicker}>
                   <DatePicker
-                    defaultDate={this.state.chosenDate}
-                    minimumDate={this.state.chosenDate}
-                    selected={this.state.chosenDate}
+                    defaultDate={
+                      new Date(
+                        this.state.chosenDate.split('/')[2],
+                        parseInt(this.state.chosenDate.split('/')[1]) - 1,
+                        this.state.chosenDate.split('/')[0],
+                      )
+                    }
+                    minimumDate={new Date()}
                     locale={'es'}
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
                     animationType={'fade'}
                     androidMode={'default'}
-                    placeHolderText={global.translate('TITLE_SELECT_DATE')}
                     textStyle={{color: theme.colors.gray, fontSize: 14}}
-                    placeHolderTextStyle={{
-                      color: theme.colors.gray2,
-                      fontSize: 14,
-                    }}
                     onDateChange={this.setDate}
-                    disabled={false}
+                    disabled={this.state.disabled_date_from}
                   />
                 </View>
               </View>
@@ -313,7 +331,13 @@ export class Route extends Component {
                 </Text>
                 <View style={styles.datepicker}>
                   <DatePicker
-                    defaultDate={new Date()}
+                    defaultDate={
+                      new Date(
+                        this.state.chosenDate2.split('/')[2],
+                        parseInt(this.state.chosenDate2.split('/')[1]) - 1,
+                        this.state.chosenDate2.split('/')[0],
+                      )
+                    }
                     minimumDate={new Date()}
                     locale={'es'}
                     timeZoneOffsetInMinutes={undefined}
@@ -321,14 +345,13 @@ export class Route extends Component {
                     value={this.state.date_to}
                     animationType={'fade'}
                     androidMode={'default'}
-                    placeHolderText={global.translate('TITLE_SELECT_DATE')}
                     textStyle={{color: theme.colors.gray, fontSize: 14}}
                     placeHolderTextStyle={{
                       color: theme.colors.gray2,
                       fontSize: 14,
                     }}
                     onDateChange={this.setDate2}
-                    disabled={false}
+                    disabled={this.state.disabled_date_from}
                   />
                 </View>
               </View>
@@ -341,6 +364,7 @@ export class Route extends Component {
                   items={this.state.employees}
                   placeholder={this.state.placeholder}
                   selectedItem={this.selectedItem}
+                  disabled={this.state.disabled_date_from}
                 />
               </View>
             </Form>
@@ -355,6 +379,7 @@ export class Route extends Component {
             <View>{}</View>
             <TouchableOpacity
               style={styles.buttonGhost}
+              disabled={this.state.disabled_date_from}
               onPress={() => {
                 this.props.navigation.navigate('OrderList', {
                   checkedItems: this.state.data,

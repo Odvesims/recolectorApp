@@ -65,6 +65,7 @@
   "TITLE_OPTIONS": "Opciones",
   "TITLE_DELETE": "Eliminar",
   "TITLE_EDIT": "Editar",
+  "TITLE_VIEW": "Ver",
   "TITLE_CANCEL": "Cancelar",
   "TITLE_DONE": "Listo",
   "TITLE_NAME": "Nombre",
@@ -114,5 +115,7 @@
   "TITLE_QUESTION_SIGN_OUT": "Seguro que desea cerrar la sesión?",
   "TITLE_MY_ROUTES": "Mis Rutas",
   "TITLE_NEW_ROUTE": "Nueva Ruta",
-  "TITLE_EDIT_ROUTE": "Editar Ruta"
+  "TITLE_EDIT_ROUTE": "Editar Ruta",
+  "TITLE_VIEW_ROUTE": "Ver Ruta",
+  "TITLE_SELECTED": "Seleccionados"
 }

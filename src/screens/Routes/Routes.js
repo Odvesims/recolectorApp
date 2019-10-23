@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {SearchBar, FetchingData} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
 
 import {} from 'react-native-vector-icons';
 
@@ -216,11 +217,12 @@ export default class Routes extends Component {
               supervisor_name: '',
               employee_name: '',
               phone_number: '',
-              date_from: '',
-              date_to: '',
+              date_from: moment(new Date()).format('DD/MM/YYYY'),
+              date_to: moment(new Date()).format('DD/MM/YYYY'),
               status: '',
               loading_message: 'MESSAGE_REGISTERING_ROUTE',
-              new_record: false,
+              new_record: true,
+              disabled_date_from: false,
               onGoBack: () => this.refresh(false),
             })
           }>
