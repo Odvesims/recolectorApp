@@ -151,13 +151,7 @@ class Order extends Component {
             <Body>
               <Title>{global.translate('TITLE_MYROUTES')}</Title>
             </Body>
-            <Right>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.navigate('')}>
-                <Icon name="checkmark" />
-              </Button>
-            </Right>
+            <Right></Right>
           </Header>
 
           {/* Content */}

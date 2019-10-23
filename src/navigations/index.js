@@ -243,6 +243,7 @@ const AppNavigator = createDrawerNavigator(
         </TouchableOpacity>
       </ScrollView>
     ),
+
     contentOptions: {
       activeTintColor: theme.colors.primary,
       inactiveTintColor: theme.colors.darkGray,
@@ -253,6 +254,15 @@ const AppNavigator = createDrawerNavigator(
         color: theme.colors.gray,
       },
     },
+    order: [
+      'HomeScreen',
+      'ClientScreen',
+      'RouteScreen',
+      'OrderScreen',
+      'MyRoutesScreen',
+      'ConfigScreen',
+    ],
+    backBehavior: 'none',
   },
 );
 
@@ -264,6 +274,7 @@ const Navigation = createSwitchNavigator(
   },
   {
     initialRouteName: 'Auth',
+    backBehavior: 'initialRoute',
   },
 );
 

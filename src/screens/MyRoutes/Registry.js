@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, createRef} from 'react';
 import {theme} from '../../constants';
 import {Text, View, StyleSheet, ScrollView, FlatList} from 'react-native';
 import {CustomTextInput} from '../../components';
@@ -42,8 +42,9 @@ const ItemsContainer = styled.View`
 `;
 
 const InputValues = styled(CustomTextInput)`
-  width: 100px;
-  margin-left: 8px;
+  flex-basis: 100px;
+  margin-left: 20px;
+  padding: 12px;
   background-color: #fff;
   border-color: #bdbdbd;
   border-width: 1px;
@@ -69,6 +70,9 @@ export default class Registry extends Component {
 
   //     };
   //   }
+  constructor(props) {
+    super(props);
+  }
 
   state = {
     //   data: [], //this.props.navigation.state.params.info
@@ -77,72 +81,63 @@ export default class Registry extends Component {
         id: 1,
         name: 'Calambres',
         address: 'Kulas Light',
+        value: '',
       },
       {
         id: 2,
         name: 'Alambres',
         address: 'Kulas Light',
+        value: '',
       },
       {
         id: 3,
-        name: 'Tornillos',
+        name: 'Tornillos Tornillos Tornillos',
         address: 'Kulas Light',
+        value: '',
       },
       {
-        id: 3,
-        name: 'Tornillos',
+        id: 4,
+        name: 'Tornillos Tornillos',
         address: 'Kulas Light',
+        value: '',
       },
       {
-        id: 3,
-        name: 'Tornillos',
+        id: 5,
+        name: 'Tornillos dfasdadsad Tornillos',
         address: 'Kulas Light',
+        value: '',
       },
       {
-        id: 3,
-        name: 'Muletas',
+        id: 6,
+        name: 'Muletas Tornillos',
         address: 'Kulas Light',
+        value: '',
       },
     ],
     textInputs: [],
   };
 
-  //   componentDidMount() {}
-
-  renderItem = dataList => (
-    <View onPress={() => {}}>
-      <Text>Hola</Text>
-      <View>
-        <Text>{dataList.item.name}</Text>
-        <Text>{dataList.item.address}</Text>
-      </View>
-    </View>
-  );
-
   render() {
-    const {data, articles} = this.state;
+    let {articles} = this.state;
     // const {state, navigate} = this.props.navigation;
 
-    let renderItem = ({item, index}) => (
+    let renderItem = ({item}) => (
       <ItemsContainer>
         <ItemTitle numberOfLines={1}>{item.name}</ItemTitle>
         <InputValues
-          value={this.state.textInputs[index]}
+          blurOnSubmit={false}
+          value={item.value}
           returnKeyType="next"
           keyboardType="number-pad"
-          ref={'article' + index}
-          onSubmitEditing={() => {
-            let reference = 'article' + (index + 1);
-            this.refs[reference].focus();
-          }}
           onChangeText={text => {
-            let {textInputs} = this.state;
-            textInputs[index] = text;
+            item.value = text;
             this.setState({
-              textInputs,
+              text,
             });
+            console.log(item);
           }}
         />
+        {console.log(item.id)}
       </ItemsContainer>
     );
 
@@ -190,7 +185,6 @@ export default class Registry extends Component {
           <KeyboardAwareScrollView>
             {/* FlatList */}
             <FlatList
-              ref={ref => (this.flatList = ref)}
               data={articles}
               extraData={this.state}
               keyExtractor={item => item.id.toString()}

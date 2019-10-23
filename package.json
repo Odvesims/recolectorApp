@@ -12,6 +12,7 @@
     "@react-native-community/netinfo": "^4.3.0",
     "i18n-js": "^3.3.0",
     "lodash.memoize": "^4.1.2",
+    "moment": "^2.24.0",
     "native-base": "^2.13.8",
     "next-frame": "^0.2.3",
     "prop-types": "^15.7.2",

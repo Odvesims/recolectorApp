@@ -10,7 +10,7 @@ import {
   Platform,
   TextInput,
 } from 'react-native';
-import {Container, Header, Right, Button, Icon} from 'native-base';
+import {Container, Header, Right, Button, Icon, Item} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
   CustomButton,
@@ -52,6 +52,8 @@ export default class LoginScreen extends Component {
     };
     global.deviceLanguage = this.state.deviceLanguage;
     this.inputs = {};
+    this.inputField = React.createRef();
+    this.nextField = React.forwardRef();
   }
 
   focusNextField = id => {
@@ -152,6 +154,10 @@ export default class LoginScreen extends Component {
     header: null,
   };
 
+  focusTextInput = () => {
+    this.inputField.current.focus();
+  };
+
   // focusTheField = id => {
   //   this.inputs[id]._root.focus();
   // };
@@ -187,9 +193,9 @@ export default class LoginScreen extends Component {
               // onSubmitEditing={() => {
               //   this.inputs['dsad'].focus();
               // }}
-              // ref={input => {
-              //   this.inputs['user'] = input;
-              // }}
+              ref={input => {
+                this.inputs = input;
+              }}
               blurOnSubmit={false}
               value={this.state.userName}
             />
@@ -199,9 +205,6 @@ export default class LoginScreen extends Component {
               label={global.translate('TITLE_PASSWORD') + ':'}
               onChangeText={userPassword => {
                 this.setState({userPassword: userPassword});
-              }}
-              ref={input => {
-                this.inputs['dsad'] = input;
               }}
               blurOnSubmit={true}
               secured={true}
