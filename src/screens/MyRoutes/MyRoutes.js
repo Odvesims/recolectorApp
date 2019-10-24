@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
+
 import styled from 'styled-components/native';
-import {View, StyleSheet, FlatList, Modal, Alert} from 'react-native';
+import {SearchBar} from '../../components';
+import {View, StyleSheet, FlatList} from 'react-native';
 import {
   Container,
   Left,
@@ -19,23 +22,19 @@ import {
   Content,
 } from 'native-base';
 
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {getStoredClients} from '../../helpers/sql_helper';
-
 class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      arrayData: [],
+      query: '',
+      value: '',
+      isloading: false,
+      error: null,
       modalVisible: false,
       show: false,
       date: '10/12/19',
-      clients: [],
-      client: '',
-      client_address: '',
-      client_city: '',
-      client_state: '',
-      client_phone: '',
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
@@ -45,7 +44,8 @@ class Order extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.arrData = [];
+    // this.arrData = [];
+    this.arrayholder = [];
   }
 
   componentDidMount() {
@@ -71,43 +71,59 @@ class Order extends Component {
     this.setState({modalVisible: visible});
   }
 
+  showHideSearchBar = () => {
+    // this.setState({show: true});
+    if (this.state.show === true) {
+      this.setState({show: false});
+    } else {
+      this.setState({show: true});
+    }
+  };
+
   fetchData = () => {
     this.setState({loading: true});
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(responseJson => {
-        responseJson = responseJson.map(item => {
-          item.selectedClass = styles.list;
-          return item;
-        });
-
+    const url = 'https://jsonplaceholder.typicode.com/users';
+    this.setState({loading: true});
+    fetch(url)
+      .then(res => res.json())
+      .then(res => {
         this.setState({
           loading: false,
-          data: responseJson,
+          data: res,
+          arrayData: res,
         });
+
+        // this.arrayholder = res;
       })
       .catch(error => {
-        this.setState({loading: false});
+        this.setState({error, loading: false});
       });
   };
 
-  openDrawer = () => {
-    this.props.navigation.openDrawer();
+  searchFilter = text => {
+    const {arrayData} = this.state;
+    let newData = arrayData;
+    newData = arrayData.filter(item => {
+      const itemData = `${item.name.toLowerCase()}`;
+      const textData = text.toLowerCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({data: newData, query: text});
   };
 
-  renderItem = dataList => {
+  renderItem = ({item}) => {
     const {navigate} = this.props.navigation;
     return (
       <Item
-        style={[styles.list, dataList.item.selectedClass]}
+        style={[styles.list, item.selectedClass]}
         onPress={() =>
           navigate('RouteDetail', {
-            routeName: dataList.item.name,
+            routeName: item.name,
             date: this.state.date,
             onGoBack: () => this.refresh(true),
-            email: dataList.item.email,
-            zipcode: dataList.item.address.zipcode,
-            info: dataList.item,
+            email: item.email,
+            zipcode: item.address.zipcode,
+            info: item,
           })
         }>
         <View
@@ -117,18 +133,18 @@ class Order extends Component {
             alignItems: 'center',
             paddingHorizontal: 12,
           }}>
-          <View key={dataList.item.key} style={styles.listContainer}>
+          <View key={item.key} style={styles.listContainer}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
               <Text numberOfLines={1} style={styles.name}>
-                {dataList.item.name}
+                {item.name}
               </Text>
             </View>
             <Text numberOfLines={1} style={styles.address}>
-              {dataList.item.address.street}
+              {item.address.street}
             </Text>
           </View>
         </View>
@@ -136,8 +152,46 @@ class Order extends Component {
     );
   };
 
+  openDrawer = () => {
+    this.props.navigation.openDrawer();
+  };
+
+  listEmpty = () => {
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}>
+        <Text>No hay resultados</Text>
+      </View>
+    );
+  };
+
   render() {
-    const {modalVisible, data} = this.state;
+    const {modalVisible, data, loading, show} = this.state;
+
+    let content = (
+      <ContentLoader>
+        <Rect x="0" y="20" rx="5" ry="5" width="250" height="12" />
+        <Rect x="0" y="40" rx="5" ry="5" width="180" height="12" />
+      </ContentLoader>
+    );
+
+    if (!loading) {
+      content = (
+        <FlatList
+          ListEmptyComponent={this.listEmpty}
+          keyboardShouldPersistTaps={'handled'}
+          // style={{overflow: 'hidden'}}
+          data={data}
+          extraData={this.state}
+          keyExtractor={item => item.id.toString()}
+          renderItem={this.renderItem}
+        />
+      );
+    }
 
     return (
       <Root>
@@ -151,32 +205,36 @@ class Order extends Component {
             <Body>
               <Title>{global.translate('TITLE_MYROUTES')}</Title>
             </Body>
-            <Right></Right>
+            <Right>
+              <Button transparent onPress={this.showHideSearchBar}>
+                <Icon name="search" />
+              </Button>
+            </Right>
           </Header>
-
-          {/* Content */}
-          <View
+          {/* SearchBar */}
+          {show ? (
+            <SearchBar
+              style={styles.searchbar}
+              placeholder="Busque su orden"
+              onChangeText={text => {
+                this.searchFilter(text);
+              }}
+              onPressCancel={this.showHideSearchBar}
+              onPressClear={() => {
+                this.searchFilter('');
+              }}
+            />
+          ) : null}
+          {/* SearchBar */}
+          <Content
             style={{
               flexDirection: 'column',
               flex: 1,
               backgroundColor: theme.colors.lightGray,
+              padding: 12,
             }}>
-            <View style={{flex: 1}}>
-              <View style={styles.addPoint}>
-                <View>
-                  <ScrollView>
-                    <FlatList
-                      style={{overflow: 'hidden', marginBottom: 12}}
-                      data={data}
-                      extraData={this.state}
-                      keyExtractor={item => item.id.toString()}
-                      renderItem={item => this.renderItem(item)}
-                    />
-                  </ScrollView>
-                </View>
-              </View>
-            </View>
-          </View>
+            {content}
+          </Content>
         </Container>
       </Root>
     );
@@ -184,32 +242,12 @@ class Order extends Component {
 }
 
 const styles = StyleSheet.create({
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
+  searchbar: {
+    // position: 'absolute',
+    // left: 0,
+    // top: 0,
+    // height: 500,
   },
-
-  currentDate: {
-    // display: 'flex',
-
-    flexDirection: 'row',
-  },
-  currentDateText: {color: theme.colors.gray},
-
-  container: {
-    // flex: 1,
-    padding: theme.sizes.padding,
-    backgroundColor: theme.colors.white,
-  },
-
-  client_data: {
-    fontSize: 14,
-  },
-
-  RouteDetails: {backgroundColor: 'white', padding: 16},
-
-  detailText: {textTransform: 'uppercase', color: theme.colors.gray},
 
   list: {
     margin: 5,
@@ -225,32 +263,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
-  label: {
-    fontSize: theme.sizes.base,
-    color: theme.colors.darkGray,
-  },
-
-  addPoint: {
-    padding: theme.sizes.padding,
-    marginBottom: 24,
-  },
-
   name: {
     flexBasis: 150,
     fontSize: 16,
@@ -258,14 +270,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     overflow: 'scroll',
     flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-
-  quantity: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 14,
-    fontWeight: 'bold',
     flexWrap: 'nowrap',
   },
 });

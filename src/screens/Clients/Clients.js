@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {
-  AddButton,
-  // SearchBar,
-  FetchingData,
-} from '../../components';
+import {AddButton, SearchBar, FetchingData} from '../../components';
 import Toast from 'react-native-easy-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -29,7 +25,7 @@ import {
   Body,
   Left,
   Item,
-  Input,
+  // Input,
   Right,
   Title,
   ActionSheet,
@@ -41,7 +37,7 @@ import {
   getStoredClients,
   editStoredClient,
 } from '../../helpers/sql_helper';
-import {checkConnectivity, getData} from '../../helpers/apiconnection_helper';
+import {getData} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
   constructor(props) {
@@ -68,15 +64,13 @@ export default class Clients extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.enterHandler();
   }
 
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       try {
-        let new_record = navigation.state.params.new_record;
-        this.refreshHandler();
+        this.enterHandler();
       } catch (err) {
         this.enterHandler();
       }
@@ -106,9 +100,7 @@ export default class Clients extends Component {
   storedClients = () => {
     getStoredClients().then(clients => {
       if (clients.length > 0) {
-        this.setState({data: clients, loading: false}, function() {
-          this.arrayholder = clients;
-        });
+        this.setState({data: clients, loading: false});
       } else {
         this.setState({loading: false});
       }
@@ -160,48 +152,22 @@ export default class Clients extends Component {
     this.props.navigation.openDrawer();
   };
 
-  _searchCancel = () => {
-    alert('Cancel searchBar');
+  listEmpty = () => {
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text>No hay items para mostrar</Text>
+      </View>
+    );
   };
-
-  _searchClean = () => {
-    alert('Clean searchBar');
-  };
-
-  _onChangeSearchText = () => {};
-
-  _searchFilterFunction(text) {
-    const newData = this.arrayholder.filter(function(item) {
-      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-      const textData = text.toUpperCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    this.setState({
-      data: newData,
-      search: text,
-    });
-  }
 
   render() {
     const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     const {loading} = this.state;
-
-    let searchBar = (
-      <Header searchBar rounded>
-        <Item>
-          <Icon name="arrow-back" onPress={this._searchCancel} />
-          <Input
-            placeholder="Search"
-            onChangeText={text => this._onChangeSearchText(text)}
-          />
-          <Icon name="close" onPress={this._searchClean} />
-        </Item>
-        <Button transparent>
-          <Text>Search</Text>
-        </Button>
-      </Header>
-    );
 
     return (
       <Root>
@@ -233,11 +199,6 @@ export default class Clients extends Component {
               </Button>
             </Right>
           </Header>
-
-          {/* SearchBar */}
-          {this.state.show ? searchBar : null}
-          {/* <SearchBar onPressRemove={() => {}} onPressCancel={() => {}} /> */}
-
           <Toast
             ref="toast"
             style={{backgroundColor: '#CE2424'}}
@@ -249,13 +210,19 @@ export default class Clients extends Component {
             textStyle={{color: 'white'}}
           />
 
+          {/* SearchBar */}
+
+          {this.state.show ? <SearchBar /> : null}
+
+          {/* SearchBar */}
+
           {/* Content */}
-          <ScrollView>
-            <Content style={styles.content}>
+          <Content style={styles.content}>
+            <ScrollView>
               <FlatList
                 style={{overflow: 'hidden'}}
                 data={data}
-                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={this.listEmpty}
                 renderItem={({item}) => (
                   <Item style={styles.list}>
                     <Text style={styles.code}>{item.client_code}</Text>
@@ -303,11 +270,12 @@ export default class Clients extends Component {
                   </Item>
                 )}
               />
-            </Content>
+            </ScrollView>
+          </Content>
 
-            {/* Content */}
-          </ScrollView>
+          {/* Content */}
           <AddButton
+            style={{position: 'absolute'}}
             onPress={() =>
               this.props.navigation.navigate('Client', {
                 operation: 'TITLE_NEW_CLIENT',
@@ -331,7 +299,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
   list: {
     margin: 5,
     backgroundColor: 'white',
@@ -339,13 +306,11 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     elevation: 1,
   },
-
   content: {
     backgroundColor: theme.colors.lightGray,
     paddingHorizontal: 8,
     paddingVertical: 12,
   },
-
   code: {
     width: 32,
     textAlign: 'center',
@@ -382,12 +347,5 @@ const styles = StyleSheet.create({
   more: {
     position: 'absolute',
     right: 0,
-  },
-
-  searchBar: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    flex: 1,
   },
 });

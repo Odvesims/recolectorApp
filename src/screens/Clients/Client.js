@@ -1,22 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {TextInput} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
-
-import {} from 'react-native-vector-icons';
-
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  StatusBar,
-  FlatList,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-} from 'react-native';
-
 import {dataOperation} from '../../helpers/apiconnection_helper';
 import {updateClient} from '../../helpers/sql_helper';
 import CustomPicker from '../../components/CustomPicker';
@@ -33,15 +17,23 @@ import {
   Header,
   Body,
   Left,
-  Input,
   Right,
   Title,
-  ActionSheet,
   Form,
 } from 'native-base';
-import {bigIntLiteral} from '@babel/types';
 
-export default class NewClient extends Component {
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  FlatList,
+  KeyboardAvoidingView,
+} from 'react-native';
+
+export class Client extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -83,9 +75,18 @@ export default class NewClient extends Component {
       setma_id: global.setma_id,
     };
     this.setState({loading: true});
-    dataOperation('SET_CLIENT', client_data).then(res => {
-      updateClient(res.returnObject).then(result => {
-        this.setState({loading: false});
+    dataOperation('CLIENT_OPERATION', client_data).then(res => {
+      updateClient(res.responseObject).then(result => {
+        this.setState({
+          loading: false,
+          code: '',
+          name: '',
+          address: '',
+          city: '',
+          state: '',
+          country: this.props.navigation.state.params.country,
+          phone: '',
+        });
         alert(global.translate(result));
       });
     });
@@ -224,6 +225,7 @@ export default class NewClient extends Component {
     );
   }
 }
+export default Client;
 
 const styles = StyleSheet.create({
   headerCode: {

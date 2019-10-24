@@ -171,8 +171,5 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 
-  more: {
-    position: 'absolute',
-    right: 0,
-  },
+  more: {},
 });

@@ -53,13 +53,11 @@ export default class LoginScreen extends Component {
     global.deviceLanguage = this.state.deviceLanguage;
     this.inputs = {};
     this.inputField = React.createRef();
-    this.nextField = React.forwardRef();
   }
 
-  focusNextField = id => {
-    this.inputs[id].focus();
+  focuInputs = () => {
+    this.inputField.current.focus();
   };
-
   setLanguage = sLang => {
     if (Platform.OS === 'android') {
       this.setState({
@@ -154,15 +152,8 @@ export default class LoginScreen extends Component {
     header: null,
   };
 
-  focusTextInput = () => {
-    this.inputField.current.focus();
-  };
-
-  // focusTheField = id => {
-  //   this.inputs[id]._root.focus();
-  // };
-
   render() {
+    const inputSubmit = this.inputField.current;
     return (
       <Container>
         <Header transparent>

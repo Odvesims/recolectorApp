@@ -38,7 +38,7 @@ import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 // Routes
 import Routes from '../screens/Routes/Routes';
-import NewRoute from '../screens/Routes/NewRoute';
+import Route from '../screens/Routes/Route';
 import OrderList from '../screens/Routes/OrderList';
 // Orders
 import Orders from '../screens/Orders/Orders';
@@ -92,7 +92,7 @@ const ClientScreen = createStackNavigator(
 const RouteScreen = createStackNavigator(
   {
     Routes: Routes,
-    NewRoute: NewRoute,
+    Route: Route,
     OrderList: OrderList,
   },
   {

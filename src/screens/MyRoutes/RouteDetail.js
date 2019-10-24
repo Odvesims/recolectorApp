@@ -27,6 +27,8 @@ export default class RouteDetail extends Component {
     super(props);
     this.state = {
       data: this.props.navigation.state.params.info,
+      // [{name: this.props.navigation.state.params.name}],
+      // this.props.navigation.state.params.info,
       modalVisible: false,
       show: false,
       date: '',
@@ -70,39 +72,37 @@ export default class RouteDetail extends Component {
     this.setState({modalVisible: visible});
   }
 
-  renderItem = dataList => (
-    <Item style={[styles.list, dataList.selectedClass]} onPress={() => {}}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-        }}>
-        <View key={dataList.key} style={styles.listContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text numberOfLines={1} style={styles.name}>
-              {dataList.name}
-            </Text>
-          </View>
-          <Text numberOfLines={1} style={styles.address}>
-            {dataList.address.street}
-          </Text>
-        </View>
-      </View>
-    </Item>
-  );
+  // renderItem = dataList => (
+  //   <Item style={[styles.list, dataList.selectedClass]} onPress={() => {}}>
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         flexDirection: 'row',
+  //         alignItems: 'center',
+  //         paddingHorizontal: 12,
+  //       }}>
+  //       <View key={dataList.key} style={styles.listContainer}>
+  //         <View
+  //           style={{
+  //             flexDirection: 'row',
+  //             justifyContent: 'space-between',
+  //           }}>
+  //           <Text numberOfLines={1} style={styles.name}>
+  //             {dataList.name}
+  //           </Text>
+  //         </View>
+  //         <Text numberOfLines={1} style={styles.address}>
+  //           {dataList.address.street}
+  //         </Text>
+  //       </View>
+  //     </View>
+  //   </Item>
+  // );
 
   render() {
-    const {modalVisible, data} = this.state;
+    const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     const {state, navigate} = this.props.navigation;
-
-    let info = state.params.info;
 
     return (
       <Root>
@@ -152,7 +152,7 @@ export default class RouteDetail extends Component {
                 </Text>
               </View>
             </View>
-
+            {console.log(data)}
             <View style={{flex: 1}}>
               <View style={styles.addPoint}>
                 <View style={{paddingBottom: 8}}>
@@ -163,8 +163,37 @@ export default class RouteDetail extends Component {
                     <FlatList
                       style={{overflow: 'hidden', marginBottom: 12}}
                       data={data}
-                      keyExtractor={item => item.id.toString()}
-                      renderItem={item => this.renderItem(item)}
+                      keyExtractor={item => item.key}
+                      renderItem={({item}) => (
+                        <Item
+                          onPress={() => {}}
+                          style={[styles.list, item.selectedClass]}>
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              paddingHorizontal: 12,
+                            }}>
+                            <View style={styles.listContainer}>
+                              {/* //key={item.key} */}
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'space-between',
+                                }}>
+                                <Text numberOfLines={1} style={styles.name}>
+                                  {item.name}
+                                </Text>
+                              </View>
+                              <Text numberOfLines={1} style={styles.address}>
+                                {item.address.street}
+                              </Text>
+                            </View>
+                          </View>
+                          {console.log(item)}
+                        </Item>
+                      )} //item => this.renderItem(item)
                     />
                     <Button onPress={() => navigate('Registry')}>
                       <Text>Ir</Text>

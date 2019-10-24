@@ -33,7 +33,7 @@ import {
 import {getNotAssignedOrders} from '../../helpers/sql_helper';
 
 const selectedData = [];
-export default class Active extends Component {
+export default class OrderList extends Component {
   state = {
     data: [],
     dataSelected: [],
@@ -242,9 +242,11 @@ export default class Active extends Component {
         <Content style={styles.content}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={styles.numberBox}>
-              <Text style={styles.number}>Seleccionados: {itemNumber}</Text>
-              <Text style={styles.number}>Seleccionados: {selectedItems}</Text>
+              <Text style={styles.number}>
+                {global.translate('TITLE_SELECTED')}: {itemNumber}
+              </Text>
             </View>
+            {/* 
             <Text
               onChange={dataList => {
                 this.selectAll(dataList);
@@ -254,8 +256,9 @@ export default class Active extends Component {
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
               }}>
-              Seleccionar todos
+              {global.translate('TITLE_SELECTED')}
             </Text>
+            */}
           </View>
 
           <ScrollView style={{marginBottom: 24}}>
@@ -355,54 +358,3 @@ const styles = StyleSheet.create({
 
   selected: {backgroundColor: '#E2FAE8'},
 });
-
-//   showHideSearchBar = () => {
-//     this.setState(previousState => ({show: !previousState.show}));
-//   };
-
-//   componentWillMount() {
-//     let {data, isChecked} = this.state;
-//     let intialCheck = data.map(x => false);
-//     this.setState({isChecked: intialCheck});
-//   }
-
-//   handleChange = index => {
-//     let isChecked = [...this.state.isChecked];
-//     isChecked[index] = !isChecked[index];
-//     this.setState({isChecked});
-//   };
-
-//   renderHeader = () => {
-//     return <SearchBar placeholder="Type Here..." />;
-//   };
-
-//   {
-//     code: 1983,
-//     name: 'Oscar Valdez Gonzalo Medina asdasa',
-//     address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-//     totalPrice: '200,000',
-//   },
-//   {
-//     code: 1983,
-//     name: 'Oscar Valdez Gonzalo',
-//     address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-//     totalPrice: 200,
-//   },
-//   {
-//     code: 1983,
-//     name: 'Oscar Valdez Gonzalo ',
-//     address: 'Las Palmas de Alma Rosa, Santodsaasdasdaddasdas Domingo Este',
-//     totalPrice: 200,
-//   },
-//   {
-//     code: 1983,
-//     name: 'Oscar Valdez Gonzalo Peña Nieto sadsds',
-//     address: 'Las Palmas de Alma Rosa, Santo Domingo Este',
-//     totalPrice: 20000000,
-//   },
-//   {
-//     code: 1983,
-//     name: 'Oscar Valdez Gonzalo asdsafasdadsada',
-//     address: 'Las Palmas de Alma Rosa, Santo Domingo Este saddsads',
-//     totalPrice: 200,
-//   },

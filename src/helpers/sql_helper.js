@@ -78,11 +78,11 @@ export function setUserTable() {
       txn.executeSql('DROP TABLE IF EXISTS route_details');
       txn.executeSql('DROP VIEW IF EXISTS view_orders');
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no")',
+        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no", printer_name VARCHAR, printer_address VARCHAR)',
       );
       txn.executeSql(
-        'INSERT INTO app_configurations(host_name, port_number) VALUES(?, ?)',
-        ['apimobile.sojaca.net', 444],
+        'INSERT INTO app_configurations(host_name, port_number, printer_name, printer_address) VALUES(?, ?, ?, ?)',
+        ['apimobile.sojaca.net', 444, '', ''],
         (tx, results) => {},
       );
       txn.executeSql(
@@ -132,6 +132,8 @@ export function getUserConfig() {
             port_number: row.port_number.toString(),
             host: row.host_name,
             printer: row.uses_printer,
+            printer_name: row.printer_name,
+            printer_address: row.printer_address,
           };
         }
         resolve(userConfig);
@@ -149,15 +151,23 @@ export function deleteUserConfig() {
   });
 }
 
-export function saveUserConfig(count, host, port, printer) {
+export function saveUserConfig(
+  count,
+  host,
+  port,
+  printer,
+  printer_name,
+  printer_address,
+) {
   return new Promise((resolve, reject) => {
     let updated;
+    let objResult = {};
     if (count == 0) {
       updated = false;
       db.transaction(function(tx) {
         tx.executeSql(
-          'INSERT INTO app_configurations (host_name, port_number, uses_printer) VALUES (?,?,?)',
-          [host, port, printer],
+          'INSERT INTO app_configurations (host_name, port_number, uses_printer) VALUES (?,?,?,?,?)',
+          [host, port, printer, printer_name, printer_address],
           (tx, results) => {},
         );
       });
@@ -165,13 +175,27 @@ export function saveUserConfig(count, host, port, printer) {
       updated = true;
       db.transaction(tx => {
         tx.executeSql(
-          'UPDATE app_configurations set host_name=?, port_number=? , uses_printer=?',
-          [host, port, printer],
+          'UPDATE app_configurations set host_name=?, port_number=? , uses_printer=?, printer_name=?, printer_address=?',
+          [host, port, printer, printer_name, printer_address],
           (tx, results) => {},
         );
       });
     }
-    resolve(updated);
+    db.transaction(function(tx) {
+      tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
+        for (let i = 0; i < results.rows.length; ++i) {
+          let result = results.rows.item(i);
+          objResult = {
+            host: result.host_name,
+            port: result.port_number,
+            printer: result.uses_printer,
+            printer_name: result.printer_name,
+            printer_address: result.printer_address,
+          };
+        }
+        resolve(objResult);
+      });
+    });
   });
 }
 
@@ -306,7 +330,7 @@ export function getStoredClients() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM clients WHERE country_id = ${global.country_id}`,
+        `SELECT * FROM clients WHERE country_id = ${global.country_id} ORDER BY CAST(client_code AS INTEGER)`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -360,7 +384,7 @@ export function getStoredEmployees() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM employees WHERE country_id = ${global.country_id}`,
+        `SELECT * FROM employees WHERE country_id = ${global.country_id} ORDER BY CAST(employee_code AS INTEGER)`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -430,84 +454,8 @@ export function saveRoutes(routes, inactiveRoutes) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql('DELETE FROM routes', [], (tx, results) => {});
-      tx.executeSql('DELETE FROM routes_details', [], (tx, results) => {});
-    }); /*
-    for (let i = 0; i < routes.length; i++) {
-      let route = routes[i];
-      db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO routes(route_id, document_id, document_acronym, document_number, assigned_by , assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [
-            route.route_id,
-            route.document_id,
-            route.document_acronym,
-            route.document_number,
-            route.assigned_by,
-            route.assigned_to,
-            route.supervisor_name,
-            route.employee_name,
-            route.phone_number,
-            route.date_from,
-            route.date_to,
-            route.status,
-          ],
-          (tx, results) => {},
-        );
-      });
-      for (let e = 0; e < route.route_details.length; e++) {
-        let route_detail = route.route_details[e];
-        db.transaction(tx => {
-          tx.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id, status) VALUES(?, ?, ?, ?)',
-            [
-              route_detail.route_id,
-              route_detail.order_id,
-              route_detail.routedetail_id,
-              route.status,
-            ],
-            (tx, results) => {},
-          );
-        });
-      }
-    }
-    for (let i = 0; i < inactiveRoutes.length; i++) {
-      let route = inactiveRoutes[i];
-      db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO routes(route_id, document_id, document_acronym, document_number, assigned_by , assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [
-            route.route_id,
-            route.document_id,
-            route.document_acronym,
-            route.document_number,
-            route.assigned_by,
-            route.assigned_to,
-            route.supervisor_name,
-            route.employee_name,
-            route.phone_number,
-            route.date_from,
-            route.date_to,
-            route.status,
-          ],
-          (tx, results) => {},
-        );
-      });
-      for (let e = 0; e < route.route_details.length; e++) {
-        let route_detail = route.route_details[e];
-        db.transaction(tx => {
-          tx.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id, status) VALUES(?, ?, ?, ?)',
-            [
-              route_detail.route_id,
-              route_detail.order_id,
-              route_detail.routedetail_id,
-              route.status,
-            ],
-            (tx, results) => {},
-          );
-        });
-      }
-    }*/
+      tx.executeSql('DELETE FROM route_details', [], (tx, results) => {});
+    });
     resolve(true);
   });
 }
@@ -528,7 +476,7 @@ export function clearRoutesCab(status_route) {
 export function clearRoutesDetails() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('DELETE FROM routes_details');
+      tx.executeSql('DELETE FROM route_details');
     });
     resolve(true);
   });
@@ -578,7 +526,7 @@ export function saveActiveRoutes(routes) {
         let route_detail = route.route_details[e];
         db.transaction(td => {
           td.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
+            'INSERT INTO route_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
             [
               route_detail.route_id,
               route_detail.order_id,
@@ -625,7 +573,7 @@ export function saveInactiveRoutes(routes) {
         let route_detail = route.route_details[e];
         db.transaction(td => {
           td.executeSql(
-            'INSERT INTO routes_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
+            'INSERT INTO route_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
             [
               route_detail.route_id,
               route_detail.order_id,
@@ -713,7 +661,7 @@ export function saveArticles(articles) {
 export function getStoredRoutes(routes_status) {
   return new Promise((resolve, reject) => {
     let arrRoutes = [];
-    let sqlStr = `SELECT * FROM routes WHERE status = '${routes_status}'`;
+    let sqlStr = `SELECT * FROM routes WHERE status = '${routes_status}' ORDER BY CAST(document_number AS INTEGER) DESC`;
     db.transaction(tx => {
       tx.executeSql(sqlStr, [], (tx, results) => {
         for (let i = 0; i < results.rows.length; ++i) {
@@ -741,23 +689,53 @@ export function getStoredRoutes(routes_status) {
   });
 }
 
+export function getRouteDetails(route_id) {
+  return new Promise((resolve, reject) => {
+    let arrDetails = [];
+    let sqlStr2 = `SELECT r.order_id, r.routedetail_id, o.order_id, o.order_document, o.client, o.address, o.order_total, c.name FROM route_details r, orders o, clients c WHERE route_id = ${route_id} AND o.order_id = r.order_id AND c.client_code = o.client`;
+    db.transaction(tx => {
+      tx.executeSql(sqlStr2, [], (tx, results_det) => {
+        for (let e = 0; e < results_det.rows.length; ++e) {
+          let orderRow = results_det.rows.item(e);
+          let detObject = {
+            route_id: route_id,
+            order_id: orderRow.order_id,
+            routedetail_id: orderRow.routedetail_id,
+            order_document: orderRow.order_document,
+            client: orderRow.client,
+            name: orderRow.name,
+            address: orderRow.address,
+            order_total: orderRow.order_total,
+          };
+          arrDetails.push(detObject);
+        }
+        resolve(arrDetails);
+      });
+    });
+  });
+}
+
 export function getOrders() {
   let arrOrders = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql(`SELECT * FROM orders`, [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let orderObject = {
-            document: row.order_document,
-            client: row.client,
-            address: row.address,
-            order_total: row.order_total,
-            assigned: row.assigned,
-          };
-          arrOrders.push(orderObject);
-        }
-      });
+      tx.executeSql(
+        `SELECT * FROM orders ORDER BY id DESC`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              document: row.order_document,
+              client: row.client,
+              address: row.address,
+              order_total: row.order_total,
+              assigned: row.assigned,
+            };
+            arrOrders.push(orderObject);
+          }
+        },
+      );
       resolve(arrOrders);
     });
   });
@@ -768,7 +746,7 @@ export function getAssignedOrders() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client`,
+        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client ORDER BY o.order_id DESC`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -795,7 +773,7 @@ export function getNotAssignedOrders() {
     let arrOrders = [];
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client',
+        'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -822,18 +800,22 @@ export function getStoredCategories() {
   return new Promise((resolve, reject) => {
     let arrCategories = [];
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM categories', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let categoryObject = {
-            category_code: row.category_code,
-            description: row.description,
-            price: row.price,
-          };
-          arrCategories.push(categoryObject);
-        }
-        resolve(arrCategories);
-      });
+      tx.executeSql(
+        'SELECT * FROM categories ORDER BY CAST(category_code AS INTEGER) ASC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let categoryObject = {
+              category_code: row.category_code,
+              description: row.description,
+              price: row.price,
+            };
+            arrCategories.push(categoryObject);
+          }
+          resolve(arrCategories);
+        },
+      );
     });
   });
 }
@@ -842,19 +824,23 @@ export function getStoredSubcategories() {
   let arrSubcategories = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM subcategories', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let subcategoryObject = {
-            category_id: row.category_id,
-            subcategory_code: row.subcategory_code,
-            description: row.description,
-            price: row.price,
-          };
-          arrSubcategories.push(subcategoryObject);
-        }
-        resolve(arrSubcategories);
-      });
+      tx.executeSql(
+        'SELECT * FROM subcategories ORDER BY CAST(subcategory_code AS INTEGER) ASC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let subcategoryObject = {
+              category_id: row.category_id,
+              subcategory_code: row.subcategory_code,
+              description: row.description,
+              price: row.price,
+            };
+            arrSubcategories.push(subcategoryObject);
+          }
+          resolve(arrSubcategories);
+        },
+      );
     });
   });
 }
@@ -863,20 +849,24 @@ export function getStoredArticles() {
   let arrArticles = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM articles', [], (tx, results) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let row = results.rows.item(i);
-          let articleObject = {
-            category_id: row.category_id,
-            subcategory_id: row.subcategory_id,
-            article_code: row.article_code,
-            description: row.description,
-            price: row.price,
-          };
-          arrArticles.push(articleObject);
-        }
-        resolve(arrArticles);
-      });
+      tx.executeSql(
+        'SELECT * FROM articles ORDER BY CAST(article_code AS INTEGER) ASC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let articleObject = {
+              category_id: row.category_id,
+              subcategory_id: row.subcategory_id,
+              article_code: row.article_code,
+              description: row.description,
+              price: row.price,
+            };
+            arrArticles.push(articleObject);
+          }
+          resolve(arrArticles);
+        },
+      );
     });
   });
 }

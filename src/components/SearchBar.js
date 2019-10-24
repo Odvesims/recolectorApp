@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TextInput, View} from 'react-native';
 import {Container, Header, Item, Input, Icon, Button, Text} from 'native-base';
 import PropTypes from 'prop-types';
+
 export default class SearchBar extends Component {
   state = {show: false};
 
@@ -15,15 +16,43 @@ export default class SearchBar extends Component {
   };
 
   render() {
-    const {style, onPressRemove, onPressCancel} = this.props;
+    const {
+      style,
+      onPressClear,
+      onPressCancel,
+      placeholder,
+      onChangeText,
+    } = this.props;
     return (
       <Header searchBar rounded style={style}>
         <Item>
-          <Icon name="arrow-back" onPress={() => onPressCancel()} />
-          <Input placeholder="Search" />
-          <Icon name="close" onPress={() => onPressRemove()} />
+          <Icon name="arrow-back" onPress={onPressCancel} />
+          <Input
+            placeholder={placeholder}
+            onChangeText={onChangeText}
+            ref={ref => {
+              this.input = ref;
+            }}
+          />
+          {/* this.onPressRemove */}
+
+          <Icon
+            name="close"
+            onPress={() => {
+              if (onPressClear) {
+                if (this.input) {
+                  this.input._root.clear();
+                  onPressClear();
+                }
+              } else {
+                if (this.input) {
+                  this.input._root.clear();
+                }
+              }
+            }}
+          />
         </Item>
-        <Button transparent>
+        <Button>
           <Text>Search</Text>
         </Button>
       </Header>
@@ -37,5 +66,5 @@ const styles = StyleSheet.create({
 
 SearchBar.propTypes = {
   onPressRemove: PropTypes.func.isRequired,
-  onPressCancel: PropTypes.func.isRequired,
+  onPressClear: PropTypes.func.isRequired,
 };

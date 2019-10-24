@@ -19,6 +19,8 @@
   "ALERT_UPDATE_FAILED": "Erreur de mise à jour des données.",
   "ALERT_QUANTITY_BLANK": "La quantité ne peut pas être vide",
   "ALERT_COMPLETE_DATA": "Certaines données sont nécessaires pour compléter le formulaire",
+  "ALERT_PRINTER_NOT_CONFIGURED": "Vous n'avez configuré aucune imprimante. Vérifiez votre configuration.",
+  "ALERT_NO_ROUTES_FOUND": "Aucun itinéraire trouvé.",
   "MESSAGE_SIGNIN": "Se Connecter",
   "MESSAGE_LOADING_CLIENTS": "Chargement des clients",
   "MESSAGE_LOADING_ORDERS": "Chargement des commandes",
@@ -62,6 +64,7 @@
   "TITLE_OPTIONS": "Les options",
   "TITLE_DELETE": "Enlever",
   "TITLE_EDIT": "Éditer",
+  "TITLE_VIEW": "Vue",
   "TITLE_CANCEL": "Sortir",
   "TITLE_DONE": "Prêt",
   "TITLE_NAME": "Nom",
@@ -93,5 +96,12 @@
   "TITLE_END_DATE": "Date limite",
   "TITLE_ACTIVE": "Active",
   "TITLE_EXPIRED": "Expiré",
-  "TITLE_MYROUTES": "Mes Itinéraires"
+  "TITLE_CONFIGURE_PRINTER": "Configurer une imprimante",
+  "TITLE_SIGN_OUT": "Déconnexion",
+  "TITLE_QUESTION_SIGN_OUT": "Êtes-vous certain de vouloir vous déconnecter?",
+  "TITLE_MY_ROUTES": "Mes itinéraires",
+  "TITLE_NEW_ROUTE": "Nouvelle itinéraire",
+  "TITLE_EDIT_ROUTE": "Modifier itinéraire",
+  "TITLE_VIEW_ROUTE": "Vue itinéraire",
+  "TITLE_SELECTED": "Choisie"
 }
