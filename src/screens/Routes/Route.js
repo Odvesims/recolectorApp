@@ -4,9 +4,6 @@ import PickerModal from 'react-native-picker-modal-view';
 import CustomPicker from '../../components/CustomPicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
-import SwipeView from 'react-native-swipeview';
-import Swipeable from 'react-native-swipeable-row';
-import {SwipeableFlatList} from 'react-native-swipeable-flat-list';
 import {SwipeListView} from 'react-native-swipe-list-view';
 
 import {
@@ -46,47 +43,58 @@ import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 export class Route extends Component {
   constructor(props) {
     super(props);
-    //alert(JSON.stringify(this.props.navigation.state.params.details));
+    //alert(JSON.stringify(params.details));
+    const {params} = this.props.navigation.state;
     this.state = {
       employees: [],
       employee: '',
       data: [],
       clear_data: [],
-      loading: !this.props.navigation.state.params.new_record,
+      loading: !params.new_record,
       loadingMessage: 'ALERT_GETTING_ROUTE',
-      new_record: this.props.navigation.state.params.new_record,
-      route_description: this.props.navigation.state.params.description,
-      document_id: this.props.navigation.state.params.document_id,
-      document_acronym: this.props.navigation.state.params.acronym,
-      document_number: this.props.navigation.state.params.document_number,
-      assigned_by: this.props.navigation.state.params.assigned_by,
-      placeholder: this.props.navigation.state.params.employee_name,
-      chosenDate: this.props.navigation.state.params.date_to,
-      chosenDate2: this.props.navigation.state.params.date_from,
-      disabled_date_from: this.props.navigation.state.params.disabled_date_from,
+      new_record: params.new_record,
+      route_description: params.description,
+      document_id: params.document_id,
+      document_acronym: params.acronym,
+      document_number: params.document_number,
+      assigned_by: params.assigned_by,
+      placeholder: params.employee_name,
+      chosenDate: params.date_to,
+      chosenDate2: params.date_from,
+      disabled_date_from: params.disabled_date_from,
     };
-    if (this.props.navigation.state.params.new_record === false) {
+    if (params.new_record === false) {
       this.rowTranslateAnimatedValues = {};
       getData(
         'GET_ROUTE',
-        `&route_id=${this.props.navigation.state.params.route_id}&status=${this.props.navigation.state.params.status}`,
+        `&route_id=${params.route_id}&status=${params.status}`,
       ).then(route => {
         updateRouteOrders(route.arrResponse[0]).then(r => {
-          getRouteDetails(this.props.navigation.state.params.route_id).then(
-            dets => {
-              let dataWithIds = dets.map((item, index) => {
-                item.id = index;
-                item.isChecked = true;
-                item.isSelect = true;
-                this.rowTranslateAnimatedValues[
-                  `${index}`
-                ] = new Animated.Value(1);
+          getRouteDetails(params.route_id).then(dets => {
+            let dataWithIds = dets.map((item, index) => {
+              item.id = index;
+              item.isChecked = true;
+              item.isSelect = true;
+              this.rowTranslateAnimatedValues[`${index}`] = new Animated.Value(
+                1,
+              );
+            });
+            this.cleanArr(dets).then(clear => {
+              this.setState({
+                loading: false,
+                data: clear,
+                clear_data: clear,
+                route_description: r.description,
+                document_id: r.document_id,
+                document_acronym: r.acronym,
+                document_number: r.document_number,
+                assigned_by: r.assigned_by,
+                placeholder: r.employee_name,
+                chosenDate: r.date_to,
+                chosenDate2: r.date_from,
               });
-              this.cleanArr(dets).then(clear => {
-                this.setState({loading: false, data: clear, clear_data: clear});
-              });
-            },
-          );
+            });
+          });
         });
       });
     }
@@ -115,14 +123,15 @@ export class Route extends Component {
   }
 
   componentDidMount() {
+    const {params} = this.props.navigation.state;
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       try {
-        let orders = this.props.navigation.state.params.orders;
+        let orders = params.orders;
         if (orders !== undefined) {
           this.cleanArr(orders).then(res => {
             this.setState({data: res, clear_data: res});
           });
-          this.props.navigation.state.params.orders = undefined;
+          params.orders = undefined;
         }
       } catch (err) {}
     });
@@ -269,6 +278,7 @@ export class Route extends Component {
       leftActionActivated,
       toggle,
     } = this.state;
+    const {params} = this.props.navigation.state;
 
     let renderItem = ({item}) => (
       <Item style={[styles.list]} onPress={() => {}}>
@@ -347,9 +357,7 @@ export class Route extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>
-              {global.translate(this.props.navigation.state.params.operation)}
-            </Title>
+            <Title>{global.translate(params.operation)}</Title>
           </Body>
           <Right>
             <Button transparent onPress={this.saveRoute}>

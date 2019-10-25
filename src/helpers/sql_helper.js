@@ -925,6 +925,6 @@ export function updateRouteOrders(route_orders) {
         });
       });
     });
-    resolve(true);
+    resolve(route_orders);
   });
 }
