@@ -59,6 +59,16 @@ export default class OrderList extends Component {
     });
   }
 
+  checkItems(dataList, data) {
+    return new Promise((resolve, reject) => {
+      dataList.map(i => {
+        const index = this.state.data.findIndex(item => i.id === item.id);
+        data[index] = i;
+      });
+      resolve(data);
+    });
+  }
+
   /*fetchData() {
     return new Promise((resolve, reject) => {
       let not_assigned;
@@ -186,7 +196,7 @@ export default class OrderList extends Component {
   );
 
   onPressHandler = () => {
-    this.props.navigation.navigate('NewRoute', {
+    this.props.navigation.navigate('Route', {
       orders: this.state.dataSelected,
     });
   };

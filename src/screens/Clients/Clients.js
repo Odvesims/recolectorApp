@@ -44,7 +44,7 @@ export default class Clients extends Component {
     super(props);
     this.state = {
       data: [],
-      loading: true,
+      loading: false,
       deviceLanguage: 'en',
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
       request_timeout: false,
@@ -100,10 +100,10 @@ export default class Clients extends Component {
   storedClients = () => {
     getStoredClients().then(clients => {
       if (clients.length > 0) {
-        this.setState({data: clients, loading: false});
+        this.setState({data: clients});
       } else {
-        this.setState({loading: false});
       }
+      this.setState({loading: false});
     });
   };
 
@@ -179,12 +179,13 @@ export default class Clients extends Component {
             </Body>
             <Right>
               <FetchingData syncData={this.refreshHandler} fetching={loading} />
-              <Button transparent>
+              {/*<Button transparent>
                 <Icon name="funnel" />
               </Button>
               <Button transparent onPress={this.showHideSearchBar}>
                 <Icon name="search" />
               </Button>
+              */}
             </Right>
           </Header>
           <Toast
@@ -213,9 +214,13 @@ export default class Clients extends Component {
                 renderItem={({item}) => (
                   <Item style={styles.list}>
                     <Text style={styles.code}>{item.client_code}</Text>
-                    <View style={{marginLeft: 8}}>
-                      <Text style={styles.name}>{item.name}</Text>
-                      <Text style={styles.address}>{item.address}</Text>
+                    <View style={{marginLeft: 8, flex: 1}}>
+                      <Text style={styles.name} numberOfLines={1}>
+                        {item.name}
+                      </Text>
+                      <Text style={styles.address} numberOfLines={1}>
+                        {item.address}
+                      </Text>
                     </View>
                     <Button
                       transparent
@@ -262,7 +267,7 @@ export default class Clients extends Component {
             {/* Content */}
           </ScrollView>
           <AddButton
-            style={{position: 'absolute'}}
+            style={{position: 'absolute', right: 20}}
             onPress={() =>
               this.props.navigation.navigate('Client', {
                 operation: 'TITLE_NEW_CLIENT',
@@ -310,11 +315,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
+    flexWrap: 'nowrap',
+    overflow: 'hidden',
   },
 
   address: {
     fontSize: 12,
     color: 'gray',
+    flexWrap: 'nowrap',
     overflow: 'hidden',
   },
 
@@ -331,8 +339,5 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 
-  more: {
-    position: 'absolute',
-    right: 0,
-  },
+  more: {},
 });

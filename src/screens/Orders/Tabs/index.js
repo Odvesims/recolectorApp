@@ -1,4 +1,3 @@
-import Assigned from './Assigned';
-import Available from './Available';
+import OrdersTab from './OrdersTab';
 
-export {Assigned, Available};
+export {OrdersTab};

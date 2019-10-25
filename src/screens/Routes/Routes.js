@@ -117,14 +117,14 @@ export default class Routes extends Component {
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 20000);
-    getData('GET_ACTIVE_ROUTES').then(active => {
+    getData('GET_ROUTES', '&status=A').then(active => {
       if (!this.state.request_timeout) {
         clearRoutesCab('A').then(ca => {
           clearRoutesDetails().then(cd => {
             if (active.arrResponse !== []) {
               saveActiveRoutes(active.arrResponse);
             }
-            getData('GET_INACTIVE_ROUTES').then(inactive => {
+            getData('GET_ROUTES', '&status=I').then(inactive => {
               if (!this.state.request_timeout) {
                 clearRoutesCab('I').then(ci => {
                   if (inactive.arrResponse !== []) {
@@ -172,7 +172,7 @@ export default class Routes extends Component {
           </Body>
           <Right>
             <FetchingData syncData={this.refreshHandler} fetching={loading} />
-            <Button transparent>
+            {/*<Button transparent>
               <Icon name="funnel" />
             </Button>
             <Button
@@ -182,6 +182,7 @@ export default class Routes extends Component {
               }}>
               <Icon name="search" />
             </Button>
+            */}
           </Right>
         </Header>
 

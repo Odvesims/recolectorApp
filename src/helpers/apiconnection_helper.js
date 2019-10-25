@@ -47,7 +47,10 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   return returnObject;
 }
 
-export async function getData(apiOption) {
+export async function getData(apiOption, extraParams) {
+  if (extraParams === undefined) {
+    extraParams = '';
+  }
   let returnObject = {};
   if (!global.apiHost) {
     global.apiHost = 'apimobile.sojaca.net';
@@ -67,7 +70,8 @@ export async function getData(apiOption) {
     '&country_id=' +
     global.country_id +
     '&username=' +
-    global.userName;
+    global.userName +
+    extraParams;
   try {
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();

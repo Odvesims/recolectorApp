@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {Available, Assigned} from './Tabs';
+import {OrdersTab} from './Tabs';
 import {FetchingData} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -216,13 +216,13 @@ export default class Orders extends Component {
           </Header>
           <Tabs hasTabs>
             <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
-              <Available
+              <OrdersTab
                 tab_data={this.state.not_assigned}
                 ref={this.availableTab}
               />
             </Tab>
             <Tab heading={global.translate('TITLE_ASSIGNED')}>
-              <Assigned
+              <OrdersTab
                 tab_data={this.state.assigned}
                 ref={this.notAvailableTab}
               />

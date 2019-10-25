@@ -698,6 +698,7 @@ export function getRouteDetails(route_id) {
         for (let e = 0; e < results_det.rows.length; ++e) {
           let orderRow = results_det.rows.item(e);
           let detObject = {
+            id: orderRow.id,
             route_id: route_id,
             order_id: orderRow.order_id,
             routedetail_id: orderRow.routedetail_id,
@@ -880,6 +881,48 @@ export function updateOrderAssigned(orders_list) {
           [],
           (tx, results) => {},
         );
+      });
+    });
+    resolve(true);
+  });
+}
+
+export function updateRouteOrders(route_orders) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(`UPDATE route_id, description, document_id, document_acronym, , assigned_by, assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status
+      VALUES(${route_orders.route_id}, '${route_orders.description}', ${route_orders.document_id}, '${route_orders.document_acronym}', ${route_orders.document_number}, ${route_orders.assigned_by}, ${route_orders.assigned_to}, '${route_orders.supervisor_name}', '${route_orders.employee_name}', '${route_orders.phone_number}', '${route_orders.date_to}', '${route_orders.date_from}', '${route_orders.status})
+      WHERE route_id = ${route_orders.route_id}`);
+    });
+    //alert(JSON.stringify(route_orders));
+    route_orders.route_details.map(detail => {
+      db.transaction(tx => {
+        tx.executeSql(
+          `DELETE FROM route_details WHERE routedetail_id = ${detail.routedetail_id}`,
+        );
+        tx.executeSql(
+          `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(${detail.route_id}, ${detail.order_id}, ${detail.routedetail_id}, 'A')`,
+        );
+      });
+      detail.orders.map(order => {
+        db.transaction(tx => {
+          tx.executeSql(
+            `DELETE FROM orders WHERE order_id = ${order.order_id}`,
+          );
+          tx.executeSql(
+            `INSERT INTO orders(order_id, address, order_document, client, date_register, order_total, assigned) VALUES(${order.order_id}, '${order.address}', '${order.order_document}', ${order.client}, '${order.date_register}', ${order.order_total}, ${order.assigned})`,
+          );
+        });
+        order.order_details.map(order_detail => {
+          db.transaction(tx => {
+            tx.executeSql(
+              `DELETE FROM order_details WHERE orderdetail_id = ${order_detail.orderdetail_id}`,
+            );
+            tx.executeSql(
+              `INSERT INTO order_details(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price, detail_description, collected_quantity, collected_amount) VALUES(${order_detail.order_id}, ${order_detail.orderdetail_id}, '${order_detail.detail_type}', ${order_detail.detail_id}, ${order_detail.detail_quantity}, ${order_detail.detail_price}, '${order_detail.detail_description}', ${order_detail.collected_quantity}, ${order_detail.collected_amount})`,
+            );
+          });
+        });
       });
     });
     resolve(true);

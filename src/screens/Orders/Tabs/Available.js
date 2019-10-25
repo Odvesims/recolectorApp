@@ -24,7 +24,11 @@ export class Available extends Component {
     BUTTONS: [
       {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
       {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-      {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      {
+        text: global.translate('TITLE_CANCEL'),
+        icon: 'close',
+        iconColor: theme.colors.gray,
+      },
     ],
     DESTRUCTIVE_INDEX: 3,
     CANCEL_INDEX: 4,
@@ -64,10 +68,36 @@ export class Available extends Component {
                 options: BUTTONS,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: 'Opciones',
+                title: global.translate('TITLE_OPTIONS'),
               },
               buttonIndex => {
-                this.setState({clicked: BUTTONS[buttonIndex]});
+                switch (buttonIndex) {
+                  case 0:
+                    this.props.navigation.navigate('Order', {
+                      operation: 'VIEW_ORDER_ROUTE',
+                      route_id: item.route_id,
+                      description: item.description,
+                      document_id: item.document_id,
+                      document_acronym: item.acronym,
+                      document_number: item.document_number,
+                      assigned_by: item.assigned_by,
+                      assigned_to: item.assigned_to,
+                      supervisor_name: item.supervisor_name,
+                      employee_name: item.employee_name,
+                      phone_number: item.phone_number,
+                      date_from: item.date_from,
+                      date_to: item.date_to,
+                      status: item.status,
+                      disabled_date_from: true,
+                      loading_message: 'MESSAGE_UPDATING_ROUTE',
+                      new_record: false,
+                      details: item.details,
+                    });
+                    break;
+                  case 1:
+                    ActionSheet.hide();
+                    break;
+                }
               },
             )
           }>

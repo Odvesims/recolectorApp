@@ -21,6 +21,7 @@
   "ALERT_COMPLETE_DATA": "Some data is needed to complete the form",
   "ALERT_PRINTER_NOT_CONFIGURED": "You have not configured any printer. Check your configuration.",
   "ALERT_NO_ROUTES_FOUND": "No routes found.",
+  "ALERT_GETTING_ROUTE": "Getting route information",
   "MESSAGE_SIGNIN": "Signing In",
   "MESSAGE_LOADING_CLIENTS": "Loading Clients",
   "MESSAGE_LOADING_ORDERS": "Loading Orders",
@@ -117,5 +118,8 @@
   "TITLE_NEW_ROUTE": "New Route",
   "TITLE_EDIT_ROUTE": "Edit Route",
   "TITLE_VIEW_ROUTE": "View Route",
-  "TITLE_SELECTED": "Selected"
+  "TITLE_SELECTED": "Selected",
+  "TITLE_REGISTERING_ROUTE": "Registering Route",
+  "TITLE_DELETED": "Deleted",
+  "TITLE_DISCARD": "Discard"
 }
