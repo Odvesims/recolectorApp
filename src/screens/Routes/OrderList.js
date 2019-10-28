@@ -149,11 +149,6 @@ export default class OrderList extends Component {
     });
   };
 
-  //   ({item, index})
-  goToNewRoute = item => {
-    this.props.navigation.navigate('NewRoute', {selected: item});
-  };
-
   renderItem = dataList => (
     <Item style={[styles.list, dataList.item.selectedClass]} onPress={() => {}}>
       <View

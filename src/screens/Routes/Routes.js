@@ -3,7 +3,6 @@ import {theme} from '../../constants';
 import {SearchBar, FetchingData} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
-
 import {} from 'react-native-vector-icons';
 
 import {
@@ -18,7 +17,6 @@ import {
 } from 'react-native';
 
 // import ContentCustom from '../components';
-
 import {
   Icon,
   Button,
@@ -66,10 +64,6 @@ export default class Routes extends Component {
 
   static navigationOptions = {
     header: null,
-  };
-
-  showHideSearchBar = () => {
-    this.setState(previousState => ({show: !previousState.show}));
   };
 
   componentDidMount() {

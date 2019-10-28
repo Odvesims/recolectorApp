@@ -31,7 +31,7 @@ import styled from 'styled-components/native';
 const AppTitle = styled.Text`
   text-align: center;
   font-size: 24;
-  font-weight: bold;
+  font-weight: bold;s
   color: #111825;
 `;
 
