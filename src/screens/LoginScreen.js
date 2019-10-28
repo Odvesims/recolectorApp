@@ -3,23 +3,37 @@ import React, {Component} from 'react';
 import {theme} from '../constants';
 import nextFrame from 'next-frame';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
-import {View, StyleSheet, NativeModules, Platform} from 'react-native';
-
-import {Container, Header, Right, Button, Icon} from 'native-base';
-
+import {
+  View,
+  StyleSheet,
+  NativeModules,
+  Platform,
+  TextInput,
+  Text,
+} from 'react-native';
+import {Container, Header, Right, Button, Icon, Item} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
-
-import BoldLargeText from '../components/BoldLargeText';
-import NormalText from '../components/NormalText';
-import CustomButton from '../components/CustomButton';
-import CustomTextInput from '../components/TextInput';
-import ToastMessage from '../components/ToastMessage';
+import {
+  CustomButton,
+  CustomTextInput,
+  ToastMessage,
+  BoldLargeText,
+  NormalText,
+  InputLogin,
+} from '../components';
 
 import {getUserConfig, saveUserData} from '../helpers/sql_helper';
 import {getUserLogin} from '../helpers/apiconnection_helper';
+import styled from 'styled-components/native';
 
 /*import ConfigurationScreen from './pages/configscreen';*/
+
+const AppTitle = styled.Text`
+  text-align: center;
+  font-size: 24;
+  font-weight: bold;
+  color: #111825;
+`;
 
 export default class LoginScreen extends Component {
   constructor(props) {
@@ -29,8 +43,8 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: '',
-      userPassword: '',
+      userName: 'ovaldez',
+      userPassword: '901090',
       hostName: '',
       portNumber: 444,
       visible: false,
@@ -38,10 +52,13 @@ export default class LoginScreen extends Component {
       request_timeout: false,
     };
     global.deviceLanguage = this.state.deviceLanguage;
+    this.inputs = {};
+    this.inputField = React.createRef();
   }
 
-  componentDidMount() {}
-
+  focuInputs = () => {
+    this.inputField.current.focus();
+  };
   setLanguage = sLang => {
     if (Platform.OS === 'android') {
       this.setState({
@@ -83,9 +100,6 @@ export default class LoginScreen extends Component {
                 global.userPassword = password;
                 global.apiHost = res.host;
                 global.apiPort = res.port_number;
-                global.usesPrinter = res.printer;
-                global.printer_name = res.printer_name;
-                global.printer_address = res.printer_address;
                 saveUserData(l.user_data).then(usr => {
                   global.token = l.token;
                   global.states_collection = l.user_data.country_code;
@@ -132,20 +146,17 @@ export default class LoginScreen extends Component {
   }
 
   goConfig = cClick => {
-    this.props.navigation.navigate('userConfig');
+    global.config_from = 'Login';
+    global.fromLogin = true;
+    this.props.navigation.navigate('Configuration');
   };
 
   static navigationOptions = {
     header: null,
   };
 
-  inputs = {};
-
-  focusTheField = id => {
-    this.inputs[id]._root.focus();
-  };
-
   render() {
+    const inputSubmit = this.inputField.current;
     return (
       <Container>
         <Header transparent>
@@ -158,51 +169,59 @@ export default class LoginScreen extends Component {
             </Button>
           </Right>
         </Header>
+
+        {/* Login */}
         <KeyboardAwareScrollView
           contentContainerStyle={styles.container}
           resetScrollToCoords={{x: 0, y: 0}}
           scrollEnabled={false}>
           <View>
+            <AppTitle>RecolectorApp</AppTitle>
+            <InputLogin
+              iconName="person"
+              label={global.translate('TITLE_USER') + ':'}
+              onChangeText={userName => {
+                this.setState({userName: userName});
+              }}
+              // returnKeyType={'next'}
+              // onSubmitEditing={() => {
+              //   this.inputs['dsad'].focus();
+              // }}
+              ref={input => {
+                this.inputs = input;
+              }}
+              blurOnSubmit={false}
+              value={this.state.userName}
+            />
+            <InputLogin
+              id="password"
+              iconName="lock"
+              label={global.translate('TITLE_PASSWORD') + ':'}
+              onChangeText={userPassword => {
+                this.setState({userPassword: userPassword});
+              }}
+              blurOnSubmit={true}
+              secured={true}
+              returnKeyType={'done'}
+              value={this.state.userPassword}
+            />
+
+            <CustomButton
+              style={{marginTop: 50}}
+              customClick={this.customClickHandler}
+              title={global.translate('TITLE_SIGNIN')}
+            />
+            {/* Toast and Spinner */}
+            <ToastMessage
+              visible={this.state.visible}
+              message={this.state.toastMsg}
+            />
             <Spinner
               visible={this.state.loading}
               textContent={this.state.loadingMessage}
               color={'CE2424'}
               overlayColor={'rgba(255, 255, 255, 0.4)'}
               animation={'slide'}
-            />
-            <BoldLargeText text="RecolectorApp" style={{textAlign: 'center'}} />
-            <NormalText
-              text={global.translate('TITLE_USER') + ':'}
-              style={styles.NormalText}
-            />
-            <CustomTextInput
-              onChangeText={userName => {
-                this.setState({userName: userName});
-              }}
-              secured={false}
-              returnKeyType="go"
-              value={this.state.userName}
-            />
-            <NormalText
-              id="password"
-              text={global.translate('TITLE_PASSWORD') + ':'}
-              style={styles.NormalText}
-            />
-            <CustomTextInput
-              onChangeText={userPassword => {
-                this.setState({userPassword: userPassword});
-              }}
-              secured={true}
-              returnKeyType="go"
-              value={this.state.userPassword}
-            />
-            <CustomButton
-              customClick={this.customClickHandler}
-              title={global.translate('TITLE_SIGNIN')}
-            />
-            <ToastMessage
-              visible={this.state.visible}
-              message={this.state.toastMsg}
             />
           </View>
         </KeyboardAwareScrollView>
@@ -220,8 +239,44 @@ const styles = StyleSheet.create({
   },
 
   NormalText: {
-    marginLeft: 10,
+    // marginLeft: 10,
     marginTop: 20,
     textAlign: 'left',
   },
 });
+
+{
+  /* <NormalText
+              text={global.translate('TITLE_USER') + ':'}
+              style={styles.NormalText}
+            />
+            <Input>
+              <InputIcon name="person" />
+              <CustomTextInput
+                onChangeText={userName => {
+                  this.setState({userName: userName});
+                }}
+                secured={false}
+                returnKeyType="go"
+                value={this.state.userName}
+                style={{flex: 1}}
+              />
+            </Input>
+            <NormalText
+              id="password"
+              text={global.translate('TITLE_PASSWORD') + ':'}
+              style={styles.NormalText}
+            />
+            <Input>
+              <InputIcon name="eye-off" />
+              <CustomTextInput
+                onChangeText={userPassword => {
+                  this.setState({userPassword: userPassword});
+                }}
+                secured={true}
+                returnKeyType="go"
+                value={this.state.userPassword}
+                style={{flex: 1}}
+              />
+            </Input> */
+}

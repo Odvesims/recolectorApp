@@ -49,7 +49,7 @@ export default class BluetoothManagerComponent extends Component {
   }
 
   goBack = () => {
-    this.props.navigation.navigate('ConfigScreen', {
+    this.props.navigation.navigate('Configuration', {
       printer_name: this.state.name,
       printer_address: this.state.boundAddress,
     });
@@ -269,7 +269,7 @@ export default class BluetoothManagerComponent extends Component {
 
   render() {
     return (
-      <Container style={headerStyles.androidHeader}>
+      <Container style={global.fromLogin ? headerStyles.androidHeader : ''}>
         <Header>
           <Left>
             <Button transparent onPress={this.goBack}>

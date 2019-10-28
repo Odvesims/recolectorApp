@@ -51,12 +51,16 @@ export default class Home extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    global.config_from = 'HomeScreen';
+    global.fromLogin = false;
+  }
 
   setPrinter = () => {
     this.setState({loading: true, loadingMessage: 'Testing Printer'});
     if (global.printer_address === '') {
       alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
+      this.setState({loading: false});
     } else {
       enableBT().then(e => {
         connectBluetooth(global.printer_name, global.printer_address).then(c => {

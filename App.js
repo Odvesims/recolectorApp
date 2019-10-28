@@ -7,6 +7,8 @@ import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
 
 global.database_version = 3;
+global.config_from = 'Login';
+global.fromLogin = true;
 global.userDisplayName = '';
 global.userRole = '';
 global.userName = '';

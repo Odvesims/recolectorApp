@@ -56,14 +56,7 @@ export default class ConfigScreen extends Component {
     });
   }
 
-  componentDidMount() {
-    if (this.props.navigation.state.params.printer_name !== undefined) {
-      this.setState({
-        printerName: this.props.navigation.state.params.printer_name,
-        printerAddress: this.props.navigation.state.params.printer_address,
-      });
-    }
-  }
+  componentDidMount() {}
 
   saveUser = () => {
     this.setState({
@@ -95,7 +88,8 @@ export default class ConfigScreen extends Component {
   };
 
   goBack = () => {
-    this.props.navigation.goBack();
+    console.log(this.props.navigation.goBack());
+    this.props.navigation.navigate(global.config_from);
   };
 
   static navigationOptions = {
@@ -139,7 +133,7 @@ export default class ConfigScreen extends Component {
       configPrinter = <View />;
     }
     return (
-      <Container style={headerStyles.androidHeader}>
+      <Container style={global.fromLogin ? headerStyles.androidHeader : ''}>
         <Header>
           <Left>
             <Button transparent onPress={this.goBack}>
@@ -225,7 +219,7 @@ const headerStyles = StyleSheet.create({
   androidHeader: {
     ...Platform.select({
       android: {
-        //paddingTop: StatusBar.currentHeight,
+        paddingTop: StatusBar.currentHeight,
       },
     }),
   },
