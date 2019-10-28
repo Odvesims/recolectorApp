@@ -7,7 +7,6 @@ import {
   StatusBar,
   StyleSheet,
   ScrollView,
-  Alert,
 } from 'react-native';
 import {
   Container,
@@ -42,11 +41,6 @@ const primaryRoutes = [
     icon: 'navigate',
     text: 'TITLE_ROUTES',
   },
-  {
-    name: 'MyRoutesScreen',
-    icon: 'list-box',
-    text: 'TITLE_MYROUTES',
-  },
 ];
 
 const secondaryRoutes = [
@@ -55,34 +49,14 @@ const secondaryRoutes = [
     icon: 'settings',
     text: 'TITLE_CONFIGURATION',
   },
-  // {
-  //   name: 'Logout',
-  //   icon: 'log-out',
-  //   text: 'TITLE_LOGOUT',
-  // },
+  {
+    name: 'Logout',
+    icon: 'log-out',
+    text: 'TITLE_LOGOUT',
+  },
 ];
 
 export default class SideBar extends Component {
-  _signOut = () => {
-    Alert.alert(
-      //title
-      'Cerrar Sesión',
-      //body
-      'Seguro que desea cerrar sesión?',
-      [
-        {
-          text: 'Si',
-          onPress: () => this.props.navigation.navigate('Auth'),
-        },
-        {
-          text: 'No',
-          onPress: () => this.props.navigation.goBack(),
-          style: 'cancel',
-        },
-      ],
-      {cancelable: false},
-    );
-  };
   render() {
     return (
       <Container>
@@ -93,6 +67,7 @@ export default class SideBar extends Component {
               <Text>{global.translate(global.userRole)}</Text>
             </Badge>
           </View>
+
           <Button transparent>
             <Icon
               name="create"
@@ -110,7 +85,6 @@ export default class SideBar extends Component {
             flexDirection: 'column',
             justifyContent: 'space-between',
           }}>
-          {/* Main Items */}
           <List
             style={{marginTop: 16}}
             dataArray={primaryRoutes}
@@ -119,7 +93,6 @@ export default class SideBar extends Component {
                 <ListItem
                   style={{
                     borderColor: 'transparent',
-                    zz,
                   }}
                   button
                   onPress={() => this.props.navigation.navigate(data.name)}>
@@ -133,12 +106,14 @@ export default class SideBar extends Component {
               );
             }}
           />
-          {/* Secondary Items */}
           <View
-          // style={{ justifyContent: 'flex-end', }}
-          >
+            style={{
+              justifyContent: 'flex-end',
+            }}>
             <List
-              //  style={  {  marginVertical: 16, }  }
+              style={{
+                marginVertical: 16,
+              }}
               dataArray={secondaryRoutes}
               renderRow={data => {
                 return (
@@ -158,17 +133,6 @@ export default class SideBar extends Component {
                 );
               }}
             />
-
-            <List style={{flexDirection: 'row'}}>
-              <ListItem onPress={this._signOut}>
-                <Button transparent style={styles.iconContainer}>
-                  <Icon name="log-out" style={styles.menuIcon} />
-                </Button>
-                <Text style={{marginLeft: 8}}>
-                  {global.translate('TITLE_LOGOUT')}
-                </Text>
-              </ListItem>
-            </List>
           </View>
         </View>
       </Container>

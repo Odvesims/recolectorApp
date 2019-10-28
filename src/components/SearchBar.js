@@ -4,45 +4,77 @@ import {Container, Header, Item, Input, Icon, Button, Text} from 'native-base';
 import PropTypes from 'prop-types';
 
 export default class SearchBar extends Component {
-  state = {show: false};
+  state = {
+    // data: this.props.data,
+    // arrayData: this.props.arrayData,
+    value: '',
+    query: '',
+    error: null,
+    show: false,
+  };
 
-  showHideSearchBar = () => {
-    // this.setState({show: true});
-    if (this.state.show === true) {
-      this.setState({show: false});
-    } else {
-      this.setState({show: true});
-    }
+  // showHideSearchBar = () => {
+  //   // if (this.state.show === true) {
+  //   //   this.setState({show: false});
+  //   // } else {
+  //   //   this.setState({show: true});
+  //   // }
+  // };
+
+  searchFilter = (text, name) => {
+    const {dataValue, data} = this.props;
+    let newData = dataValue;
+    newData = dataValue.filter(item => {
+      const itemData = `${item.name.toLowerCase()}`;
+      const textData = text.toLowerCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log(text);
+    data(newData, text);
+    // this.setState({data: newData, query: text});
+  };
+
+  onPressCancel = () => {
+    console.log('Cancel');
+    // this.props.onPressCancel;
+    this.searchFilter('');
+    // this.onPressClear();
+  };
+
+  onPressClear = () => {
+    console.log('Clear');
+    this.searchFilter('');
   };
 
   render() {
-    const {
-      style,
-      onPressClear,
-      onPressCancel,
-      placeholder,
-      onChangeText,
-    } = this.props;
+    const {style, placeholder, ...props} = this.props;
     return (
-      <Header searchBar rounded style={style}>
+      <Header searchBar rounded style={style} {...props}>
         <Item>
-          <Icon name="arrow-back" onPress={onPressCancel} />
+          <Icon
+            name="arrow-back"
+            onPress={() => {
+              this.searchFilter(''), this.props.onPressCancel();
+              // this.searchFilter('');
+            }}
+          />
+          {console.log()}
           <Input
             placeholder={placeholder}
-            onChangeText={onChangeText}
+            onChangeText={text => {
+              this.searchFilter(text);
+            }}
             ref={ref => {
               this.input = ref;
             }}
           />
-          {/* this.onPressRemove */}
-
           <Icon
             name="close"
             onPress={() => {
-              if (onPressClear) {
+              if (this.onPressClear) {
                 if (this.input) {
                   this.input._root.clear();
-                  onPressClear();
+                  this.onPressClear();
                 }
               } else {
                 if (this.input) {

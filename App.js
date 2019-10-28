@@ -7,7 +7,7 @@ import Navigation from './src/navigations/';
 import {createAppContainer} from 'react-navigation';
 import NavigationService from './src/services/NavigationService';
 
-global.database_version = 12;
+global.database_version = 15;
 global.userDisplayName = '';
 global.userRole = '';
 global.userName = '';

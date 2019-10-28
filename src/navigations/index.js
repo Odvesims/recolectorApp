@@ -114,7 +114,7 @@ const OrdersScreen = createStackNavigator(
     Detail: Detail,
   },
   {
-    initialRouteParams: 'Orderss',
+    initialRouteParams: 'Orders',
     headerMode: 'none',
     mode: 'modal',
   },
@@ -128,7 +128,7 @@ const AppNavigator = createDrawerNavigator(
         drawerIcon: ({tintColor}) => (
           <Icon name="home" size={24} style={{color: tintColor}} />
         ),
-        drawerLabel: `Inicio`, //${global.translate('TITLE_PRINCIPAL')}
+        drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
       },
     },
     ClientScreen: {
@@ -137,7 +137,7 @@ const AppNavigator = createDrawerNavigator(
         drawerIcon: ({tintColor}) => (
           <Icon name="people" size={24} style={{color: tintColor}} />
         ),
-        drawerLabel: `Clientes`, //${global.translate('TITLE_CLIENTS')}
+        drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
       },
     },
     RouteScreen: {
@@ -146,7 +146,7 @@ const AppNavigator = createDrawerNavigator(
         drawerIcon: ({tintColor}) => (
           <Icon name="navigate" size={24} style={{color: tintColor}} />
         ),
-        drawerLabel: `Rutas`, //${global.translate('TITLE_ROUTES')}
+        drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
       },
     },
     OrderScreen: {
@@ -155,7 +155,7 @@ const AppNavigator = createDrawerNavigator(
         drawerIcon: ({tintColor}) => (
           <Icon name="cube" size={24} style={{color: tintColor}} />
         ),
-        drawerLabel: `Ordenes`, //${global.translate('TITLE_ORDERS')}
+        drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
       },
     },
     MyRoutesScreen: {
@@ -169,7 +169,7 @@ const AppNavigator = createDrawerNavigator(
             style={{color: tintColor}}
           />
         ),
-        drawerLabel: `Mis rutas`, //${global.translate('TITLE_MYROUTES')}
+        drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
       },
     },
     ConfigScreen: {
@@ -178,7 +178,7 @@ const AppNavigator = createDrawerNavigator(
         drawerIcon: ({tintColor}) => (
           <Icon name="settings" style={{color: tintColor}} />
         ),
-        drawerLabel: `Configuracion`, //${global.translate('TITLE_CONFIGURATION')}
+        drawerLabel: 'Configuraciones', //global.translate('TITLE_CONFIGURATION'),
       },
     },
   },
@@ -215,15 +215,15 @@ const AppNavigator = createDrawerNavigator(
         <TouchableOpacity
           onPress={() =>
             Alert.alert(
-              'Cerrar Sesión',
-              'Seguro que desea cerrar sesión?',
+              global.translate('TITLE_SIGN_OUT'),
+              global.translate('TITLE_QUESTION_SIGN_OUT'),
               [
                 {
-                  text: 'Si',
+                  text: global.translate('TITLE_YES'),
                   onPress: () => props.navigation.navigate('Auth'),
                 },
                 {
-                  text: 'No',
+                  text: global.translate('TITLE_NO'),
                   onPress: () => props.navigation.goBack(null),
                   style: 'cancel',
                 },
@@ -243,7 +243,6 @@ const AppNavigator = createDrawerNavigator(
         </TouchableOpacity>
       </ScrollView>
     ),
-
     contentOptions: {
       activeTintColor: theme.colors.primary,
       inactiveTintColor: theme.colors.darkGray,
@@ -254,15 +253,6 @@ const AppNavigator = createDrawerNavigator(
         color: theme.colors.gray,
       },
     },
-    order: [
-      'HomeScreen',
-      'ClientScreen',
-      'RouteScreen',
-      'OrderScreen',
-      'MyRoutesScreen',
-      'ConfigScreen',
-    ],
-    backBehavior: 'none',
   },
 );
 
@@ -274,7 +264,6 @@ const Navigation = createSwitchNavigator(
   },
   {
     initialRouteName: 'Auth',
-    backBehavior: 'initialRoute',
   },
 );
 

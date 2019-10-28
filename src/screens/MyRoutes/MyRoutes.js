@@ -27,15 +27,12 @@ class Order extends Component {
     super(props);
     this.state = {
       data: [],
-      arrayData: [],
-      query: '',
+      dataAll: [],
       value: '',
       isloading: false,
       error: null,
       modalVisible: false,
       show: false,
-      date: '10/12/19',
-      placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
         {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -45,8 +42,13 @@ class Order extends Component {
       CANCEL_INDEX: 4,
     };
     // this.arrData = [];
-    this.arrayholder = [];
+    // this.arrayholder = [];
   }
+
+  // searchHandler = event => {
+  //   event.preventDefault();
+  //   console.log(this.searchBarRef.current);
+  // };
 
   componentDidMount() {
     this.fetchData();
@@ -90,7 +92,7 @@ class Order extends Component {
         this.setState({
           loading: false,
           data: res,
-          arrayData: res,
+          dataAll: res,
         });
 
         // this.arrayholder = res;
@@ -100,16 +102,16 @@ class Order extends Component {
       });
   };
 
-  searchFilter = text => {
-    const {arrayData} = this.state;
-    let newData = arrayData;
-    newData = arrayData.filter(item => {
-      const itemData = `${item.name.toLowerCase()}`;
-      const textData = text.toLowerCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    this.setState({data: newData, query: text});
-  };
+  // searchFilter = (text, name) => {
+  //   const {arrayData} = this.state;
+  //   let newData = arrayData;
+  //   newData = arrayData.filter(item => {
+  //     const itemData = `${item[name].toLowerCase()}`;
+  //     const textData = text.toLowerCase();
+  //     return itemData.indexOf(textData) > -1;
+  //   });
+  //   this.setState({data: newData, query: text});
+  // };
 
   renderItem = ({item}) => {
     const {navigate} = this.props.navigation;
@@ -169,6 +171,13 @@ class Order extends Component {
     );
   };
 
+  handler = (data, text) => {
+    this.setState({
+      data: data,
+      query: text,
+    });
+  };
+
   render() {
     const {modalVisible, data, loading, show} = this.state;
 
@@ -187,7 +196,7 @@ class Order extends Component {
           // style={{overflow: 'hidden'}}
           data={data}
           extraData={this.state}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item.id} //.toString()
           renderItem={this.renderItem}
         />
       );
@@ -211,21 +220,30 @@ class Order extends Component {
               </Button>
             </Right>
           </Header>
+
           {/* SearchBar */}
           {show ? (
             <SearchBar
+              arrayData={this.state.arrayData}
+              data={this.handler}
+              dataValue={this.state.dataAll}
+              ref={this.searchBarRef}
               style={styles.searchbar}
-              placeholder="Busque su orden"
-              onChangeText={text => {
-                this.searchFilter(text);
+              placeholder={'Busque su orden'}
+              // filter={text => {
+              //   this.searchFilter(text, 'name');
+              // }}
+              onPressCancel={() => {
+                this.showHideSearchBar();
               }}
-              onPressCancel={this.showHideSearchBar}
-              onPressClear={() => {
-                this.searchFilter('');
-              }}
+              // onPressClear={() => {
+              //   this.searchFilter('');
+              // }}
             />
           ) : null}
+
           {/* SearchBar */}
+
           <Content
             style={{
               flexDirection: 'column',

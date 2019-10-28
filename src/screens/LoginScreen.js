@@ -9,6 +9,7 @@ import {
   NativeModules,
   Platform,
   TextInput,
+  Text,
 } from 'react-native';
 import {Container, Header, Right, Button, Icon, Item} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -208,7 +209,6 @@ export default class LoginScreen extends Component {
               customClick={this.customClickHandler}
               title={global.translate('TITLE_SIGNIN')}
             />
-
             {/* Toast and Spinner */}
             <ToastMessage
               visible={this.state.visible}
