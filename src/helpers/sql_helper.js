@@ -782,7 +782,7 @@ export function getNotAssignedOrders() {
             let orderObject = {
               id: row.id,
               order_id: row.order_id,
-              document: row.order_document,
+              order_document: row.order_document,
               client: row.client,
               name: row.name,
               address: row.address,

@@ -100,6 +100,7 @@ export class Route extends Component {
     }
     this.selectedItem = this.selectedItem.bind(this);
     this.getEmployeesHandler();
+    this.updateDataState = this.updateDataState.bind(this);
   }
 
   state = {};
@@ -128,13 +129,17 @@ export class Route extends Component {
       try {
         let orders = params.orders;
         if (orders !== undefined) {
-          this.cleanArr(orders).then(res => {
-            this.setState({data: res, clear_data: res});
-          });
+          //this.cleanArr(orders).then(res => {
+          this.setState({data: orders, clear_data: orders});
+          //});
           params.orders = undefined;
         }
       } catch (err) {}
     });
+  }
+
+  updateDataState(theData) {
+    this.setState({data: theData, clear_data: theData});
   }
 
   setEmployeesPicker(employees) {
@@ -165,69 +170,64 @@ export class Route extends Component {
   }
 
   saveRoute = () => {
-    if (this.state.new_record) {
-      let {
-        route_description,
-        chosenDate,
-        chosenDate2,
-        selected_item,
-        clear_data,
-      } = this.state;
-      if (
-        route_description &&
-        chosenDate &&
-        chosenDate2 &&
-        selected_item.Code
-      ) {
-        let ordersArr = [];
-        clear_data.map(order => {
-          let orderObject = {
-            code: order.document.split('-')[1],
-            order_id: order.order_id,
-          };
-          ordersArr.push(orderObject);
-        });
-        let order_data = {
-          setma_id: global.setma_id,
-          description: route_description,
-          supervisor_code: global.employee_code,
-          collector_code: selected_item.Code,
-          start_date: chosenDate,
-          end_date: chosenDate2,
-          route_state: 'A',
-          orders_list: ordersArr,
+    //if (this.state.new_record) {
+    let {
+      route_description,
+      chosenDate,
+      chosenDate2,
+      selected_item,
+      clear_data,
+    } = this.state;
+    if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
+      let ordersArr = [];
+      clear_data.map(order => {
+        let orderObject = {
+          code: order.order_document.split('-')[1],
+          order_id: order.order_id,
         };
-        this.setState({
-          loading: true,
-          loadingMessage: 'MESSAGE_REGISTERING_ROUTE',
-        });
-        dataOperation('ROUTE_OPERATION', order_data).then(res => {
-          if (res.valid) {
-            updateOrderAssigned(ordersArr).then(up => {
-              alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
-              this.setState({
-                employees: [],
-                client: '',
-                client_address: '',
-                client_city: '',
-                client_state: '',
-                client_phone: '',
-                placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
-                data: [],
-                clear_data: [],
-                loading: false,
-              });
+        ordersArr.push(orderObject);
+      });
+      let order_data = {
+        setma_id: global.setma_id,
+        description: route_description,
+        supervisor_code: global.employee_code,
+        collector_code: selected_item.Code,
+        start_date: chosenDate,
+        end_date: chosenDate2,
+        route_state: 'A',
+        orders_list: ordersArr,
+      };
+      this.setState({
+        loading: true,
+        loadingMessage: this.props.navigation.state.params.operation,
+      });
+      dataOperation('ROUTE_OPERATION', order_data).then(res => {
+        if (res.valid) {
+          updateOrderAssigned(ordersArr).then(up => {
+            alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+            this.setState({
+              employees: [],
+              client: '',
+              client_address: '',
+              client_city: '',
+              client_state: '',
+              client_phone: '',
+              placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+              data: [],
+              clear_data: [],
+              loading: false,
             });
-          } else {
-            this.setState({loading: false});
-          }
-        });
-      } else {
-        alert(global.translate('ALERT_COMPLETE_DATA'));
-      }
+          });
+        } else {
+          this.setState({loading: false});
+        }
+      });
     } else {
-      this.props.navigation.goBack();
+      alert(global.translate('ALERT_COMPLETE_DATA'));
     }
+    //} else {
+    //  this.props.navigation.goBack();
+    //}
   };
 
   getEmployeesHandler() {
@@ -467,6 +467,7 @@ export class Route extends Component {
               onPress={() => {
                 this.props.navigation.navigate('OrderList', {
                   checkedItems: this.state.data,
+                  updateData: this.updateDataState,
                 });
               }}>
               <Icon name="add" style={{color: theme.colors.primary}} />
