@@ -43,7 +43,6 @@ import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 export class Route extends Component {
   constructor(props) {
     super(props);
-    //alert(JSON.stringify(params.details));
     const {params} = this.props.navigation.state;
     this.state = {
       employees: [],
@@ -59,6 +58,7 @@ export class Route extends Component {
       document_number: params.document_number,
       assigned_by: params.assigned_by,
       placeholder: params.employee_name,
+      selected_item: {Name: params.employee_name, Code: params.assigned_to},
       chosenDate: params.date_to,
       chosenDate2: params.date_from,
       disabled_date_from: params.disabled_date_from,
@@ -177,6 +177,7 @@ export class Route extends Component {
       chosenDate2,
       selected_item,
       clear_data,
+      document_number,
     } = this.state;
     if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
       let ordersArr = [];
@@ -188,6 +189,7 @@ export class Route extends Component {
         ordersArr.push(orderObject);
       });
       let order_data = {
+        document_number: document_number,
         setma_id: global.setma_id,
         description: route_description,
         supervisor_code: global.employee_code,
@@ -199,24 +201,16 @@ export class Route extends Component {
       };
       this.setState({
         loading: true,
-        loadingMessage: this.props.navigation.state.params.operation,
+        loadingMessage: this.props.navigation.state.params.loading_message,
       });
       dataOperation('ROUTE_OPERATION', order_data).then(res => {
         if (res.valid) {
           updateOrderAssigned(ordersArr).then(up => {
             alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
             this.setState({
-              employees: [],
-              client: '',
-              client_address: '',
-              client_city: '',
-              client_state: '',
-              client_phone: '',
-              placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
-              data: [],
-              clear_data: [],
               loading: false,
             });
+            this.props.navigation.goBack();
           });
         } else {
           this.setState({loading: false});
@@ -254,7 +248,7 @@ export class Route extends Component {
 
   updateList = list => {
     if (this.state.reverted) {
-      list = this.state.data;
+      //list = this.state.data;
     }
     this.setState({
       data: list,

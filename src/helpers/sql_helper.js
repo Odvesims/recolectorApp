@@ -894,12 +894,14 @@ export function updateRouteOrders(route_orders) {
       VALUES(${route_orders.route_id}, '${route_orders.description}', ${route_orders.document_id}, '${route_orders.document_acronym}', ${route_orders.document_number}, ${route_orders.assigned_by}, ${route_orders.assigned_to}, '${route_orders.supervisor_name}', '${route_orders.employee_name}', '${route_orders.phone_number}', '${route_orders.date_to}', '${route_orders.date_from}', '${route_orders.status})
       WHERE route_id = ${route_orders.route_id}`);
     });
+    db.transaction(tx => {
+      tx.executeSql(
+        `DELETE FROM route_details WHERE route_id = ${route_orders.route_id}`,
+      );
+    });
     //alert(JSON.stringify(route_orders));
     route_orders.route_details.map(detail => {
       db.transaction(tx => {
-        tx.executeSql(
-          `DELETE FROM route_details WHERE routedetail_id = ${detail.routedetail_id}`,
-        );
         tx.executeSql(
           `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(${detail.route_id}, ${detail.order_id}, ${detail.routedetail_id}, 'A')`,
         );

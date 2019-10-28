@@ -32,6 +32,7 @@
   "MESSAGE_REGISTERING_CLIENT": "Registrando Cliente",
   "MESSAGE_REGISTERING_ORDER": "Registrando Orden",
   "MESSAGE_UPDATING_ORDER": "Actualizando Orden",
+  "MESSAGE_UPDATING_ROUTE": "Actualizando Ruta",
   "MESSAGE_SELECT_STATE": "Seleccione un estado/provincia",
   "PLACEHOLDER_TYPE_NAME": "Digite el nombre",
   "PLACEHOLDER_TYPE_ADDRESS": "Digite la dirección",

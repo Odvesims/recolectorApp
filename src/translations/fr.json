@@ -32,6 +32,7 @@
   "MESSAGE_REGISTERING_CLIENT": "Client inscrit",
   "MESSAGE_REGISTERING_ORDER": "Command inscrit",
   "MESSAGE_UPDATING_ORDER": "Mise à jour du command",
+  "MESSAGE_UPDATING_ROUTE": "Mise à jour du itinéraire",
   "MESSAGE_SELECT_STATE": "Sélectionner un état / une province",
   "PLACEHOLDER_TYPE_NAME": "Tapez le nom",
   "PLACEHOLDER_TYPE_ADDRESS": "Tapez l'adresse",

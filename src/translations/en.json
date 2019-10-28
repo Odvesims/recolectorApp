@@ -32,6 +32,7 @@
   "MESSAGE_REGISTERING_CLIENT": "Registering Client",
   "MESSAGE_REGISTERING_ORDER": "Registering Order",
   "MESSAGE_UPDATING_ORDER": "Updating Order",
+  "MESSAGE_UPDATING_ROUTE": "Updating Route",
   "MESSAGE_SELECT_STATE": "Select a state",
   "PLACEHOLDER_TYPE_NAME": "Type in the name",
   "PLACEHOLDER_TYPE_ADDRESS": "Type in the address",
