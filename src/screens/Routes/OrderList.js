@@ -52,6 +52,8 @@ export default class OrderList extends Component {
           this.setState({
             data: res,
             isChecked: true,
+            isSelect: true,
+            selectedClass: styles.selected,
           });
         });
         this.props.navigation.state.params.checkedItems = undefined;
@@ -62,7 +64,9 @@ export default class OrderList extends Component {
   checkItems(dataList, data) {
     return new Promise((resolve, reject) => {
       dataList.map(i => {
-        const index = this.state.data.findIndex(item => i.id === item.id);
+        const index = this.state.data.findIndex(
+          item => i.order_id === item.order_id,
+        );
         data[index] = i;
       });
       resolve(data);
@@ -115,7 +119,7 @@ export default class OrderList extends Component {
     dataList.item.isSelect = !dataList.item.isSelect;
     dataList.item.isChecked = !dataList.item.isChecked;
     dataList.item.selectedClass = dataList.item.isSelect
-      ? styles.selected
+      ? styles.list
       : styles.list;
 
     const index = this.state.data.findIndex(
@@ -168,7 +172,7 @@ export default class OrderList extends Component {
         />
         <View key={dataList.item.key} style={styles.listContainer}>
           <Text style={styles.code}>
-            {global.translate('TITLE_CODE')}: {dataList.item.document}
+            {global.translate('TITLE_CODE')}: {dataList.item.order_document}
           </Text>
           <View
             style={{
@@ -191,9 +195,46 @@ export default class OrderList extends Component {
   );
 
   onPressHandler = () => {
-    this.props.navigation.navigate('Route', {
-      orders: this.state.dataSelected,
+    let arrSelected = [];
+    this.state.data.map(i => {
+      if (i.isChecked) {
+        arrSelected.push({
+          id: i.id,
+          order_id: i.order_id,
+          order_document: i.order_document,
+          client: i.client,
+          name: i.name,
+          address: i.address,
+          order_total: i.order_total,
+          isChecked: true,
+          isSelect: true,
+        });
+      }
     });
+    this.props.navigation.navigate('Route', {
+      orders: arrSelected,
+    });
+  };
+
+  goBack = () => {
+    let arrSelected = [];
+    this.state.data.map(i => {
+      if (i.isChecked) {
+        arrSelected.push({
+          id: i.id,
+          order_id: i.order_id,
+          order_document: i.order_document,
+          client: i.client,
+          name: i.name,
+          address: i.address,
+          order_total: i.order_total,
+          isChecked: true,
+          isSelect: true,
+        });
+      }
+    });
+    this.props.navigation.state.params.updateData(arrSelected);
+    this.props.navigation.goBack();
   };
 
   render() {
@@ -227,7 +268,7 @@ export default class OrderList extends Component {
       <Container>
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
+            <Button transparent onPress={this.goBack}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -235,7 +276,7 @@ export default class OrderList extends Component {
             <Title>{global.translate('TITLE_AVAILABLE')}</Title>
           </Body>
           <Right>
-            <Button transparent onPress={this.onPressHandler}>
+            <Button transparent onPress={this.goBack}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>
                 {global.translate('TITLE_DONE')}

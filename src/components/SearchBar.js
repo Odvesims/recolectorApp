@@ -13,14 +13,6 @@ export default class SearchBar extends Component {
     show: false,
   };
 
-  // showHideSearchBar = () => {
-  //   // if (this.state.show === true) {
-  //   //   this.setState({show: false});
-  //   // } else {
-  //   //   this.setState({show: true});
-  //   // }
-  // };
-
   searchFilter = (text, name) => {
     const {dataValue, data} = this.props;
     let newData = dataValue;

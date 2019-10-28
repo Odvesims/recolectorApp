@@ -3,7 +3,6 @@ import {theme} from '../../constants';
 import {AddButton, SearchBar, FetchingData} from '../../components';
 import Toast from 'react-native-easy-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
-
 import {} from 'react-native-vector-icons';
 
 import {

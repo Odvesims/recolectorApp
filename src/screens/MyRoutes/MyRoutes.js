@@ -41,14 +41,7 @@ class Order extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    // this.arrData = [];
-    // this.arrayholder = [];
   }
-
-  // searchHandler = event => {
-  //   event.preventDefault();
-  //   console.log(this.searchBarRef.current);
-  // };
 
   componentDidMount() {
     this.fetchData();
@@ -94,24 +87,11 @@ class Order extends Component {
           data: res,
           dataAll: res,
         });
-
-        // this.arrayholder = res;
       })
       .catch(error => {
         this.setState({error, loading: false});
       });
   };
-
-  // searchFilter = (text, name) => {
-  //   const {arrayData} = this.state;
-  //   let newData = arrayData;
-  //   newData = arrayData.filter(item => {
-  //     const itemData = `${item[name].toLowerCase()}`;
-  //     const textData = text.toLowerCase();
-  //     return itemData.indexOf(textData) > -1;
-  //   });
-  //   this.setState({data: newData, query: text});
-  // };
 
   renderItem = ({item}) => {
     const {navigate} = this.props.navigation;
@@ -178,6 +158,12 @@ class Order extends Component {
     });
   };
 
+  searchHandler = show => {
+    this.setState({
+      show: show,
+    });
+  };
+
   render() {
     const {modalVisible, data, loading, show} = this.state;
 
@@ -226,19 +212,13 @@ class Order extends Component {
             <SearchBar
               arrayData={this.state.arrayData}
               data={this.handler}
+              visible={this.searchHandler}
               dataValue={this.state.dataAll}
-              ref={this.searchBarRef}
               style={styles.searchbar}
               placeholder={'Busque su orden'}
-              // filter={text => {
-              //   this.searchFilter(text, 'name');
-              // }}
               onPressCancel={() => {
                 this.showHideSearchBar();
               }}
-              // onPressClear={() => {
-              //   this.searchFilter('');
-              // }}
             />
           ) : null}
 
