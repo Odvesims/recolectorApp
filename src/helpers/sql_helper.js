@@ -85,6 +85,7 @@ export function setUserTable() {
         ['apimobile.sojaca.net', 444, '', ''],
         (tx, results) => {},
       );
+      alert('here');
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
       );
@@ -716,6 +717,31 @@ export function getRouteDetails(route_id) {
   });
 }
 
+export function getOrderDetails(order_id) {
+  let arrOrders = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM order_details WHERE order_id=${order_id} ORDER BY id DESC`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              id: row.orderdetail_id,
+              order_id: row.order_id,
+              orderDetail_id: row.orderdetail_id,
+              detail_description: row.detail_description,
+              collected_quantity: row.collected_quantity,
+            };
+            arrOrders.push(orderObject);
+          }
+          resolve(arrOrders);
+        },
+      );
+    });
+  });
+}
 export function getOrders() {
   let arrOrders = [];
   return new Promise((resolve, reject) => {
@@ -782,7 +808,7 @@ export function getNotAssignedOrders() {
             let orderObject = {
               id: row.id,
               order_id: row.order_id,
-              document: row.order_document,
+              order_document: row.order_document,
               client: row.client,
               name: row.name,
               address: row.address,
@@ -894,12 +920,14 @@ export function updateRouteOrders(route_orders) {
       VALUES(${route_orders.route_id}, '${route_orders.description}', ${route_orders.document_id}, '${route_orders.document_acronym}', ${route_orders.document_number}, ${route_orders.assigned_by}, ${route_orders.assigned_to}, '${route_orders.supervisor_name}', '${route_orders.employee_name}', '${route_orders.phone_number}', '${route_orders.date_to}', '${route_orders.date_from}', '${route_orders.status})
       WHERE route_id = ${route_orders.route_id}`);
     });
+    db.transaction(tx => {
+      tx.executeSql(
+        `DELETE FROM route_details WHERE route_id = ${route_orders.route_id}`,
+      );
+    });
     //alert(JSON.stringify(route_orders));
     route_orders.route_details.map(detail => {
       db.transaction(tx => {
-        tx.executeSql(
-          `DELETE FROM route_details WHERE routedetail_id = ${detail.routedetail_id}`,
-        );
         tx.executeSql(
           `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(${detail.route_id}, ${detail.order_id}, ${detail.routedetail_id}, 'A')`,
         );

@@ -47,6 +47,7 @@ import Detail from '../screens/Orders/Detail';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
 import SplashScreen from '../screens/SplashScreen';
+import BluetoothPrinter from '../components/BluetoothManagerComponent';
 //MyRoutes
 import MyRoutes from '../screens/MyRoutes/MyRoutes';
 import RouteDetail from '../screens/MyRoutes/RouteDetail';
@@ -54,10 +55,23 @@ import Registry from '../screens/MyRoutes/Registry';
 
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const AuthNavigator = createStackNavigator({
-  Login: {screen: LoginScreen},
-  Configuration: {screen: ConfigScreen, headerMode: 'none'},
-});
+const ConfigNavigator = createStackNavigator(
+  {
+    Configuration: ConfigScreen,
+    BluetoothPrinter: BluetoothPrinter,
+  },
+  {
+    headerMode: 'none',
+  },
+);
+
+const AuthNavigator = createStackNavigator(
+  {
+    Login: LoginScreen,
+    Configuration: ConfigNavigator,
+  },
+  {headerMode: 'none'},
+);
 
 const MyRoutesScreen = createStackNavigator(
   {
@@ -172,13 +186,18 @@ const AppNavigator = createDrawerNavigator(
         drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
       },
     },
-    ConfigScreen: {
-      screen: ConfigScreen,
+    MyConfigScreen: {
+      screen: ConfigNavigator,
       navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <Icon name="settings" style={{color: tintColor}} />
+        drawerIcon: ({focused, tintColor}) => (
+          <Icon
+            focused={focused}
+            name="settings"
+            size={24}
+            style={{color: tintColor}}
+          />
         ),
-        drawerLabel: 'Configuraciones', //global.translate('TITLE_CONFIGURATION'),
+        drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
       },
     },
   },
@@ -263,7 +282,7 @@ const Navigation = createSwitchNavigator(
     Auth: AuthNavigator,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Splash',
   },
 );
 

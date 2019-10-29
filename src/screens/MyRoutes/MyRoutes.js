@@ -1,10 +1,18 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
-
-import styled from 'styled-components/native';
-import {SearchBar} from '../../components';
+import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
+import {SearchBar, FetchingData} from '../../components';
 import {View, StyleSheet, FlatList} from 'react-native';
+import {
+  saveActiveRoutes,
+  saveInactiveRoutes,
+  getStoredRoutes,
+  clearRoutesCab,
+  clearRoutesDetails,
+} from '../../helpers/sql_helper';
+import {getData} from '../../helpers/apiconnection_helper';
 import {
   Container,
   Left,
@@ -31,6 +39,7 @@ class Order extends Component {
       value: '',
       isloading: false,
       error: null,
+      status: '',
       modalVisible: false,
       show: false,
       BUTTONS: [
@@ -44,7 +53,7 @@ class Order extends Component {
   }
 
   componentDidMount() {
-    this.fetchData();
+    // this.fetchData();
     // this.focusListener = this.props.navigation.addListener('didFocus', () => {
     //   try {
     //     let item = this.props.navigation.state.params.selItem;
@@ -75,37 +84,97 @@ class Order extends Component {
     }
   };
 
-  fetchData = () => {
-    this.setState({loading: true});
-    const url = 'https://jsonplaceholder.typicode.com/users';
-    this.setState({loading: true});
-    fetch(url)
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          loading: false,
-          data: res,
-          dataAll: res,
-        });
-      })
-      .catch(error => {
-        this.setState({error, loading: false});
-      });
+  enterHandler = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+    });
+    this.storedRoutes();
   };
+
+  storedRoutes = () => {
+    getStoredRoutes('A').then(active => {
+      getStoredRoutes('I').then(expired => {
+        this.setState({active: active, expired: expired, loading: false});
+      });
+    });
+  };
+
+  refreshHandler = () => {
+    this.setState({
+      loading: true,
+      request_timeout: false,
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      active: [],
+    });
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      }
+    }, 20000);
+    getData('GET_ROUTES', '&status=A').then(active => {
+      if (!this.state.request_timeout) {
+        clearRoutesCab('A').then(ca => {
+          clearRoutesDetails().then(cd => {
+            if (active.arrResponse !== []) {
+              saveActiveRoutes(active.arrResponse);
+            }
+            getData('GET_ROUTES', '&status=I').then(inactive => {
+              if (!this.state.request_timeout) {
+                clearRoutesCab('I').then(ci => {
+                  if (inactive.arrResponse !== []) {
+                    saveInactiveRoutes(inactive.arrResponse);
+                  }
+                  this.storedRoutes();
+                });
+              } else {
+                this.setState({request_timeout: false});
+              }
+            });
+          });
+        });
+      } else {
+        this.setState({request_timeout: false});
+      }
+    });
+  };
+
+  // fetchData = () => {
+  //   this.setState({loading: true});
+  //   const url = 'https://jsonplaceholder.typicode.com/users';
+  //   this.setState({loading: true});
+  //   fetch(url)
+  //     .then(res => res.json())
+  //     .then(res => {
+  //       this.setState({
+  //         loading: false,
+  //         data: res,
+  //         dataAll: res,
+  //       });
+  //     })
+  //     .catch(error => {
+  //       this.setState({error, loading: false});
+  //     });
+  // };
 
   renderItem = ({item}) => {
     const {navigate} = this.props.navigation;
+    console.log(item);
     return (
       <Item
         style={[styles.list, item.selectedClass]}
         onPress={() =>
           navigate('RouteDetail', {
-            routeName: item.name,
-            date: this.state.date,
+            routeName: item.description,
+            expire: item.data_to,
+            status: item.status,
             onGoBack: () => this.refresh(true),
-            email: item.email,
-            zipcode: item.address.zipcode,
-            info: item,
+            route_id: item.route_id,
+            document_id: '',
+            phone_number: '',
+            date_from: moment(new Date()).format('DD/MM/YYYY'),
+            date_to: moment(new Date()).format('DD/MM/YYYY'),
           })
         }>
         <View
@@ -122,11 +191,11 @@ class Order extends Component {
                 justifyContent: 'space-between',
               }}>
               <Text numberOfLines={1} style={styles.name}>
-                {item.name}
+                {item.description}
               </Text>
             </View>
             <Text numberOfLines={1} style={styles.address}>
-              {item.address.street}
+              Hasta: {item.date_to}
             </Text>
           </View>
         </View>
@@ -151,21 +220,15 @@ class Order extends Component {
     );
   };
 
-  handler = (data, text) => {
-    this.setState({
-      data: data,
-      query: text,
-    });
-  };
-
-  searchHandler = show => {
-    this.setState({
-      show: show,
-    });
-  };
+  // searchBarHandler = (data, text) => {
+  //   this.setState({
+  //     data: data,
+  //     query: text,
+  //   });
+  // };
 
   render() {
-    const {modalVisible, data, loading, show} = this.state;
+    const {modalVisible, active, loading, show} = this.state;
 
     let content = (
       <ContentLoader>
@@ -180,7 +243,7 @@ class Order extends Component {
           ListEmptyComponent={this.listEmpty}
           keyboardShouldPersistTaps={'handled'}
           // style={{overflow: 'hidden'}}
-          data={data}
+          data={active}
           extraData={this.state}
           keyExtractor={item => item.id} //.toString()
           renderItem={this.renderItem}
@@ -201,17 +264,18 @@ class Order extends Component {
               <Title>{global.translate('TITLE_MYROUTES')}</Title>
             </Body>
             <Right>
-              <Button transparent onPress={this.showHideSearchBar}>
+              <FetchingData syncData={this.refreshHandler} fetching={loading} />
+              {/* <Button transparent onPress={this.showHideSearchBar}>
                 <Icon name="search" />
-              </Button>
+              </Button> */}
             </Right>
           </Header>
 
           {/* SearchBar */}
-          {show ? (
+          {/* {show ? (
             <SearchBar
               arrayData={this.state.arrayData}
-              data={this.handler}
+              data={this.searchBarHandler}
               visible={this.searchHandler}
               dataValue={this.state.dataAll}
               style={styles.searchbar}
@@ -220,8 +284,7 @@ class Order extends Component {
                 this.showHideSearchBar();
               }}
             />
-          ) : null}
-
+          ) : null} */}
           {/* SearchBar */}
 
           <Content

@@ -43,6 +43,7 @@ export default class Clients extends Component {
     super(props);
     this.state = {
       data: [],
+      dataAll: [],
       loading: true,
       deviceLanguage: 'en',
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
@@ -77,7 +78,7 @@ export default class Clients extends Component {
   }
 
   componentWillUnmount() {
-    this.focusListener.remove();
+    // this.focusListener.remove();
   }
 
   refresh(value) {
@@ -99,7 +100,7 @@ export default class Clients extends Component {
   storedClients = () => {
     getStoredClients().then(clients => {
       if (clients.length > 0) {
-        this.setState({data: clients, loading: false});
+        this.setState({data: clients, dataAll: clients, loading: false});
       } else {
         this.setState({loading: false});
       }
@@ -163,10 +164,16 @@ export default class Clients extends Component {
     );
   };
 
+  searchBarHandler = (data, text) => {
+    this.setState({
+      data: data,
+      query: text,
+    });
+  };
+
   render() {
-    const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-    const {loading} = this.state;
+    const {modalVisible, data, loading, show} = this.state;
 
     return (
       <Root>
@@ -198,6 +205,21 @@ export default class Clients extends Component {
               </Button>
             </Right>
           </Header>
+
+          {/* SearchBar */}
+          {show ? (
+            <SearchBar
+              arrayData={this.state.arrayData}
+              data={this.searchBarHandler}
+              visible={this.searchHandler}
+              dataValue={this.state.dataAll}
+              style={styles.searchbar}
+              placeholder={'Busque su orden'}
+              onPressCancel={this.showHideSearchBar}
+            />
+          ) : null}
+          {/* SearchBar */}
+
           <Toast
             ref="toast"
             style={{backgroundColor: '#CE2424'}}
@@ -210,8 +232,6 @@ export default class Clients extends Component {
           />
 
           {/* SearchBar */}
-
-          {this.state.show ? <SearchBar /> : null}
 
           {/* SearchBar */}
 

@@ -5,15 +5,27 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   ScrollView,
   DeviceEventEmitter,
   NativeEventEmitter,
   Switch,
   TouchableOpacity,
-  Dimensions,
+  StatusBar,
   ToastAndroid,
 } from 'react-native';
+
+import {
+  Container,
+  Content,
+  Icon,
+  Header,
+  Button,
+  Left,
+  Title,
+  Body,
+  Right,
+} from 'native-base';
+
 import {
   BluetoothEscposPrinter,
   BluetoothManager,
@@ -30,16 +42,52 @@ export default class BluetoothManagerComponent extends Component {
       foundDs: [],
       bleOpend: false,
       loading: true,
+      name: '',
       boundAddress: '',
       debugMsg: '',
     };
   }
 
+  goBack = () => {
+    this.props.navigation.navigate('Configuration', {
+      printer_name: this.state.name,
+      printer_address: this.state.boundAddress,
+    });
+  };
+
   componentDidMount() {
     if (
       !BluetoothManager.isBluetoothEnabled().then(() => {
         BluetoothManager.enableBluetooth().then(enabled => {
-          this.setState({bleOpend: true});
+          if (
+            this.props.navigation.state.params.printer_address !== undefined &&
+            this.props.navigation.state.params.printer_address !== null &&
+            this.props.navigation.state.params.printer_address !== ''
+          ) {
+            BluetoothManager.connect(
+              this.props.navigation.state.params.printer_address,
+            ).then(
+              s => {
+                this.setState({
+                  loading: false,
+                  bleOpend: true,
+                  boundAddress: this.props.navigation.state.params
+                    .printer_address,
+                  name:
+                    this.props.navigation.state.params.printer_name ||
+                    'UNKNOWN',
+                });
+              },
+              e => {
+                this.setState({
+                  loading: false,
+                });
+                alert(e);
+              },
+            );
+          } else {
+            this.setState({bleOpend: true});
+          }
         });
       })
     );
@@ -221,103 +269,127 @@ export default class BluetoothManagerComponent extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-        <Text>{this.state.debugMsg}</Text>
-        <Text style={styles.title}>
-          Blutooth Opended:{this.state.bleOpend ? 'true' : 'false'}{' '}
-          <Text>Open BLE Before Scanning</Text>{' '}
-        </Text>
-        <View>
-          <Switch
-            value={this.state.bleOpend}
-            onValueChange={v => {
-              this.setState({
-                loading: true,
-              });
-              if (!v) {
-                BluetoothManager.disableBluetooth().then(
-                  () => {
-                    this.setState({
-                      bleOpend: false,
-                      loading: false,
-                      foundDs: [],
-                      pairedDs: [],
-                    });
-                  },
-                  err => {
-                    alert(err);
-                  },
-                );
-              } else {
-                BluetoothManager.enableBluetooth().then(
-                  r => {
-                    var paired = [];
-                    if (r && r.length > 0) {
-                      for (var i = 0; i < r.length; i++) {
-                        try {
-                          paired.push(JSON.parse(r[i]));
-                        } catch (e) {
-                          //ignore
+      <Container style={global.fromLogin ? headerStyles.androidHeader : ''}>
+        <Header>
+          <Left>
+            <Button transparent onPress={this.goBack}>
+              <Icon name="arrow-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>{global.translate('TITLE_PRINTER_CONFIG')}</Title>
+          </Body>
+          <Right></Right>
+        </Header>
+        <Content>
+          <ScrollView style={styles.container}>
+            <View
+              style={{
+                flexDirection: 'row',
+                padding: 12,
+                backgroundColor: '#eee',
+              }}>
+              <Text style={styles.title}>
+                {global.translate('TITLE_BLUETOOTH_ENABLED')}
+              </Text>
+              <Switch
+                value={this.state.bleOpend}
+                onValueChange={v => {
+                  this.setState({
+                    loading: true,
+                  });
+                  if (!v) {
+                    BluetoothManager.disableBluetooth().then(
+                      () => {
+                        this.setState({
+                          bleOpend: false,
+                          loading: false,
+                          foundDs: [],
+                          pairedDs: [],
+                        });
+                      },
+                      err => {
+                        alert(err);
+                      },
+                    );
+                  } else {
+                    BluetoothManager.enableBluetooth().then(
+                      r => {
+                        var paired = [];
+                        if (r && r.length > 0) {
+                          for (var i = 0; i < r.length; i++) {
+                            try {
+                              paired.push(JSON.parse(r[i]));
+                            } catch (e) {
+                              //ignore
+                            }
+                          }
                         }
-                      }
-                    }
-                    this.setState({
-                      bleOpend: true,
-                      loading: false,
-                      pairedDs: paired,
-                    });
-                  },
-                  err => {
-                    this.setState({
-                      loading: false,
-                    });
-                    alert(err);
-                  },
-                );
-              }
-            }}
-          />
-          <Button
-            disabled={this.state.loading || !this.state.bleOpend}
-            onPress={() => {
-              this._scan();
-            }}
-            title="Scan"
-          />
-        </View>
-        <Text style={styles.title}>
-          Connected:
-          <Text style={{color: 'blue'}}>
-            {!this.state.name ? 'No Devices' : this.state.name}
-          </Text>
-        </Text>
-        <Text style={styles.title}>Found(tap to connect):</Text>
-        {this.state.loading ? <ActivityIndicator animating={true} /> : null}
-        <View style={{flex: 1, flexDirection: 'column'}}>
-          {this._renderRow(this.state.foundDs)}
-        </View>
-        <Text style={styles.title}>Paired:</Text>
-        {this.state.loading ? <ActivityIndicator animating={true} /> : null}
-        <View style={{flex: 1, flexDirection: 'column'}}>
-          {this._renderRow(this.state.pairedDs)}
-        </View>
+                        this.setState({
+                          bleOpend: true,
+                          loading: false,
+                          pairedDs: paired,
+                        });
+                      },
+                      err => {
+                        this.setState({
+                          loading: false,
+                        });
+                        alert(err);
+                      },
+                    );
+                  }
+                }}
+              />
+            </View>
+            <View>
+              <TouchableOpacity
+                disabled={this.state.loading || !this.state.bleOpend}
+                style={styles.button}
+                onPress={() => {
+                  this._scan();
+                }}>
+                <Text>{global.translate('TITLE_SCAN')}</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.title}>
+              {global.translate('TITLE_CONNECTED')}
+              <Text style={{color: 'blue'}}>
+                {!this.state.name ? '0' : this.state.name}
+              </Text>
+            </Text>
+            <Text style={styles.title}>
+              {global.translate('TITLE_FOUND')}(
+              {global.translate('TITLE_TAP_TO_CONNECT')}):
+            </Text>
+            {this.state.loading ? <ActivityIndicator animating={true} /> : null}
+            <View style={{flex: 1, flexDirection: 'column'}}>
+              {this._renderRow(this.state.foundDs)}
+            </View>
+            <Text style={styles.title}>{global.translate('TITLE_PAIRED')}</Text>
+            {this.state.loading ? <ActivityIndicator animating={true} /> : null}
+            <View style={{flex: 1, flexDirection: 'column'}}>
+              {this._renderRow(this.state.pairedDs)}
+            </View>
 
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            paddingVertical: 30,
-          }}>
-          <Button
-            disabled={
-              this.state.loading ||
-              !(this.state.bleOpend && this.state.boundAddress.length > 0)
-            }
-            title="ESC/POS"
-            onPress={this.sendTextPrinter}
-          />
-        </View>
-      </ScrollView>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                paddingVertical: 30,
+              }}>
+              <TouchableOpacity
+                disabled={
+                  this.state.loading ||
+                  !(this.state.bleOpend && this.state.boundAddress.length > 0)
+                }
+                onPress={this.sendTextPrinter}>
+                <Text>{global.translate('TITLE_TEST_PRINT')}</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </Content>
+      </Container>
     );
   }
 
@@ -325,33 +397,12 @@ export default class BluetoothManagerComponent extends Component {
     this.setState({
       loading: true,
     });
-    BluetoothEscposPrinter.printText('Imprimiendo desde React 1 \r\n\r\n\r\n', {
+    BluetoothEscposPrinter.printText('SUCCESFUL PRINTING \r\n\r\n\r\n', {
       encoding: 'GBK',
       codepage: 0,
       widthtimes: 0,
       heigthtimes: 0,
       fonttype: 1,
-    });
-    BluetoothEscposPrinter.printText('Imprimiendo desde React 2 \r\n\r\n\r\n', {
-      encoding: 'GBK',
-      codepage: 0,
-      widthtimes: 0,
-      heigthtimes: 1,
-      fonttype: 2,
-    });
-    BluetoothEscposPrinter.printText('Imprimiendo desde React 3 \r\n\r\n\r\n', {
-      encoding: 'GBK',
-      codepage: 0,
-      widthtimes: 0,
-      heigthtimes: 2,
-      fonttype: 3,
-    });
-    BluetoothEscposPrinter.printText('Imprimiendo desde React 4 \r\n\r\n\r\n', {
-      encoding: 'GBK',
-      codepage: 0,
-      widthtimes: 0,
-      heigthtimes: 3,
-      fonttype: 4,
     });
     this.setState({
       loading: false,
@@ -402,6 +453,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingVertical: 4,
     textAlign: 'left',
+    flex: 1,
   },
   wtf: {
     flex: 1,
@@ -416,5 +468,22 @@ const styles = StyleSheet.create({
   address: {
     flex: 1,
     textAlign: 'right',
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#E1E1E5',
+    color: '#000000',
+    paddingBottom: 5,
+    paddingTop: 5,
+  },
+});
+
+const headerStyles = StyleSheet.create({
+  androidHeader: {
+    ...Platform.select({
+      android: {
+        paddingTop: StatusBar.currentHeight,
+      },
+    }),
   },
 });

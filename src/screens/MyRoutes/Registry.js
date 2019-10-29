@@ -4,6 +4,13 @@ import {Text, View, StyleSheet, ScrollView, FlatList} from 'react-native';
 import {CustomTextInput} from '../../components';
 import styled from 'styled-components/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {
+  getOrderDetails,
+  updateOrderAssigned,
+  getRouteDetails,
+  updateRouteOrders,
+} from '../../helpers/sql_helper';
+import {getData} from '../../helpers/apiconnection_helper';
 
 import {
   Header,
@@ -17,65 +24,9 @@ import {
   Content,
 } from 'native-base';
 
-const CustomButton = styled(Button)`
-  background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
-  border-color: ${props =>
-    props.bordered ? theme.colors.gray : ' transparent'};
-  border: ${props => (props.bordered ? '3px solid gray' : '#4285f4')};
-  text-transform: uppercase;
-  flex-basis: 48%;
-  justify-content: center;
-`;
-
-const ItemTitle = styled.Text`
-  text-align: left;
-  width: 180px;
-  overflow: hidden;
-  font-size: 14px;
-`;
-
-const ItemsContainer = styled.View`
-  flex-direction: row;
-  padding-vertical: 12;
-  margin-left: 24;
-  align-items: center;
-`;
-
-const InputValues = styled(CustomTextInput)`
-  flex-basis: 100px;
-  margin-left: 20px;
-  padding: 12px;
-  background-color: #fff;
-  border-color: #bdbdbd;
-  border-width: 1px;
-  border-radius: 4px;
-`;
-
-const HeaderItems = styled.View`
-  flex-direction: row;
-  justify-content: space-around;
-  padding-vertical: 12px;
-  background-color: ${theme.colors.gray3};
-`;
-
-const RContent = styled.View`
-  flex: 1;
-  flex-direction: column;
-  background-color: ${theme.colors.lightGray};
-`;
-
 export default class Registry extends Component {
-  //   constructor(props) {
-  //     super(props);
-
-  //     };
-  //   }
-  constructor(props) {
-    super(props);
-  }
-
   state = {
-    //   data: [], //this.props.navigation.state.params.info
+    data: [],
     articles: [
       {
         id: 1,
@@ -117,27 +68,33 @@ export default class Registry extends Component {
     textInputs: [],
   };
 
+  save = () => {};
+
+  componentDidMount() {
+    const {params} = this.props.navigation.state;
+    getOrderDetails(params.order_id).then(detail => {
+      this.setState({
+        data: detail,
+      });
+    });
+  }
+
   render() {
-    let {articles} = this.state;
+    let {articles, data} = this.state;
+    const {params} = this.props.navigation.state;
+    console.log(data.collected_quantity);
     // const {state, navigate} = this.props.navigation;
 
     let renderItem = ({item}) => (
       <ItemsContainer>
-        <ItemTitle numberOfLines={1}>{item.name}</ItemTitle>
+        <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
         <InputValues
+          id={item.orderDetail_id}
           blurOnSubmit={false}
-          value={item.value}
+          value={item.collected_quantity}
           returnKeyType="next"
           keyboardType="number-pad"
-          onChangeText={text => {
-            item.value = text;
-            this.setState({
-              text,
-            });
-            console.log(item);
-          }}
         />
-        {console.log(item.id)}
       </ItemsContainer>
     );
 
@@ -153,7 +110,7 @@ export default class Registry extends Component {
             <Title>Detalles</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => {}}>
+            <Button transparent onPress={this.save}>
               <Icon name="checkmark" />
               <Text
                 style={{
@@ -170,12 +127,14 @@ export default class Registry extends Component {
         {/* Content */}
         <RContent>
           <View style={styles.RouteDetails}>
-            <Text style={styles.currentDateText}>{`Numero : 1`}</Text>
             <Text style={styles.currentDateText}>
-              {`${global.translate('TITLE_DATE')} : 20/25/58`}
+              {`Numero : ${params.client}`}
             </Text>
             <Text style={styles.currentDateText}>
-              {`Dirección : Las Palmas de Alma Rosa, SDE`}
+              {`Dirección : ${params.name}`}
+            </Text>
+            <Text style={styles.currentDateText}>
+              {`Address : ${params.address}`}
             </Text>
           </View>
           <HeaderItems>
@@ -185,7 +144,7 @@ export default class Registry extends Component {
           <KeyboardAwareScrollView>
             {/* FlatList */}
             <FlatList
-              data={articles}
+              data={data}
               extraData={this.state}
               keyExtractor={item => item.id.toString()}
               renderItem={renderItem} //item => this.renderItem(item)
@@ -288,3 +247,50 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 });
+
+const CustomButton = styled(Button)`
+  background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
+  border-color: ${props =>
+    props.bordered ? theme.colors.gray : ' transparent'};
+  border: ${props => (props.bordered ? '3px solid gray' : '#4285f4')};
+  text-transform: uppercase;
+  flex-basis: 48%;
+  justify-content: center;
+`;
+
+const ItemTitle = styled.Text`
+  text-align: left;
+  width: 180px;
+  overflow: hidden;
+  font-size: 14px;
+`;
+
+const ItemsContainer = styled.View`
+  flex-direction: row;
+  padding-vertical: 12;
+  margin-left: 24;
+  align-items: center;
+`;
+
+const InputValues = styled(CustomTextInput)`
+  flex-basis: 100px;
+  margin-left: 20px;
+  padding: 12px;
+  background-color: #fff;
+  border-color: #bdbdbd;
+  border-width: 1px;
+  border-radius: 4px;
+`;
+
+const HeaderItems = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  padding-vertical: 12px;
+  background-color: ${theme.colors.gray3};
+`;
+
+const RContent = styled.View`
+  flex: 1;
+  flex-direction: column;
+  background-color: ${theme.colors.lightGray};
+`;

@@ -146,6 +146,8 @@ export default class LoginScreen extends Component {
   }
 
   goConfig = cClick => {
+    global.config_from = 'Login';
+    global.fromLogin = true;
     this.props.navigation.navigate('Configuration');
   };
 

@@ -134,25 +134,6 @@ export default class OrderList extends Component {
     });
   };
 
-  selectAll = dataList => {
-    dataList.item.isSelect = !dataList.item.isSelect;
-    dataList.item.isChecked = !dataList.item.isChecked;
-    dataList.item.isSelectedAll = !dataList.item.isSelectedAll;
-    dataList.item.selectedClass = dataList.item.isSelect
-      ? styles.selected
-      : styles.list;
-
-    const index = this.state.data.findIndex(
-      item => dataList.item.id === item.id,
-    );
-    this.state.data[index] = dataList.item;
-    this.setState({
-      data: this.state.data,
-      isChecked: true,
-      isSelectedAll: true,
-    });
-  };
-
   renderItem = dataList => (
     <Item style={[styles.list, dataList.item.selectedClass]} onPress={() => {}}>
       <View

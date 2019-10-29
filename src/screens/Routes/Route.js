@@ -63,6 +63,7 @@ export class Route extends Component {
       chosenDate2: params.date_from,
       disabled_date_from: params.disabled_date_from,
     };
+
     if (params.new_record === false) {
       this.rowTranslateAnimatedValues = {};
       getData(
@@ -265,6 +266,39 @@ export class Route extends Component {
     this.swipeable.recenter();
   }
 
+  renderItem = ({item}) => (
+    <Item style={[styles.list]} onPress={() => {}}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 12,
+        }}>
+        <View key={item.key} style={styles.listContainer}>
+          <Text style={styles.code}>
+            {global.translate('TITLE_CODE')}: {item.order_document}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <Text numberOfLines={1} style={styles.name}>
+              {item.client} - {item.name}
+            </Text>
+            <Text numberOfLines={1} style={styles.price}>
+              $ {item.order_total}
+            </Text>
+          </View>
+          <Text numberOfLines={1} style={styles.address}>
+            {item.address}
+          </Text>
+        </View>
+      </View>
+    </Item>
+  );
+
   render() {
     const {
       selectedItem,
@@ -273,39 +307,6 @@ export class Route extends Component {
       toggle,
     } = this.state;
     const {params} = this.props.navigation.state;
-
-    let renderItem = ({item}) => (
-      <Item style={[styles.list]} onPress={() => {}}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 12,
-          }}>
-          <View key={item.key} style={styles.listContainer}>
-            <Text style={styles.code}>
-              {global.translate('TITLE_CODE')}: {item.order_document}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text numberOfLines={1} style={styles.name}>
-                {item.client} - {item.name}
-              </Text>
-              <Text numberOfLines={1} style={styles.price}>
-                $ {item.order_total}
-              </Text>
-            </View>
-            <Text numberOfLines={1} style={styles.address}>
-              {item.address}
-            </Text>
-          </View>
-        </View>
-      </Item>
-    );
 
     let orderList = (
       <SwipeListView
@@ -316,15 +317,20 @@ export class Route extends Component {
         }}
         data={this.state.data}
         keyExtractor={item => item.id}
-        renderItem={renderItem}
+        renderItem={this.renderItem}
         renderHiddenItem={(data, rowMap) => (
           <TouchableHighlight
             style={[styles.hiddenList]}
             onPress={this.onClickRevert}>
             <View>
-              <Right>
-                <Text></Text>
-              </Right>
+              <Button
+                transparent
+                style={{alignSelf: 'flex-end', marginRight: 12}}>
+                <Icon name="trash" style={{color: 'white'}} />
+                <Text style={{color: 'white', fontFamily: 'Roboto-Medium'}}>
+                  Eliminado
+                </Text>
+              </Button>
             </View>
           </TouchableHighlight>
         )}
@@ -448,14 +454,21 @@ export class Route extends Component {
               </View>
             </Form>
           </View>
-          <ScrollView style={{marginBottom: 24}}>
-            {/* FLATLIST */}
-            {orderList}
-            {/* FLATLIST */}
-          </ScrollView>
 
           <View style={styles.addPoint}>
-            <View>{}</View>
+            <ScrollView style={{marginBottom: 24}}>
+              {/* FLATLIST */}
+              <Text
+                style={{
+                  fontSize: 14,
+                  textTransform: 'uppercase',
+                  color: '#7D7D7D',
+                }}>
+                Ordenes
+              </Text>
+              {orderList}
+              {/* FLATLIST */}
+            </ScrollView>
             <TouchableOpacity
               style={styles.buttonGhost}
               onPress={() => {
@@ -465,13 +478,7 @@ export class Route extends Component {
                 });
               }}>
               <Icon name="add" style={{color: theme.colors.primary}} />
-              <Text
-                style={{
-                  marginLeft: 12,
-                  fontSize: theme.sizes.base,
-                  color: theme.colors.primary,
-                  textTransform: 'uppercase',
-                }}>
+              <Text style={styles.orderButton}>
                 {global.translate('TITLE_ORDER')}
               </Text>
             </TouchableOpacity>
@@ -501,6 +508,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 32,
+  },
+
+  orderButton: {
+    marginLeft: 12,
+    fontSize: theme.sizes.base,
+    color: theme.colors.primary,
+    textTransform: 'uppercase',
   },
 
   button: {
@@ -547,7 +561,7 @@ const styles = StyleSheet.create({
   },
 
   addPoint: {
-    padding: theme.sizes.padding,
+    padding: theme.sizes.p12,
     backgroundColor: theme.colors.lightGray,
   },
 
@@ -571,7 +585,10 @@ const styles = StyleSheet.create({
   hiddenList: {
     margin: 5,
     backgroundColor: '#c3000d',
-    height: 80,
+    alignContent: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
     elevation: 1,
   },
 
@@ -623,6 +640,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexWrap: 'nowrap',
   },
+
   leftSwipeItem: {
     flex: 1,
     marginTop: 5,
@@ -634,6 +652,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     backgroundColor: '#c3000d',
   },
+
   rightSwipeItem: {
     flex: 1,
     justifyContent: 'center',

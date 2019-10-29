@@ -5,7 +5,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
 import {} from 'react-native-vector-icons';
-
 import {
   Text,
   View,
