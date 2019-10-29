@@ -118,7 +118,6 @@ export default class Home extends Component {
                                       saveOrders(ord.arrResponse).then(res => {
                                         getData('GET_ROUTES', '&status=A').then(active => {
                                           if (!this.state.request_timeout) {
-                                            alert(JSON.stringify(active));
                                             clearRoutesCab('A').then(ca => {
                                               clearRoutesDetails().then(cd => {
                                                 if (active.arrResponse !== []) {
