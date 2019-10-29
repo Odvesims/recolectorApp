@@ -33,6 +33,8 @@ import {
   saveActiveRoutes,
   saveInactiveRoutes,
   getUserConfig,
+  clearRoutesCab,
+  clearRoutesDetails,
 } from '../helpers/sql_helper';
 
 import {getData, dataOperation} from '../helpers/apiconnection_helper';
@@ -89,6 +91,13 @@ export default class Home extends Component {
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
     });
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        clearTimeout();
+      }
+    }, 30000);
     getData('GET_EMPLOYEES').then(emp => {
       if (!this.state.request_timeout) {
         saveEmployees(emp.arrResponse).then(res => {
@@ -107,15 +116,30 @@ export default class Home extends Component {
                                   getData('GET_ORDERS').then(ord => {
                                     if (!this.state.request_timeout) {
                                       saveOrders(ord.arrResponse).then(res => {
-                                        getData('GET_ROUTES').then(rte => {
+                                        getData('GET_ROUTES', '&status=A').then(active => {
                                           if (!this.state.request_timeout) {
-                                            saveActiveRoutes(rte.arrResponse[0]).then(res => {
-                                                saveInactiveRoutes(rte.arrResponse[1]).then(resi => {
-                                                  this.setState({
-                                                    request_timeout: false,
-                                                    loading: false,
-                                                  });
-                                                });
+                                            alert(JSON.stringify(active));
+                                            clearRoutesCab('A').then(ca => {
+                                              clearRoutesDetails().then(cd => {
+                                                if (active.arrResponse !== []) {
+                                                  saveActiveRoutes(active.arrResponse).then(res => {
+                                                    getData('GET_ROUTES', '&status=I').then(inactive => {
+                                                      if (!this.state.request_timeout) {
+                                                        clearRoutesCab('I').then(ci => {
+                                                          if (inactive.arrResponse !== []) {
+                                                            saveInactiveRoutes(inactive.arrResponse).then(resi => {
+                                                              this.setState({
+                                                                request_timeout: false,
+                                                                loading: false,
+                                                              });
+                                                            });
+                                                          }
+                                                        })
+                                                      }
+                                                    })
+                                                  })
+                                                }
+                                              })
                                             })
                                           }
                                         });

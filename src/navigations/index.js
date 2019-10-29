@@ -282,7 +282,7 @@ const Navigation = createSwitchNavigator(
     Auth: AuthNavigator,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Splash',
   },
 );
 

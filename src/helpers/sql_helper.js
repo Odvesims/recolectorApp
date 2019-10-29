@@ -85,6 +85,7 @@ export function setUserTable() {
         ['apimobile.sojaca.net', 444, '', ''],
         (tx, results) => {},
       );
+      alert('here');
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
       );
