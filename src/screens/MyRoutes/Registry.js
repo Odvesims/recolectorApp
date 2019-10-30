@@ -1,7 +1,15 @@
 import React, {Component, createRef} from 'react';
 import {theme} from '../../constants';
-import {Text, View, StyleSheet, ScrollView, FlatList} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  CheckBox,
+} from 'react-native';
 import {CustomTextInput} from '../../components';
+import {dataOperation} from '../../helpers/apiconnection_helper';
 import styled from 'styled-components/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -27,48 +35,40 @@ import {
 export default class Registry extends Component {
   state = {
     data: [],
-    articles: [
-      {
-        id: 1,
-        name: 'Calambres',
-        address: 'Kulas Light',
-        value: '',
-      },
-      {
-        id: 2,
-        name: 'Alambres',
-        address: 'Kulas Light',
-        value: '',
-      },
-      {
-        id: 3,
-        name: 'Tornillos Tornillos Tornillos',
-        address: 'Kulas Light',
-        value: '',
-      },
-      {
-        id: 4,
-        name: 'Tornillos Tornillos',
-        address: 'Kulas Light',
-        value: '',
-      },
-      {
-        id: 5,
-        name: 'Tornillos dfasdadsad Tornillos',
-        address: 'Kulas Light',
-        value: '',
-      },
-      {
-        id: 6,
-        name: 'Muletas Tornillos',
-        address: 'Kulas Light',
-        value: '',
-      },
-    ],
     textInputs: [],
+    checkItem: false,
   };
 
-  save = () => {};
+  save = () => {
+    let {data} = this.state;
+    let dataArr = [];
+    data.map(item => {
+      let info = {
+        collected_quantity: item.collected_quantity,
+        orderDetail_id: item.orderDetail_id,
+      };
+      dataArr.push(info);
+    });
+
+    let collectData = {
+      collect_data: dataArr,
+      order_id: data[0].order_id,
+      route_id: this.props.navigation.state.params.route_id,
+    };
+    dataOperation('COLLECT_OPERATION', collectData).then(res => {
+      if (res.valid) {
+        updateOrderAssigned(ordersArr).then(up => {
+          alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+          this.setState({
+            loading: false,
+          });
+          this.props.navigation.goBack();
+        });
+      } else {
+        this.setState({loading: false});
+      }
+    });
+  };
 
   componentDidMount() {
     const {params} = this.props.navigation.state;
@@ -80,24 +80,34 @@ export default class Registry extends Component {
   }
 
   render() {
-    let {articles, data} = this.state;
+    let {articles, data, textInputss} = this.state;
     const {params} = this.props.navigation.state;
-    console.log(data.collected_quantity);
-    // const {state, navigate} = this.props.navigation;
+    console.log(data);
+    let renderItem = ({item, index}) => {
+      return (
+        <ItemsContainer>
+          <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
+          <InputValues
+            id={item.orderDetail_id}
+            blurOnSubmit={false}
+            value={item.collected_quantity}
+            onChangeText={text => {
+              item.collected_quantity = text;
+              this.setState({
+                ...item,
+              });
+            }}
+            // value={this.state.textInputs[index]}
+            returnKeyType="next"
+            keyboardType="number-pad"
+          />
+        </ItemsContainer>
+      );
+    };
 
-    let renderItem = ({item}) => (
-      <ItemsContainer>
-        <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
-        <InputValues
-          id={item.orderDetail_id}
-          blurOnSubmit={false}
-          value={item.collected_quantity}
-          returnKeyType="next"
-          keyboardType="number-pad"
-        />
-      </ItemsContainer>
-    );
-
+    // console.log(this.input);
+    // console.log('cantidad datas', data.orderDetail_id);
+    // console.log('Hola', this.input.current);
     return (
       <Container>
         <Header>
@@ -166,7 +176,6 @@ const styles = StyleSheet.create({
 
   currentDate: {
     // display: 'flex',
-
     flexDirection: 'row',
   },
   currentDateText: {color: theme.colors.gray},

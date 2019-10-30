@@ -733,6 +733,8 @@ export function getOrderDetails(order_id) {
               orderDetail_id: row.orderdetail_id,
               detail_description: row.detail_description,
               collected_quantity: row.collected_quantity,
+              detail_price: row.detail_price,
+              detail_quantity: row.detail_quantity,
             };
             arrOrders.push(orderObject);
           }
@@ -742,6 +744,7 @@ export function getOrderDetails(order_id) {
     });
   });
 }
+
 export function getOrders() {
   let arrOrders = [];
   return new Promise((resolve, reject) => {
@@ -917,19 +920,36 @@ export function updateRouteOrders(route_orders) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(`UPDATE route_id, description, document_id, document_acronym, , assigned_by, assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status
-      VALUES(${route_orders.route_id}, '${route_orders.description}', ${route_orders.document_id}, '${route_orders.document_acronym}', ${route_orders.document_number}, ${route_orders.assigned_by}, ${route_orders.assigned_to}, '${route_orders.supervisor_name}', '${route_orders.employee_name}', '${route_orders.phone_number}', '${route_orders.date_to}', '${route_orders.date_from}', '${route_orders.status})
+      VALUES(
+      ${route_orders.route_id}, 
+      '${route_orders.description}', 
+      ${route_orders.document_id}, 
+      '${route_orders.document_acronym}', 
+      ${route_orders.document_number}, 
+      ${route_orders.assigned_by}, 
+      ${route_orders.assigned_to}, 
+      '${route_orders.supervisor_name}', 
+      '${route_orders.employee_name}', 
+      '${route_orders.phone_number}', 
+      '${route_orders.date_to}', 
+      '${route_orders.date_from}', 
+      '${route_orders.status})
       WHERE route_id = ${route_orders.route_id}`);
     });
     db.transaction(tx => {
       tx.executeSql(
-        `DELETE FROM route_details WHERE route_id = ${route_orders.route_id}`,
+        `DELETE FROM route_details WHERE route_id = 
+        ${route_orders.route_id}`,
       );
     });
     //alert(JSON.stringify(route_orders));
     route_orders.route_details.map(detail => {
       db.transaction(tx => {
         tx.executeSql(
-          `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(${detail.route_id}, ${detail.order_id}, ${detail.routedetail_id}, 'A')`,
+          `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(
+            ${detail.route_id}, 
+            ${detail.order_id}, 
+            ${detail.routedetail_id}, 'A')`,
         );
       });
       detail.orders.map(order => {
@@ -944,7 +964,8 @@ export function updateRouteOrders(route_orders) {
         order.order_details.map(order_detail => {
           db.transaction(tx => {
             tx.executeSql(
-              `DELETE FROM order_details WHERE orderdetail_id = ${order_detail.orderdetail_id}`,
+              `DELETE FROM order_details WHERE orderdetail_id = 
+              ${order_detail.orderdetail_id}`,
             );
             tx.executeSql(
               `INSERT INTO order_details(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price, detail_description, collected_quantity, collected_amount) VALUES(${order_detail.order_id}, ${order_detail.orderdetail_id}, '${order_detail.detail_type}', ${order_detail.detail_id}, ${order_detail.detail_quantity}, ${order_detail.detail_price}, '${order_detail.detail_description}', ${order_detail.collected_quantity}, ${order_detail.collected_amount})`,

@@ -92,6 +92,7 @@ export default class RouteDetail extends Component {
           name: item.name,
           address: item.address,
           order_id: item.order_id,
+          route_id: item.route_id,
         })
       }>
       <View
@@ -124,7 +125,7 @@ export default class RouteDetail extends Component {
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     const {state, navigate} = this.props.navigation;
     const {params} = this.props.navigation.state;
-
+    console.log(data);
     return (
       <Root>
         <Container>

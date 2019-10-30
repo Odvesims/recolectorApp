@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {Available, Assigned} from './Tabs';
-// import {SearchBar} from '../../components';
+import {OrdersTab} from './Tabs';
 import {FetchingData} from '../../components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
@@ -72,7 +72,6 @@ export default class Orders extends Component {
     };
     this.availableTab = React.createRef();
     this.notAvailableTab = React.createRef();
-    this.enterHandler();
   }
 
   static navigationOptions = {
@@ -84,7 +83,14 @@ export default class Orders extends Component {
   };
 
   componentDidMount() {
-    this.enterHandler();
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        this.enterHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -101,7 +107,7 @@ export default class Orders extends Component {
 
   enterHandler = () => {
     this.setState({
-      loading: false,
+      loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
     });
     this.storedOrders();
@@ -111,6 +117,7 @@ export default class Orders extends Component {
     getNotAssignedOrders().then(not_assigned => {
       getAssignedOrders().then(assigned => {
         this.setState({
+          loading: false,
           not_assigned: not_assigned,
           assigned: assigned,
         });
@@ -184,6 +191,13 @@ export default class Orders extends Component {
     return (
       <Root>
         <Container>
+          <Spinner
+            visible={this.state.loading}
+            textContent={this.state.loadingMessage}
+            color={'CE2424'}
+            overlayColor={'rgba(255, 255, 255, 0.4)'}
+            animation={'slide'}
+          />
           <Header>
             <Left>
               <Button transparent onPress={this.openDrawer}>
@@ -202,13 +216,13 @@ export default class Orders extends Component {
           </Header>
           <Tabs hasTabs>
             <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
-              <Available
+              <OrdersTab
                 tab_data={this.state.not_assigned}
                 ref={this.availableTab}
               />
             </Tab>
             <Tab heading={global.translate('TITLE_ASSIGNED')}>
-              <Assigned
+              <OrdersTab
                 tab_data={this.state.assigned}
                 ref={this.notAvailableTab}
               />

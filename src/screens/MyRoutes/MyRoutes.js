@@ -53,22 +53,18 @@ class Order extends Component {
   }
 
   componentDidMount() {
-    // this.fetchData();
-    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
-    //   try {
-    //     let item = this.props.navigation.state.params.selItem;
-    //     if (item !== undefined) {
-    //       this.arrData.push(item);
-    //       this.setState({data: this.arrData});
-    //     }
-    //   } catch (err) {
-    //     alert(err);
-    //   }
-    // });
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        this.enterHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });
   }
 
   componentWillUnmount() {
-    // this.focusListener.remove();
+    this.focusListener.remove();
   }
 
   setModalVisible(visible) {
@@ -160,7 +156,6 @@ class Order extends Component {
 
   renderItem = ({item}) => {
     const {navigate} = this.props.navigation;
-    console.log(item);
     return (
       <Item
         style={[styles.list, item.selectedClass]}

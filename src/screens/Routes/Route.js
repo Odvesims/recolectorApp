@@ -5,7 +5,6 @@ import CustomPicker from '../../components/CustomPicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
-
 import {
   Text,
   View,
@@ -16,7 +15,6 @@ import {
   ScrollView,
   Animated,
 } from 'react-native';
-
 import {
   Content,
   Container,
@@ -171,7 +169,6 @@ export class Route extends Component {
   }
 
   saveRoute = () => {
-    //if (this.state.new_record) {
     let {
       route_description,
       chosenDate,

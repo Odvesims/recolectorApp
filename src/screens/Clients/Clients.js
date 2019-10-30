@@ -78,7 +78,7 @@ export default class Clients extends Component {
   }
 
   componentWillUnmount() {
-    // this.focusListener.remove();
+    this.focusListener.remove();
   }
 
   refresh(value) {

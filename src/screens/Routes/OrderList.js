@@ -175,27 +175,27 @@ export default class OrderList extends Component {
     </Item>
   );
 
-  onPressHandler = () => {
-    let arrSelected = [];
-    this.state.data.map(i => {
-      if (i.isChecked) {
-        arrSelected.push({
-          id: i.id,
-          order_id: i.order_id,
-          order_document: i.order_document,
-          client: i.client,
-          name: i.name,
-          address: i.address,
-          order_total: i.order_total,
-          isChecked: true,
-          isSelect: true,
-        });
-      }
-    });
-    this.props.navigation.navigate('Route', {
-      orders: arrSelected,
-    });
-  };
+  // onPressHandler = () => {
+  //   let arrSelected = [];
+  //   this.state.data.map(i => {
+  //     if (i.isChecked) {
+  //       arrSelected.push({
+  //         id: i.id,
+  //         order_id: i.order_id,
+  //         order_document: i.order_document,
+  //         client: i.client,
+  //         name: i.name,
+  //         address: i.address,
+  //         order_total: i.order_total,
+  //         isChecked: true,
+  //         isSelect: true,
+  //       });
+  //     }
+  //   });
+  //   this.props.navigation.navigate('Route', {
+  //     orders: arrSelected,
+  //   });
+  // };
 
   goBack = () => {
     let arrSelected = [];
@@ -237,13 +237,9 @@ export default class OrderList extends Component {
           extraData={this.state}
           renderItem={item => this.renderItem(item)}
           keyExtractor={item => item.id.toString()}
-          // initialNumToRender={10}
-          // ListHeaderComponent={this.renderHeader}
         />
       );
     }
-
-    // const {isChecked} = this.state;
 
     return (
       <Container>
@@ -273,25 +269,11 @@ export default class OrderList extends Component {
                 {global.translate('TITLE_SELECTED')}: {itemNumber}
               </Text>
             </View>
-            {/* 
-            <Text
-              onChange={dataList => {
-                this.selectAll(dataList);
-              }}
-              style={{
-                color: theme.colors.primary,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-              }}>
-              {global.translate('TITLE_SELECTED')}
-            </Text>
-            */}
           </View>
 
           <ScrollView style={{marginBottom: 24}}>
             {/* FLATLIST */}
             {orderList}
-
             {/* FLATLIST */}
           </ScrollView>
         </Content>
