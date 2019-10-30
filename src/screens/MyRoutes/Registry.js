@@ -1,5 +1,10 @@
-import React, {Component, createRef} from 'react';
+import React, {Component} from 'react';
 import {theme} from '../../constants';
+import {CustomTextInput} from '../../components';
+import {dataOperation} from '../../helpers/apiconnection_helper';
+import styled from 'styled-components/native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {getOrderDetails, updateOrderAssigned} from '../../helpers/sql_helper';
 import {
   Text,
   View,
@@ -8,18 +13,6 @@ import {
   FlatList,
   CheckBox,
 } from 'react-native';
-import {CustomTextInput} from '../../components';
-import {dataOperation} from '../../helpers/apiconnection_helper';
-import styled from 'styled-components/native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {
-  getOrderDetails,
-  updateOrderAssigned,
-  getRouteDetails,
-  updateRouteOrders,
-} from '../../helpers/sql_helper';
-import {getData} from '../../helpers/apiconnection_helper';
-
 import {
   Header,
   Right,
@@ -39,8 +32,17 @@ export default class Registry extends Component {
     checkItem: false,
   };
 
+  componentDidMount() {
+    const {params} = this.props.navigation.state;
+    getOrderDetails(params.order_id).then(detail => {
+      this.setState({
+        data: detail,
+      });
+    });
+  }
+
   save = () => {
-    let {data} = this.state;
+    let {data, checkItem} = this.state;
     let dataArr = [];
     data.map(item => {
       let info = {
@@ -49,11 +51,11 @@ export default class Registry extends Component {
       };
       dataArr.push(info);
     });
-
     let collectData = {
       collect_data: dataArr,
       order_id: data[0].order_id,
       route_id: this.props.navigation.state.params.route_id,
+      close_order: checkItem,
     };
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       if (res.valid) {
@@ -70,44 +72,38 @@ export default class Registry extends Component {
     });
   };
 
-  componentDidMount() {
-    const {params} = this.props.navigation.state;
-    getOrderDetails(params.order_id).then(detail => {
-      this.setState({
-        data: detail,
-      });
+  checkboxHandler = () => {
+    this.setState({
+      checkItem: !this.state.checkItem,
     });
-  }
+  };
+
+  renderItem = ({item, index}) => {
+    return (
+      <ItemsContainer>
+        <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
+        <InputValues
+          id={item.orderDetail_id}
+          blurOnSubmit={false}
+          value={item.collected_quantity}
+          onChangeText={text => {
+            item.collected_quantity = text;
+            this.setState({
+              ...item,
+            });
+          }}
+          returnKeyType="next"
+          keyboardType="number-pad"
+        />
+      </ItemsContainer>
+    );
+  };
 
   render() {
-    let {articles, data, textInputss} = this.state;
+    let {data, checkItem} = this.state;
     const {params} = this.props.navigation.state;
-    console.log(data);
-    let renderItem = ({item, index}) => {
-      return (
-        <ItemsContainer>
-          <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
-          <InputValues
-            id={item.orderDetail_id}
-            blurOnSubmit={false}
-            value={item.collected_quantity}
-            onChangeText={text => {
-              item.collected_quantity = text;
-              this.setState({
-                ...item,
-              });
-            }}
-            // value={this.state.textInputs[index]}
-            returnKeyType="next"
-            keyboardType="number-pad"
-          />
-        </ItemsContainer>
-      );
-    };
+    console.log(checkItem);
 
-    // console.log(this.input);
-    // console.log('cantidad datas', data.orderDetail_id);
-    // console.log('Hola', this.input.current);
     return (
       <Container>
         <Header>
@@ -157,8 +153,16 @@ export default class Registry extends Component {
               data={data}
               extraData={this.state}
               keyExtractor={item => item.id.toString()}
-              renderItem={renderItem} //item => this.renderItem(item)
+              renderItem={this.renderItem} //item => this.renderItem(item)
             />
+            <View
+              style={[
+                styles.checkbox,
+                !checkItem ? styles.checkboxDisabled : styles.checkboxSuccess,
+              ]}>
+              <CheckBox value={checkItem} onChange={this.checkboxHandler} />
+              <Text style={styles.bodyHeader}>Cerrar orden</Text>
+            </View>
           </KeyboardAwareScrollView>
           {/* End flatList */}
         </RContent>
@@ -254,6 +258,22 @@ const styles = StyleSheet.create({
 
   bodyHeader: {
     textTransform: 'uppercase',
+  },
+
+  checkbox: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.gray3,
+    paddingVertical: theme.sizes.p12,
+  },
+
+  checkboxDisabled: {
+    backgroundColor: theme.colors.white,
+  },
+
+  checkboxSuccess: {
+    backgroundColor: 'rgba(46, 148, 50, 0.2)',
   },
 });
 
