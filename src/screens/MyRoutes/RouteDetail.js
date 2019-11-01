@@ -3,6 +3,7 @@ import {theme} from '../../constants';
 import styled from 'styled-components/native';
 import {View, StyleSheet, FlatList, Modal, Alert, Animated} from 'react-native';
 import {getData} from '../../helpers/apiconnection_helper';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   updateOrderAssigned,
   getRouteDetails,
@@ -50,6 +51,7 @@ export default class RouteDetail extends Component {
 
   componentDidMount() {
     const {params} = this.props.navigation.state;
+    this.setState({loading: true, loadingMessage: 'ALERT_GETTING_ROUTE'});
     getData(
       'GET_ROUTE',
       `&route_id=${params.route_id}&status=${params.status}`,
@@ -59,6 +61,7 @@ export default class RouteDetail extends Component {
           this.setState({
             data: dets,
           });
+          this.setState({loading: false});
         });
       });
     });
@@ -128,7 +131,14 @@ export default class RouteDetail extends Component {
     console.log(data);
     return (
       <Root>
-        <Container>
+        <Container>   
+          <Spinner
+            visible={this.state.loading}
+            textContent={global.translate(this.state.loadingMessage)}
+            color={'CE2424'}
+            overlayColor={'rgba(255, 255, 255, 0.4)'}
+            animation={'slide'}
+          />
           <Header>
             <Left>
               <Button

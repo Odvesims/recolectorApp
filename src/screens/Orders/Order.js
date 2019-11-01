@@ -19,6 +19,8 @@ import {
   Item,
   ActionSheet,
   Content,
+  Tabs,
+  Tab,
 } from 'native-base';
 
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
@@ -30,6 +32,7 @@ import {
   connectBluetooth,
 } from '../../helpers/bluetooth_helper';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {ButtonGroup} from '../../components';
 
 class Order extends Component {
   constructor(props) {
@@ -39,6 +42,16 @@ class Order extends Component {
       loading: false,
       modalVisible: false,
       show: false,
+      //
+      selectedIndex: 2,
+      categories: [],
+      subcategories: [],
+      articles: [],
+      picker_data: [],
+      article: '',
+      article_price: '',
+      quantity: 1,
+      //
       date: '',
       clients: [],
       client: '',
@@ -56,27 +69,33 @@ class Order extends Component {
       CANCEL_INDEX: 4,
     };
     this.arrData = [];
-    this.getClientsHandler();
-    this.selectedItem = this.selectedItem.bind(this);
   }
 
-  selectedItem(item) {
-    this.setState({
-      client: item.Name,
-      client_address: item.Address,
-      client_city: item.City,
-      client_state: item.State,
-      client_phone: item.Phone,
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      try {
+        let item = this.props.navigation.state.params.selItem;
+        if (item != undefined) {
+          this.arrData.push(item);
+          this.setState({data: this.arrData});
+        }
+      } catch (err) {
+        alert(err);
+      }
     });
   }
 
-  getClientsHandler() {
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
+
+  getClientsHandler = () => {
     getStoredClients().then(clients => {
       this.setClientsPicker(clients).then(res => {
         this.setState({clients: res});
       });
     });
-  }
+  };
 
   execOperation = () => {
     let order_data = {
@@ -137,33 +156,71 @@ class Order extends Component {
     });
   }
 
-  componentDidMount() {
-    this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      try {
-        let item = this.props.navigation.state.params.selItem;
-        if (item != undefined) {
-          this.arrData.push(item);
-          this.setState({data: this.arrData});
-        }
-      } catch (err) {
-        alert(err);
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.focusListener.remove();
-  }
-
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
+  selectedItem = item => {
+    this.setState({
+      theItem: item,
+      article: item.Name,
+      article_price: item.Code,
+      total: item.Code * this.state.quantity,
+      selItem: {
+        item: item.Name.split('-')[0],
+        description: item.Name.split('-')[1],
+        price: item.Code,
+        quantity: this.state.quantity,
+        line_type: item.Type,
+        line_id: item.Id,
+      },
+    });
+  };
+
+  renderItem = ({item}) => (
+    <Item style={styles.list}>
+      <View key={item.key} style={styles.listContainer}>
+        <View
+          key={item.key}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text numberOfLines={1} style={styles.name}>
+            {item.description}
+          </Text>
+          <Text numberOfLines={1} style={styles.quantity}>
+            {item.quantity}
+          </Text>
+        </View>
+      </View>
+      <Button
+        transparent
+        style={styles.more}
+        onPress={() =>
+          ActionSheet.show(
+            {
+              options: BUTTONS,
+              cancelButtonIndex: CANCEL_INDEX,
+              destructiveButtonIndex: DESTRUCTIVE_INDEX,
+              title: 'Opciones',
+            },
+            buttonIndex => {
+              this.setState({clicked: BUTTONS[buttonIndex]});
+            },
+          )
+        }>
+        <Icon style={{color: 'gray'}} name="more" />
+      </Button>
+    </Item>
+  );
+
   render() {
     let ClientInfo = null;
     const {client} = this.state;
+    const buttons = ['Recolección', 'Compras']; //global.translate('TITLE_CATEGORY')];
 
-    if (!client == '') {
+    if (!client === '') {
       ClientInfo = (
         <View>
           <Text style={styles.client_data}>{this.state.client_address}</Text>
@@ -174,43 +231,6 @@ class Order extends Component {
       );
     }
 
-    let renderItem = ({item}) => (
-      <Item style={styles.list}>
-        <View key={item.key} style={styles.listContainer}>
-          <View
-            key={item.key}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text numberOfLines={1} style={styles.name}>
-              {item.description}
-            </Text>
-            <Text numberOfLines={1} style={styles.quantity}>
-              {item.quantity}
-            </Text>
-          </View>
-        </View>
-        <Button
-          transparent
-          style={styles.more}
-          onPress={() =>
-            ActionSheet.show(
-              {
-                options: BUTTONS,
-                cancelButtonIndex: CANCEL_INDEX,
-                destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: 'Opciones',
-              },
-              buttonIndex => {
-                this.setState({clicked: BUTTONS[buttonIndex]});
-              },
-            )
-          }>
-          <Icon style={{color: 'gray'}} name="more" />
-        </Button>
-      </Item>
-    );
     const {modalVisible, data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
@@ -273,6 +293,7 @@ class Order extends Component {
                 {ClientInfo}
               </Form>
             </View>
+            {/* Details */}
             <View style={{flex: 1}}>
               <View style={styles.addPoint}>
                 <View style={{paddingBottom: 8}}>
@@ -282,11 +303,18 @@ class Order extends Component {
                 </View>
                 <ScrollView>
                   <View>
+                    {/* Tabs */}
+                    <ButtonGroup
+                      onPress={this.updateIndex}
+                      selectedIndex={this.state.selectedIndex}
+                      buttons={buttons}
+                      containerStyle={{height: 40}}
+                    />
                     <FlatList
                       style={{overflow: 'hidden', marginBottom: 12}}
                       data={data}
                       keyExtractor={item => item.id}
-                      renderItem={renderItem}
+                      renderItem={this.renderItem}
                     />
                   </View>
                   <TouchableOpacity

@@ -43,7 +43,7 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: 'aramirez',
+      userName: 'testing',
       userPassword: '101010',
       hostName: '',
       portNumber: 444,
@@ -109,6 +109,7 @@ export default class LoginScreen extends Component {
                   this.goHome(
                     l.user_data.display_name,
                     l.user_data.employee_cat_label,
+                    l.user_data.first_login,
                   );
                 });
               } else {
@@ -139,10 +140,10 @@ export default class LoginScreen extends Component {
     }
   };
 
-  goHome(displayName, userRole) {
+  goHome(displayName, userRole, firstLogin) {
     global.userDisplayName = displayName;
     global.userRole = userRole;
-    this.props.navigation.navigate('HomeScreen');
+    this.props.navigation.navigate('HomeScreen', {first_login: firstLogin});
   }
 
   goConfig = cClick => {

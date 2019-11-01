@@ -165,7 +165,7 @@ export class Route extends Component {
   }
 
   setDate2(newDate) {
-    this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
+    this.setState({chosenDate2: moment(newDate).format('DD/MM/YYYY')});
   }
 
   saveRoute = () => {

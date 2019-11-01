@@ -24,8 +24,7 @@ export class Notifications extends Component {
     active: [
       {
         id: 1,
-        title:
-          'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+        title: 'sunt aut facere repellat',
         body:
           'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto',
       },
@@ -53,20 +52,6 @@ export class Notifications extends Component {
     ],
   };
 
-  renderItem = ({item}) => {
-    <ListItem avatar>
-      <Left>
-        <Thumbnail source={{uri: 'Image URL'}} />
-      </Left>
-      <Body>
-        <Text>Kumar Pratik</Text>
-        <Text note>Doing what you like will always keep you happy . .</Text>
-      </Body>
-      <Right>
-        <Text note>3:43 pm</Text>
-      </Right>
-    </ListItem>;
-  };
   render() {
     return (
       <Container>
@@ -94,7 +79,7 @@ export class Notifications extends Component {
               navigation={this.props.navigation}
             />
           </Tab>
-          <Tab heading={global.translate('TITLE_EXPIRED')}>
+          <Tab heading="Leídas">
             <NotificationsTab
               tab_data={this.state.unRead}
               navigation={this.props.navigation}

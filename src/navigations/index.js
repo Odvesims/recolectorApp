@@ -136,9 +136,10 @@ const OrdersScreen = createStackNavigator(
 );
 
 const Home = createStackNavigator(
-  {HomeScreen: HomeScreen},
-  {Notifications: Notifications},
-  {initialRouteName: 'HomeScreen'},
+ { HomeScreen: HomeScreen,
+  Notifications: Notifications},
+  {initialRouteName: 'HomeScreen',
+headerMode:'none'},
 );
 
 const AppNavigator = createDrawerNavigator(

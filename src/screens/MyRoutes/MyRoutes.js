@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
-import {SearchBar, FetchingData, ContentLoader} from '../../components';
+import {SearchBar, FetchingData} from '../../components';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {
   saveActiveRoutes,
@@ -89,9 +90,7 @@ class Order extends Component {
 
   storedRoutes = () => {
     getStoredRoutes('A').then(active => {
-      getStoredRoutes('I').then(expired => {
-        this.setState({active: active, expired: expired, loading: false});
-      });
+      this.setState({active: active, loading: false});
     });
   };
 
@@ -115,18 +114,7 @@ class Order extends Component {
             if (active.arrResponse !== []) {
               saveActiveRoutes(active.arrResponse);
             }
-            getData('GET_ROUTES', '&status=I').then(inactive => {
-              if (!this.state.request_timeout) {
-                clearRoutesCab('I').then(ci => {
-                  if (inactive.arrResponse !== []) {
-                    saveInactiveRoutes(inactive.arrResponse);
-                  }
-                  this.storedRoutes();
-                });
-              } else {
-                this.setState({request_timeout: false});
-              }
-            });
+            this.storedRoutes();
           });
         });
       } else {
@@ -225,11 +213,10 @@ class Order extends Component {
     const {modalVisible, active, loading, show} = this.state;
 
     let content = (
-      <React.Fragment>
-        <Item style={styles.list}>
-          <ContentLoader />
-        </Item>
-      </React.Fragment>
+      <ContentLoader>
+        <Rect x="0" y="20" rx="5" ry="5" width="250" height="12" />
+        <Rect x="0" y="40" rx="5" ry="5" width="180" height="12" />
+      </ContentLoader>
     );
 
     if (!loading) {

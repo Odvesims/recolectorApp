@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, FlatList, Alert} from 'react-native';
 import {
   List,
-  ListItem,
   Container,
   Content,
   Right,
   Left,
   Body,
   Thumbnail,
+  ListItem,
 } from 'native-base';
 
 export class NotificationsTab extends Component {
@@ -17,30 +17,44 @@ export class NotificationsTab extends Component {
     loading: false,
   };
 
+  alert = () => {
+    Alert.alert(
+      'Notification',
+      'Juan Perez ha completado su recoleccion',
+      [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+      {cancelable: false},
+    );
+  };
+
   renderItem = ({item}) => {
-    <ListItem avatar>
-      <Left>
-        <Thumbnail source={{uri: 'Image URL'}} />
-      </Left>
-      <Body>
-        <Text>Kumar Pratik</Text>
-        <Text note>Doing what you like will always keep you happy . .</Text>
-      </Body>
-      <Right>
-        <Text note>3:43 pm</Text>
-      </Right>
-    </ListItem>;
+    console.log(item);
+    return (
+      <ListItem onPress={this.alert}>
+        <Body>
+          <Text>{item.title}</Text>
+          <Text numberOfLines={1} note>
+            {item.body}
+          </Text>
+        </Body>
+        <Right>
+          <Text numberOfLines={1} note>
+            {item.id}
+          </Text>
+        </Right>
+      </ListItem>
+    );
   };
 
   render() {
-    let content = '';
+    // let content = '';
 
     const {loading} = this.state;
     const {tab_data} = this.props;
+    console.log(tab_data);
 
-    if (!loading) {
-      content = <List data={tab_data} renderItem={this.rendeItem} />;
-    }
+    // if (!loading) {
+    let content = <List dataArray={tab_data} renderItem={this.renderItem} />;
+    // }
 
     return (
       <Container>

@@ -5,6 +5,7 @@ import {dataOperation} from '../../helpers/apiconnection_helper';
 import styled from 'styled-components/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {getOrderDetails, updateOrderAssigned} from '../../helpers/sql_helper';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   Text,
   View,
@@ -55,17 +56,18 @@ export default class Registry extends Component {
       collect_data: dataArr,
       order_id: data[0].order_id,
       route_id: this.props.navigation.state.params.route_id,
+      employee_code: global.employee_code,
       close_order: checkItem,
     };
+    this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'})
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
+      alert(JSON.stringify(res));
       if (res.valid) {
-        updateOrderAssigned(ordersArr).then(up => {
-          alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
-          this.setState({
-            loading: false,
-          });
-          this.props.navigation.goBack();
+        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        this.setState({
+          loading: false,
         });
+        this.props.navigation.goBack();
       } else {
         this.setState({loading: false});
       }
@@ -105,7 +107,14 @@ export default class Registry extends Component {
     console.log(checkItem);
 
     return (
-      <Container>
+      <Container>      
+        <Spinner
+          visible={this.state.loading}
+          textContent={global.translate(this.state.loadingMessage)}
+          color={'CE2424'}
+          overlayColor={'rgba(255, 255, 255, 0.4)'}
+          animation={'slide'}
+        />
         <Header>
           <Left>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
@@ -273,7 +282,7 @@ const styles = StyleSheet.create({
   },
 
   checkboxSuccess: {
-    backgroundColor: '#e0ffe0',
+    backgroundColor: 'rgba(46, 148, 50, 0.2)',
   },
 });
 

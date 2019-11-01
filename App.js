@@ -5,8 +5,11 @@ import NavigationService from './src/services/NavigationService';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
+import 'react-native-gesture-handler';
 
-global.database_version = 18;
+global.database_version = 5;
+global.config_from = 'Login';
+global.fromLogin = true;
 global.userDisplayName = '';
 global.userRole = '';
 global.userName = '';

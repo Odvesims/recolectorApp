@@ -222,6 +222,7 @@ export default class Detail extends Component {
 
     return (
       <Container>
+        {/* header */}
         <Header>
           <Left>
             <Button
@@ -237,6 +238,7 @@ export default class Detail extends Component {
           </Body>
           <Right />
         </Header>
+        {/* Content */}
         <Content style={styles.container}>
           <KeyboardAwareScrollView>
             <Form>
@@ -273,7 +275,6 @@ export default class Detail extends Component {
                   selectedItem={this.selectedItem}
                 />
               </View>
-
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_QUANTITY')}</Text>
                 <TextInput
