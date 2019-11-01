@@ -36,6 +36,7 @@ import Client from '../screens/Clients/Client';
 import LoginScreen from '../screens/LoginScreen';
 // Home
 import HomeScreen from '../screens/HomeScreen';
+import Notifications from '../screens/Notifications/Notifications';
 // Routes
 import Routes from '../screens/Routes/Routes';
 import Route from '../screens/Routes/Route';
@@ -134,10 +135,16 @@ const OrdersScreen = createStackNavigator(
   },
 );
 
+const Home = createStackNavigator(
+  {HomeScreen: HomeScreen},
+  {Notifications: Notifications},
+  {initialRouteName: 'HomeScreen'},
+);
+
 const AppNavigator = createDrawerNavigator(
   {
     HomeScreen: {
-      screen: HomeScreen,
+      screen: Home,
       navigationOptions: {
         drawerIcon: ({tintColor}) => (
           <Icon name="home" size={24} style={{color: tintColor}} />

@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   },
 
   checkboxSuccess: {
-    backgroundColor: 'rgba(46, 148, 50, 0.2)',
+    backgroundColor: '#e0ffe0',
   },
 });
 

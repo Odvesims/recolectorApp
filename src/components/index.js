@@ -12,9 +12,11 @@ import ButtonDone from './ButtonDone';
 import CustomPicker from './CustomPicker';
 import InputLogin from './forms/InputLogin';
 import ToastMessage from './ToastMessage';
+import ContentLoader from './ContentLoader';
 
 export {
   CustomTextInput,
+  ContentLoader,
   ToastMessage,
   InputLogin,
   NavigationHeader,

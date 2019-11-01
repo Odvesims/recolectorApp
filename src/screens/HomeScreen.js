@@ -170,6 +170,10 @@ export default class Home extends Component {
     this.props.navigation.openDrawer();
   };
 
+  notifications = ()=>{
+    this.props.navigation.navigation('NotificatioNotificationsns')
+  }
+
   render() {
     const {loading} = this.state;
     return (

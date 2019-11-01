@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
-import {SearchBar, FetchingData} from '../../components';
+import {SearchBar, FetchingData, ContentLoader} from '../../components';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {
   saveActiveRoutes,
@@ -226,10 +225,11 @@ class Order extends Component {
     const {modalVisible, active, loading, show} = this.state;
 
     let content = (
-      <ContentLoader>
-        <Rect x="0" y="20" rx="5" ry="5" width="250" height="12" />
-        <Rect x="0" y="40" rx="5" ry="5" width="180" height="12" />
-      </ContentLoader>
+      <React.Fragment>
+        <Item style={styles.list}>
+          <ContentLoader />
+        </Item>
+      </React.Fragment>
     );
 
     if (!loading) {
