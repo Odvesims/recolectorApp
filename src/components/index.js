@@ -12,6 +12,7 @@ import ButtonDone from './ButtonDone';
 import CustomPicker from './CustomPicker';
 import InputLogin from './forms/InputLogin';
 import ToastMessage from './ToastMessage';
+import WithBadge from './WithBadge';
 
 export {
   CustomTextInput,

@@ -40,6 +40,7 @@
   "PLACEHOLDER_TYPE_CITY": "Type in the city",
   "PLACEHOLDER_TYPE_PHONE": "Type in the phone number",
   "PLACEHOLDER_SELECT_CLIENT": "Select client",
+  "PLACEHOLDER_SELECT_EMPLOYEE": "Select employee",
   "PLACEHOLDER_SELECT_ARTICLE": "Select article",
   "PLACEHOLDER_TYPE_DESCRIPTION": "Type in the description",
   "ROLE_SUPERVISOR": "Supervisor",
@@ -122,5 +123,12 @@
   "TITLE_SELECTED": "Selected",
   "TITLE_REGISTERING_ROUTE": "Registering Route",
   "TITLE_DELETED": "Deleted",
-  "TITLE_DISCARD": "Discard"
+  "TITLE_DISCARD": "Discard",
+  "TITLE_MYROUTES": "My Routes",
+  "ALERT_REGISTERING_COLLECT": "Registering pickup",
+  "TITLE_PRINT_ORDER":"Print Order Receipt",
+  "TITLE_PRINT_ORDER_MESSAGE":"This order contains pickups and purchases. How would you like to print the receipt?",
+  "TITLE_PRINT_SEPARATE":"Print Separated",
+  "TITLE_PRINT_TOGETHER":"Print Together",
+  "TITLE_NO_PRINT":"No Print"
 }

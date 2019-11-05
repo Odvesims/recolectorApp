@@ -166,7 +166,7 @@ export class Route extends Component {
   }
 
   setDate2(newDate) {
-    this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
+    this.setState({chosenDate2: moment(newDate).format('DD/MM/YYYY')});
   }
 
   saveRoute = () => {
@@ -247,9 +247,6 @@ export class Route extends Component {
   };
 
   updateList = list => {
-    if (this.state.reverted) {
-      //list = this.state.data;
-    }
     this.setState({
       data: list,
       clear_data: list,
@@ -322,9 +319,14 @@ export class Route extends Component {
             style={[styles.hiddenList]}
             onPress={this.onClickRevert}>
             <View>
-              <Right>
-                <Text></Text>
-              </Right>
+              <Button
+                transparent
+                style={{alignSelf: 'flex-end', marginRight: 12}}>
+                <Icon name="trash" style={{color: 'white'}} />
+                <Text style={{color: 'white', fontFamily: 'Roboto-Medium'}}>
+                  {global.translate('TITLE_DELETED')}
+                </Text>
+              </Button>
             </View>
           </TouchableHighlight>
         )}

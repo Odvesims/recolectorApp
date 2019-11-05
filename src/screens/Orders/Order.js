@@ -3,7 +3,8 @@ import {theme} from '../../constants';
 import styled from 'styled-components/native';
 import CustomPicker from '../../components/CustomPicker';
 import Detail from './Detail';
-import {View, StyleSheet, FlatList, Modal, Alert} from 'react-native';
+import {View, StyleSheet, FlatList, Alert, TouchableHighlight, Modal} from 'react-native';
+import {SwipeListView} from 'react-native-swipe-list-view';
 import {
   Container,
   Left,
@@ -22,7 +23,7 @@ import {
 } from 'native-base';
 
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {getStoredClients} from '../../helpers/sql_helper';
+import {getStoredClients, getStoredEmployees} from '../../helpers/sql_helper';
 import {dataOperation} from '../../helpers/apiconnection_helper';
 import {
   printText,
@@ -41,12 +42,14 @@ class Order extends Component {
       show: false,
       date: '',
       clients: [],
+      employees: [],
       client: '',
       client_address: '',
       client_city: '',
       client_state: '',
       client_phone: '',
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+      placeholder2: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
         {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -57,7 +60,9 @@ class Order extends Component {
     };
     this.arrData = [];
     this.getClientsHandler();
+    this.getEmployeesHandler();
     this.selectedItem = this.selectedItem.bind(this);
+    this.selectedItem2 = this.selectedItem2.bind(this);
   }
 
   selectedItem(item) {
@@ -70,10 +75,24 @@ class Order extends Component {
     });
   }
 
+  selectedItem2(item) {
+    this.setState({
+      selected_item: item,
+    });
+  }
+
   getClientsHandler() {
     getStoredClients().then(clients => {
       this.setClientsPicker(clients).then(res => {
         this.setState({clients: res});
+      });
+    });
+  }
+
+  getEmployeesHandler() {
+    getStoredEmployees().then(employees => {
+      this.setEmployeesPicker(employees).then(res => {
+        this.setState({employees: res});
       });
     });
   }
@@ -83,6 +102,7 @@ class Order extends Component {
       setma_id: global.setma_id,
       client_code: this.state.client.split('-')[0],
       supervisor_code: global.employee_code,
+      employee_code: this.state.selected_item.Code,
       order_state: 'A',
       order_completed: false,
       order_details: this.state.data,
@@ -137,6 +157,21 @@ class Order extends Component {
     });
   }
 
+  setEmployeesPicker(employees) {
+    return new Promise((resolve, reject) => {
+      let arrEmployees = [];
+      for (let i = 0; i < employees.length; ++i) {
+        let employee = employees[i];
+        arrEmployees.push({
+          Name: employee.employee_code + '- ' + employee.name,
+          Code: employee.employee_code,
+          Phone: employee.phone_number,
+        });
+      }
+      resolve(arrEmployees);
+    });
+  }
+
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       try {
@@ -159,6 +194,23 @@ class Order extends Component {
     this.setState({modalVisible: visible});
   }
 
+  markForDelete = swipeData => {
+    const {key, value} = swipeData;
+    if (value < -375) {
+      alert(key);
+      const filteredData = this.state.data.filter(item => item.id !== key);
+      this.updateList(filteredData);
+    }
+  };
+
+  updateList = list => {
+    this.setState({
+      data: list,
+      clear_data: list,
+      reverted: false,
+    });
+  }
+
   render() {
     let ClientInfo = null;
     const {client} = this.state;
@@ -178,7 +230,6 @@ class Order extends Component {
       <Item style={styles.list}>
         <View key={item.key} style={styles.listContainer}>
           <View
-            key={item.key}
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -186,8 +237,16 @@ class Order extends Component {
             <Text numberOfLines={1} style={styles.name}>
               {item.description}
             </Text>
+            <Text numberOfLines={1} style={styles.total}>
+              ${item.price * item.quantity}
+            </Text>
+          </View>
+          <View>
             <Text numberOfLines={1} style={styles.quantity}>
-              {item.quantity}
+              {global.translate('TITLE_QUANTITY')} : {item.quantity}
+            </Text>
+            <Text numberOfLines={1} style={styles.price}>
+              {global.translate('TITLE_PRICE')} : ${item.price}
             </Text>
           </View>
         </View>
@@ -216,6 +275,28 @@ class Order extends Component {
 
     return (
       <Root>
+        <View style={{marginTop: 22}}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+            }}>
+            <View style={{marginTop: 22}}>
+              <View>
+                <Text>Hello World!</Text>
+
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}>
+                  <Text>Hide Modal</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </Modal>
+        </View>
         <Container>
           <Header>
             <Spinner
@@ -251,63 +332,100 @@ class Order extends Component {
               flex: 1,
               backgroundColor: theme.colors.lightGray,
             }}>
-            <View>
-              <View style={styles.currentDate}>
-                <Text style={styles.currentDateText}>
-                  {global.translate('TITLE_DATE')}
-                </Text>
-                <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                  {`: ${this.props.navigation.state.params.date}`}
-                </Text>
-              </View>
-              <Form style={styles.container}>
-                <View>
-                  <Text>{global.translate('TITLE_CLIENT')}</Text>
-                  <CustomPicker
-                    items={this.state.clients}
-                    placeholder={this.state.placeholder}
-                    selectedHolder={this.selectedItem.Name}
-                    selectedItem={this.selectedItem}
-                  />
-                </View>
-                {ClientInfo}
-              </Form>
-            </View>
-            <View style={{flex: 1}}>
-              <View style={styles.addPoint}>
-                <View style={{paddingBottom: 8}}>
-                  <Text style={styles.detailText}>
-                    {global.translate('TITLE_DETAILS')}
+            <ScrollView>
+              <View>
+                <View style={styles.currentDate}>
+                  <Text style={styles.currentDateText}>
+                    {global.translate('TITLE_DATE')}
+                  </Text>
+                  <Text style={({marginLeft: 4}, styles.currentDateText)}>
+                    {`: ${this.props.navigation.state.params.date}`}
                   </Text>
                 </View>
-                <ScrollView>
+                <Form style={styles.container}>
                   <View>
-                    <FlatList
-                      style={{overflow: 'hidden', marginBottom: 12}}
-                      data={data}
-                      keyExtractor={item => item.id}
-                      renderItem={renderItem}
+                    <Text>{global.translate('TITLE_CLIENT')}</Text>
+                    <CustomPicker
+                      items={this.state.clients}
+                      placeholder={this.state.placeholder}
+                      selectedHolder={this.selectedItem.Name}
+                      selectedItem={this.selectedItem}
                     />
                   </View>
-                  <TouchableOpacity
-                    style={styles.buttonGhost}
-                    onPress={() => {
-                      this.props.navigation.navigate('Detail');
-                    }}>
-                    <Icon name="add" style={{color: theme.colors.primary}} />
-                    <Text
-                      style={{
-                        marginLeft: 24,
-                        fontSize: theme.sizes.base,
-                        color: theme.colors.primary,
-                        textTransform: 'uppercase',
-                      }}>
+                  {ClientInfo}
+                  <Text></Text>
+                  <View>
+                    <Text style={styles.label}>
+                      {global.translate('TITLE_COLLECTOR')}
+                    </Text>
+                    {/* CustomPicker */}
+                    <CustomPicker
+                      items={this.state.employees}
+                      placeholder={this.state.placeholder2}
+                      selectedItem={this.selectedItem2}
+                      disabled={this.state.disabled_date_from}
+                    />
+                  </View>
+                </Form>
+              </View>
+              <View style={{flex: 1}}>
+                <View style={styles.addPoint}>
+                  <View style={{paddingBottom: 8}}>
+                    <Text style={styles.detailText}>
                       {global.translate('TITLE_DETAILS')}
                     </Text>
-                  </TouchableOpacity>
-                </ScrollView>
+                  </View>
+                    <View>
+                      <SwipeListView
+                        style={{
+                          overflow: 'hidden',
+                          marginBottom: 0,
+                          backgroundColor: 'lightGray',
+                        }}
+                        data={this.state.data}
+                        keyExtractor={item => item.id}
+                        renderItem={renderItem}
+                        renderHiddenItem={(data, rowMap) => (
+                          <TouchableHighlight
+                            style={[styles.hiddenList]}
+                            onPress={this.onClickRevert}>
+                            <View>
+                              <Button
+                                transparent
+                                style={{alignSelf: 'flex-end', marginRight: 12}}>
+                                <Icon name="trash" style={{color: 'white'}} />
+                                <Text style={{color: 'white', fontFamily: 'Roboto-Medium'}}>
+                                  {global.translate('TITLE_DELETED')}
+                                </Text>
+                              </Button>
+                            </View>
+                          </TouchableHighlight>
+                        )}
+                        leftOpenValue={0}
+                        rightOpenValue={-375}
+                        rightActionActivationDistance={125}
+                        onSwipeValueChange={this.markForDelete}
+                      />
+                    </View>
+                    <TouchableOpacity
+                      style={styles.buttonGhost}
+                      onPress={() => {
+                        this.props.navigation.navigate('Detail');
+                      }}>
+                      <Icon name="add" style={{color: theme.colors.primary}} />
+                      <Text
+                        style={{
+                          marginLeft: 24,
+                          fontSize: theme.sizes.base,
+                          color: theme.colors.primary,
+                          textTransform: 'uppercase',
+                        }}>
+                        {global.translate('TITLE_DETAILS')}
+                      </Text>
+                    </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            </ScrollView>
           </View>
         </Container>
       </Root>
@@ -434,10 +552,52 @@ const styles = StyleSheet.create({
 
   quantity: {
     flexShrink: 10,
-    color: theme.colors.success,
+    color: theme.colors.gray2,
     fontSize: 14,
     fontWeight: 'bold',
     flexWrap: 'nowrap',
+  },
+
+  price: {
+    flexShrink: 10,
+    color: theme.colors.gray2,
+    fontSize: 14,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
+  },
+
+  total: {
+    flexShrink: 10,
+    color: theme.colors.success,
+    fontSize: 16,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
+  },
+
+  leftSwipeItem: {
+    flex: 1,
+    marginTop: 5,
+    marginBottom: 5,
+    height: 80,
+    elevation: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingRight: 20,
+    backgroundColor: '#c3000d',
+  },
+
+  rightSwipeItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 5,
+    backgroundColor: '#c3000d',
+  },
+  
+  hiddenList: {
+    margin: 5,
+    backgroundColor: '#c3000d',
+    height: 80,
+    elevation: 1,
   },
 });
 

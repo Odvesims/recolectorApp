@@ -1,7 +1,18 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import styled from 'styled-components/native';
-import {View, StyleSheet, FlatList, Modal, Alert} from 'react-native';
+import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
+import {SearchBar, FetchingData} from '../../components';
+import {View, StyleSheet, FlatList} from 'react-native';
+import {
+  saveActiveRoutes,
+  saveInactiveRoutes,
+  getStoredRoutes,
+  clearRoutesCab,
+  clearRoutesDetails,
+} from '../../helpers/sql_helper';
+import {getData} from '../../helpers/apiconnection_helper';
 import {
   Container,
   Left,
@@ -19,24 +30,18 @@ import {
   Content,
 } from 'native-base';
 
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {getStoredClients} from '../../helpers/sql_helper';
-
 class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      dataAll: [],
+      value: '',
+      isloading: false,
+      error: null,
+      status: '',
       modalVisible: false,
       show: false,
-      date: '10/12/19',
-      clients: [],
-      client: '',
-      client_address: '',
-      client_city: '',
-      client_state: '',
-      client_phone: '',
-      placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
         {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -45,69 +50,113 @@ class Order extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.arrData = [];
   }
 
   componentDidMount() {
-    this.fetchData();
-    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
-    //   try {
-    //     let item = this.props.navigation.state.params.selItem;
-    //     if (item !== undefined) {
-    //       this.arrData.push(item);
-    //       this.setState({data: this.arrData});
-    //     }
-    //   } catch (err) {
-    //     alert(err);
-    //   }
-    // });
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        this.enterHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });
   }
 
   componentWillUnmount() {
-    // this.focusListener.remove();
+    this.focusListener.remove();
   }
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-  fetchData = () => {
-    this.setState({loading: true});
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(responseJson => {
-        responseJson = responseJson.map(item => {
-          item.selectedClass = styles.list;
-          return item;
-        });
-
-        this.setState({
-          loading: false,
-          data: responseJson,
-        });
-      })
-      .catch(error => {
-        this.setState({loading: false});
-      });
+  showHideSearchBar = () => {
+    // this.setState({show: true});
+    if (this.state.show === true) {
+      this.setState({show: false});
+    } else {
+      this.setState({show: true});
+    }
   };
 
-  openDrawer = () => {
-    this.props.navigation.openDrawer();
+  enterHandler = () => {
+    this.setState({
+      loading: true,
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+    });
+    this.storedRoutes();
   };
 
-  renderItem = dataList => {
+  storedRoutes = () => {
+    getStoredRoutes('A').then(active => {
+      this.setState({active: active, loading: false});
+    });
+  };
+
+  refreshHandler = () => {
+    this.setState({
+      loading: true,
+      request_timeout: false,
+      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      active: [],
+    });
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      }
+    }, 20000);
+    getData('GET_ROUTES', '&status=A').then(active => {
+      if (!this.state.request_timeout) {
+        clearRoutesCab('A').then(ca => {
+          clearRoutesDetails().then(cd => {
+            if (active.arrResponse !== []) {
+              saveActiveRoutes(active.arrResponse);
+            }
+            this.storedRoutes();
+          });
+        });
+      } else {
+        this.setState({request_timeout: false});
+      }
+    });
+  };
+
+  // fetchData = () => {
+  //   this.setState({loading: true});
+  //   const url = 'https://jsonplaceholder.typicode.com/users';
+  //   this.setState({loading: true});
+  //   fetch(url)
+  //     .then(res => res.json())
+  //     .then(res => {
+  //       this.setState({
+  //         loading: false,
+  //         data: res,
+  //         dataAll: res,
+  //       });
+  //     })
+  //     .catch(error => {
+  //       this.setState({error, loading: false});
+  //     });
+  // };
+
+  renderItem = ({item}) => {
     const {navigate} = this.props.navigation;
     return (
       <Item
-        style={[styles.list, dataList.item.selectedClass]}
+        style={[styles.list, item.selectedClass]}
         onPress={() =>
           navigate('RouteDetail', {
-            routeName: dataList.item.name,
-            date: this.state.date,
+            routeName: item.description,
+            expire: item.data_to,
+            status: item.status,
             onGoBack: () => this.refresh(true),
-            email: dataList.item.email,
-            zipcode: dataList.item.address.zipcode,
-            info: dataList.item,
+            route_id: item.route_id,
+            document_id: '',
+            phone_number: '',
+            date_from: moment(new Date()).format('DD/MM/YYYY'),
+            date_to: moment(new Date()).format('DD/MM/YYYY'),
           })
         }>
         <View
@@ -117,18 +166,18 @@ class Order extends Component {
             alignItems: 'center',
             paddingHorizontal: 12,
           }}>
-          <View key={dataList.item.key} style={styles.listContainer}>
+          <View key={item.key} style={styles.listContainer}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
               <Text numberOfLines={1} style={styles.name}>
-                {dataList.item.name}
+                {item.description}
               </Text>
             </View>
             <Text numberOfLines={1} style={styles.address}>
-              {dataList.item.address.street}
+              Hasta: {item.date_to}
             </Text>
           </View>
         </View>
@@ -136,8 +185,53 @@ class Order extends Component {
     );
   };
 
+  openDrawer = () => {
+    this.props.navigation.openDrawer();
+  };
+
+  listEmpty = () => {
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}>
+        <Text>No hay resultados</Text>
+      </View>
+    );
+  };
+
+  // searchBarHandler = (data, text) => {
+  //   this.setState({
+  //     data: data,
+  //     query: text,
+  //   });
+  // };
+
   render() {
-    const {modalVisible, data} = this.state;
+    const {modalVisible, active, loading, show} = this.state;
+
+    let content = (
+      <ContentLoader>
+        <Rect x="0" y="20" rx="5" ry="5" width="250" height="12" />
+        <Rect x="0" y="40" rx="5" ry="5" width="180" height="12" />
+      </ContentLoader>
+    );
+
+    if (!loading) {
+      content = (
+        <FlatList
+          ListEmptyComponent={this.listEmpty}
+          keyboardShouldPersistTaps={'handled'}
+          // style={{overflow: 'hidden'}}
+          data={active}
+          extraData={this.state}
+          keyExtractor={item => item.id} //.toString()
+          renderItem={this.renderItem}
+        />
+      );
+    }
 
     return (
       <Root>
@@ -152,37 +246,38 @@ class Order extends Component {
               <Title>{global.translate('TITLE_MYROUTES')}</Title>
             </Body>
             <Right>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.navigate('')}>
-                <Icon name="checkmark" />
-              </Button>
+              <FetchingData syncData={this.refreshHandler} fetching={loading} />
+              {/* <Button transparent onPress={this.showHideSearchBar}>
+                <Icon name="search" />
+              </Button> */}
             </Right>
           </Header>
 
-          {/* Content */}
-          <View
+          {/* SearchBar */}
+          {/* {show ? (
+            <SearchBar
+              arrayData={this.state.arrayData}
+              data={this.searchBarHandler}
+              visible={this.searchHandler}
+              dataValue={this.state.dataAll}
+              style={styles.searchbar}
+              placeholder={'Busque su orden'}
+              onPressCancel={() => {
+                this.showHideSearchBar();
+              }}
+            />
+          ) : null} */}
+          {/* SearchBar */}
+
+          <Content
             style={{
               flexDirection: 'column',
               flex: 1,
               backgroundColor: theme.colors.lightGray,
+              padding: 12,
             }}>
-            <View style={{flex: 1}}>
-              <View style={styles.addPoint}>
-                <View>
-                  <ScrollView>
-                    <FlatList
-                      style={{overflow: 'hidden', marginBottom: 12}}
-                      data={data}
-                      extraData={this.state}
-                      keyExtractor={item => item.id.toString()}
-                      renderItem={item => this.renderItem(item)}
-                    />
-                  </ScrollView>
-                </View>
-              </View>
-            </View>
-          </View>
+            {content}
+          </Content>
         </Container>
       </Root>
     );
@@ -190,32 +285,12 @@ class Order extends Component {
 }
 
 const styles = StyleSheet.create({
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
+  searchbar: {
+    // position: 'absolute',
+    // left: 0,
+    // top: 0,
+    // height: 500,
   },
-
-  currentDate: {
-    // display: 'flex',
-
-    flexDirection: 'row',
-  },
-  currentDateText: {color: theme.colors.gray},
-
-  container: {
-    // flex: 1,
-    padding: theme.sizes.padding,
-    backgroundColor: theme.colors.white,
-  },
-
-  client_data: {
-    fontSize: 14,
-  },
-
-  RouteDetails: {backgroundColor: 'white', padding: 16},
-
-  detailText: {textTransform: 'uppercase', color: theme.colors.gray},
 
   list: {
     margin: 5,
@@ -231,32 +306,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
-  label: {
-    fontSize: theme.sizes.base,
-    color: theme.colors.darkGray,
-  },
-
-  addPoint: {
-    padding: theme.sizes.padding,
-    marginBottom: 24,
-  },
-
   name: {
     flexBasis: 150,
     fontSize: 16,
@@ -264,14 +313,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     overflow: 'scroll',
     flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-
-  quantity: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 14,
-    fontWeight: 'bold',
     flexWrap: 'nowrap',
   },
 });

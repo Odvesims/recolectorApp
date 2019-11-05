@@ -40,6 +40,7 @@
   "PLACEHOLDER_TYPE_CITY": "Tapez dans la ville",
   "PLACEHOLDER_TYPE_PHONE": "Tapez le téléphone",
   "PLACEHOLDER_SELECT_CLIENT": "Sélectionner le client",
+  "PLACEHOLDER_SELECT_EMPLOYEE": "Sélectionner le collecteur",
   "PLACEHOLDER_SELECT_ARTICLE": "Sélectionner le article",
   "PLACEHOLDER_TYPE_DESCRIPTION": "Entrez la description",
   "ROLE_SUPERVISOR": "Superviseur",
@@ -108,5 +109,12 @@
   "TITLE_SELECTED": "Choisie",
   "TITLE_REGISTERING_ROUTE": "Enregistrement de l'itinéraire",
   "TITLE_DELETED": "Enlevé",
-  "TITLE_DISCARD": "Défaire"
+  "TITLE_DISCARD": "Défaire",
+  "TITLE_MYROUTES": "Mon itinéraires",
+  "ALERT_REGISTERING_COLLECT": "Enregistrement de ramassage",
+  "TITLE_PRINT_ORDER":"Impression de reçu",
+  "TITLE_PRINT_ORDER_MESSAGE":"Cette commande contient des collections et des achats. Comment voulez-vous imprimer le reçu?",
+  "TITLE_PRINT_SEPARATE":"Imprimer séparément",
+  "TITLE_PRINT_TOGETHER":"Imprimer ensemble",
+  "TITLE_NO_PRINT":"Pas imprimer"
 }

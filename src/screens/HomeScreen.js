@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {FetchingData} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { Badge, withBadge } from "react-native-elements";
 
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   DeviceEventEmitter,
   NativeEventEmitter,
   ToastAndroid,
+  Modal, Text, TouchableHighlight, View, Alert,
 } from 'react-native';
 
 import {
@@ -35,6 +37,7 @@ import {
   getUserConfig,
   clearRoutesCab,
   clearRoutesDetails,
+  saveNotifications,
 } from '../helpers/sql_helper';
 
 import {getData, dataOperation} from '../helpers/apiconnection_helper';
@@ -50,15 +53,43 @@ export default class Home extends Component {
     super(props);
     this.state = {
       loading: false,
+      modalVisible: false,
+      new_notifications: false,
+      notifications: '0',
     };
   }
 
   componentDidMount() {
+    let {params} = this.props.navigation.state;
     global.config_from = 'HomeScreen';
     global.fromLogin = false;
+    if(params.first_login !== undefined){
+      if(params.first_login){
+        params.first_login = false;
+       this.refreshHandler();
+      }
+    }
+    this.searchForNotifications();
   }
 
-  setPrinter = () => {
+  searchForNotifications(){    
+    setInterval(() => {
+      getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
+        //alert(JSON.stringify(notifications));
+        if(notifications.valid){
+          saveNotifications(notifications.arrResponse).then(count=> {
+            if(count > 0){              
+              this.setState({new_notifications: true, notifications: count})
+            } else{
+              this.setState({new_notifications: true, notifications: '0'})              
+            }
+          })
+        }
+      });
+    }, 10000)
+  }
+
+  setPrinter = () => {/*
     this.setState({loading: true, loadingMessage: 'Testing Printer'});
     if (global.printer_address === '') {
       alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
@@ -82,8 +113,37 @@ export default class Home extends Component {
           }
         });
       });
-    }
+    }*/
+    //this.setModalVisible(true);
+    Alert.alert(
+      global.translate("TITLE_PRINT_ORDER"),
+      global.translate("TITLE_PRINT_ORDER_MESSAGE"),
+      [
+        {
+          text: global.translate("TITLE_NO_PRINT"), 
+          onPress: () => {
+            alert.cancel     
+          }, 
+          style: 'cancel'
+        },
+        {
+          text: global.translate("TITLE_PRINT_TOGETHER"),
+          onPress: () => {
+            printText()
+          },
+        },
+        {
+          text: global.translate("TITLE_PRINT_SEPARATE"), 
+          onPress: () => console.log('Ask me later pressed')
+        },
+      ],
+      {cancelable: false},
+    )
   };
+
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
 
   refreshHandler = () => {
     this.setState({
@@ -172,6 +232,7 @@ export default class Home extends Component {
 
   render() {
     const {loading} = this.state;
+    const BadgedIcon = withBadge(this.state.notifications)(Icon)
     return (
       <Container style={styles.androidHeader}>
         <Header>
@@ -195,11 +256,34 @@ export default class Home extends Component {
             <Button transparent onPress={this.setPrinter}>
               <Icon name="print" />
             </Button>
-            <Button transparent>
-              <Icon name="notifications" />
+            <Button transparent>         
+              <BadgedIcon name="notifications" />
             </Button>
           </Right>
         </Header>
+        <View style={{marginTop: 22}}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            presentationStyle="formSheet"
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+            }}>
+            <View style={{marginTop: 22}}>
+              <View>
+                <Text>Hello World!</Text>
+
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}>
+                  <Text>Hide Modal</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </Container>
     );
   }

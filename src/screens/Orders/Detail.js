@@ -57,9 +57,18 @@ export default class Detail extends Component {
   }
 
   getArticlesData() {
-    getStoredCategories().then(categories => {
-      getStoredSubcategories().then(subcategories => {
-        getStoredArticles().then(articles => {
+    getStoredCategories().then(categories => {      
+    categories.map((item, index) => {
+      item.id = (index + 1);
+    });
+      getStoredSubcategories().then(subcategories => {   
+        subcategories.map((item, index) => {
+          item.id = (index + 1) + 1000;
+        });
+        getStoredArticles().then(articles => {   
+          articles.map((item, index) => {
+            item.id = (index + 1) + 10000;
+          });
           this.setArticlesPicker(articles).then(res => {
             this.setState({
               categories: categories,
@@ -74,18 +83,22 @@ export default class Detail extends Component {
   }
 
   changeQuantity(theQuantity) {
-    this.setState({
-      quantity: theQuantity,
-      total: this.state.article_price * theQuantity,
-      selItem: {
-        item: this.state.theItem.Name.split('-')[0],
-        description: this.state.theItem.Name.split('-')[1],
-        price: this.state.theItem.Code,
+    if(this.state.theItem.Name !== undefined){
+      this.setState({
         quantity: theQuantity,
-        line_type: this.state.theItem.Type,
-        line_id: this.state.theItem.Id,
-      },
-    });
+        total: this.state.article_price * theQuantity,
+        selItem: {
+          item: this.state.theItem.Name.split('-')[0],
+          description: this.state.theItem.Name.split('-')[1],
+          price: this.state.theItem.Code,
+          quantity: theQuantity,
+          line_type: this.state.theItem.Type,
+          line_id: this.state.theItem.Id,
+        },
+      });      
+    } else{
+      this.setState({quantity: ''});
+    }
   }
 
   setCategoriesPicker(categories) {
@@ -186,20 +199,22 @@ export default class Detail extends Component {
   };
 
   selectedItem(item) {
-    this.setState({
-      theItem: item,
-      article: item.Name,
-      article_price: item.Code,
-      total: item.Code * this.state.quantity,
-      selItem: {
-        item: item.Name.split('-')[0],
-        description: item.Name.split('-')[1],
-        price: item.Code,
-        quantity: this.state.quantity,
-        line_type: item.Type,
-        line_id: item.Id,
-      },
-    });
+    if(item.Name !== undefined){
+      this.setState({
+        theItem: item,
+        article: item.Name,
+        article_price: item.Code,
+        total: item.Code * this.state.quantity,
+        selItem: {
+          item: item.Name.split('-')[0],
+          description: item.Name.split('-')[1],
+          price: item.Code,
+          quantity: this.state.quantity,
+          line_type: item.Type,
+          line_id: item.Id,
+        },
+      });
+    }
   }
 
   onPresHandler = () => {
@@ -285,6 +300,7 @@ export default class Detail extends Component {
                   onChangeText={quantity => {
                     this.changeQuantity(quantity);
                   }}
+                  value={this.state.quantity}
                 />
               </View>
             </Form>

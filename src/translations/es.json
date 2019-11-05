@@ -40,6 +40,7 @@
   "PLACEHOLDER_TYPE_CITY": "Digite la ciudad",
   "PLACEHOLDER_TYPE_PHONE": "Digite el número de teléfono",
   "PLACEHOLDER_SELECT_CLIENT": "Seleccione el cliente",
+  "PLACEHOLDER_SELECT_EMPLOYEE": "Seleccione el empleado",
   "PLACEHOLDER_SELECT_ARTICLE": "Seleccione el artículo",
   "PLACEHOLDER_TYPE_DESCRIPTION": "Digite la descripción",
   "ROLE_SUPERVISOR": "Supervisor",
@@ -122,5 +123,12 @@
   "TITLE_SELECTED": "Seleccionados",
   "TITLE_REGISTERING_ROUTE": "Registrando Ruta",
   "TITLE_DELETED": "Eliminado",
-  "TITLE_DISCARD": "Deshacer"
+  "TITLE_DISCARD": "Deshacer",
+  "TITLE_MYROUTES": "Mis Rutas",
+  "ALERT_REGISTERING_COLLECT": "Registrando recogida",
+  "TITLE_PRINT_ORDER":"Impresión de Recibo",
+  "TITLE_PRINT_ORDER_MESSAGE":"Esta orden contiene recolecciones y compras. Cómo desea imprimir el recibo?",
+  "TITLE_PRINT_SEPARATE":"Imprimir por separado",
+  "TITLE_PRINT_TOGETHER":"Imprimir junto",
+  "TITLE_NO_PRINT":"No Imprimir"
 }

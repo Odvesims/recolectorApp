@@ -85,7 +85,6 @@ export function setUserTable() {
         ['apimobile.sojaca.net', 444, '', ''],
         (tx, results) => {},
       );
-      alert('here');
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS user_data(id INTEGER PRIMARY KEY AUTOINCREMENT, user VARCHAR(100), employee_code VARCHAR(10), employee_cat VARCHAR(2), employee_cat_label TEXT, clients_update INTEGER, employees_update INTEGER, categories_update INTEGER, subcategories_update INTEGER, articles_update INTEGER, orders_update INTEGER, routes_update INTEGER)',
       );
@@ -115,6 +114,9 @@ export function setUserTable() {
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS route_details(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, order_id INTEGER, routedetail_id INTEGER, status VARCHAR(1))',
+      );
+      txn.executeSql(
+        'CREATE TABLE IF NOT EXISTS notifications(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, body TEXT, date TEXT, read BOOLEAN DEFAULT false)',
       );
     });
     resolve(true);
@@ -225,6 +227,32 @@ export function saveUserData(userData) {
       );
     });
     resolve(true);
+  });
+}
+
+export function saveNotifications(notifications) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM notifications', [], (tx, results) => {});
+    });
+    db.transaction(tx => {
+      notifications.map(notification => {
+        tx.executeSql(
+          'INSERT INTO notifications(title, body, read) VALUES (?, ?, ?)',
+          [
+            notification.user,
+            notification.employee_code,
+            false,
+          ],
+          (tx, results) => {},
+        )
+      })
+    });
+    db.transaction(tx => {
+      tx.executeSql(`SELECT * FROM notifications where read = 0;`, [], (tx, results) => {
+        resolve(JSON.stringify(results.rows.length));
+      });
+    });
   });
 }
 
@@ -663,6 +691,7 @@ export function getStoredRoutes(routes_status) {
   return new Promise((resolve, reject) => {
     let arrRoutes = [];
     let sqlStr = `SELECT * FROM routes WHERE status = '${routes_status}' ORDER BY CAST(document_number AS INTEGER) DESC`;
+    console.log(sqlStr);
     db.transaction(tx => {
       tx.executeSql(sqlStr, [], (tx, results) => {
         for (let i = 0; i < results.rows.length; ++i) {
@@ -671,7 +700,7 @@ export function getStoredRoutes(routes_status) {
             route_id: row.route_id,
             description: row.description,
             document_id: row.document_id,
-            document_acronym: row.acronym,
+            document_acronym: row.document_acronym,
             document_number: row.document_number,
             assigned_by: row.assigned_by,
             assigned_to: row.assigned_to,
@@ -684,6 +713,7 @@ export function getStoredRoutes(routes_status) {
           };
           arrRoutes.push(routeObject);
         }
+        console.log(arrRoutes);
         resolve(arrRoutes);
       });
     });
@@ -929,5 +959,33 @@ export function updateRouteOrders(route_orders) {
       });
     });
     resolve(route_orders);
+  });
+}
+
+export function getOrderDetails(order_id) {
+  let arrOrders = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM order_details WHERE order_id=${order_id} ORDER BY id DESC`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              id: row.orderdetail_id,
+              order_id: row.order_id,
+              orderDetail_id: row.orderdetail_id,
+              detail_description: row.detail_description,
+              collected_quantity: row.collected_quantity,
+              detail_price: row.detail_price,
+              detail_quantity: row.detail_quantity,
+            };
+            arrOrders.push(orderObject);
+          }
+          resolve(arrOrders);
+        },
+      );
+    });
   });
 }

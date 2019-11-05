@@ -1,7 +1,14 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import styled from 'styled-components/native';
-import {View, StyleSheet, FlatList, Modal, Alert} from 'react-native';
+import {View, StyleSheet, FlatList, Modal, Alert, Animated} from 'react-native';
+import {getData} from '../../helpers/apiconnection_helper';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {
+  updateOrderAssigned,
+  getRouteDetails,
+  updateRouteOrders,
+} from '../../helpers/sql_helper';
 import {
   Container,
   Left,
@@ -18,24 +25,18 @@ import {
   ActionSheet,
   Content,
 } from 'native-base';
-
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {getStoredClients} from '../../helpers/sql_helper';
 
 export default class RouteDetail extends Component {
   constructor(props) {
     super(props);
+    const {params} = this.props.navigation.state;
+
     this.state = {
-      data: this.props.navigation.state.params.info,
+      data: [],
       modalVisible: false,
       show: false,
-      date: '',
-      clients: [],
-      client: '',
-      client_address: '',
-      client_city: '',
-      client_state: '',
-      client_phone: '',
+      date_to: params.date_to,
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
@@ -48,30 +49,55 @@ export default class RouteDetail extends Component {
     this.arrData = [];
   }
 
-  //   componentDidMount() {
-  /*this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      try {
-        let item = this.props.navigation.state.params.selItem;
-        if (item !== undefined) {
-          this.arrData.push(item);
-          this.setState({data: this.arrData});
-        }
-      } catch (err) {
-        alert(err);
-      }
-    });*/
-  //   }
+  componentDidMount() {
+    const {params} = this.props.navigation.state;
+    this.setState({loading: true, loadingMessage: 'ALERT_GETTING_ROUTE'});
+    getData(
+      'GET_ROUTE',
+      `&route_id=${params.route_id}&status=${params.status}`,
+    ).then(route => {
+      updateRouteOrders(route.arrResponse[0]).then(r => {
+        getRouteDetails(params.route_id).then(dets => {
+          this.setState({
+            data: dets,
+          });
+          this.setState({loading: false});
+        });
+      });
+    });
+    // this.focusListener.remove();
 
-  //   componentWillUnmount() {
-  //     // this.focusListener.remove();
-  //   }
+    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
+    //   try {
+    //     let orders = params.orders;
+    //     if (orders !== undefined) {
+    //       this.setState({data: orders, clear_data: orders});
+    //       params.orders = undefined;
+    //     }
+    //   } catch (err) {}
+    // });
+  }
+
+  componentWillUnmount() {
+    // this.focusListener.remove();
+  }
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-  renderItem = dataList => (
-    <Item style={[styles.list, dataList.selectedClass]} onPress={() => {}}>
+  renderItem = ({item}) => (
+    <Item
+      style={styles.list}
+      onPress={() =>
+        this.props.navigation.navigate('Registry', {
+          client: item.client,
+          name: item.name,
+          address: item.address,
+          order_id: item.order_id,
+          route_id: item.route_id,
+        })
+      }>
       <View
         style={{
           flex: 1,
@@ -79,18 +105,18 @@ export default class RouteDetail extends Component {
           alignItems: 'center',
           paddingHorizontal: 12,
         }}>
-        <View key={dataList.key} style={styles.listContainer}>
+        <View style={styles.listContainer}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
             <Text numberOfLines={1} style={styles.name}>
-              {dataList.name}
+              {item.client} - {item.name}
             </Text>
           </View>
           <Text numberOfLines={1} style={styles.address}>
-            {dataList.address.street}
+            {item.address}
           </Text>
         </View>
       </View>
@@ -98,15 +124,21 @@ export default class RouteDetail extends Component {
   );
 
   render() {
-    const {modalVisible, data} = this.state;
+    const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     const {state, navigate} = this.props.navigation;
-
-    let info = state.params.info;
-
+    const {params} = this.props.navigation.state;
+    console.log(data);
     return (
       <Root>
-        <Container>
+        <Container>   
+          <Spinner
+            visible={this.state.loading}
+            textContent={global.translate(this.state.loadingMessage)}
+            color={'CE2424'}
+            overlayColor={'rgba(255, 255, 255, 0.4)'}
+            animation={'slide'}
+          />
           <Header>
             <Left>
               <Button
@@ -116,7 +148,7 @@ export default class RouteDetail extends Component {
               </Button>
             </Left>
             <Body>
-              <Title>{`${state.params.routeName}`}</Title>
+              <Title>{`${params.routeName}`}</Title>
             </Body>
             <Right>
               <Button transparent onPress={() => navigate('')}>
@@ -140,7 +172,7 @@ export default class RouteDetail extends Component {
                     ({marginLeft: 4, backgroundColor: 'blue'},
                     styles.currentDateText)
                   }>
-                  {`: ${state.params.routeName}`}
+                  {`: ${params.routeName}`}
                 </Text>
               </View>
               <View style={styles.currentDate}>
@@ -148,7 +180,7 @@ export default class RouteDetail extends Component {
                   {global.translate('TITLE_DATE')}
                 </Text>
                 <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                  {`: ${state.params.date}`}
+                  {`: ${this.state.date_to}`}
                 </Text>
               </View>
             </View>
@@ -163,12 +195,9 @@ export default class RouteDetail extends Component {
                     <FlatList
                       style={{overflow: 'hidden', marginBottom: 12}}
                       data={data}
-                      keyExtractor={item => item.id.toString()}
-                      renderItem={item => this.renderItem(item)}
+                      keyExtractor={item => item.key}
+                      renderItem={this.renderItem}
                     />
-                    <Button onPress={() => navigate('Registry')}>
-                      <Text>Ir</Text>
-                    </Button>
                   </View>
                 </ScrollView>
               </View>
