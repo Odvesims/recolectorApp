@@ -43,7 +43,7 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: 'testing',
+      userName: 'aramirez',
       userPassword: '101010',
       hostName: '',
       portNumber: 444,
@@ -184,10 +184,6 @@ export default class LoginScreen extends Component {
               onChangeText={userName => {
                 this.setState({userName: userName});
               }}
-              // returnKeyType={'next'}
-              // onSubmitEditing={() => {
-              //   this.inputs['dsad'].focus();
-              // }}
               ref={input => {
                 this.inputs = input;
               }}

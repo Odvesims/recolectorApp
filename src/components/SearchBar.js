@@ -21,7 +21,6 @@ export default class SearchBar extends Component {
       const textData = text.toLowerCase();
       return itemData.indexOf(textData) > -1;
     });
-    console.log(text);
     data(newData, text);
     // this.setState({data: newData, query: text});
   };
@@ -47,7 +46,6 @@ export default class SearchBar extends Component {
             name="arrow-back"
             onPress={() => {
               this.searchFilter(''), this.props.onPressCancel();
-              // this.searchFilter('');
             }}
           />
           {console.log()}

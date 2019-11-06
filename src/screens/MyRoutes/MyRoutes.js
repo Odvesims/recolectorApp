@@ -36,7 +36,7 @@ class Order extends Component {
       data: [],
       dataAll: [],
       value: '',
-      isloading: false,
+      loading: false,
       error: null,
       status: '',
       modalVisible: false,

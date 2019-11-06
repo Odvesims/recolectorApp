@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, FlatList, Alert} from 'react-native';
+import {ContentLoader} from '../../../components';
 import {
   List,
   Container,
@@ -14,33 +15,26 @@ import {
 export class NotificationsTab extends Component {
   state = {
     data: [],
-    loading: false,
   };
 
-  alert = () => {
-    Alert.alert(
-      'Notification',
-      'Juan Perez ha completado su recoleccion',
-      [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-      {cancelable: false},
-    );
-  };
+  showAlert(title, body) {
+    Alert.alert(global.translate(title), body, [{text: 'OK'}], {
+      cancelable: false,
+    });
+  }
 
   renderItem = ({item}) => {
-    console.log(item);
     return (
-      <ListItem onPress={this.alert}>
+      <ListItem
+        onPress={() => {
+          this.showAlert(item.title, item.body);
+        }}>
         <Body>
-          <Text>{item.title}</Text>
+          <Text>{global.translate(item.title)}</Text>
           <Text numberOfLines={1} note>
             {item.body}
           </Text>
         </Body>
-        <Right>
-          <Text numberOfLines={1} note>
-            {item.id}
-          </Text>
-        </Right>
       </ListItem>
     );
   };
@@ -48,12 +42,16 @@ export class NotificationsTab extends Component {
   render() {
     // let content = '';
 
-    const {loading} = this.state;
-    const {tab_data} = this.props;
-    console.log(tab_data);
+    const {tab_data, loading} = this.props;
+    console.log(loading);
 
     // if (!loading) {
-    let content = <List dataArray={tab_data} renderItem={this.renderItem} />;
+    let content = <ContentLoader />;
+
+    if (!loading) {
+      content = <List dataArray={tab_data} renderItem={this.renderItem} />;
+    }
+
     // }
 
     return (

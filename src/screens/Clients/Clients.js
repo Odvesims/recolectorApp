@@ -108,19 +108,20 @@ export default class Clients extends Component {
   };
 
   refreshHandler = () => {
+    const {loading, request_timeout} = this.state;
     this.setState({
       loading: true,
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
     });
     setTimeout(() => {
-      if (this.state.loading) {
+      if (loading) {
         this.setState({loading: false, request_timeout: true});
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 15000);
     getData('GET_CLIENTS').then(result => {
-      if (!this.state.request_timeout) {
+      if (!request_timeout) {
         this.setState({loading: false, request_timeout: false});
         if (result.valid) {
           saveClients(result.arrResponse, []).then(res => {

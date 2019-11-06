@@ -130,5 +130,9 @@
   "TITLE_PRINT_ORDER_MESSAGE":"This order contains pickups and purchases. How would you like to print the receipt?",
   "TITLE_PRINT_SEPARATE":"Print Separated",
   "TITLE_PRINT_TOGETHER":"Print Together",
-  "TITLE_NO_PRINT":"No Print"
+  "TITLE_NO_PRINT":"No Print",
+  "TITLE_NOTIFICATIONS": "Notifications",
+  "TITLE_READ": "Read",
+  "TITLE_UNREAD": "Unread",
+  "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Quantities Mismatch"
 }

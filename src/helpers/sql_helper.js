@@ -240,8 +240,8 @@ export function saveNotifications(notifications) {
         tx.executeSql(
           'INSERT INTO notifications(title, body, read) VALUES (?, ?, ?)',
           [
-            notification.user,
-            notification.employee_code,
+            notification.title,
+            notification.body,
             false,
           ],
           (tx, results) => {},
@@ -984,6 +984,29 @@ export function getOrderDetails(order_id) {
             arrOrders.push(orderObject);
           }
           resolve(arrOrders);
+        },
+      );
+    });
+  });
+}
+
+export function getNotifications(status) {
+  let arrNotifications = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM notifications WHERE read = ${status}`,
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let notificationObject = {
+              title: row.title,
+              body: row.body,
+            };
+            arrNotifications.push(notificationObject);
+          }
+          resolve(arrNotifications);
         },
       );
     });
