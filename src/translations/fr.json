@@ -116,5 +116,9 @@
   "TITLE_PRINT_ORDER_MESSAGE":"Cette commande contient des collections et des achats. Comment voulez-vous imprimer le reçu?",
   "TITLE_PRINT_SEPARATE":"Imprimer séparément",
   "TITLE_PRINT_TOGETHER":"Imprimer ensemble",
-  "TITLE_NO_PRINT":"Pas imprimer"
+  "TITLE_NO_PRINT":"Pas imprimer",
+  "TITLE_NOTIFICATIONS": "Les notifications",
+  "TITLE_READ": "Lire",
+  "TITLE_UNREAD": "Non lu",
+  "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Inadéquation des Quantités"
 }

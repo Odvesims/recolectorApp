@@ -17,30 +17,30 @@ export class NotificationsTab extends Component {
     loading: false,
   };
 
-  alert = () => {
+
+  showAlert(title, body){
     Alert.alert(
-      'Notification',
-      'Juan Perez ha completado su recoleccion',
+      global.translate(title),
+      body,
       [{text: 'OK', onPress: () => console.log('OK Pressed')}],
       {cancelable: false},
     );
+  }
+
+  alert = () => {
+    this.showAlert(title, body)
   };
 
   renderItem = ({item}) => {
     console.log(item);
     return (
-      <ListItem onPress={this.alert}>
+      <ListItem onPress={() => {this.showAlert(item.title, item.body)}}>
         <Body>
-          <Text>{item.title}</Text>
+          <Text>{global.translate(item.title)}</Text>
           <Text numberOfLines={1} note>
             {item.body}
           </Text>
         </Body>
-        <Right>
-          <Text numberOfLines={1} note>
-            {item.id}
-          </Text>
-        </Right>
       </ListItem>
     );
   };

@@ -256,7 +256,7 @@ export default class Home extends Component {
             <Button transparent onPress={this.setPrinter}>
               <Icon name="print" />
             </Button>
-            <Button transparent>         
+            <Button transparent onPress={()=>{this.props.navigation.navigate('Notifications')}}>         
               <BadgedIcon name="notifications" />
             </Button>
           </Right>

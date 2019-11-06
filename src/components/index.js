@@ -13,6 +13,7 @@ import CustomPicker from './CustomPicker';
 import InputLogin from './forms/InputLogin';
 import ToastMessage from './ToastMessage';
 import WithBadge from './WithBadge';
+import ContentLoader from './ContentLoader';
 
 export {
   CustomTextInput,
@@ -29,4 +30,5 @@ export {
   CustomPicker,
   //   ContentCustom,
   NormalText,
+  ContentLoader
 };

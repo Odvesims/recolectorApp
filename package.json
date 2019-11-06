@@ -17,7 +17,6 @@
     "next-frame": "^0.2.3",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
-    "react-bell-icon": "^1.0.1",
     "react-content-loader": "^4.3.2",
     "react-loader-spinner": "^3.1.4",
     "react-native": "0.61.2",

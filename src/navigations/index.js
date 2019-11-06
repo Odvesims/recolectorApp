@@ -1,33 +1,34 @@
 import React from 'react';
+import {withBadge} from '../components';
 // import {StyleSheet, Platform, StatusBar} from 'react-native';
 
+import {theme} from '../constants';
 import {
+  Alert,
   AppRegistry,
   Image,
+  ScrollView,
   StatusBar,
   StyleSheet,
-  ScrollView,
-  Alert,
 } from 'react-native';
 import {
+  Badge,
+  Button,
   Container,
   Content,
-  Text,
+  Icon,
   List,
   ListItem,
+  Text,
   View,
-  Badge,
-  Icon,
-  Button,
 } from 'native-base';
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {
   createDrawerNavigator,
   DrawerNavigatorItems,
 } from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
-import SideBar from './SideBar';
-import {theme} from '../constants';
+// import SideBar from './SideBar';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 
 // Clients
 import Clients from '../screens/Clients/Clients';
@@ -36,6 +37,7 @@ import Client from '../screens/Clients/Client';
 import LoginScreen from '../screens/LoginScreen';
 // Home
 import HomeScreen from '../screens/HomeScreen';
+import Notifications from '../screens/Notifications/Notifications';
 // Routes
 import Routes from '../screens/Routes/Routes';
 import Route from '../screens/Routes/Route';
@@ -134,10 +136,15 @@ const OrdersScreen = createStackNavigator(
   },
 );
 
+const Home = createStackNavigator(
+  {HomeScreen: HomeScreen, Notifications: Notifications},
+  {initialRouteName: 'HomeScreen', headerMode: 'none'},
+);
+
 const AppNavigator = createDrawerNavigator(
   {
     HomeScreen: {
-      screen: HomeScreen,
+      screen: Home,
       navigationOptions: {
         drawerIcon: ({tintColor}) => (
           <Icon name="home" size={24} style={{color: tintColor}} />

@@ -18,39 +18,41 @@ import {
   Title,
 } from 'native-base';
 
+import { getNotifications } from '../../helpers/sql_helper';
+
 export class Notifications extends Component {
-  state = {
-    data: [],
-    active: [
-      {
-        id: 1,
-        title: 'sunt aut facere repellat',
-        body:
-          'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto',
-      },
-      {
-        id: 2,
-        title: 'qui est esse',
-        body:
-          'est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla',
-      },
-    ],
-    unRead: [
-      {
-        id: 3,
-        title:
-          'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
-        body:
-          'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto',
-      },
-      {
-        id: 4,
-        title: 'qui est esse',
-        body:
-          'est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla',
-      },
-    ],
-  };
+  constructor(props) {
+      super(props);
+      this.state = {
+      data: [],
+      unread: [],
+      read: [],
+      isloading: false,
+    };
+  }
+
+  enterHandler = () => {
+    getNotifications(0).then(unread => {
+      getNotifications(1).then(read => {
+        this.setState({unread: unread, read: read })
+      })
+    })
+  }
+
+  componentDidMount() {
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      try {
+        this.enterHandler();
+      } catch (err) {
+        this.enterHandler();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
 
   render() {
     return (
@@ -66,22 +68,22 @@ export class Notifications extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Notifications</Title>
+            <Title>{global.translate('TITLE_NOTIFICATIONS')}</Title>
           </Body>
           <Right />
         </Header>
 
         {/* Tabs */}
         <Tabs hasTabs>
-          <Tab heading={global.translate('TITLE_ACTIVE')}>
+          <Tab heading={global.translate('TITLE_UNREAD')}>
             <NotificationsTab
-              tab_data={this.state.active}
+              tab_data={this.state.unread}
               navigation={this.props.navigation}
             />
           </Tab>
-          <Tab heading="Leídas">
+          <Tab heading={global.translate('TITLE_READ')}>
             <NotificationsTab
-              tab_data={this.state.unRead}
+              tab_data={this.state.read}
               navigation={this.props.navigation}
             />
           </Tab>
