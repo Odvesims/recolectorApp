@@ -1,6 +1,5 @@
 import React from 'react';
 import {Platform} from 'react-native';
-import Sockets from 'react-native-sockets';
 
 export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   let returnObject = {};
@@ -141,18 +140,4 @@ export async function dataOperation(apiOption, theData) {
     };
   }
   return returnObject;
-}
-
-export function socketConnection(option, sent_string){
-  config={
-    address: "192.168.1.1", //ip address of server
-    port: 8080, //port of socket server
-    timeout: 5000, // OPTIONAL (default 60000ms): timeout for response
-    reconnect:true, //OPTIONAL (default false): auto-reconnect on lost server
-    reconnectDelay:500, //OPTIONAL (default 500ms): how often to try to auto-reconnect
-    maxReconnectAttempts:10, //OPTIONAL (default infinity): how many time to attemp to auto-reconnect
-
-  }
-  Sockets.startClient(config);
-  Sockets.write(sent_string);
 }

@@ -1,33 +1,35 @@
-import CustomTextInput from './TextInput';
-import NavigationHeader from './NavigationHeader';
-import CustomButton from './CustomButton';
-import BoldLargeText from './BoldLargeText';
-import ButtonGroup from './ButtonGroup';
 // import ContentCustom from './ContentCustom';
-import NormalText from './NormalText';
 import AddButton from './AddButton';
-import SearchBar from './SearchBar';
-import FetchingData from './FetchingData';
+import BoldLargeText from './BoldLargeText';
 import ButtonDone from './ButtonDone';
-import CustomPicker from './CustomPicker';
-import InputLogin from './forms/InputLogin';
-import ToastMessage from './ToastMessage';
+import ButtonGroup from './ButtonGroup';
 import ContentLoader from './ContentLoader';
+import CustomButton from './CustomButton';
+import CustomPicker from './CustomPicker';
+import CustomTextInput from './TextInput';
+import FetchingData from './FetchingData';
+import InputLogin from './forms/InputLogin';
+import NavigationHeader from './NavigationHeader';
+import NormalText from './NormalText';
+import SearchBar from './SearchBar';
+import ToastMessage from './ToastMessage';
+import withBadge from './withBadge';
 
 export {
-  CustomTextInput,
+  //   ContentCustom,
+  AddButton,
+  BoldLargeText,
+  ButtonDone,
+  ButtonGroup,
   ContentLoader,
-  ToastMessage,
+  CustomButton,
+  CustomPicker,
+  CustomTextInput,
+  FetchingData,
   InputLogin,
   NavigationHeader,
-  CustomButton,
-  AddButton,
-  SearchBar,
-  FetchingData,
-  BoldLargeText,
-  ButtonGroup,
-  ButtonDone,
-  CustomPicker,
-  //   ContentCustom,
   NormalText,
+  SearchBar,
+  ToastMessage,
+  withBadge,
 };
