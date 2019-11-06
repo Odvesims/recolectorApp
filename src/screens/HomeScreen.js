@@ -38,6 +38,7 @@ import {
   clearRoutesCab,
   clearRoutesDetails,
   saveNotifications,
+  getNotifications,
 } from '../helpers/sql_helper';
 
 import {getData, dataOperation} from '../helpers/apiconnection_helper';
@@ -51,11 +52,17 @@ import {
 export default class Home extends Component {
   constructor(props) {
     super(props);
+    getNotifications(0).then(n => {
+      if(n.length == 0){
+        this.setState({notifications: '0'});
+      } else{
+        this.setState({notifications: n.length})
+      }
+    });
     this.state = {
       loading: false,
       modalVisible: false,
       new_notifications: false,
-      notifications: '0',
     };
   }
 
@@ -68,7 +75,7 @@ export default class Home extends Component {
         params.first_login = false;
        this.refreshHandler();
       }
-    }
+    };
     this.searchForNotifications();
   }
 
@@ -82,6 +89,14 @@ export default class Home extends Component {
               this.setState({new_notifications: true, notifications: count})
             } else{
               this.setState({new_notifications: true, notifications: '0'})              
+            }
+          })
+        } else{
+          getNotifications(0).then(n => {
+            if(n.length == 0){
+              this.setState({notifications: '0'});
+            } else{
+              this.setState({notifications: n.length})
             }
           })
         }
@@ -257,7 +272,7 @@ export default class Home extends Component {
               <Icon name="print" />
             </Button>
             <Button transparent onPress={()=>{this.props.navigation.navigate('Notifications')}}>         
-              <BadgedIcon name="notifications" />
+              <BadgedIcon containerStyle={{width:'30px'}} name="notifications" />
             </Button>
           </Right>
         </Header>
@@ -296,5 +311,12 @@ const styles = StyleSheet.create({
         //paddingTop: StatusBar.currentHeight
       },
     }),
+  },
+  badge: {
+    flex:1,
+    height: 18,
+    minWidth: 0,
+    width: 18,    
+    fontSize: 5,
   },
 });

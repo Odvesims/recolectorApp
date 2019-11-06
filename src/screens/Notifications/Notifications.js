@@ -18,26 +18,35 @@ import {
   Title,
 } from 'native-base';
 
-import { getNotifications } from '../../helpers/sql_helper';
+import {getNotifications} from '../../helpers/sql_helper';
 
 export class Notifications extends Component {
   constructor(props) {
-      super(props);
-      this.state = {
+    super(props);
+    this.state = {
       data: [],
       unread: [],
       read: [],
-      isloading: false,
+      loading: true,
     };
   }
 
+  // isLoading = value => {
+  //   this.setState({
+  //     loading: value,
+  //   });
+  // };
+
   enterHandler = () => {
+    setTimeout(() => {
+      this.setState({loading: false});
+    }, 5000);
     getNotifications(0).then(unread => {
       getNotifications(1).then(read => {
-        this.setState({unread: unread, read: read })
-      })
-    })
-  }
+        this.setState({unread: unread, read: read, loading: false});
+      });
+    });
+  };
 
   componentDidMount() {
     const {navigation} = this.props;
@@ -77,12 +86,14 @@ export class Notifications extends Component {
         <Tabs hasTabs>
           <Tab heading={global.translate('TITLE_UNREAD')}>
             <NotificationsTab
+              loading={this.state.loading}
               tab_data={this.state.unread}
               navigation={this.props.navigation}
             />
           </Tab>
           <Tab heading={global.translate('TITLE_READ')}>
             <NotificationsTab
+              loading={this.state.loading}
               tab_data={this.state.read}
               navigation={this.props.navigation}
             />

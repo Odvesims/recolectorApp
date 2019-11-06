@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     position: "absolute"
   },
   badgeText: {
-    fontSize: 10,
+    fontSize: 5,
     paddingHorizontal: 0
   }
 });

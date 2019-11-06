@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, FlatList, Alert} from 'react-native';
+import {ContentLoader} from '../../../components';
 import {
   List,
   Container,
@@ -10,31 +11,31 @@ import {
   Thumbnail,
   ListItem,
 } from 'native-base';
+import {updateNotificationStatus} from '../../../helpers/sql_helper';
 
 export class NotificationsTab extends Component {
-  state = {
-    data: [],
-    loading: false,
-  };
-
-
-  showAlert(title, body){
-    Alert.alert(
-      global.translate(title),
-      body,
-      [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-      {cancelable: false},
-    );
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: this.props.tab_data,
+    };
   }
 
-  alert = () => {
-    this.showAlert(title, body)
-  };
+  showAlert(id, title, body) {
+    Alert.alert(global.translate(title), body, [{text: 'OK'}], {
+      cancelable: false,
+    });
+    updateNotificationStatus(1, id);
+    const filteredData = this.state.data.filter(item => item.id !== id);
+    this.setState({ data: filteredData });
+  }
 
   renderItem = ({item}) => {
-    console.log(item);
     return (
-      <ListItem onPress={() => {this.showAlert(item.title, item.body)}}>
+      <ListItem
+        onPress={() => {
+          this.showAlert(item.id, item.title, item.body);
+        }}>
         <Body>
           <Text>{global.translate(item.title)}</Text>
           <Text numberOfLines={1} note>
@@ -48,12 +49,16 @@ export class NotificationsTab extends Component {
   render() {
     // let content = '';
 
-    const {loading} = this.state;
-    const {tab_data} = this.props;
-    console.log(tab_data);
+    const {tab_data, loading} = this.props;
+    console.log(loading);
 
     // if (!loading) {
-    let content = <List dataArray={tab_data} renderItem={this.renderItem} />;
+    let content = <ContentLoader />;
+
+    if (!loading) {
+      content = <List dataArray={this.state.data} renderItem={this.renderItem} />;
+    }
+
     // }
 
     return (

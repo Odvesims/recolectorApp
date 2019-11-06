@@ -233,7 +233,7 @@ export function saveUserData(userData) {
 export function saveNotifications(notifications) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('DELETE FROM notifications', [], (tx, results) => {});
+      //tx.executeSql('DELETE FROM notifications', [], (tx, results) => {});
     });
     db.transaction(tx => {
       notifications.map(notification => {
@@ -1001,6 +1001,7 @@ export function getNotifications(status) {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let notificationObject = {
+              id: row.id,
               title: row.title,
               body: row.body,
             };
@@ -1010,5 +1011,18 @@ export function getNotifications(status) {
         },
       );
     });
+  });
+}
+
+export function updateNotificationStatus(status, id) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `UPDATE notifications set read =${status} WHERE id = ${id}`,
+        [],
+        (tx, results) => {},
+      );
+    });
+    resolve(true);
   });
 }
