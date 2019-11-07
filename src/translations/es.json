@@ -126,13 +126,15 @@
   "TITLE_DISCARD": "Deshacer",
   "TITLE_MYROUTES": "Mis Rutas",
   "ALERT_REGISTERING_COLLECT": "Registrando recogida",
-  "TITLE_PRINT_ORDER":"Impresión de Recibo",
-  "TITLE_PRINT_ORDER_MESSAGE":"Esta orden contiene recolecciones y compras. Cómo desea imprimir el recibo?",
-  "TITLE_PRINT_SEPARATE":"Imprimir por separado",
-  "TITLE_PRINT_TOGETHER":"Imprimir junto",
-  "TITLE_NO_PRINT":"No Imprimir",
+  "TITLE_PRINT_ORDER": "Impresión de Recibo",
+  "TITLE_PRINT_ORDER_MESSAGE": "Esta orden contiene recolecciones y compras. Cómo desea imprimir el recibo?",
+  "TITLE_PRINT_SEPARATE": "Imprimir por separado",
+  "TITLE_PRINT_TOGETHER": "Imprimir junto",
+  "TITLE_NO_PRINT": "No Imprimir",
   "TITLE_NOTIFICATIONS": "Notificaciones",
   "TITLE_READ": "Leídas",
   "TITLE_UNREAD": "No Leídas",
-  "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Discrepancia en Cantidades"
+  "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Discrepancia en Cantidades",
+  "TITLE_CONFIRM_CLOSE": "Cerrar Orden",
+  "TITLE_CONFIRM_CLOSE_QUESTION": "Seguro que desea cerrar esta orden?"
 }

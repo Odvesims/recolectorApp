@@ -13,6 +13,8 @@ import {
   ScrollView,
   FlatList,
   CheckBox,
+  Alert,
+  TouchableHighlight,
 } from 'react-native';
 import {
   Header,
@@ -59,6 +61,33 @@ export default class Registry extends Component {
       employee_code: global.employee_code,
       close_order: checkItem,
     };
+    if(this.state.checkItem){      
+    Alert.alert(
+      global.translate("TITLE_CONFIRM_CLOSE"),
+      global.translate("TITLE_CONFIRM_CLOSE_QUESTION"),
+      [
+        {
+          text: global.translate("TITLE_NO"), 
+          onPress: () => {
+            alert.cancel     
+          }, 
+          style: 'cancel'
+        },
+        {
+          text: global.translate("TITLE_YES"),
+          onPress: () => {
+            this.storePickup;
+          },
+        },
+      ],
+      {cancelable: false},
+    )
+    } else{
+      this.storePickup;
+    }
+  };
+
+  storePickup = () => {    
     this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'})
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       alert(JSON.stringify(res));
@@ -72,7 +101,7 @@ export default class Registry extends Component {
         this.setState({loading: false});
       }
     });
-  };
+  }
 
   checkboxHandler = () => {
     this.setState({

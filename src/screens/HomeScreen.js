@@ -49,6 +49,7 @@ import {
   printText,
 } from '../helpers/bluetooth_helper';
 
+
 export default class Home extends Component {
   constructor(props) {
     super(props);
@@ -70,38 +71,41 @@ export default class Home extends Component {
     let {params} = this.props.navigation.state;
     global.config_from = 'HomeScreen';
     global.fromLogin = false;
+    this.notificationsInterval =   
+    setInterval(this.notificationsHandler, 10000);
     if(params.first_login !== undefined){
       if(params.first_login){
         params.first_login = false;
        this.refreshHandler();
       }
     };
-    this.searchForNotifications();
   }
 
-  searchForNotifications(){    
-    setInterval(() => {
-      getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
-        //alert(JSON.stringify(notifications));
-        if(notifications.valid){
-          saveNotifications(notifications.arrResponse).then(count=> {
-            if(count > 0){              
-              this.setState({new_notifications: true, notifications: count})
-            } else{
-              this.setState({new_notifications: true, notifications: '0'})              
-            }
-          })
-        } else{
-          getNotifications(0).then(n => {
-            if(n.length == 0){
-              this.setState({notifications: '0'});
-            } else{
-              this.setState({notifications: n.length})
-            }
-          })
-        }
-      });
-    }, 10000)
+  notificationsHandler() {
+    getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
+      //alert(JSON.stringify(notifications));
+      if(notifications.valid){
+        saveNotifications(notifications.arrResponse).then(count=> {
+          if(count > 0){              
+            this.setState({new_notifications: true, notifications: count})
+          } else{
+            this.setState({new_notifications: true, notifications: '0'})              
+          }
+        })
+      } else{
+        getNotifications(0).then(n => {
+          if(n.length == 0){
+            this.setState({notifications: '0'});
+          } else{
+            this.setState({notifications: n.length})
+          }
+        })
+      }
+    })
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.notificationsInterval);
   }
 
   setPrinter = () => {/*

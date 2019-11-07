@@ -1,4 +1,6 @@
 {
   "name": "AwesomeProject",
-  "displayName": "AwesomeProject"
+  "displayName": "AwesomeProject",
+  "TITLE_CONFIRM_CLOSE": "Close Order",
+  "TITLE_CONFIRM_CLOSE_QUESTION": "Are you sure you want to close this order?"
 }

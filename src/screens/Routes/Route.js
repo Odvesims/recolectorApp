@@ -59,8 +59,8 @@ export class Route extends Component {
       assigned_by: params.assigned_by,
       placeholder: params.employee_name,
       selected_item: {Name: params.employee_name, Code: params.assigned_to},
-      chosenDate: params.date_to,
-      chosenDate2: params.date_from,
+      chosenDate: params.date_from,
+      chosenDate2: params.date_to,
       disabled_date_from: params.disabled_date_from,
     };
     if (params.new_record === false) {
@@ -90,8 +90,8 @@ export class Route extends Component {
                 document_number: r.document_number,
                 assigned_by: r.assigned_by,
                 placeholder: r.employee_name,
-                chosenDate: r.date_to,
-                chosenDate2: r.date_from,
+                chosenDate: r.date_from,
+                chosenDate2: r.date_to,
               });
             });
           });
@@ -104,8 +104,6 @@ export class Route extends Component {
   }
 
   state = {};
-
-  setDate = this.setDate.bind(this);
 
   static navigationOptions = {
     header: null,
@@ -161,13 +159,13 @@ export class Route extends Component {
     this.focusListener.remove();
   }
 
-  setDate(newDate) {
+  setDate = newDate => {
     this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
-  }
+  };
 
-  setDate2(newDate) {
+  setDate2 = newDate => {
     this.setState({chosenDate2: moment(newDate).format('DD/MM/YYYY')});
-  }
+  };
 
   saveRoute = () => {
     //if (this.state.new_record) {
@@ -423,7 +421,6 @@ export class Route extends Component {
                     locale={'es'}
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
-                    value={this.state.date_to}
                     animationType={'fade'}
                     androidMode={'default'}
                     textStyle={{color: theme.colors.gray, fontSize: 14}}
