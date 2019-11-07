@@ -78,7 +78,7 @@ export class Assigned extends Component {
 
     return (
       <Content style={styles.content}>
-        <ScrollView>
+        {/* <ScrollView> */}
           <FlatList
             style={{overflow: 'hidden'}}
             data={this.props.tab_data}
@@ -87,7 +87,7 @@ export class Assigned extends Component {
             maxToRenderPerBatch={10}
             windowSize={10}
           />
-        </ScrollView>
+        {/* </ScrollView> */}
       </Content>
     );
   }

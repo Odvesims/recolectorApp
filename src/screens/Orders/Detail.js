@@ -52,7 +52,6 @@ export default class Detail extends Component {
       quantity: 1,
       placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
     };
-    this.selectedItem = this.selectedItem.bind(this);
     this.getArticlesData();
   }
 
@@ -185,7 +184,7 @@ export default class Detail extends Component {
     header: null,
   };
 
-  selectedItem(item) {
+  selectedItem = item => {
     this.setState({
       theItem: item,
       article: item.Name,
@@ -200,7 +199,7 @@ export default class Detail extends Component {
         line_id: item.Id,
       },
     });
-  }
+  };
 
   onPresHandler = () => {
     if (this.state.quantity) {

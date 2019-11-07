@@ -88,7 +88,6 @@ export default class ConfigScreen extends Component {
   };
 
   goBack = () => {
-    console.log(this.props.navigation.goBack());
     this.props.navigation.navigate(global.config_from);
   };
 

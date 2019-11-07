@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import {ButtonGroup} from 'react-native-elements';
 import styled from 'styled-components/native';
 import CustomPicker from '../../components/CustomPicker';
-import Detail from './Detail';
+// import Detail from './Detail';
 import {View, StyleSheet, FlatList, Modal, Alert} from 'react-native';
 import {
   Container,
@@ -11,18 +12,21 @@ import {
   Title,
   Body,
   Header,
-  Button,
   Icon,
   Text,
   Form,
   Root,
   Item,
+  Button,
   ActionSheet,
   Content,
   Tabs,
   Tab,
+  Segment,
 } from 'native-base';
 
+import Spinner from 'react-native-loading-spinner-overlay';
+import DetailsTab from './Tabs/DetailsTab';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {getStoredClients} from '../../helpers/sql_helper';
 import {dataOperation} from '../../helpers/apiconnection_helper';
@@ -31,10 +35,8 @@ import {
   enableBT,
   connectBluetooth,
 } from '../../helpers/bluetooth_helper';
-import Spinner from 'react-native-loading-spinner-overlay';
-import {ButtonGroup} from '../../components';
 
-class Order extends Component {
+export default class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,7 +45,7 @@ class Order extends Component {
       modalVisible: false,
       show: false,
       //
-      selectedIndex: 2,
+      selectedIndex: 0,
       categories: [],
       subcategories: [],
       articles: [],
@@ -51,6 +53,10 @@ class Order extends Component {
       article: '',
       article_price: '',
       quantity: 1,
+      //
+      picking: [],
+      shopping: [],
+      activePage: 1,
       //
       date: '',
       clients: [],
@@ -69,15 +75,17 @@ class Order extends Component {
       CANCEL_INDEX: 4,
     };
     this.arrData = [];
+    this.arrDataPicking = [];
+    this.arrDataShopping = [];
   }
 
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       try {
         let item = this.props.navigation.state.params.selItem;
-        if (item != undefined) {
+        if (item !== undefined) {
           this.arrData.push(item);
-          this.setState({data: this.arrData});
+          this.setState({picking: this.arrDataPicking});
         }
       } catch (err) {
         alert(err);
@@ -88,6 +96,25 @@ class Order extends Component {
   componentWillUnmount() {
     this.focusListener.remove();
   }
+
+  // Select
+  selectComponent = activePage => () => this.setState({activePage});
+  updateIndex = selectedIndex => {
+    this.setState({selectedIndex});
+  };
+  _renderComponent = () => {
+    const {picking, shopping, activePage} = this.state;
+
+    if (activePage === 0) {
+      return (
+        <DetailsTab tab_data={picking} navigation={this.props.navigation} />
+      );
+    } else {
+      return (
+        <DetailsTab tab_data={shopping} navigation={this.props.navigation} />
+      );
+    }
+  };
 
   getClientsHandler = () => {
     getStoredClients().then(clients => {
@@ -186,12 +213,8 @@ class Order extends Component {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <Text numberOfLines={1} style={styles.name}>
-            {item.description}
-          </Text>
-          <Text numberOfLines={1} style={styles.quantity}>
-            {item.quantity}
-          </Text>
+          <Name numberOfLines={1}>{item.description}</Name>
+          <Quantity numberOfLines={1}>{item.quantity}</Quantity>
         </View>
       </View>
       <Button
@@ -265,23 +288,21 @@ class Order extends Component {
           </Header>
 
           {/* Content */}
-          <View
-            style={{
-              flexDirection: 'column',
-              flex: 1,
-              backgroundColor: theme.colors.lightGray,
-            }}>
+          <DetailContent>
             <View>
-              <View style={styles.currentDate}>
+              {/* CurrentDate */}
+              <CurrentDate style={styles.currentDate}>
                 <Text style={styles.currentDateText}>
                   {global.translate('TITLE_DATE')}
                 </Text>
                 <Text style={({marginLeft: 4}, styles.currentDateText)}>
                   {`: ${this.props.navigation.state.params.date}`}
                 </Text>
-              </View>
+              </CurrentDate>
+
+              {/*ClientForm*/}
               <Form style={styles.container}>
-                <View>
+                <ClientForm>
                   <Text>{global.translate('TITLE_CLIENT')}</Text>
                   <CustomPicker
                     items={this.state.clients}
@@ -289,7 +310,7 @@ class Order extends Component {
                     selectedHolder={this.selectedItem.Name}
                     selectedItem={this.selectedItem}
                   />
-                </View>
+                </ClientForm>
                 {ClientInfo}
               </Form>
             </View>
@@ -301,42 +322,37 @@ class Order extends Component {
                     {global.translate('TITLE_DETAILS')}
                   </Text>
                 </View>
-                <ScrollView>
-                  <View>
-                    {/* Tabs */}
-                    <ButtonGroup
-                      onPress={this.updateIndex}
-                      selectedIndex={this.state.selectedIndex}
-                      buttons={buttons}
-                      containerStyle={{height: 40}}
-                    />
-                    <FlatList
-                      style={{overflow: 'hidden', marginBottom: 12}}
-                      data={data}
-                      keyExtractor={item => item.id}
-                      renderItem={this.renderItem}
-                    />
-                  </View>
-                  <TouchableOpacity
-                    style={styles.buttonGhost}
-                    onPress={() => {
-                      this.props.navigation.navigate('Detail');
-                    }}>
-                    <Icon name="add" style={{color: theme.colors.primary}} />
-                    <Text
-                      style={{
-                        marginLeft: 24,
-                        fontSize: theme.sizes.base,
-                        color: theme.colors.primary,
-                        textTransform: 'uppercase',
-                      }}>
-                      {global.translate('TITLE_DETAILS')}
-                    </Text>
-                  </TouchableOpacity>
-                </ScrollView>
+                {/* <ScrollView> */}
+                <View>
+                  {/* Tabs */}
+                  <ButtonGroup
+                    onPress={this.updateIndex}
+                    selectedIndex={this.state.selectedIndex}
+                    buttons={buttons}
+                    containerStyle={{height: 50}}
+                  />
+
+                  {this._renderComponent()}
+
+                  <FlatList
+                    style={{overflow: 'hidden', marginBottom: 12}}
+                    data={data}
+                    keyExtractor={item => item.id}
+                    renderItem={this.renderItem}
+                  />
+                </View>
+
+                <ButtonOutlined
+                  onPress={() => {
+                    this.props.navigation.navigate('Detail');
+                  }}>
+                  <Icon name="add" style={{color: theme.colors.primary}} />
+                  <TextButton>{global.translate('TITLE_DETAILS')}</TextButton>
+                </ButtonOutlined>
+                {/* </ScrollView> */}
               </View>
             </View>
-          </View>
+          </DetailContent>
         </Container>
       </Root>
     );
@@ -438,35 +454,67 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     backgroundColor: 'white',
   },
-
-  buttonGhost: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: theme.colors.primary,
-    borderWidth: 1,
-    paddingVertical: 12,
-    borderRadius: 4,
-    alignItems: 'center',
-  },
-
-  name: {
-    flexBasis: 150,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-    overflow: 'scroll',
-    flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-
-  quantity: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 14,
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-  },
 });
 
-export default Order;
+const ButtonOutlined = styled(TouchableOpacity)`
+  flex-direction: row;
+  justify-content: center;
+  border-style: solid;
+  border-color: ${theme.colors.primary};
+  border-width: 1;
+  padding-vertical: 12;
+  border-radius: 4;
+  align-items: center;
+`;
+const TextButton = styled.Text`
+  margin-left: 24;
+  font-size: ${theme.sizes.base};
+  color: ${theme.colors.primary};
+  text-transform: uppercase;
+`;
+const ClientForm = styled.View``;
+const Name = styled.Text`
+  flex-basis: 150;
+  font-size: 16;
+  color: black;
+  font-weight: bold;
+  overflow: scroll;
+  flex-grow: 2;
+  flex-wrap: nowrap;
+`;
+const Quantity = styled.Text`
+  flex-shrink: 10;
+  color: ${theme.colors.success};
+  font-size: 14;
+  font-weight: bold;
+  flex-wrap: nowrap;
+`;
+const CurrentDate = styled.View``;
+const DetailContent = styled.View`
+  flex-direction: column;
+  flex: 1;
+  background-color: ${theme.colors.lightGray};
+`;
+
+{
+  /* <Segment style={{backgroundColor: 'transparent'}}>
+                      <Button
+                        first
+                        active={this.state.activePage === 1}
+                        onPress={this.selectComponent(1)}
+                        style={{flex: 1, justifyContent: 'center'}}>
+                        <Text>Venta</Text>
+                      </Button>
+
+                      <Button
+                        last
+                        active={this.state.activePage === 2}
+                        onPress={this.selectComponent(2)}
+                        style={{
+                          flex: 1,
+                          justifyContent: 'center',
+                        }}>
+                        <Text>Compras</Text>
+                      </Button>
+                    </Segment> */
+}
