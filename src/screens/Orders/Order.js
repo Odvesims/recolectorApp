@@ -462,6 +462,7 @@ const ButtonOutlined = styled(TouchableOpacity)`
   border-color: ${theme.colors.primary};
   border-width: 1;
   padding-vertical: 12px;
+  margin-top: 12px;
   border-radius: 4px;
   align-items: center;
 `;

@@ -87,11 +87,13 @@ export default class Picking extends PureComponent {
     return new Promise((resolve, reject, hola) => {
       let arrSelect = [];
       select.map(item => {
+        console.log('hola');
+        console.log(item);
         arrSelect.push({
+          Id: item.line_id,
           Name: item.code + '- ' + item.description,
           Price: item.price,
           Type: `${symbol}`,
-          Id: item.line_id,
         });
       });
       resolve(arrSelect);
@@ -99,8 +101,8 @@ export default class Picking extends PureComponent {
   }
 
   updateIndex = selectedIndex => {
-    console.log(selectedIndex);
     const {articles, categories, subcategories} = this.state;
+    console.log(selectedIndex);
     switch (selectedIndex) {
       case 0:
         this.setArticleHandler(categories, 'C').then(res => {
@@ -108,9 +110,10 @@ export default class Picking extends PureComponent {
             selectedIndex,
             picker_data: res,
             theItem: {},
+            selectedItem: {Name: '', Code: ''},
             placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
             article_price: '',
-            type: `C`,
+            type: 'C',
             total: 0,
             quantity: '',
           });
@@ -124,7 +127,7 @@ export default class Picking extends PureComponent {
             theItem: {},
             placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
             article_price: '',
-            type: `S`,
+            type: 'S',
             total: 0,
             quantity: '',
           });
@@ -138,7 +141,7 @@ export default class Picking extends PureComponent {
             theItem: {},
             placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
             article_price: '',
-            type: `A`,
+            type: 'A',
             total: 0,
             quantity: '',
           });
@@ -153,13 +156,13 @@ export default class Picking extends PureComponent {
       this.setState({
         theItem: item,
         article: item.Name,
-        article_price: item.Code,
-        total: item.Code,
+        article_price: item.Price,
+        total: item.Price,
         placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
         selItem: {
           item: item.Name.split('-')[0],
           description: item.Name.split('-')[1],
-          price: item.Code,
+          price: item.Price,
           quantity: quantity,
           line_type: item.Type,
           line_id: item.Id,
@@ -170,8 +173,6 @@ export default class Picking extends PureComponent {
 
   onPressHandler = () => {
     if (this.state.quantity) {
-      console.log('Onpresshandler');
-      console.log(this.state.selItem);
       this.props.navigation.navigate('Order', {
         selItem: this.state.selItem,
       });
@@ -181,6 +182,8 @@ export default class Picking extends PureComponent {
   };
 
   render() {
+    console.log(this.state.picker_data);
+
     const buttons = [
       global.translate('TITLE_CATEGORY'),
       global.translate('TITLE_SUBCATEGORY'),
@@ -213,6 +216,7 @@ export default class Picking extends PureComponent {
             <Title>Articulos a Recoger</Title>
           </Body>
         </Header>
+
         {/* Content */}
         <Content style={styles.container}>
           <KeyboardAwareScrollView>
@@ -235,12 +239,12 @@ export default class Picking extends PureComponent {
                     justifyContent: 'space-between',
                   }}>
                   <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
-                  <View style={{flexDirection: 'row'}}>
-                    <Text style={{color: theme.colors.success}}>
+                  <Price>
+                    <PriceLabel>
                       {global.translate('TITLE_PRICE')}: $
-                    </Text>
-                    <Price> {article_price || '0'}</Price>
-                  </View>
+                    </PriceLabel>
+                    <PriceQuantity>{article_price || '0'}</PriceQuantity>
+                  </Price>
                 </View>
                 <CustomPicker
                   placeholder={placeholder}
@@ -266,6 +270,8 @@ export default class Picking extends PureComponent {
                 />
               </View>
             </Form>
+
+            {/* Total */}
             <View style={styles.totalPriceContainer}>
               <Text style={styles.totalPrice}>
                 {global.translate('TITLE_TOTAL')}: $ {total || 0}
@@ -273,6 +279,8 @@ export default class Picking extends PureComponent {
             </View>
           </KeyboardAwareScrollView>
         </Content>
+
+        {/* actionButton */}
         <ActionButton
           cancel={() => {
             navigation.goBack();
@@ -299,31 +307,8 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 
-  inputNumber: {
-    width: '25%',
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p8,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
   paddingBottom: {
     paddingBottom: theme.sizes.padding,
-  },
-
-  actionContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    left: 0,
-    flexBasis: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    backgroundColor: 'white',
   },
 
   totalPrice: {
@@ -343,8 +328,15 @@ const styles = StyleSheet.create({
   price: {},
 });
 
-const Price = styled.Text`
+const PriceQuantity = styled.Text`
   color: ${theme.colors.success};
   font-weight: bold;
   font-size: 16;
+`;
+
+const PriceLabel = styled.Text`
+  color: ${theme.colors.success};
+`;
+const Price = styled.Text`
+  flex-direction: row;
 `;
