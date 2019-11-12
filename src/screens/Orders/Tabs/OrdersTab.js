@@ -36,11 +36,9 @@ export class Assigned extends Component {
 
   componentDidMount() {}
 
-  render() {
-    const {data} = this.state;
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-
-    let renderItem = ({item}) => (
+  renderItem = ({item}) => {
+    const {BUTTONS, CANCEL_INDEX, DESTRUCTIVE_INDEX} = this.props;
+    return (
       <Item style={styles.list}>
         <View key={item.key} style={styles.listContainer}>
           <Text style={styles.code}>{item.document}</Text>
@@ -75,18 +73,23 @@ export class Assigned extends Component {
         </Button>
       </Item>
     );
+  };
+
+  render() {
+    const {data} = this.state;
+    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
     return (
       <Content style={styles.content}>
         {/* <ScrollView> */}
-          <FlatList
-            style={{overflow: 'hidden'}}
-            data={this.props.tab_data}
-            keyExtractor={item => item.id}
-            renderItem={renderItem}
-            maxToRenderPerBatch={10}
-            windowSize={10}
-          />
+        <FlatList
+          style={{overflow: 'hidden'}}
+          data={this.props.tab_data}
+          keyExtractor={item => item.id}
+          renderItem={this.renderItem}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+        />
         {/* </ScrollView> */}
       </Content>
     );

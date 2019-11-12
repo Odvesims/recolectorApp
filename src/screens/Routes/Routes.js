@@ -5,6 +5,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
 import {} from 'react-native-vector-icons';
+
 import {
   Text,
   View,
@@ -53,13 +54,6 @@ export default class Routes extends Component {
       data2: [],
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
       show: true,
-      BUTTONS: [
-        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-        {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-        {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
-      ],
-      DESTRUCTIVE_INDEX: 3,
-      CANCEL_INDEX: 4,
     };
   }
 

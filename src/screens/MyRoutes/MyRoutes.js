@@ -218,10 +218,9 @@ class Order extends Component {
         <FlatList
           ListEmptyComponent={this.listEmpty}
           keyboardShouldPersistTaps={'handled'}
-          // style={{overflow: 'hidden'}}
           data={active}
           extraData={this.state}
-          keyExtractor={item => item.id} //.toString()
+          keyExtractor={item => item.id} //
           renderItem={this.renderItem}
         />
       );

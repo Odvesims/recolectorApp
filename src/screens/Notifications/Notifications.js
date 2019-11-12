@@ -43,7 +43,7 @@ export class Notifications extends Component {
     }, 5000);
     getNotifications(0).then(unread => {
       getNotifications(1).then(read => {
-        this.setState({unread: unread, read: read});
+        this.setState({unread: unread, read: read, loading: false});
       });
     });
   };

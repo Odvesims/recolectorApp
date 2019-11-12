@@ -14,10 +14,12 @@ import NormalText from './NormalText';
 import SearchBar from './SearchBar';
 import ToastMessage from './ToastMessage';
 import withBadge from './withBadge';
+import ActionButton from './ActionButton';
 
 export {
   //   ContentCustom,
   AddButton,
+  ActionButton,
   BoldLargeText,
   ButtonDone,
   ButtonGroup,

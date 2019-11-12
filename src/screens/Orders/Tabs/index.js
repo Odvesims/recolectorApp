@@ -1,3 +1,4 @@
 import OrdersTab from './OrdersTab';
+import DetailsTab from './DetailsTab';
 
-export {OrdersTab};
+export {DetailsTab, OrdersTab};

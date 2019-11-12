@@ -131,7 +131,7 @@ export default class RouteDetail extends Component {
     console.log(data);
     return (
       <Root>
-        <Container>   
+        <Container>
           <Spinner
             visible={this.state.loading}
             textContent={global.translate(this.state.loadingMessage)}

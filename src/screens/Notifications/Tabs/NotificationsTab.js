@@ -11,23 +11,30 @@ import {
   Thumbnail,
   ListItem,
 } from 'native-base';
+import {updateNotificationStatus} from '../../../helpers/sql_helper';
 
 export class NotificationsTab extends Component {
-  state = {
-    data: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: this.props.tab_data,
+    };
+  }
 
-  showAlert(title, body) {
+  showAlert(id, title, body) {
     Alert.alert(global.translate(title), body, [{text: 'OK'}], {
       cancelable: false,
     });
+    updateNotificationStatus(1, id);
+    const filteredData = this.state.data.filter(item => item.id !== id);
+    this.setState({ data: filteredData });
   }
 
   renderItem = ({item}) => {
     return (
       <ListItem
         onPress={() => {
-          this.showAlert(item.title, item.body);
+          this.showAlert(item.id, item.title, item.body);
         }}>
         <Body>
           <Text>{global.translate(item.title)}</Text>
@@ -49,7 +56,7 @@ export class NotificationsTab extends Component {
     let content = <ContentLoader />;
 
     if (!loading) {
-      content = <List dataArray={tab_data} renderItem={this.renderItem} />;
+      content = <List dataArray={this.state.data} renderItem={this.renderItem} />;
     }
 
     // }

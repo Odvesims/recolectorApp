@@ -158,35 +158,8 @@ export default class Orders extends Component {
   };
 
   render() {
-    const {data} = this.state;
+    const {data, loading, not_assigned, assigned} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-
-    let renderItem = ({item}) => (
-      <Item style={styles.list}>
-        <View key={item.key} style={{marginLeft: 8}}>
-          <Text style={styles.name}>{item.client}</Text>
-          <Text style={styles.address}>{item.address}</Text>
-        </View>
-        <Button
-          transparent
-          style={styles.more}
-          onPress={() =>
-            ActionSheet.show(
-              {
-                options: BUTTONS,
-                cancelButtonIndex: CANCEL_INDEX,
-                destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: 'Opciones',
-              },
-              buttonIndex => {
-                this.setState({clicked: BUTTONS[buttonIndex]});
-              },
-            )
-          }>
-          <Icon style={{color: 'gray'}} name="more" />
-        </Button>
-      </Item>
-    );
 
     return (
       <Root>
@@ -208,24 +181,15 @@ export default class Orders extends Component {
               <Title>{global.translate('TITLE_ORDERS')}</Title>
             </Body>
             <Right>
-              <FetchingData
-                syncData={this.refreshHandler}
-                fetching={this.state.loading}
-              />
+              <FetchingData syncData={this.refreshHandler} fetching={loading} />
             </Right>
           </Header>
           <Tabs hasTabs>
             <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
-              <OrdersTab
-                tab_data={this.state.not_assigned}
-                ref={this.availableTab}
-              />
+              <OrdersTab tab_data={not_assigned} ref={this.availableTab} />
             </Tab>
             <Tab heading={global.translate('TITLE_ASSIGNED')}>
-              <OrdersTab
-                tab_data={this.state.assigned}
-                ref={this.notAvailableTab}
-              />
+              <OrdersTab tab_data={assigned} ref={this.notAvailableTab} />
             </Tab>
           </Tabs>
           <Fab

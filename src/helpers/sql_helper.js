@@ -239,19 +239,19 @@ export function saveNotifications(notifications) {
       notifications.map(notification => {
         tx.executeSql(
           'INSERT INTO notifications(title, body, read) VALUES (?, ?, ?)',
-          [
-            notification.title,
-            notification.body,
-            false,
-          ],
+          [notification.title, notification.body, false],
           (tx, results) => {},
-        )
-      })
+        );
+      });
     });
     db.transaction(tx => {
-      tx.executeSql(`SELECT * FROM notifications where read = 0;`, [], (tx, results) => {
-        resolve(JSON.stringify(results.rows.length));
-      });
+      tx.executeSql(
+        `SELECT * FROM notifications where read = 0;`,
+        [],
+        (tx, results) => {
+          resolve(JSON.stringify(results.rows.length));
+        },
+      );
     });
   });
 }
@@ -839,8 +839,9 @@ export function getStoredCategories() {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let categoryObject = {
-              category_code: row.category_code,
+              code: row.category_code,
               description: row.description,
+              line_id: row.category_id,
               price: row.price,
             };
             arrCategories.push(categoryObject);
@@ -864,7 +865,8 @@ export function getStoredSubcategories() {
             let row = results.rows.item(i);
             let subcategoryObject = {
               category_id: row.category_id,
-              subcategory_code: row.subcategory_code,
+              line_id: row.subcategory_id,
+              code: row.subcategory_code,
               description: row.description,
               price: row.price,
             };
@@ -890,7 +892,8 @@ export function getStoredArticles() {
             let articleObject = {
               category_id: row.category_id,
               subcategory_id: row.subcategory_id,
-              article_code: row.article_code,
+              line_id: row.article_id,
+              code: row.article_code,
               description: row.description,
               price: row.price,
             };

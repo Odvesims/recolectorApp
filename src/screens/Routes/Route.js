@@ -47,6 +47,7 @@ export class Route extends Component {
       employee: '',
       data: [],
       clear_data: [],
+      //
       loading: !params.new_record,
       loadingMessage: 'ALERT_GETTING_ROUTE',
       new_record: params.new_record,
@@ -57,8 +58,8 @@ export class Route extends Component {
       assigned_by: params.assigned_by,
       placeholder: params.employee_name,
       selected_item: {Name: params.employee_name, Code: params.assigned_to},
-      chosenDate: params.date_to,
-      chosenDate2: params.date_from,
+      chosenDate: params.date_from,
+      chosenDate2: params.date_to,
       disabled_date_from: params.disabled_date_from,
     };
 
@@ -89,8 +90,8 @@ export class Route extends Component {
                 document_number: r.document_number,
                 assigned_by: r.assigned_by,
                 placeholder: r.employee_name,
-                chosenDate: r.date_to,
-                chosenDate2: r.date_from,
+                chosenDate: r.date_from,
+                chosenDate2: r.date_to,
               });
             });
           });
@@ -101,14 +102,6 @@ export class Route extends Component {
     this.getEmployeesHandler();
     this.updateDataState = this.updateDataState.bind(this);
   }
-
-  state = {};
-
-  setDate = this.setDate.bind(this);
-
-  static navigationOptions = {
-    header: null,
-  };
 
   cleanArr(orders) {
     return new Promise((resolve, reject) => {
@@ -160,15 +153,16 @@ export class Route extends Component {
     this.focusListener.remove();
   }
 
-  setDate(newDate) {
+  setDate = newDate => {
     this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
-  }
+  };
 
-  setDate2(newDate) {
+  setDate2 = newDate => {
     this.setState({chosenDate2: moment(newDate).format('DD/MM/YYYY')});
-  }
+  };
 
   saveRoute = () => {
+    //if (this.state.new_record) {
     let {
       route_description,
       chosenDate,
@@ -177,8 +171,10 @@ export class Route extends Component {
       clear_data,
       document_number,
     } = this.state;
+
     if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
       let ordersArr = [];
+
       clear_data.map(order => {
         let orderObject = {
           code: order.order_document.split('-')[1],
@@ -186,6 +182,7 @@ export class Route extends Component {
         };
         ordersArr.push(orderObject);
       });
+
       let order_data = {
         document_number: document_number,
         setma_id: global.setma_id,
@@ -197,10 +194,12 @@ export class Route extends Component {
         route_state: 'A',
         orders_list: ordersArr,
       };
+
       this.setState({
         loading: true,
         loadingMessage: this.props.navigation.state.params.loading_message,
       });
+
       dataOperation('ROUTE_OPERATION', order_data).then(res => {
         if (res.valid) {
           updateOrderAssigned(ordersArr).then(up => {
@@ -245,9 +244,6 @@ export class Route extends Component {
   };
 
   updateList = list => {
-    if (this.state.reverted) {
-      //list = this.state.data;
-    }
     this.setState({
       data: list,
       clear_data: list,
@@ -325,7 +321,7 @@ export class Route extends Component {
                 style={{alignSelf: 'flex-end', marginRight: 12}}>
                 <Icon name="trash" style={{color: 'white'}} />
                 <Text style={{color: 'white', fontFamily: 'Roboto-Medium'}}>
-                  Eliminado
+                  {global.translate('TITLE_DELETED')}
                 </Text>
               </Button>
             </View>
@@ -424,7 +420,6 @@ export class Route extends Component {
                     locale={'es'}
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
-                    value={this.state.date_to}
                     animationType={'fade'}
                     androidMode={'default'}
                     textStyle={{color: theme.colors.gray, fontSize: 14}}
@@ -451,21 +446,13 @@ export class Route extends Component {
               </View>
             </Form>
           </View>
+          <ScrollView style={{marginBottom: 24}}>
+            {/* FLATLIST */}
+            {orderList}
+          </ScrollView>
 
           <View style={styles.addPoint}>
-            <ScrollView style={{marginBottom: 24}}>
-              {/* FLATLIST */}
-              <Text
-                style={{
-                  fontSize: 14,
-                  textTransform: 'uppercase',
-                  color: '#7D7D7D',
-                }}>
-                Ordenes
-              </Text>
-              {orderList}
-              {/* FLATLIST */}
-            </ScrollView>
+            <View>{}</View>
             <TouchableOpacity
               style={styles.buttonGhost}
               onPress={() => {
@@ -475,7 +462,13 @@ export class Route extends Component {
                 });
               }}>
               <Icon name="add" style={{color: theme.colors.primary}} />
-              <Text style={styles.orderButton}>
+              <Text
+                style={{
+                  marginLeft: 12,
+                  fontSize: theme.sizes.base,
+                  color: theme.colors.primary,
+                  textTransform: 'uppercase',
+                }}>
                 {global.translate('TITLE_ORDER')}
               </Text>
             </TouchableOpacity>
@@ -505,13 +498,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 32,
-  },
-
-  orderButton: {
-    marginLeft: 12,
-    fontSize: theme.sizes.base,
-    color: theme.colors.primary,
-    textTransform: 'uppercase',
   },
 
   button: {
@@ -558,7 +544,7 @@ const styles = StyleSheet.create({
   },
 
   addPoint: {
-    padding: theme.sizes.p12,
+    padding: theme.sizes.padding,
     backgroundColor: theme.colors.lightGray,
   },
 
@@ -582,10 +568,7 @@ const styles = StyleSheet.create({
   hiddenList: {
     margin: 5,
     backgroundColor: '#c3000d',
-    alignContent: 'center',
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    height: 80,
     elevation: 1,
   },
 
@@ -637,7 +620,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexWrap: 'nowrap',
   },
-
   leftSwipeItem: {
     flex: 1,
     marginTop: 5,
@@ -649,7 +631,6 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     backgroundColor: '#c3000d',
   },
-
   rightSwipeItem: {
     flex: 1,
     justifyContent: 'center',

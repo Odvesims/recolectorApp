@@ -3,8 +3,16 @@ import {theme} from '../../constants';
 import {ButtonGroup} from 'react-native-elements';
 import styled from 'styled-components/native';
 import CustomPicker from '../../components/CustomPicker';
-// import Detail from './Detail';
-import {View, StyleSheet, FlatList, Modal, Alert} from 'react-native';
+import {SwipeListView} from 'react-native-swipe-list-view';
+import Detail from './Detail';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Modal,
+  Alert,
+  TouchableHighlight,
+} from 'react-native';
 import {
   Container,
   Left,
@@ -26,9 +34,9 @@ import {
 } from 'native-base';
 
 import Spinner from 'react-native-loading-spinner-overlay';
-import DetailsTab from './Tabs/DetailsTab';
+import {DetailsTab} from './Tabs';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {getStoredClients} from '../../helpers/sql_helper';
+import {getStoredClients, getStoredEmployees} from '../../helpers/sql_helper';
 import {dataOperation} from '../../helpers/apiconnection_helper';
 import {
   printText,
@@ -46,26 +54,21 @@ export default class Order extends Component {
       show: false,
       //
       selectedIndex: 0,
-      categories: [],
-      subcategories: [],
-      articles: [],
-      picker_data: [],
-      article: '',
-      article_price: '',
       quantity: 1,
       //
       picking: [],
       shopping: [],
-      activePage: 1,
       //
       date: '',
       clients: [],
+      employees: [],
       client: '',
       client_address: '',
       client_city: '',
       client_state: '',
       client_phone: '',
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+      placeholderEmployee: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
         {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -77,6 +80,9 @@ export default class Order extends Component {
     this.arrData = [];
     this.arrDataPicking = [];
     this.arrDataShopping = [];
+
+    this.getClientsHandler();
+    this.getEmployeesHandler();
   }
 
   componentDidMount() {
@@ -84,28 +90,39 @@ export default class Order extends Component {
       try {
         let item = this.props.navigation.state.params.selItem;
         if (item !== undefined) {
-          this.arrData.push(item);
-          this.setState({picking: this.arrDataPicking});
+          this.setState({data: this.arrData});
+          let {selectedIndex} = this.state;
+          if (selectedIndex === 0) {
+            this.arrDataPicking.push(item);
+            this.setState({
+              picking: this.arrDataPicking,
+            });
+          } else {
+            this.arrData.push(item);
+            this.arrDataShopping.push(item);
+            this.setState({
+              data: this.arrData,
+              shopping: this.arrDataShopping,
+            });
+          }
         }
       } catch (err) {
         alert(err);
       }
     });
   }
-
   componentWillUnmount() {
     this.focusListener.remove();
   }
 
   // Select
-  selectComponent = activePage => () => this.setState({activePage});
   updateIndex = selectedIndex => {
     this.setState({selectedIndex});
   };
-  _renderComponent = () => {
-    const {picking, shopping, activePage} = this.state;
+  _renderDetails = item => {
+    const {picking, shopping, selectedIndex} = this.state;
 
-    if (activePage === 0) {
+    if (item === 0) {
       return (
         <DetailsTab tab_data={picking} navigation={this.props.navigation} />
       );
@@ -116,19 +133,12 @@ export default class Order extends Component {
     }
   };
 
-  getClientsHandler = () => {
-    getStoredClients().then(clients => {
-      this.setClientsPicker(clients).then(res => {
-        this.setState({clients: res});
-      });
-    });
-  };
-
   execOperation = () => {
     let order_data = {
       setma_id: global.setma_id,
       client_code: this.state.client.split('-')[0],
       supervisor_code: global.employee_code,
+      employee_code: this.state.selected_item.Code,
       order_state: 'A',
       order_completed: false,
       order_details: this.state.data,
@@ -156,6 +166,8 @@ export default class Order extends Component {
           client_phone: '',
           placeholder: '',
           selectedItem: [],
+          selectedClient: [],
+          selected: [],
           data: [],
           loading: false,
         });
@@ -165,11 +177,36 @@ export default class Order extends Component {
     });
   };
 
+  getClientsHandler() {
+    getStoredClients().then(clients => {
+      this.setClientsPicker(clients).then(res => {
+        this.setState({clients: res});
+      });
+    });
+  }
+
+  getEmployeesHandler() {
+    getStoredEmployees().then(employees => {
+      this.setEmployeesPicker(employees).then(res => {
+        this.setState({employees: res});
+      });
+    });
+  }
+
+  onPressDetailHandler = () => {
+    let {navigate} = this.props.navigation;
+    let {selectedIndex} = this.state;
+    if (selectedIndex === 0) {
+      navigate('Picking');
+    } else {
+      navigate('Shopping');
+    }
+  };
+
   setClientsPicker(clients) {
     return new Promise((resolve, reject) => {
       let arrClients = [];
-      for (let i = 0; i < clients.length; ++i) {
-        let client = clients[i];
+      clients.map(client => {
         arrClients.push({
           Name: client.client_code + '- ' + client.name,
           Code: client.client_code,
@@ -178,8 +215,22 @@ export default class Order extends Component {
           State: client.state,
           Phone: client.phone_number,
         });
-      }
+      });
       resolve(arrClients);
+    });
+  }
+
+  setEmployeesPicker(employees) {
+    return new Promise((resolve, reject) => {
+      let arrEmployees = [];
+      employees.map(employee => {
+        arrEmployees.push({
+          Name: employee.employee_code + '- ' + employee.name,
+          Code: employee.employee_code,
+          Phone: employee.phone_number,
+        });
+      });
+      resolve(arrEmployees);
     });
   }
 
@@ -187,75 +238,69 @@ export default class Order extends Component {
     this.setState({modalVisible: visible});
   }
 
-  selectedItem = item => {
+  markForDelete = swipeData => {
+    const {key, value} = swipeData;
+    if (value < -375) {
+      alert(key);
+      const filteredData = this.state.data.filter(item => item.id !== key);
+      this.updateList(filteredData);
+    }
+  };
+
+  selectedClient = item => {
     this.setState({
-      theItem: item,
-      article: item.Name,
-      article_price: item.Code,
-      total: item.Code * this.state.quantity,
-      selItem: {
-        item: item.Name.split('-')[0],
-        description: item.Name.split('-')[1],
-        price: item.Code,
-        quantity: this.state.quantity,
-        line_type: item.Type,
-        line_id: item.Id,
-      },
+      client: item.Name,
+      client_address: item.Address,
+      client_city: item.City,
+      client_state: item.State,
+      client_phone: item.Phone,
     });
   };
 
-  renderItem = ({item}) => (
-    <Item style={styles.list}>
-      <View key={item.key} style={styles.listContainer}>
-        <View
-          key={item.key}
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          <Name numberOfLines={1}>{item.description}</Name>
-          <Quantity numberOfLines={1}>{item.quantity}</Quantity>
-        </View>
-      </View>
-      <Button
-        transparent
-        style={styles.more}
-        onPress={() =>
-          ActionSheet.show(
-            {
-              options: BUTTONS,
-              cancelButtonIndex: CANCEL_INDEX,
-              destructiveButtonIndex: DESTRUCTIVE_INDEX,
-              title: 'Opciones',
-            },
-            buttonIndex => {
-              this.setState({clicked: BUTTONS[buttonIndex]});
-            },
-          )
-        }>
-        <Icon style={{color: 'gray'}} name="more" />
-      </Button>
-    </Item>
-  );
+  selectedEmployee = item => {
+    this.setState({
+      selected_item: item,
+    });
+  };
+
+  updateList = list => {
+    this.setState({
+      data: list,
+      clear_data: list,
+      reverted: false,
+    });
+  };
 
   render() {
     let ClientInfo = null;
-    const {client} = this.state;
+    const {
+      client,
+      selectedIndex,
+      client_address,
+      client_city,
+      client_state,
+      client_phone,
+    } = this.state;
     const buttons = ['Recolección', 'Compras']; //global.translate('TITLE_CATEGORY')];
 
-    if (!client === '') {
+    if (client) {
       ClientInfo = (
-        <View>
-          <Text style={styles.client_data}>{this.state.client_address}</Text>
-          <Text style={styles.client_data}>{this.state.client_city}</Text>
-          <Text style={styles.client_data}>{this.state.client_state}</Text>
-          <Text style={styles.client_data}>{this.state.client_phone}</Text>
+        <View
+          style={{
+            backgroundColor: theme.colors.lightGreen,
+            borderColor: 'green',
+            borderWidth: 1,
+            borderRadius: 2,
+            paddingHorizontal: 8,
+            paddingVertical: 12,
+          }}>
+          <Text style={styles.client_data}>{client_address}</Text>
+          <Text style={styles.client_data}>{client_city}</Text>
+          <Text style={styles.client_data}>{client_state}</Text>
+          <Text style={styles.client_data}>{client_phone}</Text>
         </View>
       );
     }
-
-    const {modalVisible, data} = this.state;
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
     return (
       <Root>
@@ -286,71 +331,83 @@ export default class Order extends Component {
               </Button>
             </Right>
           </Header>
-
           {/* Content */}
           <DetailContent>
-            <View>
-              {/* CurrentDate */}
-              <CurrentDate style={styles.currentDate}>
-                <Text style={styles.currentDateText}>
-                  {global.translate('TITLE_DATE')}
-                </Text>
-                <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                  {`: ${this.props.navigation.state.params.date}`}
-                </Text>
-              </CurrentDate>
-
-              {/*ClientForm*/}
-              <Form style={styles.container}>
-                <ClientForm>
-                  <Text>{global.translate('TITLE_CLIENT')}</Text>
-                  <CustomPicker
-                    items={this.state.clients}
-                    placeholder={this.state.placeholder}
-                    selectedHolder={this.selectedItem.Name}
-                    selectedItem={this.selectedItem}
-                  />
-                </ClientForm>
-                {ClientInfo}
-              </Form>
-            </View>
-            {/* Details */}
-            <View style={{flex: 1}}>
-              <View style={styles.addPoint}>
-                <View style={{paddingBottom: 8}}>
-                  <Text style={styles.detailText}>
-                    {global.translate('TITLE_DETAILS')}
-                  </Text>
-                </View>
-                {/* <ScrollView> */}
+            <View
+              style={{
+                flexDirection: 'column',
+                flex: 1,
+                backgroundColor: theme.colors.lightGray,
+              }}>
+              <ScrollView>
                 <View>
-                  {/* Tabs */}
-                  <ButtonGroup
-                    onPress={this.updateIndex}
-                    selectedIndex={this.state.selectedIndex}
-                    buttons={buttons}
-                    containerStyle={{height: 50}}
-                  />
+                  {/* CurrentDate */}
+                  <CurrentDate>
+                    <Text style={styles.currentDateText}>
+                      {global.translate('TITLE_DATE')}
+                    </Text>
+                    <Text style={({marginLeft: 4}, styles.currentDateText)}>
+                      {`: ${this.props.navigation.state.params.date}`}
+                    </Text>
+                  </CurrentDate>
 
-                  {this._renderComponent()}
+                  {/*ClientForm*/}
+                  <Form style={styles.container}>
+                    <ClientForm style={{paddingBottom: 12}}>
+                      <Text>{global.translate('TITLE_CLIENT')}</Text>
+                      <CustomPicker
+                        items={this.state.clients}
+                        placeholder={this.state.placeholder}
+                        selectedHolder={this.selectedClient.Name}
+                        selectedItem={this.selectedClient}
+                      />
+                      {ClientInfo}
+                    </ClientForm>
 
-                  <FlatList
-                    style={{overflow: 'hidden', marginBottom: 12}}
-                    data={data}
-                    keyExtractor={item => item.id}
-                    renderItem={this.renderItem}
-                  />
+                    <ClientForm>
+                      <Text>{global.translate('TITLE_COLLECTOR')}</Text>
+                      <CustomPicker
+                        items={this.state.employees}
+                        placeholder={this.state.placeholderEmployee}
+                        selectedItem={this.selectedEmployee}
+                        disabled={this.state.disabled_date_from}
+                      />
+                    </ClientForm>
+                  </Form>
                 </View>
 
-                <ButtonOutlined
-                  onPress={() => {
-                    this.props.navigation.navigate('Detail');
-                  }}>
-                  <Icon name="add" style={{color: theme.colors.primary}} />
-                  <TextButton>{global.translate('TITLE_DETAILS')}</TextButton>
-                </ButtonOutlined>
-                {/* </ScrollView> */}
-              </View>
+                {/* Details */}
+                <View style={{flex: 1}}>
+                  <View style={styles.addPoint}>
+                    <View style={{paddingBottom: 8}}>
+                      <Text style={styles.detailText}>
+                        {global.translate('TITLE_DETAILS')}
+                      </Text>
+                    </View>
+                    {/* <ScrollView> */}
+
+                    <View>
+                      {/* Tabs */}
+                      <ButtonGroup
+                        onPress={this.updateIndex}
+                        selectedIndex={this.state.selectedIndex}
+                        buttons={buttons}
+                        containerStyle={{height: 50}}
+                      />
+                      <ScrollView>
+                        {this._renderDetails(selectedIndex)}
+                      </ScrollView>
+                    </View>
+                    <ButtonOutlined onPress={this.onPressDetailHandler}>
+                      <Icon name="add" style={{color: theme.colors.primary}} />
+                      <TextButton>
+                        {global.translate('TITLE_DETAILS')}
+                      </TextButton>
+                    </ButtonOutlined>
+                    {/* </ScrollView> */}
+                  </View>
+                </View>
+              </ScrollView>
             </View>
           </DetailContent>
         </Container>
@@ -358,24 +415,16 @@ export default class Order extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
-  },
-
   currentDate: {
-    // display: 'flex',
     backgroundColor: theme.colors.lightGray,
     padding: 16,
     flexDirection: 'row',
   },
+
   currentDateText: {color: theme.colors.gray},
 
   container: {
-    // flex: 1,
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.white,
   },
@@ -400,59 +449,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  button: {
-    fontSize: theme.sizes.caption,
-    textTransform: 'uppercase',
-    backgroundColor: '#4285F4',
-  },
-
-  textCenter: {
-    alignItems: 'center',
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
-  label: {
-    fontSize: theme.sizes.base,
-    color: theme.colors.darkGray,
-  },
-
-  labelForgot: {
-    color: theme.colors.primary,
-    fontSize: theme.fonts.caption.fontSize,
-    alignSelf: 'flex-end',
-  },
-
   addPoint: {
     padding: theme.sizes.padding,
     marginBottom: 24,
-  },
-
-  actionContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    left: 0,
-    flexBasis: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    backgroundColor: 'white',
   },
 });
 
@@ -462,20 +461,20 @@ const ButtonOutlined = styled(TouchableOpacity)`
   border-style: solid;
   border-color: ${theme.colors.primary};
   border-width: 1;
-  padding-vertical: 12;
-  border-radius: 4;
+  padding-vertical: 12px;
+  border-radius: 4px;
   align-items: center;
 `;
 const TextButton = styled.Text`
-  margin-left: 24;
+  margin-left: 24px;
   font-size: ${theme.sizes.base};
   color: ${theme.colors.primary};
   text-transform: uppercase;
 `;
 const ClientForm = styled.View``;
 const Name = styled.Text`
-  flex-basis: 150;
-  font-size: 16;
+  flex-basis: 150px;
+  font-size: 16px;
   color: black;
   font-weight: bold;
   overflow: scroll;
@@ -485,36 +484,17 @@ const Name = styled.Text`
 const Quantity = styled.Text`
   flex-shrink: 10;
   color: ${theme.colors.success};
-  font-size: 14;
+  font-size: 14px;
   font-weight: bold;
   flex-wrap: nowrap;
 `;
-const CurrentDate = styled.View``;
+const CurrentDate = styled.View`
+  background-color: ${theme.colors.lightGray};
+  padding: 16px;
+  flex-direction: row;
+`;
 const DetailContent = styled.View`
   flex-direction: column;
   flex: 1;
   background-color: ${theme.colors.lightGray};
 `;
-
-{
-  /* <Segment style={{backgroundColor: 'transparent'}}>
-                      <Button
-                        first
-                        active={this.state.activePage === 1}
-                        onPress={this.selectComponent(1)}
-                        style={{flex: 1, justifyContent: 'center'}}>
-                        <Text>Venta</Text>
-                      </Button>
-
-                      <Button
-                        last
-                        active={this.state.activePage === 2}
-                        onPress={this.selectComponent(2)}
-                        style={{
-                          flex: 1,
-                          justifyContent: 'center',
-                        }}>
-                        <Text>Compras</Text>
-                      </Button>
-                    </Segment> */
-}
