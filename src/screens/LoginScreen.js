@@ -43,7 +43,7 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: 'testing', //aramirez
+      userName: 'aramirez', //aramirezs
       userPassword: '101010',
       hostName: '',
       portNumber: 444,

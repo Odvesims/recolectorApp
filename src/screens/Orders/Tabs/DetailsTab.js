@@ -115,7 +115,6 @@ export default class DetailsTab extends Component {
   };
 
   render() {
-    console.log('DetailTab', this.props.tab_data);
     return (
       <Content style={styles.content}>
         <ScrollView>

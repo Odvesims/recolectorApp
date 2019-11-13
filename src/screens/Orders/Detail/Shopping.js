@@ -43,6 +43,7 @@ export default class Shopping extends PureComponent {
       article_price: '',
       quantity: 1,
       price: '',
+      // total: '',
       placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
     };
     this.getArticlesData();
@@ -54,9 +55,9 @@ export default class Shopping extends PureComponent {
       select.map(item => {
         arrSelect.push({
           Name: item.code + '- ' + item.description,
-          Code: item.price,
+          // Price: item.price,
           Type: `${symbol}`,
-          Id: item.subcategory_id,
+          Id: item.line_id,
         });
       });
       resolve(arrSelect);
@@ -68,6 +69,10 @@ export default class Shopping extends PureComponent {
       getStoredSubcategories().then(subcategories => {
         getStoredArticles().then(articles => {
           this.setArticleHandler(articles, 'A').then(res => {
+            // console.log('CATEGORIES ==> ', categories);
+            // console.log('SUBCATEGORIES ==> ', subcategories);
+            // console.log('ARTICLES ==> ', articles);
+            // console.log('picker_data ==> ', res);
             this.setState({
               categories: categories,
               subcategories: subcategories,
@@ -81,67 +86,79 @@ export default class Shopping extends PureComponent {
   }
 
   priceHandler(value) {
-    this.setState({
+    const {theItem, article_price, price, quantity} = this.state;
+
+    let total = parseFloat(value * quantity);
+    this.setState(prevState => ({
       price: value,
-    });
+      total: total,
+      itemSelected: {
+        ...prevState.itemSelected,
+        price: value,
+        total: total,
+        quantity: quantity,
+      },
+    }));
   }
 
   changeQuantity(value) {
-    const {theItem, article_price} = this.state;
-    console.log(theItem);
-    this.setState({
+    const {theItem, article_price, price, total, quantity} = this.state;
+
+    this.setState(prevState => ({
       quantity: value,
-      total: article_price * value,
-      selItem: {
-        item: theItem.Name.split('-')[0],
-        description: theItem.Name.split('-')[1],
-        price: theItem.Code,
+      price: price,
+      total: price * value,
+      itemSelected: {
+        ...prevState.itemSelected,
+        price: price,
+        total: price * quantity,
         quantity: value,
-        line_type: theItem.Type,
-        line_id: theItem.Id,
       },
-    });
+    }));
   }
 
   updateIndex = selectedIndex => {
-    const {articles, categories, subcategories} = this.state;
+    const {articles, categories, subcategories, quantity} = this.state;
     switch (selectedIndex) {
       case 0:
-        this.setArticleHandler(categories).then(res => {
+        this.setArticleHandler(categories, 'C').then(res => {
           this.setState({
             selectedIndex,
             picker_data: res,
             theItem: {},
             placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
             article_price: '',
+            type: 'C',
             total: 0,
-            quantity: '',
+            quantity: quantity,
           });
         });
         break;
       case 1:
-        this.setArticleHandler(subcategories).then(res => {
+        this.setArticleHandler(subcategories, 'S').then(res => {
           this.setState({
             selectedIndex,
             picker_data: res,
             theItem: {},
             placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
             article_price: '',
+            type: 'S',
             total: 0,
-            quantity: '',
+            quantity: quantity,
           });
         });
         break;
       case 2:
-        this.setArticleHandler(articles).then(res => {
+        this.setArticleHandler(articles, 'A').then(res => {
           this.setState({
             selectedIndex,
             picker_data: res,
             theItem: {},
             placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
             article_price: '',
+            type: 'A',
             total: 0,
-            quantity: '',
+            quantity: quantity,
           });
         });
         break;
@@ -149,19 +166,20 @@ export default class Shopping extends PureComponent {
   };
 
   selectedItem = item => {
-    const {quantity} = this.state;
+    const {quantity, price} = this.state;
     if (item.Name !== undefined) {
       this.setState({
         theItem: item,
         article: item.Name,
-        article_price: item.Code,
-        total: item.Code,
+        // article_price: item.Price,
+        // total: price,
         placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-        selItem: {
+        itemSelected: {
           item: item.Name.split('-')[0],
           description: item.Name.split('-')[1],
-          price: item.Code,
+          price: price,
           quantity: quantity,
+          total: price,
           line_type: item.Type,
           line_id: item.Id,
         },
@@ -170,10 +188,11 @@ export default class Shopping extends PureComponent {
   };
 
   onPressHandler = () => {
-    const {quantity, selItem} = this.state;
+    const {quantity, itemSelected} = this.state;
+    console.log('DONE ==>', itemSelected);
     if (quantity) {
       this.props.navigation.navigate('Order', {
-        selItem: selItem,
+        itemSelected: itemSelected,
       });
     } else {
       alert(global.translate('ALERT_QUANTITY_BLANK'));
@@ -204,7 +223,9 @@ export default class Shopping extends PureComponent {
             <Button
               transparent
               onPress={() =>
-                this.props.navigation.navigate('Order', {selItem: undefined})
+                this.props.navigation.navigate('Order', {
+                  itemSelected: undefined,
+                })
               }>
               <Icon name="arrow-back" />
             </Button>
@@ -269,7 +290,7 @@ export default class Shopping extends PureComponent {
                   onChange={quantity => {
                     this.changeQuantity(quantity);
                   }}
-                  minValue={0}
+                  minValue={1}
                 />
               </View>
             </Form>

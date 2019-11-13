@@ -49,6 +49,21 @@ export default class Picking extends PureComponent {
     this.getArticlesData();
   }
 
+  setArticleHandler(select, symbol) {
+    return new Promise((resolve, reject, hola) => {
+      let arrSelect = [];
+      select.map(item => {
+        arrSelect.push({
+          Id: item.line_id,
+          Name: item.code + '- ' + item.description,
+          Price: item.price,
+          Type: `${symbol}`,
+        });
+      });
+      resolve(arrSelect);
+    });
+  }
+
   getArticlesData() {
     getStoredCategories().then(categories => {
       getStoredSubcategories().then(subcategories => {
@@ -68,14 +83,13 @@ export default class Picking extends PureComponent {
 
   changeQuantity(value) {
     const {theItem, article_price} = this.state;
-    console.log(theItem);
     this.setState({
       quantity: value,
       total: article_price * value,
-      selItem: {
+      itemSelected: {
         item: theItem.Name.split('-')[0],
         description: theItem.Name.split('-')[1],
-        price: theItem.Code,
+        price: theItem.Price,
         quantity: value,
         line_type: theItem.Type,
         line_id: theItem.Id,
@@ -83,26 +97,8 @@ export default class Picking extends PureComponent {
     });
   }
 
-  setArticleHandler(select, symbol) {
-    return new Promise((resolve, reject, hola) => {
-      let arrSelect = [];
-      select.map(item => {
-        console.log('hola');
-        console.log(item);
-        arrSelect.push({
-          Id: item.line_id,
-          Name: item.code + '- ' + item.description,
-          Price: item.price,
-          Type: `${symbol}`,
-        });
-      });
-      resolve(arrSelect);
-    });
-  }
-
   updateIndex = selectedIndex => {
     const {articles, categories, subcategories} = this.state;
-    console.log(selectedIndex);
     switch (selectedIndex) {
       case 0:
         this.setArticleHandler(categories, 'C').then(res => {
@@ -159,7 +155,7 @@ export default class Picking extends PureComponent {
         article_price: item.Price,
         total: item.Price,
         placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-        selItem: {
+        itemSelected: {
           item: item.Name.split('-')[0],
           description: item.Name.split('-')[1],
           price: item.Price,
@@ -172,9 +168,11 @@ export default class Picking extends PureComponent {
   };
 
   onPressHandler = () => {
-    if (this.state.quantity) {
+    const {quantity, itemSelected} = this.state;
+
+    if (quantity) {
       this.props.navigation.navigate('Order', {
-        selItem: this.state.selItem,
+        itemSelected,
       });
     } else {
       alert(global.translate('ALERT_QUANTITY_BLANK'));
@@ -182,8 +180,6 @@ export default class Picking extends PureComponent {
   };
 
   render() {
-    console.log(this.state.picker_data);
-
     const buttons = [
       global.translate('TITLE_CATEGORY'),
       global.translate('TITLE_SUBCATEGORY'),
@@ -207,7 +203,9 @@ export default class Picking extends PureComponent {
             <Button
               transparent
               onPress={() =>
-                this.props.navigation.navigate('Order', {selItem: undefined})
+                this.props.navigation.navigate('Order', {
+                  itemSelected: undefined,
+                })
               }>
               <Icon name="arrow-back" />
             </Button>
@@ -266,7 +264,7 @@ export default class Picking extends PureComponent {
                   onChange={quantity => {
                     this.changeQuantity(quantity);
                   }}
-                  minValue={0}
+                  minValue={1}
                 />
               </View>
             </Form>

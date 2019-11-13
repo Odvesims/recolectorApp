@@ -58,6 +58,11 @@ export default class Order extends Component {
       //
       picking: [],
       shopping: [],
+      hasPurchases: 'F',
+
+      //
+      selected_item: [],
+
       //
       date: '',
       clients: [],
@@ -77,20 +82,34 @@ export default class Order extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.arrData = [];
     this.arrDataPicking = [];
     this.arrDataShopping = [];
 
-    this.getClientsHandler();
-    this.getEmployeesHandler();
+    this.getDataHandler();
+    // this.getEmployeesHandler();
+  }
+
+  getDataHandler() {
+    getStoredClients().then(clients => {
+      this.setClientsPicker(clients).then(res => {
+        this.setState({clients: res});
+      });
+    });
+    getStoredEmployees().then(employees => {
+      this.setEmployeesPicker(employees).then(res => {
+        this.setState({employees: res});
+      });
+    });
   }
 
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       try {
-        let item = this.props.navigation.state.params.selItem;
+        const {params} = this.props.navigation.state;
+        let item = params.itemSelected;
         if (item !== undefined) {
           this.setState({data: this.arrData});
+
           let {selectedIndex} = this.state;
           if (selectedIndex === 0) {
             this.arrDataPicking.push(item);
@@ -98,10 +117,8 @@ export default class Order extends Component {
               picking: this.arrDataPicking,
             });
           } else {
-            this.arrData.push(item);
             this.arrDataShopping.push(item);
             this.setState({
-              data: this.arrData,
               shopping: this.arrDataShopping,
             });
           }
@@ -134,15 +151,24 @@ export default class Order extends Component {
   };
 
   execOperation = () => {
+    let hasPurchases = 'F';
+    const {client, selected_item, data, picking, shopping} = this.state;
+    if (shopping.length > 0) {
+      hasPurchases = 'T';
+    }
+
     let order_data = {
       setma_id: global.setma_id,
-      client_code: this.state.client.split('-')[0],
+      client_code: client.split('-')[0],
       supervisor_code: global.employee_code,
-      employee_code: this.state.selected_item.Code,
+      employee_code: selected_item.Code || 0,
       order_state: 'A',
       order_completed: false,
-      order_details: this.state.data,
+      order_details: picking,
+      purchase_details: shopping,
+      has_purchases: hasPurchases,
     };
+    console.log(order_data);
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
       if (res.valid) {
@@ -176,22 +202,6 @@ export default class Order extends Component {
       }
     });
   };
-
-  getClientsHandler() {
-    getStoredClients().then(clients => {
-      this.setClientsPicker(clients).then(res => {
-        this.setState({clients: res});
-      });
-    });
-  }
-
-  getEmployeesHandler() {
-    getStoredEmployees().then(employees => {
-      this.setEmployeesPicker(employees).then(res => {
-        this.setState({employees: res});
-      });
-    });
-  }
 
   onPressDetailHandler = () => {
     let {navigate} = this.props.navigation;
@@ -272,8 +282,16 @@ export default class Order extends Component {
   };
 
   render() {
+    // console.log('SHOPPING_LENGHT ==> ', this.state.shopping);
+    console.log('Hola', this.state.selected_item);
+
     let ClientInfo = null;
     const {
+      //
+      clients,
+      employees,
+      supervisor_code,
+      //
       client,
       selectedIndex,
       client_address,
@@ -283,22 +301,16 @@ export default class Order extends Component {
     } = this.state;
     const buttons = ['Recolección', 'Compras']; //global.translate('TITLE_CATEGORY')];
 
+    console.log('clients ==>', clients);
+    console.log('employees ==>', employees);
     if (client) {
       ClientInfo = (
-        <View
-          style={{
-            backgroundColor: theme.colors.lightGreen,
-            borderColor: 'green',
-            borderWidth: 1,
-            borderRadius: 2,
-            paddingHorizontal: 8,
-            paddingVertical: 12,
-          }}>
-          <Text style={styles.client_data}>{client_address}</Text>
-          <Text style={styles.client_data}>{client_city}</Text>
-          <Text style={styles.client_data}>{client_state}</Text>
-          <Text style={styles.client_data}>{client_phone}</Text>
-        </View>
+        <ClientData>
+          <Client>{client_address}</Client>
+          <Client>{client_city}</Client>
+          <Client>{client_state}</Client>
+          <Client>{client_phone}</Client>
+        </ClientData>
       );
     }
 
@@ -429,10 +441,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
   },
 
-  client_data: {
-    fontSize: 14,
-  },
-
   detailText: {textTransform: 'uppercase', color: theme.colors.gray},
 
   list: {
@@ -455,6 +463,19 @@ const styles = StyleSheet.create({
   },
 });
 
+const Client = styled.Text`
+  font-size: 14px;
+  color: ${theme.colors.darkGray};
+`;
+const ClientData = styled.View`
+  background-color: ${theme.colors.lightGreen};
+  border-color: green;
+  border-width: 1;
+  border-radius: 2;
+  padding-horizontal: 8;
+  padding-vertical: 12;
+`;
+
 const ButtonOutlined = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
@@ -473,22 +494,7 @@ const TextButton = styled.Text`
   text-transform: uppercase;
 `;
 const ClientForm = styled.View``;
-const Name = styled.Text`
-  flex-basis: 150px;
-  font-size: 16px;
-  color: black;
-  font-weight: bold;
-  overflow: scroll;
-  flex-grow: 2;
-  flex-wrap: nowrap;
-`;
-const Quantity = styled.Text`
-  flex-shrink: 10;
-  color: ${theme.colors.success};
-  font-size: 14px;
-  font-weight: bold;
-  flex-wrap: nowrap;
-`;
+
 const CurrentDate = styled.View`
   background-color: ${theme.colors.lightGray};
   padding: 16px;

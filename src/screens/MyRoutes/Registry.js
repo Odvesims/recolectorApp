@@ -59,7 +59,7 @@ export default class Registry extends Component {
       employee_code: global.employee_code,
       close_order: checkItem,
     };
-    this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'})
+    this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'});
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       alert(JSON.stringify(res));
       if (res.valid) {
@@ -107,7 +107,7 @@ export default class Registry extends Component {
     console.log(checkItem);
 
     return (
-      <Container>      
+      <Container>
         <Spinner
           visible={this.state.loading}
           textContent={global.translate(this.state.loadingMessage)}
