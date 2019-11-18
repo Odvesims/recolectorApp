@@ -136,5 +136,9 @@
   "TITLE_UNREAD": "No Leídas",
   "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Discrepancia en Cantidades",
   "TITLE_CONFIRM_CLOSE": "Cerrar Orden",
-  "TITLE_CONFIRM_CLOSE_QUESTION": "Seguro que desea cerrar esta orden?"
+  "TITLE_CONFIRM_CLOSE_QUESTION": "Seguro que desea cerrar esta orden?",
+  "TITLE_ARTICLES_TO_PURCHASE": "Artículos a Comprar",
+  "TITLE_ARTICLES_TO_PICK": "Artículos a Recoger",
+  "TITLE_PICKINGS": "Recolecciones",
+  "TITLE_PURCHASES": "Compras"
 }

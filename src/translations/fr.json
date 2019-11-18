@@ -122,5 +122,9 @@
   "TITLE_UNREAD": "Non lu",
   "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Inadéquation des Quantités",
   "TITLE_CONFIRM_CLOSE": "Fermer la commande",
-  "TITLE_CONFIRM_CLOSE_QUESTION": "Êtes-vous sûr de vouloir fermer cette commande?"
+  "TITLE_CONFIRM_CLOSE_QUESTION": "Êtes-vous sûr de vouloir fermer cette commande?",
+  "TITLE_ARTICLES_TO_PURCHASE": "Articles à acheter",
+  "TITLE_ARTICLES_TO_PICK": "Articles à ramasser",
+  "TITLE_PICKINGS": "Pickups",
+  "TITLE_PURCHASES": "Achats"
 }

@@ -56,6 +56,7 @@ export default class RouteDetail extends Component {
       'GET_ROUTE',
       `&route_id=${params.route_id}&status=${params.status}`,
     ).then(route => {
+      console.log(route.arrResponse[0]);
       updateRouteOrders(route.arrResponse[0]).then(r => {
         getRouteDetails(params.route_id).then(dets => {
           this.setState({
@@ -131,7 +132,7 @@ export default class RouteDetail extends Component {
     console.log(data);
     return (
       <Root>
-        <Container>   
+        <Container>
           <Spinner
             visible={this.state.loading}
             textContent={global.translate(this.state.loadingMessage)}

@@ -46,6 +46,8 @@ import OrderList from '../screens/Routes/OrderList';
 import Orders from '../screens/Orders/Orders';
 import Order from '../screens/Orders/Order';
 import Detail from '../screens/Orders/Detail';
+import Picking from '../screens/Orders/Detail/Picking';
+import Shopping from '../screens/Orders/Detail/Shopping';
 // Configuration
 import ConfigScreen from '../screens/ConfigScreen';
 import SplashScreen from '../screens/SplashScreen';
@@ -128,6 +130,8 @@ const OrdersScreen = createStackNavigator(
     },
     Order: Order,
     Detail: Detail,
+    Picking: Picking,
+    Shopping: Shopping,
   },
   {
     initialRouteParams: 'Orders',
