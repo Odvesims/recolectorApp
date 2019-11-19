@@ -172,16 +172,48 @@ export default class Order extends Component {
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
       if (res.valid) {
-        if (global.printer_address === '') {
-          alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
-        } else {
-          enableBT().then(e => {
-            connectBluetooth(global.printer_name, global.printer_address).then(
-              c => {
-                printText(res.responseObject).then(p => {});
-              },
-            );
-          });
+        if(has_purchases === 'T'){
+          if (global.printer_address === '') {
+            alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
+          } else {
+            enableBT().then(e => {
+              connectBluetooth(global.printer_name, global.printer_address).then(c => {
+                if (c === true) {
+                  Alert.alert(
+                    global.translate("TITLE_PRINT_ORDER"),
+                    global.translate("TITLE_PRINT_ORDER_MESSAGE"),
+                    [
+                      {
+                        text: global.translate("TITLE_NO_PRINT"), 
+                        onPress: () => {
+                          alert.cancel     
+                        }, 
+                        style: 'cancel'
+                      },
+                      {
+                        text: global.translate("TITLE_PRINT_TOGETHER"),
+                        onPress: () => {  
+                          printInvoiceText(res.responseObject, 2).then(p => {});                        
+                        },
+                      },
+                      {
+                        text: global.translate("TITLE_PRINT_SEPARATE"), 
+                        onPress: () => {  
+                          printInvoiceText(o.responseObject, 1).then(p => {});
+                        }
+                      },
+                    ],
+                    {cancelable: false},
+                  )
+                } else {
+                  this.setState({loading: false});
+                  alert('Not connected');
+                }
+              });
+            });
+          }
+        } else{
+
         }
         alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
         this.setState({

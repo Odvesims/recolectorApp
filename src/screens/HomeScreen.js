@@ -108,8 +108,8 @@ export default class Home extends Component {
     clearInterval(this.notificationsInterval);
   }
 
-  setPrinter = () => {/*
-    this.setState({loading: true, loadingMessage: 'Testing Printer'});
+  setPrinter = () => {
+    //this.setState({loading: true, loadingMessage: 'Testing Printer'});
     if (global.printer_address === '') {
       alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
       this.setState({loading: false});
@@ -117,47 +117,56 @@ export default class Home extends Component {
       enableBT().then(e => {
         connectBluetooth(global.printer_name, global.printer_address).then(c => {
           if (c === true) {
-            dataOperation('GET_ORDER_INVOICE', {order_id: 2}).then(o => {
-              if( o.valid){
-                printText(o.responseObject).then(p => {
-                  this.setState({loading: false});
-                });
-              } else{
-                this.setState({loading: false});                  
-              }
-            })
+            Alert.alert(
+              global.translate("TITLE_PRINT_ORDER"),
+              global.translate("TITLE_PRINT_ORDER_MESSAGE"),
+              [
+                {
+                  text: global.translate("TITLE_NO_PRINT"), 
+                  onPress: () => {
+                    alert.cancel     
+                  }, 
+                  style: 'cancel'
+                },
+                {
+                  text: global.translate("TITLE_PRINT_TOGETHER"),
+                  onPress: () => {
+                    dataOperation('GET_ORDER_INVOICE', {order_id: 131}).then(o => {
+                      if( o.valid){
+                        printText(o.responseObject, 2).then(p => {
+                          this.setState({loading: false});
+                        });
+                      } else{
+                        this.setState({loading: false});                  
+                      }
+                    });
+                  },
+                },
+                {
+                  text: global.translate("TITLE_PRINT_SEPARATE"), 
+                  onPress: () => {                    
+                    dataOperation('GET_ORDER_INVOICE', {order_id: 131}).then(o => {
+                      if( o.valid){
+                        printText(o.responseObject, 1).then(p => {
+                          this.setState({loading: false});
+                        });
+                      } else{
+                        this.setState({loading: false});                  
+                      }
+                    });
+                  }
+                },
+              ],
+              {cancelable: false},
+            )
           } else {
             this.setState({loading: false});
             alert('Not connected');
           }
         });
       });
-    }*/
+    }
     //this.setModalVisible(true);
-    Alert.alert(
-      global.translate("TITLE_PRINT_ORDER"),
-      global.translate("TITLE_PRINT_ORDER_MESSAGE"),
-      [
-        {
-          text: global.translate("TITLE_NO_PRINT"), 
-          onPress: () => {
-            alert.cancel     
-          }, 
-          style: 'cancel'
-        },
-        {
-          text: global.translate("TITLE_PRINT_TOGETHER"),
-          onPress: () => {
-            printText()
-          },
-        },
-        {
-          text: global.translate("TITLE_PRINT_SEPARATE"), 
-          onPress: () => console.log('Ask me later pressed')
-        },
-      ],
-      {cancelable: false},
-    )
   };
 
   setModalVisible(visible) {

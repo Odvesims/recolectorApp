@@ -3,6 +3,8 @@ import {
   BluetoothManager,
 } from 'react-native-bluetooth-escpos-printer';
 
+import { Alert } from 'react-native';
+
 export function enableBT() {
   return new Promise((resolve, reject) => {
     !BluetoothManager.isBluetoothEnabled().then(() => {
@@ -51,7 +53,7 @@ export function printingTest() {
   });
 }
 
-export async function printText(printArray) {
+export async function printInvoiceText(printArray, printOption) {
   /*Array format:
         0: Text to print
         1: Width
@@ -60,89 +62,158 @@ export async function printText(printArray) {
         4: Format Type (normal, no-format, columns)
         5: Break line after
     */
+   console.log(printArray);
   return new Promise((resolve, reject) => {
-    printArray.invoice.map(line => {
-      switch (line[3]) {
-        case 'left':
-          BluetoothEscposPrinter.printerAlign(
-            BluetoothEscposPrinter.ALIGN.LEFT,
-          );
-
-          break;
-        case 'center':
-          BluetoothEscposPrinter.printerAlign(
-            BluetoothEscposPrinter.ALIGN.CENTER,
-          );
-
-          break;
-        case 'right':
-          BluetoothEscposPrinter.printerAlign(
-            BluetoothEscposPrinter.ALIGN.RIGHT,
-          );
-
-          break;
+    if(printOption == 1){
+      printArray.invoice_header.map(line => {
+        formattedText(line);
+      });
+      if(printArray.invoice_collected.length > 0){
+        printArray.invoice_collected.map(line => {
+          formattedText(line);
+        });
+        BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
+          encoding: 'GBK',
+          codepage: 0,
+          widthtimes: 0,
+          heigthtimes: 0,
+          fonttype: 1,
+        });
+        Alert.alert(
+          global.translate("TITLE_PRINT_ORDER"),
+          global.translate("TITLE_CONTINUE_PRINTING"),
+          [
+            {
+              text: global.translate("TITLE_YES"),
+              onPress: () => {      
+                printArray.invoice_header.map(line => {
+                  formattedText(line);
+                });        
+                printArray.invoice_purchased.map(line => {
+                  formattedText(line);
+                });
+                BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
+                  encoding: 'GBK',
+                  codepage: 0,
+                  widthtimes: 0,
+                  heigthtimes: 0,
+                  fonttype: 1,
+                });
+              },
+            }
+          ]
+        );
+      } else{      
+        printArray.invoice_purchased.map(line => {
+          formattedText(line);
+        });    
+        BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
+          encoding: 'GBK',
+          codepage: 0,
+          widthtimes: 0,
+          heigthtimes: 0,
+          fonttype: 1,
+        });    
       }
-      let textToPrint = line[0][1];
-      if (line[0][0] === 0) {
-        textToPrint = global.translate(line[0][1]);
+    } else{
+      printArray.invoice_header.map(line => {
+        formattedText(line);
+      });
+      if(printArray.invoice_collected.length > 0){
+        printArray.invoice_collected.map(line => {
+          formattedText(line);
+        });  
       }
-      switch (line[4]) {
-        case 'no-format':
-          BluetoothEscposPrinter.printText(`${textToPrint} \r\n`, {});
-          break;
-        case 'normal':
-          BluetoothEscposPrinter.printText(`${textToPrint} \r\n`, {
-            encoding: 'GBK',
-            codepage: 0,
-            widthtimes: line[1],
-            heigthtimes: line[2],
-            fonttype: 1,
-          });
-          break;
-        case 'column':
-          if (line[0][0] === 0) {
-            BluetoothEscposPrinter.printColumn(
-              [18, 6, 8, 8],
-              [
-                BluetoothEscposPrinter.ALIGN.LEFT,
-                BluetoothEscposPrinter.ALIGN.RIGHT,
-                BluetoothEscposPrinter.ALIGN.RIGHT,
-                BluetoothEscposPrinter.ALIGN.RIGHT,
-              ],
-              [
-                global.translate(line[0][1]),
-                global.translate(line[0][2]),
-                global.translate(line[0][3]),
-                global.translate(line[0][4]),
-              ],
-              {fonttype: 1},
-            );
-          } else {
-            BluetoothEscposPrinter.printColumn(
-              [18, 6, 8, 8],
-              [
-                BluetoothEscposPrinter.ALIGN.LEFT,
-                BluetoothEscposPrinter.ALIGN.RIGHT,
-                BluetoothEscposPrinter.ALIGN.RIGHT,
-                BluetoothEscposPrinter.ALIGN.RIGHT,
-              ],
-              [line[0][1], line[0][2], line[0][3], line[0][4]],
-              {fonttype: 1},
-            );
-          }
-          break;
-      }
-      if (line[5]) {
-        BluetoothEscposPrinter.printText('\r\n', {});
-      }
-    });
-    BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
-      encoding: 'GBK',
-      codepage: 0,
-      widthtimes: 0,
-      heigthtimes: 0,
-      fonttype: 1,
-    });
+      if(printArray.invoice_collected.length > 0){ 
+        printArray.invoice_purchased.map(line => {
+          formattedText(line);
+        });
+      }   
+      BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
+        encoding: 'GBK',
+        codepage: 0,
+        widthtimes: 0,
+        heigthtimes: 0,
+        fonttype: 1,
+      });
+    }
     resolve(true);
   });
+}
+
+export async function formattedText(line){
+  
+  switch (line[3]) {
+    case 'left':
+      BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.LEFT,
+      );
+
+      break;
+    case 'center':
+      BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.CENTER,
+      );
+
+      break;
+    case 'right':
+      BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.RIGHT,
+      );
+
+      break;
+  }
+  let textToPrint = line[0][1];
+  if (line[0][0] === 0) {
+    textToPrint = global.translate(line[0][1]);
+  }
+  switch (line[4]) {
+    case 'no-format':
+      BluetoothEscposPrinter.printText(`${textToPrint} \r\n`, {});
+      break;
+    case 'normal':
+      BluetoothEscposPrinter.printText(`${textToPrint} \r\n`, {
+        encoding: 'GBK',
+        codepage: 0,
+        widthtimes: line[1],
+        heigthtimes: line[2],
+        fonttype: 1,
+      });
+      break;
+    case 'column':
+      if (line[0][0] === 0) {
+        BluetoothEscposPrinter.printColumn(
+          [18, 6, 8, 8],
+          [
+            BluetoothEscposPrinter.ALIGN.LEFT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+          ],
+          [
+            global.translate(line[0][1]),
+            global.translate(line[0][2]),
+            global.translate(line[0][3]),
+            global.translate(line[0][4]),
+          ],
+          {fonttype: 1},
+        );
+      } else {
+        BluetoothEscposPrinter.printColumn(
+          [18, 6, 8, 8],
+          [
+            BluetoothEscposPrinter.ALIGN.LEFT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+          ],
+          [line[0][1], line[0][2], line[0][3], line[0][4]],
+          {fonttype: 1},
+        );
+      }
+      break;
+  }
+  if (line[5]) {
+    BluetoothEscposPrinter.printText('\r\n', {});
+  }
 }

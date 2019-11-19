@@ -80,6 +80,7 @@ export default class ConfigScreen extends Component {
         printerAddress: res.printer_address,
       });
       if (res) {
+        global.printer_address = res.printer_address;
         alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
       } else {
         alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
