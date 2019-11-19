@@ -18,6 +18,7 @@ import {Content, Body, Item, Button, ActionSheet, Icon} from 'native-base';
 
 export default class DetailsTab extends Component {
   state = {
+    data: this.props.tab_data,
     show: true,
     BUTTONS: [
       {
@@ -52,6 +53,7 @@ export default class DetailsTab extends Component {
   };
 
   renderItem = ({item}) => {
+    console.log('valor detail ==>', item);
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
     return (
       <Item style={styles.list}>
@@ -62,8 +64,12 @@ export default class DetailsTab extends Component {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <Name numberOfLines={1}>{item.description}</Name>
-            <Quantity numberOfLines={1}>{item.quantity}</Quantity>
+            <Name numberOfLines={1}>
+              {item.detail_description || item.description}
+            </Name>
+            <Quantity numberOfLines={1}>
+              {item.detail_quantity || item.quantity}
+            </Quantity>
           </View>
         </View>
         <Button
@@ -80,9 +86,9 @@ export default class DetailsTab extends Component {
               buttonIndex => {
                 switch (buttonIndex) {
                   case 0:
-                    this.props.navigation.navigate('Route', {
+                    this.props.navigation.navigate('Orders', {
                       operation: 'TITLE_VIEW_ROUTE',
-                      route_id: item.route_id,
+                      order_id: item.order_id,
                       description: item.description,
                       document_id: item.document_id,
                       document_acronym: item.acronym,
@@ -97,7 +103,7 @@ export default class DetailsTab extends Component {
                       status: item.status,
                       disabled_date_from: true,
                       loading_message: 'MESSAGE_UPDATING_ROUTE',
-                      new_record: false,
+                      isNewRecord: false,
                       details: item.details,
                     });
                     break;
@@ -115,6 +121,7 @@ export default class DetailsTab extends Component {
   };
 
   render() {
+    console.log('DETAILTABS ==>', this.props.tab_data);
     return (
       <Content style={styles.content}>
         <ScrollView>

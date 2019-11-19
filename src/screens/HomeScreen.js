@@ -82,7 +82,7 @@ export default class Home extends Component {
   }
 
   notificationsHandler() {
-    getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
+    /*getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
       //alert(JSON.stringify(notifications));
       if(notifications.valid){
         saveNotifications(notifications.arrResponse).then(count=> {
@@ -101,7 +101,7 @@ export default class Home extends Component {
           }
         })
       }
-    })
+    })*/
   }
 
   componentWillUnmount(){

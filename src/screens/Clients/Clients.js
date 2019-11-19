@@ -45,7 +45,6 @@ export default class Clients extends Component {
       data: [],
       dataAll: [],
       loading: true,
-      deviceLanguage: 'en',
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
       request_timeout: false,
       show: false,
@@ -172,8 +171,57 @@ export default class Clients extends Component {
     });
   };
 
-  render() {
+  renderItem = ({item}) => {
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    return (
+      <Item style={styles.list}>
+        <Text style={styles.code}>{item.client_code}</Text>
+        <View style={{marginLeft: 8}}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.address}>{item.address}</Text>
+        </View>
+        <Button
+          transparent
+          style={styles.more}
+          onPress={() =>
+            ActionSheet.show(
+              {
+                options: BUTTONS,
+                cancelButtonIndex: CANCEL_INDEX,
+                destructiveButtonIndex: DESTRUCTIVE_INDEX,
+                title: global.translate('TITLE_OPTIONS'),
+              },
+              buttonIndex => {
+                switch (buttonIndex) {
+                  case 0:
+                    this.props.navigation.navigate('Client', {
+                      operation: 'TITLE_EDIT_CLIENT',
+                      code: item.client_code,
+                      name: item.name,
+                      address: item.address,
+                      city: item.city,
+                      state: item.state,
+                      country: item.country,
+                      phone: item.phone_number,
+                      loading_message: 'MESSAGE_UPDATING_CLIENT',
+                      new_record: false,
+                      onGoBack: () => this.refresh(false),
+                    });
+                    break;
+                  case 1:
+                    ActionSheet.hide();
+                    break;
+                }
+              },
+            )
+          }>
+          <Icon style={{color: 'gray'}} name="more" />
+        </Button>
+      </Item>
+    );
+  };
+
+  render() {
     const {modalVisible, data, loading, show} = this.state;
 
     return (
@@ -232,10 +280,6 @@ export default class Clients extends Component {
             textStyle={{color: 'white'}}
           />
 
-          {/* SearchBar */}
-
-          {/* SearchBar */}
-
           {/* Content */}
           <Content style={styles.content}>
             <ScrollView>
@@ -243,52 +287,7 @@ export default class Clients extends Component {
                 style={{overflow: 'hidden'}}
                 data={data}
                 ListEmptyComponent={this.listEmpty}
-                renderItem={({item}) => (
-                  <Item style={styles.list}>
-                    <Text style={styles.code}>{item.client_code}</Text>
-                    <View style={{marginLeft: 8}}>
-                      <Text style={styles.name}>{item.name}</Text>
-                      <Text style={styles.address}>{item.address}</Text>
-                    </View>
-                    <Button
-                      transparent
-                      style={styles.more}
-                      onPress={() =>
-                        ActionSheet.show(
-                          {
-                            options: BUTTONS,
-                            cancelButtonIndex: CANCEL_INDEX,
-                            destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                            title: global.translate('TITLE_OPTIONS'),
-                          },
-                          buttonIndex => {
-                            switch (buttonIndex) {
-                              case 0:
-                                this.props.navigation.navigate('Client', {
-                                  operation: 'TITLE_EDIT_CLIENT',
-                                  code: item.client_code,
-                                  name: item.name,
-                                  address: item.address,
-                                  city: item.city,
-                                  state: item.state,
-                                  country: item.country,
-                                  phone: item.phone_number,
-                                  loading_message: 'MESSAGE_UPDATING_CLIENT',
-                                  new_record: false,
-                                  onGoBack: () => this.refresh(false),
-                                });
-                                break;
-                              case 1:
-                                ActionSheet.hide();
-                                break;
-                            }
-                          },
-                        )
-                      }>
-                      <Icon style={{color: 'gray'}} name="more" />
-                    </Button>
-                  </Item>
-                )}
+                renderItem={this.renderItem}
               />
             </ScrollView>
           </Content>

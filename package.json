@@ -7,11 +7,13 @@
     "test": "jest",
     "lint": "eslint .",
     "android-shake": "adb shell input keyevent 82",
-    "react-devtools": "react-devtools"
+    "react-devtools": "react-devtools",
+    "android-dev": "adb reverse tcp:8097 tcp:8097 && react-native run-android"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^4.3.0",
     "i18n-js": "^3.3.0",
+    "lodash": "^4.17.15",
     "lodash.memoize": "^4.1.2",
     "moment": "^2.24.0",
     "native-base": "^2.13.8",
@@ -55,7 +57,7 @@
     "eslint": "^6.3.0",
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.0",
-    "react-devtools": "^3.6.3",
+    "react-devtools": "^4.2.0",
     "react-test-renderer": "16.8.6"
   },
   "jest": {

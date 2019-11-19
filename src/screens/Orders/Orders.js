@@ -60,8 +60,7 @@ export default class Orders extends Component {
       show: true,
       assigned: [],
       not_assigned: [],
-      loading: false,
-      date: `${day}/${month}/${year}`,
+      isLoading: false,
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
         {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -107,8 +106,8 @@ export default class Orders extends Component {
 
   enterHandler = () => {
     this.setState({
-      loading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
+      isLoading: true,
+      loadingMessage: global.translate('MESSAGE_isLoading_ORDERS'),
     });
     this.storedOrders();
   };
@@ -116,8 +115,10 @@ export default class Orders extends Component {
   storedOrders = () => {
     getNotAssignedOrders().then(not_assigned => {
       getAssignedOrders().then(assigned => {
+        // console.log('NOT_ASSIGNED==>', not_assigned);
+        // console.log('ASSIGNED==>', assigned);
         this.setState({
-          loading: false,
+          isLoading: false,
           not_assigned: not_assigned,
           assigned: assigned,
         });
@@ -127,19 +128,22 @@ export default class Orders extends Component {
 
   refreshHandler = () => {
     this.setState({
-      loading: true,
+      isLoading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
+      loadingMessage: global.translate('MESSAGE_isLoading_ORDERS'),
     });
     setTimeout(() => {
-      if (this.state.loading) {
-        this.setState({loading: false, request_timeout: true});
+      if (this.state.isLoading) {
+        this.setState({isLoading: false, request_timeout: true});
         alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 15000);
     getData('GET_ORDERS').then(result => {
+      //
+      // console.log('RESULTS ==>', result);
+      ///
       if (!this.state.request_timeout) {
-        this.setState({loading: false, request_timeout: false});
+        this.setState({isLoading: false, request_timeout: false});
         if (result.valid) {
           saveOrders(result.arrResponse).then(res => {
             this.storedOrders();
@@ -158,15 +162,22 @@ export default class Orders extends Component {
   };
 
   render() {
-    const {data, loading, not_assigned, assigned} = this.state;
+    const {
+      data,
+      date,
+      isLoading,
+      not_assigned,
+      assigned,
+      loadingMessage,
+    } = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
     return (
       <Root>
         <Container>
           <Spinner
-            visible={this.state.loading}
-            textContent={this.state.loadingMessage}
+            visible={isLoading}
+            textContent={loadingMessage}
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}
@@ -181,17 +192,32 @@ export default class Orders extends Component {
               <Title>{global.translate('TITLE_ORDERS')}</Title>
             </Body>
             <Right>
-              <FetchingData syncData={this.refreshHandler} fetching={loading} />
+              <FetchingData
+                syncData={this.refreshHandler}
+                fetching={isLoading}
+              />
             </Right>
           </Header>
+
+          {/* Tab */}
           <Tabs hasTabs>
             <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
-              <OrdersTab tab_data={not_assigned} ref={this.availableTab} />
+              <OrdersTab
+                tab_data={not_assigned}
+                ref={this.notAvailableTab}
+                navigation={this.props.navigation}
+              />
             </Tab>
             <Tab heading={global.translate('TITLE_ASSIGNED')}>
-              <OrdersTab tab_data={assigned} ref={this.notAvailableTab} />
+              <OrdersTab
+                tab_data={assigned}
+                ref={this.availableTab}
+                navigation={this.props.navigation}
+              />
             </Tab>
           </Tabs>
+
+          {/* Fab */}
           <Fab
             style={{backgroundColor: theme.colors.primary}}
             position="bottomRight"
@@ -199,9 +225,9 @@ export default class Orders extends Component {
               this.props.navigation.navigate('Order', {
                 operation: 'TITLE_NEW_ORDER',
                 loading_message: 'MESSAGE_REGISTERING_ORDER',
-                date: this.state.date,
+                date: date,
                 onGoBack: () => this.refresh(true),
-                new_record: true,
+                isNewRecord: true,
               })
             }>
             <Icon name="add" />

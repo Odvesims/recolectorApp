@@ -48,6 +48,7 @@ export class Client extends Component {
       country: this.props.navigation.state.params.country,
       phone: this.props.navigation.state.params.phone,
     };
+    const {} = this.state;
     this.selectedItem = this.selectedItem.bind(this);
   }
 

@@ -37,8 +37,10 @@ export default class Picking extends PureComponent {
       picker_data: [],
       article: '',
       article_price: '',
-      quantity: 1,
-      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      quantity: params.data.detail_quantity || 1,
+      placeholder:
+        params.data.detail_description ||
+        global.translate('PLACEHOLDER_SELECT_ARTICLE'), //global.translate('PLACEHOLDER_SELECT_ARTICLE')
       //
       //order_selection: params.selection,
       //order_description: params.description,
@@ -185,6 +187,21 @@ export default class Picking extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
+
+    const {editable} = this.props.navigation.state.params;
+    console.log('EDITABLE', editable);
+    const isEditable = editable;
+    let save;
+    if (isEditable) {
+      save = (
+        <Right>
+          <Button transparent onpress={this.onPressHandler}>
+            <Icon name="checkmark" />
+          </Button>
+        </Right>
+      );
+    }
+
     const {
       selectedIndex,
       article_price,
@@ -213,6 +230,7 @@ export default class Picking extends PureComponent {
           <Body>
             <Title>Articulos a Recoger</Title>
           </Body>
+          {save}
         </Header>
 
         {/* Content */}
@@ -226,6 +244,7 @@ export default class Picking extends PureComponent {
                   selectedIndex={selectedIndex}
                   buttons={buttons}
                   containerStyle={{height: 40}}
+                  // disabled={!editable}
                 />
               </View>
 
@@ -249,6 +268,7 @@ export default class Picking extends PureComponent {
                   selectedHolder={this.selectedItem.Name}
                   items={picker_data}
                   selectedItem={this.selectedItem}
+                  disabled={!editable}
                 />
               </View>
 
@@ -265,6 +285,7 @@ export default class Picking extends PureComponent {
                     this.changeQuantity(quantity);
                   }}
                   minValue={1}
+                  editable={editable}
                 />
               </View>
             </Form>
@@ -277,14 +298,6 @@ export default class Picking extends PureComponent {
             </View>
           </KeyboardAwareScrollView>
         </Content>
-
-        {/* actionButton */}
-        <ActionButton
-          cancel={() => {
-            navigation.goBack();
-          }}
-          accept={this.onPressHandler}
-        />
       </Container>
     );
   }

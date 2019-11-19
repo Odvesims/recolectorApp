@@ -90,6 +90,7 @@ class Order extends Component {
   storedRoutes = () => {
     getStoredRoutes('A').then(active => {
       this.setState({active: active, loading: false});
+      console.log('Active', active);
     });
   };
 
@@ -122,25 +123,8 @@ class Order extends Component {
     });
   };
 
-  // fetchData = () => {
-  //   this.setState({loading: true});
-  //   const url = 'https://jsonplaceholder.typicode.com/users';
-  //   this.setState({loading: true});
-  //   fetch(url)
-  //     .then(res => res.json())
-  //     .then(res => {
-  //       this.setState({
-  //         loading: false,
-  //         data: res,
-  //         dataAll: res,
-  //       });
-  //     })
-  //     .catch(error => {
-  //       this.setState({error, loading: false});
-  //     });
-  // };
-
   renderItem = ({item}) => {
+    console.log('item', item);
     const {navigate} = this.props.navigation;
     return (
       <Item
@@ -154,8 +138,8 @@ class Order extends Component {
             route_id: item.route_id,
             document_id: '',
             phone_number: '',
-            date_from: moment(new Date()).format('DD/MM/YYYY'),
-            date_to: moment(new Date()).format('DD/MM/YYYY'),
+            date_from: item.date_from,
+            date_to: item.date_to,
           })
         }>
         <View

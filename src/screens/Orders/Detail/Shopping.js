@@ -32,6 +32,7 @@ import {
 export default class Shopping extends PureComponent {
   constructor(props) {
     super(props);
+    const {params} = this.props.navigation.state;
     this.state = {
       theItem: {},
       selectedIndex: 2,
@@ -41,10 +42,12 @@ export default class Shopping extends PureComponent {
       picker_data: [],
       article: '',
       article_price: '',
-      quantity: 1,
-      price: '',
+      quantity: params.data.detail_quantity || 1,
+      price: params.data.detail_price || '',
       // total: '',
-      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      placeholder:
+        params.data.detail_description ||
+        global.translate('PLACEHOLDER_SELECT_ARTICLE'), //global.translate('PLACEHOLDER_SELECT_ARTICLE')
     };
     this.getArticlesData();
   }
@@ -69,10 +72,6 @@ export default class Shopping extends PureComponent {
       getStoredSubcategories().then(subcategories => {
         getStoredArticles().then(articles => {
           this.setArticleHandler(articles, 'A').then(res => {
-            // console.log('CATEGORIES ==> ', categories);
-            // console.log('SUBCATEGORIES ==> ', subcategories);
-            // console.log('ARTICLES ==> ', articles);
-            // console.log('picker_data ==> ', res);
             this.setState({
               categories: categories,
               subcategories: subcategories,
@@ -86,8 +85,7 @@ export default class Shopping extends PureComponent {
   }
 
   priceHandler(value) {
-    const {theItem, article_price, price, quantity} = this.state;
-
+    const {quantity} = this.state;
     let total = parseFloat(value * quantity);
     this.setState(prevState => ({
       price: value,
@@ -102,8 +100,7 @@ export default class Shopping extends PureComponent {
   }
 
   changeQuantity(value) {
-    const {theItem, article_price, price, total, quantity} = this.state;
-
+    const {price, quantity} = this.state;
     this.setState(prevState => ({
       quantity: value,
       price: price,
@@ -205,6 +202,20 @@ export default class Shopping extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
+
+    const {editable} = this.props.navigation.state.params;
+    const isEditable = !editable;
+    let save;
+    if (isEditable) {
+      save = (
+        <Right>
+          <Button transparent onpress={this.onPressHandler}>
+            <Icon name="checkmark" />
+          </Button>
+        </Right>
+      );
+    }
+    
     const {
       selectedIndex,
       article_price,
@@ -212,6 +223,7 @@ export default class Shopping extends PureComponent {
       placeholder,
       picker_data,
       total,
+      price,
     } = this.state;
     const {navigation} = this.props;
 
@@ -230,9 +242,10 @@ export default class Shopping extends PureComponent {
               <Icon name="arrow-back" />
             </Button>
           </Left>
-          <Body>
+          <Body style={{width: '200px'}}>
             <Title>Articulos a Comprar</Title>
           </Body>
+          {save}
         </Header>
         {/* Content */}
         <Content style={styles.container}>
@@ -260,6 +273,7 @@ export default class Shopping extends PureComponent {
                   selectedHolder={this.selectedItem.Name}
                   items={picker_data}
                   selectedItem={this.selectedItem}
+                  disabled={!editable}
                 />
               </View>
 
@@ -271,6 +285,8 @@ export default class Shopping extends PureComponent {
                   ref={input => {
                     this.secondTextInput = input;
                   }}
+                  editable={editable}
+                  value={`${this.state.price}`}
                   style={styles.inputNumber}
                   keyboardType="number-pad"
                   onChangeText={price => {
@@ -291,6 +307,7 @@ export default class Shopping extends PureComponent {
                     this.changeQuantity(quantity);
                   }}
                   minValue={1}
+                  editable={editable}
                 />
               </View>
             </Form>
@@ -301,12 +318,6 @@ export default class Shopping extends PureComponent {
             </View>
           </KeyboardAwareScrollView>
         </Content>
-        <ActionButton
-          cancel={() => {
-            navigation.goBack();
-          }}
-          accept={this.onPressHandler}
-        />
       </Container>
     );
   }

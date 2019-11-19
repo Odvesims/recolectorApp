@@ -111,6 +111,7 @@ export default class Routes extends Component {
       }
     }, 20000);
     getData('GET_ROUTES', '&status=A').then(active => {
+      console.log('ROUTES', active);
       if (!this.state.request_timeout) {
         clearRoutesCab('A').then(ca => {
           clearRoutesDetails().then(cd => {

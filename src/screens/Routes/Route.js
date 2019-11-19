@@ -47,7 +47,6 @@ export class Route extends Component {
       employee: '',
       data: [],
       clear_data: [],
-      //
       loading: !params.new_record,
       loadingMessage: 'ALERT_GETTING_ROUTE',
       new_record: params.new_record,
@@ -84,7 +83,7 @@ export class Route extends Component {
                 loading: false,
                 data: clear,
                 clear_data: clear,
-                route_description: r.description,
+                // route_description: r.description,
                 document_id: r.document_id,
                 document_acronym: r.acronym,
                 document_number: r.document_number,
@@ -129,6 +128,9 @@ export class Route extends Component {
       } catch (err) {}
     });
   }
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
 
   updateDataState(theData) {
     this.setState({data: theData, clear_data: theData});
@@ -137,20 +139,15 @@ export class Route extends Component {
   setEmployeesPicker(employees) {
     return new Promise((resolve, reject) => {
       let arrEmployees = [];
-      for (let i = 0; i < employees.length; ++i) {
-        let employee = employees[i];
+      employees.map(employee => {
         arrEmployees.push({
           Name: employee.employee_code + '- ' + employee.name,
           Code: employee.employee_code,
           Phone: employee.phone_number,
         });
-      }
+      });
       resolve(arrEmployees);
     });
-  }
-
-  componentWillUnmount() {
-    this.focusListener.remove();
   }
 
   setDate = newDate => {
@@ -229,11 +226,11 @@ export class Route extends Component {
     });
   }
 
-  selectedItem(item) {
+  selectedItem = item => {
     this.setState({
       selected_item: item,
     });
-  }
+  };
 
   markForDelete = swipeData => {
     const {key, value} = swipeData;
@@ -298,7 +295,18 @@ export class Route extends Component {
       employeeText,
       leftActionActivated,
       toggle,
+      placeholder,
+      chosenDate2,
+      chosenDate,
+      data,
+      route_description,
+      loadingMessage,
+      loading,
+      disabled_date_from,
     } = this.state;
+
+    console.log(this.state);
+    console.log('Andris', this.state);
     const {params} = this.props.navigation.state;
 
     let orderList = (
@@ -308,7 +316,7 @@ export class Route extends Component {
           marginBottom: 0,
           backgroundColor: 'lightGray',
         }}
-        data={this.state.data}
+        data={data}
         keyExtractor={item => item.id}
         renderItem={this.renderItem}
         renderHiddenItem={(data, rowMap) => (
@@ -337,8 +345,8 @@ export class Route extends Component {
     return (
       <Container style={{flex: 1}}>
         <Spinner
-          visible={this.state.loading}
-          textContent={global.translate(this.state.loadingMessage)}
+          visible={loading}
+          textContent={global.translate(loadingMessage)}
           color={'CE2424'}
           overlayColor={'rgba(255, 255, 255, 0.4)'}
           animation={'slide'}
@@ -372,7 +380,7 @@ export class Route extends Component {
                   style={styles.input}
                   placeholder={global.translate('PLACEHOLDER_TYPE_DESCRIPTION')}
                   returnKeyType="go"
-                  value={this.state.route_description}
+                  value={route_description}
                   onChangeText={route_description => {
                     this.setState({route_description: route_description});
                   }}
@@ -386,9 +394,9 @@ export class Route extends Component {
                   <DatePicker
                     defaultDate={
                       new Date(
-                        this.state.chosenDate.split('/')[2],
-                        parseInt(this.state.chosenDate.split('/')[1]) - 1,
-                        this.state.chosenDate.split('/')[0],
+                        chosenDate.split('/')[2],
+                        parseInt(chosenDate.split('/')[1]) - 1,
+                        chosenDate.split('/')[0],
                       )
                     }
                     minimumDate={new Date()}
@@ -399,7 +407,7 @@ export class Route extends Component {
                     androidMode={'default'}
                     textStyle={{color: theme.colors.gray, fontSize: 14}}
                     onDateChange={this.setDate}
-                    disabled={this.state.disabled_date_from}
+                    disabled={disabled_date_from}
                   />
                 </View>
               </View>
@@ -412,8 +420,8 @@ export class Route extends Component {
                     defaultDate={
                       new Date(
                         this.state.chosenDate2.split('/')[2],
-                        parseInt(this.state.chosenDate2.split('/')[1]) - 1,
-                        this.state.chosenDate2.split('/')[0],
+                        parseInt(chosenDate2.split('/')[1]) - 1,
+                        chosenDate2.split('/')[0],
                       )
                     }
                     minimumDate={new Date()}
@@ -428,7 +436,7 @@ export class Route extends Component {
                       fontSize: 14,
                     }}
                     onDateChange={this.setDate2}
-                    disabled={this.state.disabled_date_from}
+                    disabled={disabled_date_from}
                   />
                 </View>
               </View>
@@ -439,9 +447,9 @@ export class Route extends Component {
                 {/* CustomPicker */}
                 <CustomPicker
                   items={this.state.employees}
-                  placeholder={this.state.placeholder}
+                  placeholder={placeholder}
                   selectedItem={this.selectedItem}
-                  disabled={this.state.disabled_date_from}
+                  disabled={disabled_date_from}
                 />
               </View>
             </Form>

@@ -47,6 +47,7 @@ export default class CustomPicker extends Component {
         searchPlaceholderText={''}
         requireSelection={false}
         autoSort={false}
+        disabled={this.props.disabled}
       />
     );
   }

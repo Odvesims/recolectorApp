@@ -81,22 +81,42 @@ export default class Registry extends Component {
   };
 
   renderItem = ({item, index}) => {
+    console.log(item);
     return (
       <ItemsContainer>
         <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
-        <InputValues
-          id={item.orderDetail_id}
-          blurOnSubmit={false}
-          value={item.collected_quantity}
-          onChangeText={text => {
-            item.collected_quantity = text;
-            this.setState({
-              ...item,
-            });
-          }}
-          returnKeyType="next"
-          keyboardType="number-pad"
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            flexGrow: 1,
+          }}>
+          <InputValues
+            id={item.orderDetail_id}
+            blurOnSubmit={false}
+            value={item.collected_quantity}
+            onChangeText={text => {
+              item.collected_quantity = text;
+              this.setState({
+                ...item,
+              });
+            }}
+            returnKeyType="next"
+            keyboardType="number-pad"
+          />
+          {/* <InputValues
+            id={item.orderDetail_id}
+            blurOnSubmit={false}
+            value={item.collected_quantity}
+            onChangeText={text => {
+              item.collected_quantity = text;
+              this.setState({
+                ...item,
+              });
+            }}
+            returnKeyType="next"
+            keyboardType="number-pad"
+          /> */}
+        </View>
       </ItemsContainer>
     );
   };
@@ -142,20 +162,39 @@ export default class Registry extends Component {
         {/* Content */}
         <RContent>
           <View style={styles.RouteDetails}>
-            <Text style={styles.currentDateText}>
-              {`Numero : ${params.client}`}
-            </Text>
-            <Text style={styles.currentDateText}>
-              {`Dirección : ${params.name}`}
-            </Text>
-            <Text style={styles.currentDateText}>
-              {`Address : ${params.address}`}
-            </Text>
+            <Head>
+              <Key>Numero:</Key>
+              <Label>{params.client}</Label>
+            </Head>
+            <Head>
+              <Key>Cliente:</Key>
+              <Label>{params.name}</Label>
+            </Head>
+            <Head>
+              <Key>Dirección:</Key>
+              <Label>{params.address}</Label>
+            </Head>
           </View>
-          <HeaderItems>
-            <Text style={styles.bodyHeader}>Articulos</Text>
-            <Text style={styles.bodyHeader}>Recodigos</Text>
-          </HeaderItems>
+          <View>
+            <HeaderItems>
+              <Text style={styles.bodyHeader}>Articulos</Text>
+              <Text style={styles.bodyHeader}>Recogidos</Text>
+            </HeaderItems>
+            <OrderMode>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexGrow: 1.5,
+                }}>
+                <Text style={{flexGrow: 1, textAlign: 'center'}}></Text>
+                <Text style={{flexGrow: 1, textAlign: 'center'}}></Text>
+              </View>
+              <View style={{flexDirection: 'row', flexGrow: 1}}>
+                <Text style={{flexGrow: 1, textAlign: 'center'}}>Picking</Text>
+                <Text style={{flexGrow: 1, textAlign: 'center'}}>Compras</Text>
+              </View>
+            </OrderMode>
+          </View>
           <KeyboardAwareScrollView>
             {/* FlatList */}
             <FlatList
@@ -191,16 +230,11 @@ const styles = StyleSheet.create({
     // display: 'flex',
     flexDirection: 'row',
   },
-  currentDateText: {color: theme.colors.gray},
 
   container: {
     // flex: 1,
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.white,
-  },
-
-  client_data: {
-    fontSize: 14,
   },
 
   RouteDetails: {backgroundColor: 'white', padding: 16},
@@ -267,6 +301,8 @@ const styles = StyleSheet.create({
 
   bodyHeader: {
     textTransform: 'uppercase',
+    flexGrow: 1,
+    textAlign: 'center',
   },
 
   checkbox: {
@@ -286,34 +322,43 @@ const styles = StyleSheet.create({
   },
 });
 
-const CustomButton = styled(Button)`
-  background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
-  border-color: ${props =>
-    props.bordered ? theme.colors.gray : ' transparent'};
-  border: ${props => (props.bordered ? '3px solid gray' : '#4285f4')};
-  text-transform: uppercase;
-  flex-basis: 48%;
-  justify-content: center;
+const Key = styled.Text`
+  flex-basis: 70px;
+  overflow: hidden;
+  flex-grow: 0;
+  color: ${theme.colors.gray2};
+`;
+const Label = styled.Text`
+  flex: 1 1 0px;
+  text-align: left;
+  margin-left: 8;
+  color: ${theme.colors.gray};
+`;
+const Head = styled.View`
+  flex-direction: row;
 `;
 
 const ItemTitle = styled.Text`
+  flex-grow: 1;
   text-align: left;
-  width: 180px;
+  ${'' /* width: 180px; */}
   overflow: hidden;
   font-size: 14px;
 `;
 
 const ItemsContainer = styled.View`
   flex-direction: row;
+  flex: 1;
   padding-vertical: 12;
   margin-left: 24;
   align-items: center;
 `;
 
 const InputValues = styled(CustomTextInput)`
-  flex-basis: 100px;
-  margin-left: 20px;
+  flex-basis: 80px;
+  margin-left: 8px;
   padding: 12px;
+  ${'' /* flex-grow: 1; */}
   background-color: #fff;
   border-color: #bdbdbd;
   border-width: 1px;
@@ -322,9 +367,15 @@ const InputValues = styled(CustomTextInput)`
 
 const HeaderItems = styled.View`
   flex-direction: row;
-  justify-content: space-around;
+  flex-grow: 1;
   padding-vertical: 12px;
   background-color: ${theme.colors.gray3};
+`;
+
+const OrderMode = styled.View`
+  margin-top: 8px;
+  flex-direction: row;
+  flex-grow: 1;
 `;
 
 const RContent = styled.View`

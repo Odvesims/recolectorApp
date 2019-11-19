@@ -217,14 +217,12 @@ const styles = StyleSheet.create({
   },
 
   currentDate: {
-    // display: 'flex',
-
     flexDirection: 'row',
   },
+
   currentDateText: {color: theme.colors.gray},
 
   container: {
-    // flex: 1,
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.white,
   },

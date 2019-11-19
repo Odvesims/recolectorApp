@@ -22,9 +22,16 @@ export class Assigned extends Component {
     data: [],
     show: true,
     BUTTONS: [
-      {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-      {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-      {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      {
+        text: global.translate('TITLE_EDIT'),
+        icon: 'create',
+        iconColor: theme.colors.primary,
+      },
+      {
+        text: global.translate('TITLE_CANCEL'),
+        icon: 'close',
+        iconColor: theme.colors.gray,
+      },
     ],
     DESTRUCTIVE_INDEX: 3,
     CANCEL_INDEX: 4,
@@ -34,14 +41,25 @@ export class Assigned extends Component {
     this.setState(previousState => ({show: !previousState.show}));
   };
 
-  componentDidMount() {}
+  listEmpty = () => {
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text>No hay items para mostrar</Text>
+      </View>
+    );
+  };
 
   renderItem = ({item}) => {
-    const {BUTTONS, CANCEL_INDEX, DESTRUCTIVE_INDEX} = this.props;
+    // console.log('ORDERSTAB==>', item);
+    const {BUTTONS, CANCEL_INDEX, DESTRUCTIVE_INDEX} = this.state;
     return (
       <Item style={styles.list}>
         <View key={item.key} style={styles.listContainer}>
-          <Text style={styles.code}>{item.document}</Text>
+          <Text style={styles.code}>{item.order_document}</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text numberOfLines={1} style={styles.name}>
               {item.client}- {item.name}
@@ -62,10 +80,22 @@ export class Assigned extends Component {
                 options: BUTTONS,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: 'Opciones',
+                title: global.translate('TITLE_OPTIONS'),
               },
               buttonIndex => {
-                this.setState({clicked: BUTTONS[buttonIndex]});
+                switch (buttonIndex) {
+                  case 0:
+                    this.props.navigation.navigate('Order', {
+                      operation: 'TITLE_VIEW_ORDER',
+                      order_id: item.order_id,
+                      loading_message: 'MESSAGE_UPDATING_CLIENT',
+                      isNewRecord: false,
+                    });
+                    break;
+                  case 1:
+                    ActionSheet.hide();
+                    break;
+                }
               },
             )
           }>
@@ -78,7 +108,6 @@ export class Assigned extends Component {
   render() {
     const {data} = this.state;
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-
     return (
       <Content style={styles.content}>
         {/* <ScrollView> */}
@@ -87,6 +116,7 @@ export class Assigned extends Component {
           data={this.props.tab_data}
           keyExtractor={item => item.id}
           renderItem={this.renderItem}
+          ListEmptyComponent={this.listEmpty}
           maxToRenderPerBatch={10}
           windowSize={10}
         />
