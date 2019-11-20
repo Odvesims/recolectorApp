@@ -6,7 +6,7 @@ import CustomPicker from '../../components/CustomPicker';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import moment from 'moment';
 import _ from 'lodash';
-import Detail from './Detail';
+// import Detail from './Detail';
 import {
   View,
   StyleSheet,
@@ -39,17 +39,14 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import {DetailsTab} from './Tabs';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 import {
   getStoredClients,
   getStoredEmployees,
-  updateOrderAssigned,
   getOrderDetails,
-  getOrders,
-  getOrderData,
 } from '../../helpers/sql_helper';
-import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 import {
-  printText,
+  printInvoiceText,
   enableBT,
   connectBluetooth,
 } from '../../helpers/bluetooth_helper';
@@ -80,29 +77,15 @@ export default class Order extends Component {
       //
       clients: [],
       employees: [],
-      client: [],
-
-      client_address: '',
-      client_city: '',
-      client_state: '',
-      client_phone: '',
-      placeholder: '', //global.translate('PLACEHOLDER_SELECT_CLIENT')
-      placeholderEmployee: '', //global.translate('PLACEHOLDER_SELECT_EMPLOYEE')
-      BUTTONS: [
-        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-        {
-          text: global.translate('TITLE_EDIT'),
-          icon: 'create',
-          iconColor: theme.colors.primary,
-        },
-        {
-          text: global.translate('TITLE_CANCEL'),
-          icon: 'close',
-          iconColor: theme.colors.gray,
-        },
-      ],
-      DESTRUCTIVE_INDEX: 3,
-      CANCEL_INDEX: 4,
+      client: '',
+      //
+      client_address: null,
+      client_city: null,
+      client_state: null,
+      client_phone: null,
+      //
+      placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+      placeholderEmployee: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'), //
       //
       operation: 'TITLE_VIEW_ORDER',
       isNewRecord: isNewRecord,
@@ -111,12 +94,16 @@ export default class Order extends Component {
       editable: true,
     };
 
+    this.arrDataPicking = [];
+    this.arrDataShopping = [];
+    this.getDataHandler();
+
     if (isNewRecord === false) {
       this.rowTranslateAnimatedValues = {};
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
           let orderData = o.arrResponse[0];
-          console.log('o ===>', orderData);
+          console.log('arrRESPONSE', o.arrResponse[0]);
           this.setState({
             ...orderData,
             placeholder: orderData.client_name || '',
@@ -133,10 +120,6 @@ export default class Order extends Component {
         });
       });
     }
-    this.arrDataPicking = [];
-    this.arrDataShopping = [];
-    this.getDataHandler();
-    // this.getclient();
   }
 
   getPickerData = (value, arr) => {
@@ -199,15 +182,34 @@ export default class Order extends Component {
     this.setState({selectedIndex});
   };
 
-  _renderDetails = item => {
-    const {picking, shopping, selectedIndex} = this.state;
+  onPressDetailHandler = () => {
+    let {navigate} = this.props.navigation;
+    if (this.state.selectedIndex === 0) {
+      navigate('Picking', {editable: this.state.editable}); // {data: picking}
+    } else {
+      navigate('Shopping', {editable: this.state.editable}); // {data: shopping}
+    }
+  };
+
+  renderDetailTabs = item => {
+    const {picking, shopping, selectedIndex, editable} = this.state;
     if (item === 0) {
       return (
-        <DetailsTab tab_data={picking} navigation={this.props.navigation} />
+        <DetailsTab
+          tab_data={picking}
+          navigation={this.props.navigation}
+          editable={editable}
+          renderView={'Picking'}
+        />
       );
     } else {
       return (
-        <DetailsTab tab_data={shopping} navigation={this.props.navigation} />
+        <DetailsTab
+          tab_data={shopping}
+          navigation={this.props.navigation}
+          editable={editable}
+          renderView={'Shopping'}
+        />
       );
     }
   };
@@ -226,7 +228,7 @@ export default class Order extends Component {
       chosenDate,
       date,
     } = this.state;
-
+    // const {client, selected_item, data, picking, shopping} = this.state;
     if (shopping.length > 0) {
       hasPurchases = 'T';
     }
@@ -248,25 +250,58 @@ export default class Order extends Component {
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
       if (res.valid) {
-        if (global.printer_address === '') {
-          alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
+        if (hasPurchases === 'T') {
+          if (global.printer_address === '') {
+            alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
+          } else {
+            enableBT().then(e => {
+              connectBluetooth(
+                global.printer_name,
+                global.printer_address,
+              ).then(c => {
+                if (c === true) {
+                  Alert.alert(
+                    global.translate('TITLE_PRINT_ORDER'),
+                    global.translate('TITLE_PRINT_ORDER_MESSAGE'),
+                    [
+                      {
+                        text: global.translate('TITLE_NO_PRINT'),
+                        onPress: () => {
+                          alert.cancel;
+                        },
+                        style: 'cancel',
+                      },
+                      {
+                        text: global.translate('TITLE_PRINT_TOGETHER'),
+                        onPress: () => {
+                          printInvoiceText(res.responseObject, 2).then(p => {});
+                        },
+                      },
+                      {
+                        text: global.translate('TITLE_PRINT_SEPARATE'),
+                        onPress: () => {
+                          printInvoiceText(o.responseObject, 1).then(p => {});
+                        },
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else {
+                  this.setState({loading: false});
+                  alert('Not connected');
+                }
+              });
+            });
+          }
         } else {
-          enableBT().then(e => {
-            connectBluetooth(global.printer_name, global.printer_address).then(
-              c => {
-                printText(res.responseObject).then(p => {});
-              },
-            );
-          });
         }
         alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
-        // this.goBack();
         this.setState({
           client: '',
-          client_address: '',
-          client_city: '',
-          client_state: '',
-          client_phone: '',
+          client_address: null,
+          client_city: null,
+          client_state: null,
+          client_phone: null,
           placeholder: '',
           selectedItem: [],
           selectedClient: [],
@@ -280,21 +315,11 @@ export default class Order extends Component {
     });
   };
 
-  onPressDetailHandler = () => {
-    let {navigate} = this.props.navigation;
-    let {selectedIndex, editable} = this.state;
-    if (selectedIndex === 0) {
-      navigate('Picking', {data: this.state.picking, editable});
-    } else {
-      navigate('Shopping', {data: this.state.shopping, editable});
-    }
-  };
-
   setClientsPicker(clients) {
     return new Promise((resolve, reject) => {
       let arrClients = [];
       clients.map(client => {
-        // console.log('Clientpicker ==>', client);
+        // console.log('ClientPicker ==>', client);
         arrClients.push({
           Name: client.client_code + '- ' + client.name,
           Code: client.client_code,
@@ -309,7 +334,6 @@ export default class Order extends Component {
   }
 
   setEmployeesPicker(employees) {
-    // console.log('SET_EMPLOYEES_PICKER', employees);
     return new Promise((resolve, reject) => {
       let arrEmployees = [];
       employees.map(employee => {
@@ -362,18 +386,12 @@ export default class Order extends Component {
   };
 
   render() {
-    // console.log('Hola', this.state.selected_employee);
-    console.log('STATE==>', this.state);
-    console.log(
-      'STATE placeholder==>',
-      this.state.placeholder,
-      this.state.placeholderEmployee,
-    );
+    // console.log('STATE==>', this.state);
     const {params} = this.props.navigation.state;
+    const {editable} = this.state;
 
     const {
       //
-      clients,
       employees,
       placeholderEmployee,
       placeholder,
@@ -388,6 +406,16 @@ export default class Order extends Component {
       loadingMessage,
     } = this.state;
     const buttons = ['Recolección', 'Compras']; //global.translate('TITLE_CATEGORY')];
+
+    let moreDetails = null;
+    if (editable) {
+      moreDetails = (
+        <ButtonOutlined onPress={this.onPressDetailHandler}>
+          <Icon name="add" style={{color: theme.colors.primary}} />
+          <TextButton>{global.translate('TITLE_DETAILS')}</TextButton>
+        </ButtonOutlined>
+      );
+    }
 
     let clientInfo = null;
     if (client) {
@@ -455,7 +483,7 @@ export default class Order extends Component {
                         placeholder={placeholder}
                         selectedHolder={placeholder}
                         selectedItem={this.selectedClient}
-                        disabled={!this.state.editable}
+                        disabled={!editable}
                       />
                       {clientInfo}
                     </ClientForm>
@@ -466,7 +494,7 @@ export default class Order extends Component {
                         items={employees}
                         placeholder={placeholderEmployee}
                         selectedItem={this.selectedEmployee}
-                        disabled={!this.state.editable}
+                        disabled={!editable}
                       />
                     </ClientForm>
                   </Form>
@@ -480,7 +508,6 @@ export default class Order extends Component {
                         {global.translate('TITLE_DETAILS')}
                       </Text>
                     </View>
-                    {/* <ScrollView> */}
 
                     <View>
                       {/* Tabs */}
@@ -491,15 +518,10 @@ export default class Order extends Component {
                         containerStyle={{height: 50}}
                       />
                       <ScrollView>
-                        {this._renderDetails(selectedIndex)}
+                        {this.renderDetailTabs(selectedIndex)}
                       </ScrollView>
                     </View>
-                    <ButtonOutlined onPress={this.onPressDetailHandler}>
-                      <Icon name="add" style={{color: theme.colors.primary}} />
-                      <TextButton>
-                        {global.translate('TITLE_DETAILS')}
-                      </TextButton>
-                    </ButtonOutlined>
+                    {moreDetails}
                     {/* </ScrollView> */}
                   </View>
                 </View>
@@ -511,6 +533,7 @@ export default class Order extends Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   currentDate: {
     backgroundColor: theme.colors.lightGray,
@@ -559,7 +582,6 @@ const ClientData = styled.View`
   padding-horizontal: 8;
   padding-vertical: 12;
 `;
-
 const ButtonOutlined = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
@@ -578,7 +600,6 @@ const TextButton = styled.Text`
   text-transform: uppercase;
 `;
 const ClientForm = styled.View``;
-
 const CurrentDate = styled.View`
   background-color: ${theme.colors.lightGray};
   padding: 16px;

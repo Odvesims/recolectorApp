@@ -27,26 +27,41 @@ import {
 export default class Picking extends PureComponent {
   constructor(props) {
     super(props);
-    const {params} = this.props.navigation.state;
+    let {params} = this.props.navigation.state;
+    let type = params.detail_type;
+    switch (type) {
+      case 'C':
+        type = 0;
+        break;
+      case 'S':
+        type = 1;
+        break;
+      default:
+        type = 2;
+        break;
+    }
+    let quantity = Number(params.quantity);
+    let total = Number(params.detail_total);
+    let price = Number(params.price);
+
+    params = params || {
+      quantity: 1,
+      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      total: 0,
+      article_price: 0,
+    };
     this.state = {
       theItem: {},
-      selectedIndex: 2,
+      selectedIndex: type,
       categories: [],
       subcategories: [],
       articles: [],
       picker_data: [],
       article: '',
-      article_price: '',
-      quantity: params.data.detail_quantity || 1,
-      placeholder:
-        params.data.detail_description ||
-        global.translate('PLACEHOLDER_SELECT_ARTICLE'), //global.translate('PLACEHOLDER_SELECT_ARTICLE')
-      //
-      //order_selection: params.selection,
-      //order_description: params.description,
-      //placeholder: params.order_name,
-      //chosenQuantity: params.quantity,
-      //order_total: params.total,
+      article_price: price,
+      quantity: quantity, //
+      placeholder: params.detail_description, // params.data.detail_description ||
+      total: total,
     };
     this.getArticlesData();
   }
@@ -171,7 +186,6 @@ export default class Picking extends PureComponent {
 
   onPressHandler = () => {
     const {quantity, itemSelected} = this.state;
-
     if (quantity) {
       this.props.navigation.navigate('Order', {
         itemSelected,
@@ -187,22 +201,10 @@ export default class Picking extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
-
-    const {editable} = this.props.navigation.state.params;
-    console.log('EDITABLE', editable);
-    const isEditable = editable;
-    let save;
-    if (isEditable) {
-      save = (
-        <Right>
-          <Button transparent onpress={this.onPressHandler}>
-            <Icon name="checkmark" />
-          </Button>
-        </Right>
-      );
-    }
-
-    const {
+    console.log('Picking ==>', this.props.navigation.state.params);
+    console.log('Picking STATE ==>', this.state);
+    //
+    let {
       selectedIndex,
       article_price,
       quantity,
@@ -210,7 +212,23 @@ export default class Picking extends PureComponent {
       picker_data,
       total,
     } = this.state;
-    const {navigation} = this.props;
+
+    //
+    const {
+      params: {editable},
+    } = this.props.navigation.state;
+    const isEditable = editable;
+    let save = null;
+
+    if (isEditable) {
+      save = (
+        <Right>
+          <Button transparent onPress={this.onPressHandler}>
+            <Icon name="checkmark" />
+          </Button>
+        </Right>
+      );
+    }
 
     return (
       <Container>
@@ -268,7 +286,7 @@ export default class Picking extends PureComponent {
                   selectedHolder={this.selectedItem.Name}
                   items={picker_data}
                   selectedItem={this.selectedItem}
-                  disabled={!editable}
+                  disabled={!isEditable}
                 />
               </View>
 
@@ -285,7 +303,7 @@ export default class Picking extends PureComponent {
                     this.changeQuantity(quantity);
                   }}
                   minValue={1}
-                  editable={editable}
+                  editable={!isEditable}
                 />
               </View>
             </Form>
@@ -293,7 +311,7 @@ export default class Picking extends PureComponent {
             {/* Total */}
             <View style={styles.totalPriceContainer}>
               <Text style={styles.totalPrice}>
-                {global.translate('TITLE_TOTAL')}: $ {total || 0}
+                {global.translate('TITLE_TOTAL')}: $ {total}
               </Text>
             </View>
           </KeyboardAwareScrollView>
@@ -331,6 +349,7 @@ const styles = StyleSheet.create({
   totalPriceContainer: {
     borderColor: theme.colors.success,
     borderWidth: 1,
+    justifyContent: 'flex-end',
     borderStyle: 'solid',
     padding: theme.sizes.p12,
     alignItems: 'center',

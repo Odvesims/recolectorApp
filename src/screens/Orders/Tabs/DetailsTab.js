@@ -18,7 +18,7 @@ import {Content, Body, Item, Button, ActionSheet, Icon} from 'native-base';
 
 export default class DetailsTab extends Component {
   state = {
-    data: this.props.tab_data,
+    data: [],
     show: true,
     BUTTONS: [
       {
@@ -65,10 +65,12 @@ export default class DetailsTab extends Component {
               justifyContent: 'space-between',
             }}>
             <Name numberOfLines={1}>
-              {item.detail_description || item.description}
+              {item.detail_description}
+              {/* //item.detail_description|| */}
             </Name>
             <Quantity numberOfLines={1}>
-              {item.detail_quantity || item.quantity}
+              {item.quantity}
+              {/* //item.detail_quantity|| */}
             </Quantity>
           </View>
         </View>
@@ -86,25 +88,9 @@ export default class DetailsTab extends Component {
               buttonIndex => {
                 switch (buttonIndex) {
                   case 0:
-                    this.props.navigation.navigate('Orders', {
-                      operation: 'TITLE_VIEW_ROUTE',
-                      order_id: item.order_id,
-                      description: item.description,
-                      document_id: item.document_id,
-                      document_acronym: item.acronym,
-                      document_number: item.document_number,
-                      assigned_by: item.assigned_by,
-                      assigned_to: item.assigned_to,
-                      supervisor_name: item.supervisor_name,
-                      employee_name: item.employee_name,
-                      phone_number: item.phone_number,
-                      date_from: item.date_from,
-                      date_to: item.date_to,
-                      status: item.status,
-                      disabled_date_from: true,
-                      loading_message: 'MESSAGE_UPDATING_ROUTE',
-                      isNewRecord: false,
-                      details: item.details,
+                    this.props.navigation.navigate(`${this.props.renderView}`, {
+                      ...this.props.tab_data[0],
+                      editable: this.props.editable,
                     });
                     break;
                   case 1:
@@ -121,7 +107,8 @@ export default class DetailsTab extends Component {
   };
 
   render() {
-    console.log('DETAILTABS ==>', this.props.tab_data);
+    console.log('DETAILTABS ==>', this.props.tab_data[0]);
+    console.log('DETAILTABS ==>', this.props);
     return (
       <Content style={styles.content}>
         <ScrollView>

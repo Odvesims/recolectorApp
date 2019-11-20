@@ -2,12 +2,7 @@ import React, {PureComponent} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
 import NumericInput from 'react-native-numeric-input';
-import {
-  CustomPicker,
-  ButtonGroup,
-  CustomButton,
-  ActionButton,
-} from '../../../components';
+import {CustomPicker, ButtonGroup} from '../../../components';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   getStoredCategories,
@@ -32,22 +27,41 @@ import {
 export default class Shopping extends PureComponent {
   constructor(props) {
     super(props);
-    const {params} = this.props.navigation.state;
+    let {params} = this.props.navigation.state;
+    let type = params.detail_type;
+    switch (type) {
+      case 'C':
+        type = 0;
+        break;
+      case 'S':
+        type = 1;
+        break;
+      default:
+        type = 2;
+        break;
+    }
+    let quantity = Number(params.quantity);
+    let total = Number(params.detail_total);
+
+    params = params || {
+      quantity: 1,
+      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      total: 0,
+      price: 0,
+    };
     this.state = {
       theItem: {},
-      selectedIndex: 2,
+      selectedIndex: type,
       categories: [],
       subcategories: [],
       articles: [],
       picker_data: [],
       article: '',
       article_price: '',
-      quantity: params.data.detail_quantity || 1,
-      price: params.data.detail_price || '',
-      // total: '',
-      placeholder:
-        params.data.detail_description ||
-        global.translate('PLACEHOLDER_SELECT_ARTICLE'), //global.translate('PLACEHOLDER_SELECT_ARTICLE')
+      quantity: quantity,
+      price: params.price,
+      total: total,
+      placeholder: params.detail_description, //global.translate('PLACEHOLDER_SELECT_ARTICLE')
     };
     this.getArticlesData();
   }
@@ -168,8 +182,6 @@ export default class Shopping extends PureComponent {
       this.setState({
         theItem: item,
         article: item.Name,
-        // article_price: item.Price,
-        // total: price,
         placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
         itemSelected: {
           item: item.Name.split('-')[0],
@@ -202,34 +214,34 @@ export default class Shopping extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
-
-    const {editable} = this.props.navigation.state.params;
-    const isEditable = !editable;
-    let save;
-    if (isEditable) {
-      save = (
-        <Right>
-          <Button transparent onpress={this.onPressHandler}>
-            <Icon name="checkmark" />
-          </Button>
-        </Right>
-      );
-    }
-    
+    console.log('Shopping ==>', this.props.navigation.state.params);
+    //
     const {
       selectedIndex,
-      article_price,
       quantity,
       placeholder,
       picker_data,
       total,
       price,
     } = this.state;
-    const {navigation} = this.props;
+    //
+    const {
+      params: {editable},
+    } = this.props.navigation.state;
+    const isEditable = editable;
+    let save = null;
+    if (isEditable) {
+      save = (
+        <Right>
+          <Button transparent onPress={this.onPressHandler}>
+            <Icon name="checkmark" />
+          </Button>
+        </Right>
+      );
+    }
 
     return (
       <Container>
-        {/* header */}
         <Header>
           <Left>
             <Button
@@ -242,12 +254,12 @@ export default class Shopping extends PureComponent {
               <Icon name="arrow-back" />
             </Button>
           </Left>
-          <Body style={{width: '200px'}}>
+          <Body>
             <Title>Articulos a Comprar</Title>
           </Body>
           {save}
         </Header>
-        {/* Content */}
+        {/* // */}
         <Content style={styles.container}>
           <KeyboardAwareScrollView>
             <Form>
@@ -273,7 +285,7 @@ export default class Shopping extends PureComponent {
                   selectedHolder={this.selectedItem.Name}
                   items={picker_data}
                   selectedItem={this.selectedItem}
-                  disabled={!editable}
+                  disabled={!isEditable}
                 />
               </View>
 
@@ -282,11 +294,8 @@ export default class Shopping extends PureComponent {
                 {/* {global.translate('TITLE_QUANTITY')} */}
                 <Text>Precio</Text>
                 <TextInput
-                  ref={input => {
-                    this.secondTextInput = input;
-                  }}
-                  editable={editable}
-                  value={`${this.state.price}`}
+                  editable={isEditable}
+                  value={price}
                   style={styles.inputNumber}
                   keyboardType="number-pad"
                   onChangeText={price => {
@@ -307,13 +316,13 @@ export default class Shopping extends PureComponent {
                     this.changeQuantity(quantity);
                   }}
                   minValue={1}
-                  editable={editable}
+                  editable={isEditable}
                 />
               </View>
             </Form>
             <View style={styles.totalPriceContainer}>
               <Text style={styles.totalPrice}>
-                {global.translate('TITLE_TOTAL')}: $ {total || 0}
+                {global.translate('TITLE_TOTAL')}: $ {total}
               </Text>
             </View>
           </KeyboardAwareScrollView>
@@ -336,6 +345,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.gray2,
     borderRadius: 4,
     color: '#000',
+    backgroundColor: 'yellow',
   },
 
   inputNumber: {

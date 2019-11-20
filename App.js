@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {I18nManager} from 'react-native';
 import {createAppContainer} from 'react-navigation';
-import NavigationService from './src/services/NavigationService';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';

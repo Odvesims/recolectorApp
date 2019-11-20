@@ -17,7 +17,7 @@ import {
 
 import {Icon, Button, Content, Item, ActionSheet} from 'native-base';
 
-export class Assigned extends Component {
+export default class OrdersTab extends Component {
   state = {
     data: [],
     show: true,
@@ -125,8 +125,6 @@ export class Assigned extends Component {
     );
   }
 }
-
-export default Assigned;
 
 const styles = StyleSheet.create({
   androidHeader: {
