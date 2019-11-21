@@ -41,14 +41,7 @@ export default class Shopping extends PureComponent {
         break;
     }
     let quantity = Number(params.quantity);
-    let total = Number(params.detail_total);
 
-    params = params || {
-      quantity: 1,
-      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-      total: 0,
-      price: 0,
-    };
     this.state = {
       theItem: {},
       selectedIndex: type,
@@ -60,7 +53,7 @@ export default class Shopping extends PureComponent {
       article_price: '',
       quantity: quantity,
       price: params.price,
-      total: total,
+      total: params.detail_total,
       placeholder: params.detail_description, //global.translate('PLACEHOLDER_SELECT_ARTICLE')
     };
     this.getArticlesData();
@@ -121,6 +114,7 @@ export default class Shopping extends PureComponent {
       total: price * value,
       itemSelected: {
         ...prevState.itemSelected,
+
         price: price,
         total: price * quantity,
         quantity: value,
@@ -182,10 +176,10 @@ export default class Shopping extends PureComponent {
       this.setState({
         theItem: item,
         article: item.Name,
-        placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+        placeholder: item.Name,
         itemSelected: {
           item: item.Name.split('-')[0],
-          description: item.Name.split('-')[1],
+          detail_description: item.Name.split('-')[1],
           price: price,
           quantity: quantity,
           total: price,
@@ -198,7 +192,6 @@ export default class Shopping extends PureComponent {
 
   onPressHandler = () => {
     const {quantity, itemSelected} = this.state;
-    console.log('DONE ==>', itemSelected);
     if (quantity) {
       this.props.navigation.navigate('Order', {
         itemSelected: itemSelected,
@@ -214,7 +207,6 @@ export default class Shopping extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
-    console.log('Shopping ==>', this.props.navigation.state.params);
     //
     const {
       selectedIndex,
@@ -260,8 +252,12 @@ export default class Shopping extends PureComponent {
           {save}
         </Header>
         {/* // */}
-        <Content style={styles.container}>
-          <KeyboardAwareScrollView>
+        <BContent>
+          <KeyboardAwareScrollView
+            contentContainerStyle={{
+              flex: 1,
+              justifyContent: 'flex-end',
+            }}>
             <Form>
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_SELECT')}</Text>
@@ -270,6 +266,7 @@ export default class Shopping extends PureComponent {
                   selectedIndex={selectedIndex}
                   buttons={buttons}
                   containerStyle={{height: 40}}
+                  disableSelected={true}
                 />
               </View>
               <View style={styles.paddingBottom}>
@@ -282,9 +279,8 @@ export default class Shopping extends PureComponent {
                 </View>
                 <CustomPicker
                   placeholder={placeholder}
-                  selectedHolder={this.selectedItem.Name}
                   items={picker_data}
-                  selectedItem={this.selectedItem}
+                  onSelected={this.selectedItem}
                   disabled={!isEditable}
                 />
               </View>
@@ -303,7 +299,7 @@ export default class Shopping extends PureComponent {
                   }}
                 />
               </View>
-              {/* quantity */}
+              {/* Quantity */}
               <View style={styles.paddingBottom}>
                 <Text style={{marginBottom: 8}}>
                   {global.translate('TITLE_QUANTITY')}
@@ -320,23 +316,26 @@ export default class Shopping extends PureComponent {
                 />
               </View>
             </Form>
-            <View style={styles.totalPriceContainer}>
-              <Text style={styles.totalPrice}>
-                {global.translate('TITLE_TOTAL')}: $ {total}
-              </Text>
-            </View>
+            {/* Total */}
+            <Total>
+              <View style={styles.totalPriceContainer}>
+                <Text style={styles.totalPrice}>
+                  {global.translate('TITLE_TOTAL')}: $ {total}
+                </Text>
+              </View>
+            </Total>
           </KeyboardAwareScrollView>
-        </Content>
+        </BContent>
       </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: theme.sizes.padding,
-  },
+  // container: {
+  //   flex: 1,
+  //   padding: theme.sizes.padding,
+  // },
 
   input: {
     marginVertical: theme.sizes.p8,
@@ -391,3 +390,14 @@ const styles = StyleSheet.create({
   },
   price: {},
 });
+
+const BContent = styled.View`
+  flex: 1;
+  flex-direction: column;
+  padding: ${theme.sizes.padding}px;
+`;
+const Total = styled.View`
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+`;

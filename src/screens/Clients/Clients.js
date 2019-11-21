@@ -301,6 +301,7 @@ export default class Clients extends Component {
                 loading_message: 'MESSAGE_REGISTERING_CLIENT',
                 onGoBack: () => this.refresh(true),
                 new_record: true,
+                state: global.translate('PLACEHOLDER_TYPE_STATE'),
               })
             }
           />

@@ -36,17 +36,31 @@ import {
 export class Client extends Component {
   constructor(props) {
     super(props);
+    const {
+      params: {
+        loading_message,
+        new_record,
+        address,
+        country,
+        phone,
+        state,
+        name,
+        code,
+        city,
+      },
+    } = this.props.navigation.state;
+
     this.state = {
       loading: false,
-      loadingMessage: this.props.navigation.state.params.loading_message,
-      new_record: this.props.navigation.state.params.new_record,
-      code: this.props.navigation.state.params.code,
-      name: this.props.navigation.state.params.name,
-      address: this.props.navigation.state.params.address,
-      city: this.props.navigation.state.params.city,
-      state: this.props.navigation.state.params.state,
-      country: this.props.navigation.state.params.country,
-      phone: this.props.navigation.state.params.phone,
+      loadingMessage: loading_message,
+      new_record: new_record,
+      code: code,
+      name: name,
+      address: address,
+      city: city,
+      state: state,
+      country: country,
+      phone: phone,
     };
     const {} = this.state;
     this.selectedItem = this.selectedItem.bind(this);
@@ -63,15 +77,16 @@ export class Client extends Component {
   }
 
   execOperation = () => {
+    const {code, name, address, city, state, phone, country} = this.state;
     let client_data = {
-      code: this.state.code,
-      name: this.state.name,
-      address: this.state.address,
-      city: this.state.city,
-      state: this.state.state,
-      country: this.state.country,
-      phone: this.state.phone,
-      phone_old: this.state.phone,
+      code: code,
+      name: name,
+      address: address,
+      city: city,
+      state: state,
+      country: country,
+      phone: phone,
+      phone_old: phone,
       country_id: global.country_id,
       setma_id: global.setma_id,
     };
@@ -85,7 +100,7 @@ export class Client extends Component {
           address: '',
           city: '',
           state: '',
-          country: this.props.navigation.state.params.country,
+          country: country,
           phone: '',
         });
         alert(global.translate(result));
@@ -101,6 +116,7 @@ export class Client extends Component {
 
   render() {
     let states = {};
+    const {phone, address, city, state, code, name} = this.state;
     switch (global.states_collection) {
       case 'us':
         states = usStates;
@@ -143,82 +159,67 @@ export class Client extends Component {
         <Header style={styles.headerCode}>
           <Body>
             <Text style={styles.headerCodeText}>
-              {global.translate('TITLE_CODE')} : {this.state.code}
+              {global.translate('TITLE_CODE')} : {code}
             </Text>
           </Body>
         </Header>
 
         <Content style={styles.container}>
           <KeyboardAvoidingView>
-            <Form>
+            <Form style={{marginBottom: 24}}>
+              <TextInputForm
+                label={global.translate('TITLE_NAME')}
+                value={name}
+                style={styles.input}
+                placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
+                returnKeyType="go"
+                onChangeText={name => {
+                  this.setState({name: name});
+                }}
+              />
+
+              <TextInputForm
+                label={global.translate('TITLE_ADDRESS')}
+                value={address}
+                style={styles.input}
+                placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
+                returnKeyType="go"
+                onChangeText={address => {
+                  this.setState({address: address});
+                }}
+              />
+
+              <TextInputForm
+                label={global.translate('TITLE_CITY')}
+                value={city}
+                style={styles.input}
+                placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
+                returnKeyType="go"
+                onChangeText={city => {
+                  this.setState({city: city});
+                }}
+              />
+
               <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_NAME')}
-                </Text>
-                <TextInput
-                  value={this.state.name}
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
-                  returnKeyType="go"
-                  onChangeText={name => {
-                    this.setState({name: name});
-                  }}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_ADDRESS')}
-                </Text>
-                <TextInput
-                  value={this.state.address}
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
-                  returnKeyType="go"
-                  onChangeText={address => {
-                    this.setState({address: address});
-                  }}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_CITY')}
-                </Text>
-                <TextInput
-                  value={this.state.city}
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
-                  returnKeyType="go"
-                  onChangeText={city => {
-                    this.setState({city: city});
-                  }}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_STATE')}
-                </Text>
                 <CustomPicker
-                  placeholder={this.state.state}
-                  selectedHolder={this.selectedItem.Name}
+                  label={global.translate('TITLE_STATE')}
+                  placeholder={state}
                   items={states}
-                  selectedItem={this.selectedItem}
+                  onSelected={this.selectedItem}
                 />
               </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_PHONE')}
-                </Text>
-                <TextInput
-                  value={this.state.phone}
-                  style={styles.input}
-                  keyboardType="phone-pad"
-                  placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
-                  returnKeyType="go"
-                  onChangeText={phone => {
-                    this.setState({phone: phone});
-                  }}
-                />
-              </View>
+
+              <TextInputForm
+                label={global.translate('TITLE_PHONE')}
+                value={phone}
+                style={styles.input}
+                keyboardType="phone-pad"
+                placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
+                returnKeyType="go"
+                onChangeText={phone => {
+                  this.setState({phone: phone});
+                }}
+              />
             </Form>
           </KeyboardAvoidingView>
         </Content>
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: theme.sizes.base,
+    fontSize: theme.sizes.font,
     color: theme.colors.darkGray,
   },
 
@@ -283,6 +284,32 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   paddingBottom: {
-    paddingBottom: theme.sizes.padding,
+    paddingBottom: theme.sizes.base,
   },
 });
+
+export const TextInputForm = ({
+  onPress,
+  placeholder,
+  onChangeText,
+  returnKeyType,
+  keyboardType,
+  label,
+  onBlur,
+  value,
+}) => {
+  return (
+    <View style={styles.paddingBottom}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        value={value}
+        style={styles.input}
+        keyboardType={keyboardType}
+        placeholder={placeholder}
+        returnKeyType={returnKeyType}
+        onChangeText={onChangeText}
+        onBlur={onBlur}
+      />
+    </View>
+  );
+};

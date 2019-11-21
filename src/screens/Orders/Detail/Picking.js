@@ -2,14 +2,14 @@ import React, {PureComponent} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
 import NumericInput from 'react-native-numeric-input';
-import {CustomPicker, ButtonGroup, ActionButton} from '../../../components';
+import {CustomPicker, ButtonGroup} from '../../../components';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   getStoredCategories,
   getStoredSubcategories,
   getStoredArticles,
 } from '../../../helpers/sql_helper';
-import {View, StyleSheet, TextInput} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {
   Content,
   Container,
@@ -41,15 +41,8 @@ export default class Picking extends PureComponent {
         break;
     }
     let quantity = Number(params.quantity);
-    let total = Number(params.detail_total);
     let price = Number(params.price);
 
-    params = params || {
-      quantity: 1,
-      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-      total: 0,
-      article_price: 0,
-    };
     this.state = {
       theItem: {},
       selectedIndex: type,
@@ -61,7 +54,7 @@ export default class Picking extends PureComponent {
       article_price: price,
       quantity: quantity, //
       placeholder: params.detail_description, // params.data.detail_description ||
-      total: total,
+      total: params.detail_total,
     };
     this.getArticlesData();
   }
@@ -105,7 +98,7 @@ export default class Picking extends PureComponent {
       total: article_price * value,
       itemSelected: {
         item: theItem.Name.split('-')[0],
-        description: theItem.Name.split('-')[1],
+        detail_description: theItem.Name.split('-')[1],
         price: theItem.Price,
         quantity: value,
         line_type: theItem.Type,
@@ -171,10 +164,10 @@ export default class Picking extends PureComponent {
         article: item.Name,
         article_price: item.Price,
         total: item.Price,
-        placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+        placeholder: item.Name,
         itemSelected: {
           item: item.Name.split('-')[0],
-          description: item.Name.split('-')[1],
+          detail_description: item.Name.split('-')[1],
           price: item.Price,
           quantity: quantity,
           line_type: item.Type,
@@ -201,8 +194,8 @@ export default class Picking extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
-    console.log('Picking ==>', this.props.navigation.state.params);
-    console.log('Picking STATE ==>', this.state);
+    // console.log('Picking ==>', this.props.navigation.state.params);
+    // console.log('Picking STATE ==>', this.state);
     //
     let {
       selectedIndex,
@@ -252,8 +245,12 @@ export default class Picking extends PureComponent {
         </Header>
 
         {/* Content */}
-        <Content style={styles.container}>
-          <KeyboardAwareScrollView>
+        <BContent>
+          <KeyboardAwareScrollView
+            contentContainerStyle={{
+              flex: 1,
+              justifyContent: 'flex-end',
+            }}>
             <Form>
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_SELECT')}</Text>
@@ -283,14 +280,12 @@ export default class Picking extends PureComponent {
                 </View>
                 <CustomPicker
                   placeholder={placeholder}
-                  selectedHolder={this.selectedItem.Name}
                   items={picker_data}
-                  selectedItem={this.selectedItem}
+                  onSelected={this.selectedItem}
                   disabled={!isEditable}
                 />
               </View>
-
-              {/* quantity */}
+              {/* Quantity */}
               <View style={styles.paddingBottom}>
                 <Text style={{marginBottom: 8}}>
                   {global.translate('TITLE_QUANTITY')}
@@ -303,29 +298,32 @@ export default class Picking extends PureComponent {
                     this.changeQuantity(quantity);
                   }}
                   minValue={1}
-                  editable={!isEditable}
+                  editable={isEditable}
                 />
               </View>
             </Form>
-
             {/* Total */}
-            <View style={styles.totalPriceContainer}>
-              <Text style={styles.totalPrice}>
-                {global.translate('TITLE_TOTAL')}: $ {total}
-              </Text>
-            </View>
+            <Total>
+              <View style={styles.totalPriceContainer}>
+                <Text style={styles.totalPrice}>
+                  {global.translate('TITLE_TOTAL')}: $ {total}
+                </Text>
+              </View>
+            </Total>
           </KeyboardAwareScrollView>
-        </Content>
+        </BContent>
       </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: theme.sizes.padding,
-  },
+  // container: {
+  //   flex: 1,
+  //   flexDirection: 'column',
+  //   padding: theme.sizes.padding,
+  //   // backgroundColor: 'green',
+  // },
 
   input: {
     marginVertical: theme.sizes.p8,
@@ -369,4 +367,14 @@ const PriceLabel = styled.Text`
 `;
 const Price = styled.Text`
   flex-direction: row;
+`;
+const BContent = styled.View`
+  flex: 1;
+  flex-direction: column;
+  padding: ${theme.sizes.padding}px;
+`;
+const Total = styled.View`
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
 `;

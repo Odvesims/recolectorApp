@@ -6,16 +6,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  StatusBar,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Platform, StatusBar} from 'react-native';
 
 // import ContentCustom from '../components';
 
@@ -28,11 +19,8 @@ import {
   Header,
   Body,
   Left,
-  Item,
-  Input,
   Right,
   Title,
-  ActionSheet,
   Fab,
   Tabs,
   Tab,
@@ -228,6 +216,8 @@ export default class Orders extends Component {
                 date: date,
                 onGoBack: () => this.refresh(true),
                 isNewRecord: true,
+                editable: true,
+                loading: false,
               })
             }>
             <Icon name="add" />

@@ -1,24 +1,13 @@
 import React, {Component} from 'react';
 import {theme} from '../../../constants';
-import styled from 'styled-components/native';
+import {Name, Quantity, ListBody, styles} from '../styles';
 import {SwipeListView} from 'react-native-swipe-list-view';
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableHighlight,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import {Content, Body, Item, Button, ActionSheet, Icon} from 'native-base';
+import {Text, View, ScrollView, TouchableHighlight} from 'react-native';
+import {Content, Item, Button, ActionSheet, Icon} from 'native-base';
 
 export default class DetailsTab extends Component {
   state = {
-    data: [],
+    data: this.props.tab_data[0],
     show: true,
     BUTTONS: [
       {
@@ -54,29 +43,19 @@ export default class DetailsTab extends Component {
 
   renderItem = ({item}) => {
     console.log('valor detail ==>', item);
+
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    const {detail_description, quantity, key} = item;
     return (
-      <Item style={styles.list}>
-        <View key={item.key} style={styles.listContainer}>
-          <View
-            key={item.key}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Name numberOfLines={1}>
-              {item.detail_description}
-              {/* //item.detail_description|| */}
-            </Name>
-            <Quantity numberOfLines={1}>
-              {item.quantity}
-              {/* //item.detail_quantity|| */}
-            </Quantity>
-          </View>
+      <Item style={styles.dList}>
+        <View style={styles.listContainer}>
+          <ListBody key={key}>
+            <Name numberOfLines={1}>{detail_description}</Name>
+            <Quantity numberOfLines={1}>{quantity}</Quantity>
+          </ListBody>
         </View>
         <Button
           transparent
-          style={styles.more}
           onPress={() =>
             ActionSheet.show(
               {
@@ -89,7 +68,8 @@ export default class DetailsTab extends Component {
                 switch (buttonIndex) {
                   case 0:
                     this.props.navigation.navigate(`${this.props.renderView}`, {
-                      ...this.props.tab_data[0],
+                      // ...this.props.tab_data[0],
+                      ...this.state.data[0],
                       editable: this.props.editable,
                     });
                     break;
@@ -108,42 +88,14 @@ export default class DetailsTab extends Component {
 
   render() {
     console.log('DETAILTABS ==>', this.props.tab_data[0]);
-    console.log('DETAILTABS ==>', this.props);
     return (
       <Content style={styles.content}>
         <ScrollView>
           <SwipeListView
-            style={{
-              overflow: 'hidden',
-              marginBottom: 0,
-              backgroundColor: 'lightGray',
-            }}
             data={this.props.tab_data}
             keyExtractor={item => item.id}
             renderItem={this.renderItem}
-            renderHiddenItem={(data, rowMap) => (
-              <TouchableHighlight
-                style={[styles.hiddenList]}
-                onPress={this.onClickRevert}>
-                <View>
-                  <Button
-                    transparent
-                    style={{
-                      alignSelf: 'flex-end',
-                      marginRight: 12,
-                    }}>
-                    <Icon name="trash" style={{color: 'white'}} />
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontFamily: 'Roboto-Medium',
-                      }}>
-                      {global.translate('TITLE_DELETED')}
-                    </Text>
-                  </Button>
-                </View>
-              </TouchableHighlight>
-            )}
+            renderHiddenItem={() => <SwipeHidden />}
             leftOpenValue={0}
             rightOpenValue={-375}
             rightActionActivationDistance={125}
@@ -154,160 +106,27 @@ export default class DetailsTab extends Component {
     );
   }
 }
-const styles = StyleSheet.create({
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
-  },
 
-  currentDate: {
-    // display: 'flex',
-    backgroundColor: theme.colors.lightGray,
-    padding: 16,
-    flexDirection: 'row',
-  },
-  currentDateText: {color: theme.colors.gray},
-
-  container: {
-    // flex: 1,
-    padding: theme.sizes.padding,
-    backgroundColor: theme.colors.white,
-  },
-
-  client_data: {
-    fontSize: 14,
-  },
-
-  detailText: {textTransform: 'uppercase', color: theme.colors.gray},
-
-  list: {
-    margin: 5,
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    paddingLeft: 12,
-    elevation: 1,
-  },
-
-  listContainer: {
-    flex: 1,
-    paddingVertical: 12,
-  },
-
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  button: {
-    fontSize: theme.sizes.caption,
-    textTransform: 'uppercase',
-    backgroundColor: '#4285F4',
-  },
-
-  textCenter: {
-    alignItems: 'center',
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
-  quantity: {
-    flexShrink: 10,
-    color: theme.colors.gray2,
-    fontSize: 14,
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-  },
-
-  price: {
-    flexShrink: 10,
-    color: theme.colors.gray2,
-    fontSize: 14,
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-  },
-
-  total: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 16,
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-  },
-
-  leftSwipeItem: {
-    flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    height: 50,
-    elevation: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    paddingRight: 20,
-    backgroundColor: '#c3000d',
-  },
-
-  rightSwipeItem: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingLeft: 5,
-    backgroundColor: '#c3000d',
-  },
-
-  hiddenList: {
-    margin: 5,
-    backgroundColor: '#c3000d',
-    height: 46,
-    elevation: 1,
-  },
-});
-
-const ButtonOutlined = styled(TouchableOpacity)`
-  flex-direction: row;
-  justify-content: center;
-  border-style: solid;
-  border-color: ${theme.colors.primary};
-  border-width: 1;
-  padding-vertical: 12;
-  border-radius: 4;
-  align-items: center;
-`;
-const TextButton = styled.Text`
-  margin-left: 24;
-  font-size: ${theme.sizes.base};
-  color: ${theme.colors.primary};
-  text-transform: uppercase;
-`;
-const ClientForm = styled.View``;
-const Name = styled.Text`
-  flex-basis: 150;
-  font-size: 16;
-  color: black;
-  font-weight: bold;
-  overflow: scroll;
-  flex-grow: 2;
-  flex-wrap: nowrap;
-`;
-const Quantity = styled.Text`
-  flex-shrink: 10;
-  color: ${theme.colors.success};
-  font-size: 14;
-  font-weight: bold;
-  flex-wrap: nowrap;
-`;
-const CurrentDate = styled.View``;
-const DetailContent = styled.View`
-  flex-direction: column;
-  flex: 1;
-  background-color: ${theme.colors.lightGray};
-`;
+export const SwipeHidden = ({onPress}) => {
+  return (
+    <TouchableHighlight style={styles.hiddenList}>
+      <View>
+        <Button
+          transparent
+          style={{
+            alignSelf: 'flex-end',
+            marginRight: 12,
+          }}>
+          <Icon name="trash" style={{color: 'white'}} />
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Roboto-Medium',
+            }}>
+            {global.translate('TITLE_DELETED')}
+          </Text>
+        </Button>
+      </View>
+    </TouchableHighlight>
+  );
+};

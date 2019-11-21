@@ -3,19 +3,10 @@ import {theme} from '../../constants';
 import {ButtonGroup} from 'react-native-elements';
 import styled from 'styled-components/native';
 import CustomPicker from '../../components/CustomPicker';
-import {SwipeListView} from 'react-native-swipe-list-view';
 import moment from 'moment';
 import _ from 'lodash';
 // import Detail from './Detail';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Modal,
-  Alert,
-  TouchableHighlight,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet, Alert, Animated} from 'react-native';
 import {
   Container,
   Left,
@@ -27,13 +18,7 @@ import {
   Text,
   Form,
   Root,
-  Item,
   Button,
-  ActionSheet,
-  Content,
-  Tabs,
-  Tab,
-  Segment,
 } from 'native-base';
 
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -55,12 +40,11 @@ export default class Order extends Component {
   constructor(props) {
     super(props);
     const {
-      params: {isNewRecord, order_id},
+      params: {editable, order_id, isNewRecord, loading},
     } = this.props.navigation.state;
-
     this.state = {
       data: [],
-      loading: false,
+      loading: loading,
       modalVisible: false,
       show: false,
       //
@@ -77,7 +61,7 @@ export default class Order extends Component {
       //
       clients: [],
       employees: [],
-      client: '',
+      client: null,
       //
       client_address: null,
       client_city: null,
@@ -91,7 +75,7 @@ export default class Order extends Component {
       isNewRecord: isNewRecord,
       order_id: order_id,
       //
-      editable: true,
+      editable: editable,
     };
 
     this.arrDataPicking = [];
@@ -99,14 +83,13 @@ export default class Order extends Component {
     this.getDataHandler();
 
     if (isNewRecord === false) {
-      this.rowTranslateAnimatedValues = {};
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
           let orderData = o.arrResponse[0];
-          console.log('arrRESPONSE', o.arrResponse[0]);
+          // console.log('arrRESPONSE', o.arrResponse[0]);
           this.setState({
+            placeholder: orderData.client_name,
             ...orderData,
-            placeholder: orderData.client_name || '',
             placeholderEmployee: orderData.employee_name || '',
             client_address: orderData.address,
             client_city: orderData.city,
@@ -115,7 +98,6 @@ export default class Order extends Component {
             loading: false,
             picking: orderData.order_details,
             shopping: orderData.order_purchases_details,
-            editable: false,
           });
         });
       });
@@ -130,17 +112,14 @@ export default class Order extends Component {
     });
   };
 
-  getDataHandler() {
-    getStoredClients().then(clients => {
-      this.setClientsPicker(clients).then(res => {
-        this.setState({clients: res});
-      });
-    });
-    getStoredEmployees().then(employees => {
-      this.setEmployeesPicker(employees).then(res => {
-        this.setState({employees: res});
-      });
-    });
+  async getDataHandler() {
+    const clients = await getStoredClients();
+    const clientPicker = await this.setClientsPicker(clients);
+    this.setState({clients: clientPicker});
+
+    const employee = await getStoredEmployees();
+    const employeePicker = await this.setEmployeesPicker(employee);
+    this.setState({employees: employeePicker});
   }
 
   componentDidMount() {
@@ -184,15 +163,29 @@ export default class Order extends Component {
 
   onPressDetailHandler = () => {
     let {navigate} = this.props.navigation;
+    let reset = {
+      quantity: 1,
+      detail_description: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      detail_total: 0,
+      article_price: 0,
+      price: 0,
+    };
     if (this.state.selectedIndex === 0) {
-      navigate('Picking', {editable: this.state.editable}); // {data: picking}
+      navigate('Picking', {
+        editable: this.state.editable,
+        ...reset,
+      });
     } else {
-      navigate('Shopping', {editable: this.state.editable}); // {data: shopping}
+      navigate('Shopping', {
+        editable: this.state.editable,
+        ...reset,
+      });
     }
   };
 
   renderDetailTabs = item => {
     const {picking, shopping, selectedIndex, editable} = this.state;
+    const {} = this;
     if (item === 0) {
       return (
         <DetailsTab
@@ -362,19 +355,23 @@ export default class Order extends Component {
 
   selectedClient = item => {
     this.setState({
+      placeholder: item.Name,
       client: item.Name,
       client_address: item.Address,
       client_city: item.City,
       client_state: item.State,
       client_phone: item.Phone,
     });
+    return item;
   };
 
   selectedEmployee = item => {
     this.setState({
+      placeholderEmployee: item.Name,
       selected_employee: item,
       employee_code: item,
     });
+    return item;
   };
 
   updateList = list => {
@@ -385,17 +382,27 @@ export default class Order extends Component {
     });
   };
 
+  onSelected = selected => {
+    this.setState({
+      placeholder: selected.Name,
+    });
+  };
+
   render() {
     // console.log('STATE==>', this.state);
+    // console.log('Order state', this.state);
+    // console.log(
+    //   'Order editable params',
+    //   this.props.navigation.state.params.editable,
+    // );
+    console.log('state', this.state);
     const {params} = this.props.navigation.state;
     const {editable} = this.state;
 
     const {
-      //
       employees,
       placeholderEmployee,
       placeholder,
-      //
       client,
       selectedIndex,
       client_address,
@@ -403,12 +410,24 @@ export default class Order extends Component {
       client_state,
       client_phone,
       loading,
+      selected_employee,
       loadingMessage,
     } = this.state;
     const buttons = ['Recolección', 'Compras']; //global.translate('TITLE_CATEGORY')];
 
+    let isEditable = this.state.editable;
+    let clientInfo = null;
     let moreDetails = null;
-    if (editable) {
+    let save = null;
+    //
+    if (isEditable) {
+      save = (
+        <Right>
+          <Button transparent onPress={this.execOperation} color="white">
+            <Icon name="checkmark" />
+          </Button>
+        </Right>
+      );
       moreDetails = (
         <ButtonOutlined onPress={this.onPressDetailHandler}>
           <Icon name="add" style={{color: theme.colors.primary}} />
@@ -417,7 +436,6 @@ export default class Order extends Component {
       );
     }
 
-    let clientInfo = null;
     if (client) {
       clientInfo = (
         <ClientData>
@@ -448,11 +466,7 @@ export default class Order extends Component {
             <Body>
               <Title>{global.translate(params.operation)}</Title>
             </Body>
-            <Right>
-              <Button transparent onPress={this.execOperation}>
-                <Icon name="checkmark" />
-              </Button>
-            </Right>
+            {save}
           </Header>
           {/* Content */}
           <DetailContent>
@@ -476,27 +490,21 @@ export default class Order extends Component {
 
                   {/*ClientForm*/}
                   <Form style={styles.container}>
-                    <ClientForm style={{paddingBottom: 12}}>
-                      <Text>{global.translate('TITLE_CLIENT')}</Text>
-                      <CustomPicker
-                        items={this.state.clients}
-                        placeholder={placeholder}
-                        selectedHolder={placeholder}
-                        selectedItem={this.selectedClient}
-                        disabled={!editable}
-                      />
-                      {clientInfo}
-                    </ClientForm>
-
-                    <ClientForm>
-                      <Text>{global.translate('TITLE_COLLECTOR')}</Text>
-                      <CustomPicker
-                        items={employees}
-                        placeholder={placeholderEmployee}
-                        selectedItem={this.selectedEmployee}
-                        disabled={!editable}
-                      />
-                    </ClientForm>
+                    <CustomPicker
+                      label={global.translate('TITLE_CLIENT')}
+                      items={this.state.clients}
+                      placeholder={placeholder}
+                      onSelected={this.selectedClient}
+                      disabled={!editable}
+                      children={clientInfo}
+                    />
+                    <CustomPicker
+                      label={global.translate('TITLE_COLLECTOR')}
+                      items={employees}
+                      placeholder={placeholderEmployee}
+                      onSelected={this.selectedEmployee}
+                      disabled={!editable}
+                    />
                   </Form>
                 </View>
 
@@ -535,6 +543,16 @@ export default class Order extends Component {
 }
 
 const styles = StyleSheet.create({
+  input: {
+    marginVertical: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 4,
+    color: '#000',
+    textTransform: 'capitalize',
+  },
+
   currentDate: {
     backgroundColor: theme.colors.lightGray,
     padding: 16,

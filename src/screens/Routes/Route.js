@@ -228,6 +228,7 @@ export class Route extends Component {
 
   selectedItem = item => {
     this.setState({
+      placeholder: item.Name,
       selected_item: item,
     });
   };
@@ -440,18 +441,13 @@ export class Route extends Component {
                   />
                 </View>
               </View>
-              <View>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_COLLECTOR')}
-                </Text>
-                {/* CustomPicker */}
-                <CustomPicker
-                  items={this.state.employees}
-                  placeholder={placeholder}
-                  selectedItem={this.selectedItem}
-                  disabled={disabled_date_from}
-                />
-              </View>
+              <CustomPicker
+                label={global.translate('TITLE_COLLECTOR')}
+                items={this.state.employees}
+                placeholder={placeholder}
+                onSelected={this.selectedItem}
+                disabled={disabled_date_from}
+              />
             </Form>
           </View>
           <ScrollView style={{marginBottom: 24}}>
