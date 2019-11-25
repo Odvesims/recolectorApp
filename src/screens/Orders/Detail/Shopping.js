@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
-import NumericInput from 'react-native-numeric-input';
-import {CustomPicker, ButtonGroup} from '../../../components';
+import {CustomPicker, NumberInput} from '../../../components';
+import {ButtonGroup} from 'react-native-elements';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   getStoredCategories,
@@ -266,24 +266,16 @@ export default class Shopping extends PureComponent {
                   selectedIndex={selectedIndex}
                   buttons={buttons}
                   containerStyle={{height: 40}}
-                  disableSelected={true}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
-                </View>
-                <CustomPicker
-                  placeholder={placeholder}
-                  items={picker_data}
-                  onSelected={this.selectedItem}
                   disabled={!isEditable}
                 />
               </View>
+              <CustomPicker
+                label={global.translate('TITLE_DESCRIPTION')}
+                placeholder={placeholder}
+                items={picker_data}
+                onSelected={this.selectedItem}
+                disabled={!isEditable}
+              />
 
               {/* Price */}
               <View style={styles.paddingBottom}>
@@ -300,21 +292,17 @@ export default class Shopping extends PureComponent {
                 />
               </View>
               {/* Quantity */}
-              <View style={styles.paddingBottom}>
-                <Text style={{marginBottom: 8}}>
-                  {global.translate('TITLE_QUANTITY')}
-                </Text>
-                <NumericInput
-                  rounded
-                  iconStyle={{color: 'green'}}
-                  value={quantity}
-                  onChange={quantity => {
-                    this.changeQuantity(quantity);
-                  }}
-                  minValue={1}
-                  editable={isEditable}
-                />
-              </View>
+              <NumberInput
+                rounded
+                label={global.translate('TITLE_QUANTITY')}
+                iconStyle={{color: 'green'}}
+                value={quantity}
+                onChange={quantity => {
+                  this.changeQuantity(quantity);
+                }}
+                minValue={1}
+                editable={isEditable}
+              />
             </Form>
             {/* Total */}
             <Total>

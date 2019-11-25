@@ -40,11 +40,14 @@ export default class Order extends Component {
   constructor(props) {
     super(props);
     const {
-      params: {editable, order_id, isNewRecord, loading},
+      params: {editable, order_id, isNewRecord, loading, date},
     } = this.props.navigation.state;
+
+    let dateRegister = moment(date).format('DD/MM/YYYY');
     this.state = {
       data: [],
       loading: loading,
+      date: dateRegister,
       modalVisible: false,
       show: false,
       //
@@ -71,22 +74,20 @@ export default class Order extends Component {
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
       placeholderEmployee: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'), //
       //
-      operation: 'TITLE_VIEW_ORDER',
+      operation: 'TITLE_EDIT_ORDER',
       isNewRecord: isNewRecord,
       order_id: order_id,
       //
       editable: editable,
     };
 
-    this.arrDataPicking = [];
-    this.arrDataShopping = [];
     this.getDataHandler();
 
     if (isNewRecord === false) {
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
           let orderData = o.arrResponse[0];
-          // console.log('arrRESPONSE', o.arrResponse[0]);
+          console.log('arrRESPONSE', o.arrResponse[0]);
           this.setState({
             placeholder: orderData.client_name,
             ...orderData,
@@ -125,26 +126,23 @@ export default class Order extends Component {
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       try {
-        const {params} = this.props.navigation.state;
         let {selectedIndex} = this.state;
-        let item = params.itemSelected;
+        let items = this.props.navigation.state.params.itemSelected;
+        if (items !== undefined) {
+          const {picking, shopping} = this.state;
 
-        if (item !== undefined) {
-          this.setState({data: this.arrData, clear_data: this.arrData});
           if (selectedIndex === 0) {
-            this.arrDataPicking.push(item);
+            items.id = picking.length + 1;
             this.setState({
-              picking: this.arrDataPicking,
-              clear_data: this.arrData,
+              picking: picking.concat(items),
             });
           } else {
-            this.arrDataShopping.push(item);
+            items.id = shopping.length + 1;
             this.setState({
-              shopping: this.arrDataShopping,
-              clear_data: this.arrData,
+              shopping: shopping.concat(items),
             });
           }
-          item = undefined;
+          items = undefined;
         }
       } catch (err) {
         alert(err);
@@ -184,8 +182,7 @@ export default class Order extends Component {
   };
 
   renderDetailTabs = item => {
-    const {picking, shopping, selectedIndex, editable} = this.state;
-    const {} = this;
+    const {picking, shopping, editable} = this.state;
     if (item === 0) {
       return (
         <DetailsTab
@@ -193,6 +190,7 @@ export default class Order extends Component {
           navigation={this.props.navigation}
           editable={editable}
           renderView={'Picking'}
+          remove={this.updateListPicking}
         />
       );
     } else {
@@ -202,26 +200,36 @@ export default class Order extends Component {
           navigation={this.props.navigation}
           editable={editable}
           renderView={'Shopping'}
+          remove={this.updateListShopping}
         />
       );
     }
   };
 
   goBack = () => {
-    this.props.navigation.goBack();
+    const {picking, shopping, client} = this.state;
+    if (!client && !picking.length && !shopping.length) {
+      this.props.navigation.goBack();
+    } else {
+      Alert.alert(
+        'Alerta',
+        'Al salir perderá la nueva orden',
+        [
+          {
+            text: 'Permanecer',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'Salir', onPress: () => this.props.navigation.goBack()},
+        ],
+        {cancelable: false},
+      );
+    }
   };
 
   execOperation = () => {
     let hasPurchases = 'F';
-    const {
-      client,
-      selected_employee,
-      picking,
-      shopping,
-      chosenDate,
-      date,
-    } = this.state;
-    // const {client, selected_item, data, picking, shopping} = this.state;
+    const {client, selected_employee, picking, shopping, date} = this.state;
     if (shopping.length > 0) {
       hasPurchases = 'T';
     }
@@ -231,7 +239,6 @@ export default class Order extends Component {
       client_code: client.split('-')[0],
       supervisor_code: global.employee_code,
       employee_code: selected_employee.Code || 0,
-      start_date: chosenDate,
       order_state: 'A',
       order_completed: false,
       order_details: picking,
@@ -239,9 +246,10 @@ export default class Order extends Component {
       has_purchases: hasPurchases,
       date_register: date,
     };
-    // console.log(order_data);
+    console.log(order_data);
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
+      console.log('DataOperation ==>', res);
       if (res.valid) {
         if (hasPurchases === 'T') {
           if (global.printer_address === '') {
@@ -281,14 +289,18 @@ export default class Order extends Component {
                   );
                 } else {
                   this.setState({loading: false});
-                  alert('Not connected');
+                  Alert.alert('Not connected');
                 }
               });
             });
           }
-        } else {
         }
-        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        // else {}
+        Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        setTimeout(() => {
+          this.props.navigation.goBack();
+        }, 1000);
+
         this.setState({
           client: '',
           client_address: null,
@@ -297,6 +309,8 @@ export default class Order extends Component {
           client_phone: null,
           placeholder: '',
           selectedItem: [],
+          picking: [],
+          shopping: [],
           selectedClient: [],
           selected: [],
           data: [],
@@ -344,15 +358,6 @@ export default class Order extends Component {
     this.setState({modalVisible: visible});
   }
 
-  markForDelete = swipeData => {
-    const {key, value} = swipeData;
-    if (value < -375) {
-      alert(key);
-      const filteredData = this.state.data.filter(item => item.id !== key);
-      this.updateList(filteredData);
-    }
-  };
-
   selectedClient = item => {
     this.setState({
       placeholder: item.Name,
@@ -369,15 +374,21 @@ export default class Order extends Component {
     this.setState({
       placeholderEmployee: item.Name,
       selected_employee: item,
-      employee_code: item,
+      employee_code: item.Code,
     });
     return item;
   };
 
-  updateList = list => {
+  updateListPicking = list => {
     this.setState({
-      data: list,
-      clear_data: list,
+      picking: list,
+      reverted: false,
+    });
+  };
+
+  updateListShopping = list => {
+    this.setState({
+      shopping: list,
       reverted: false,
     });
   };
@@ -389,21 +400,17 @@ export default class Order extends Component {
   };
 
   render() {
-    // console.log('STATE==>', this.state);
-    // console.log('Order state', this.state);
-    // console.log(
-    //   'Order editable params',
-    //   this.props.navigation.state.params.editable,
-    // );
-    console.log('state', this.state);
+    // console.log('STATE PICKING==>', this.state.picking);
+    console.log('Order state', this.state);
+
     const {params} = this.props.navigation.state;
     const {editable} = this.state;
-
     const {
       employees,
       placeholderEmployee,
       placeholder,
       client,
+      clients,
       selectedIndex,
       client_address,
       client_city,
@@ -413,12 +420,17 @@ export default class Order extends Component {
       selected_employee,
       loadingMessage,
     } = this.state;
-    const buttons = ['Recolección', 'Compras']; //global.translate('TITLE_CATEGORY')];
 
-    let isEditable = this.state.editable;
-    let clientInfo = null;
-    let moreDetails = null;
-    let save = null;
+    const detailTabs = [
+      global.translate('PICKING'),
+      global.translate('SHOPPING'),
+    ]; //global.translate('TITLE_CATEGORY')];
+
+    let detail;
+    let isEditable = editable;
+    let clientInfo;
+    let moreDetails;
+    let save;
     //
     if (isEditable) {
       save = (
@@ -478,21 +490,16 @@ export default class Order extends Component {
               }}>
               <ScrollView>
                 <View>
-                  {/* CurrentDate */}
-                  <CurrentDate>
-                    <Text style={styles.currentDateText}>
-                      {global.translate('TITLE_DATE')}
-                    </Text>
-                    <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                      {`: ${moment(params.date).format('DD/MM/YYYY')}`}
-                    </Text>
-                  </CurrentDate>
-
+                  {/* Date Assigned */}
+                  <DateAssigned
+                    label={global.translate('TITLE_DATE')}
+                    details={`: ${this.state.date}`}
+                  />
                   {/*ClientForm*/}
                   <Form style={styles.container}>
                     <CustomPicker
                       label={global.translate('TITLE_CLIENT')}
-                      items={this.state.clients}
+                      items={clients}
                       placeholder={placeholder}
                       onSelected={this.selectedClient}
                       disabled={!editable}
@@ -516,17 +523,17 @@ export default class Order extends Component {
                         {global.translate('TITLE_DETAILS')}
                       </Text>
                     </View>
-
                     <View>
                       {/* Tabs */}
                       <ButtonGroup
                         onPress={this.updateIndex}
                         selectedIndex={this.state.selectedIndex}
-                        buttons={buttons}
+                        buttons={detailTabs}
                         containerStyle={{height: 50}}
                       />
                       <ScrollView>
                         {this.renderDetailTabs(selectedIndex)}
+                        {detail}
                       </ScrollView>
                     </View>
                     {moreDetails}
@@ -541,6 +548,15 @@ export default class Order extends Component {
     );
   }
 }
+
+export const DateAssigned = ({label, details}) => {
+  return (
+    <CurrentDate>
+      <Text style={styles.currentDateText}>{label}</Text>
+      <Text style={({marginLeft: 4}, styles.currentDateText)}>{details}</Text>
+    </CurrentDate>
+  );
+};
 
 const styles = StyleSheet.create({
   input: {
@@ -584,7 +600,6 @@ const styles = StyleSheet.create({
 
   addPoint: {
     padding: theme.sizes.padding,
-    marginBottom: 24,
   },
 });
 
@@ -607,7 +622,7 @@ const ButtonOutlined = styled(TouchableOpacity)`
   border-color: ${theme.colors.primary};
   border-width: 1;
   padding-vertical: 12px;
-  margin-top: 12px;
+  margin-top: 4px;
   border-radius: 4px;
   align-items: center;
 `;
@@ -617,7 +632,6 @@ const TextButton = styled.Text`
   color: ${theme.colors.primary};
   text-transform: uppercase;
 `;
-const ClientForm = styled.View``;
 const CurrentDate = styled.View`
   background-color: ${theme.colors.lightGray};
   padding: 16px;

@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
-import NumericInput from 'react-native-numeric-input';
-import {CustomPicker, ButtonGroup} from '../../../components';
+import {CustomPicker, NumberInput} from '../../../components';
+import {ButtonGroup} from 'react-native-elements';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   getStoredCategories,
@@ -31,13 +31,13 @@ export default class Picking extends PureComponent {
     let type = params.detail_type;
     switch (type) {
       case 'C':
-        type = 0;
+        type = 0 || '0';
         break;
       case 'S':
-        type = 1;
+        type = 1 || '1';
         break;
       default:
-        type = 2;
+        type = 2 || '2';
         break;
     }
     let quantity = Number(params.quantity);
@@ -52,7 +52,7 @@ export default class Picking extends PureComponent {
       picker_data: [],
       article: '',
       article_price: price,
-      quantity: quantity, //
+      quantity: params.quantity, //
       placeholder: params.detail_description, // params.data.detail_description ||
       total: params.detail_total,
     };
@@ -60,7 +60,7 @@ export default class Picking extends PureComponent {
   }
 
   setArticleHandler(select, symbol) {
-    return new Promise((resolve, reject, hola) => {
+    return new Promise((resolve, reject) => {
       let arrSelect = [];
       select.map(item => {
         arrSelect.push({
@@ -74,15 +74,25 @@ export default class Picking extends PureComponent {
     });
   }
 
-  getArticlesData() {
+  async getArticlesData() {
+    // const storedCategories = await getStoredCategories();
+    // const storesSubCategories = await getStoredSubcategories(storedCategories);
+    // const storedArticles = await getStoredArticles(storesSubCategories);
+    // const articleHandler = this.setArticleHandler(storedArticles, 'A');
+    // this.setState({
+    //   categories: storedCategories,
+    //   subcategories: storesSubCategories,
+    //   articles: articleHandler,
+    //   picker_data: res,
+    // });
     getStoredCategories().then(categories => {
       getStoredSubcategories().then(subcategories => {
         getStoredArticles().then(articles => {
           this.setArticleHandler(articles, 'A').then(res => {
             this.setState({
-              categories: categories,
-              subcategories: subcategories,
-              articles: articles,
+              categories,
+              subcategories,
+              articles,
               picker_data: res,
             });
           });
@@ -93,12 +103,14 @@ export default class Picking extends PureComponent {
 
   changeQuantity(value) {
     const {theItem, article_price} = this.state;
+    let description = theItem.Name.split('-')[1];
+
     this.setState({
       quantity: value,
       total: article_price * value,
       itemSelected: {
-        item: theItem.Name.split('-')[0],
-        detail_description: theItem.Name.split('-')[1],
+        item: theItem.Id,
+        detail_description: description.trim(),
         price: theItem.Price,
         quantity: value,
         line_type: theItem.Type,
@@ -121,7 +133,7 @@ export default class Picking extends PureComponent {
             article_price: '',
             type: 'C',
             total: 0,
-            quantity: '',
+            quantity: 1,
           });
         });
         break;
@@ -135,7 +147,7 @@ export default class Picking extends PureComponent {
             article_price: '',
             type: 'S',
             total: 0,
-            quantity: '',
+            quantity: 1,
           });
         });
         break;
@@ -149,7 +161,7 @@ export default class Picking extends PureComponent {
             article_price: '',
             type: 'A',
             total: 0,
-            quantity: '',
+            quantity: 1,
           });
         });
         break;
@@ -166,7 +178,7 @@ export default class Picking extends PureComponent {
         total: item.Price,
         placeholder: item.Name,
         itemSelected: {
-          item: item.Name.split('-')[0],
+          item: item.Id,
           detail_description: item.Name.split('-')[1],
           price: item.Price,
           quantity: quantity,
@@ -179,6 +191,7 @@ export default class Picking extends PureComponent {
 
   onPressHandler = () => {
     const {quantity, itemSelected} = this.state;
+    console.log('quantity ==>', quantity);
     if (quantity) {
       this.props.navigation.navigate('Order', {
         itemSelected,
@@ -195,8 +208,7 @@ export default class Picking extends PureComponent {
       global.translate('TITLE_ARTICLE'),
     ];
     // console.log('Picking ==>', this.props.navigation.state.params);
-    // console.log('Picking STATE ==>', this.state);
-    //
+    console.log('Picking STATE ==>', this.state);
     let {
       selectedIndex,
       article_price,
@@ -243,7 +255,6 @@ export default class Picking extends PureComponent {
           </Body>
           {save}
         </Header>
-
         {/* Content */}
         <BContent>
           <KeyboardAwareScrollView
@@ -259,7 +270,7 @@ export default class Picking extends PureComponent {
                   selectedIndex={selectedIndex}
                   buttons={buttons}
                   containerStyle={{height: 40}}
-                  // disabled={!editable}
+                  disabled={!isEditable}
                 />
               </View>
 
@@ -275,7 +286,7 @@ export default class Picking extends PureComponent {
                     <PriceLabel>
                       {global.translate('TITLE_PRICE')}: $
                     </PriceLabel>
-                    <PriceQuantity>{article_price || '0'}</PriceQuantity>
+                    <PriceQuantity>{article_price}</PriceQuantity>
                   </Price>
                 </View>
                 <CustomPicker
@@ -286,21 +297,17 @@ export default class Picking extends PureComponent {
                 />
               </View>
               {/* Quantity */}
-              <View style={styles.paddingBottom}>
-                <Text style={{marginBottom: 8}}>
-                  {global.translate('TITLE_QUANTITY')}
-                </Text>
-                <NumericInput
-                  rounded
-                  iconStyle={{color: 'green'}}
-                  value={quantity}
-                  onChange={quantity => {
-                    this.changeQuantity(quantity);
-                  }}
-                  minValue={1}
-                  editable={isEditable}
-                />
-              </View>
+              <NumberInput
+                label={global.translate('TITLE_QUANTITY')}
+                rounded
+                iconStyle={{color: 'green'}}
+                value={quantity}
+                onChange={quantity => {
+                  this.changeQuantity(quantity);
+                }}
+                minValue={1}
+                editable={isEditable}
+              />
             </Form>
             {/* Total */}
             <Total>

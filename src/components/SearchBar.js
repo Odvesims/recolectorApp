@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
-import {Container, Header, Item, Input, Icon, Button, Text} from 'native-base';
+import React, {PureComponent} from 'react';
+import {StyleSheet} from 'react-native';
+import {Header, Item, Input, Icon, Button, Text} from 'native-base';
 import PropTypes from 'prop-types';
 
-export default class SearchBar extends Component {
+export default class SearchBar extends PureComponent {
   state = {
     // data: this.props.data,
     // arrayData: this.props.arrayData,
@@ -15,7 +15,7 @@ export default class SearchBar extends Component {
 
   searchFilter = (text, name) => {
     const {dataValue, data} = this.props;
-    let newData = dataValue;
+    let newData;
     newData = dataValue.filter(item => {
       const itemData = `${item.name.toLowerCase()}`;
       const textData = text.toLowerCase();

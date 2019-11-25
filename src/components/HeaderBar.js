@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {
   Text,
   View,
@@ -24,7 +24,7 @@ import Toast, {DURATION} from 'react-native-easy-toast';
 import {getTranslation} from '../helpers/translation_helper';
 import FetchingData from './FetchingData';
 
-class HeaderBar extends Component {
+class HeaderBar extends PureComponent {
   constructor(props) {
     super(props);
     this.syncData = this.syncDataClickHandler.bind(this);

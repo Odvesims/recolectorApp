@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {Icon, Button, Header, Body, Left, Right, Title} from 'native-base';
 
-class NavigationHeader extends Component {
+class NavigationHeader extends PureComponent {
   render() {
     return (
       <Header>

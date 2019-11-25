@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  
 
   list: {
     margin: 5,
@@ -212,7 +211,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 5,
     marginBottom: 5,
-    height: 50,
+    height: 48,
     elevation: 1,
     alignItems: 'flex-end',
     justifyContent: 'center',
@@ -240,7 +239,7 @@ const styles = StyleSheet.create({
   hiddenList: {
     margin: 5,
     backgroundColor: '#c3000d',
-    height: 46,
+    height: 44,
     elevation: 1,
   },
 
@@ -259,7 +258,7 @@ const styles = StyleSheet.create({
   },
 
   dList: {
-    margin: 5,
+    margin: 4,
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
@@ -279,7 +278,7 @@ const styles = StyleSheet.create({
 
   listContainer: {
     flex: 1,
-    paddingVertical: 12,
+    // paddingVertical: 12,
   },
 
   content: {

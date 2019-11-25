@@ -5,20 +5,24 @@ import {Button} from 'native-base';
 
 const CustomPicker = ({
   disabled,
-  selected,
-  showModal,
   placeholder,
   showAlphabeticalIndex,
   onSelected,
   items,
-  props,
   label,
   children,
+  ...props
 }) => {
+  let isLabel = label;
+  let labelInfo = <Text>{label}</Text>;
+  if (isLabel === null || isLabel === undefined) {
+    labelInfo = null;
+  }
+
   return (
     <React.Fragment>
       <View style={{paddingBottom: 12}}>
-        <Text>{label}</Text>
+        {labelInfo}
         <PickerModal
           renderSelectView={(disabled, selected, showModal) => (
             <Button
@@ -37,10 +41,10 @@ const CustomPicker = ({
           showAlphabeticalIndex={showAlphabeticalIndex}
           autoGenerateAlphabeticalIndex={true}
           selectPlaceholderText={''}
-          searchPlaceholderText={''}
           requireSelection={false}
           autoSort={false}
           disabled={disabled}
+          {...props}
         />
         {children}
       </View>

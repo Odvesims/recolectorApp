@@ -69,7 +69,7 @@ export default class OrdersTab extends Component {
                 switch (buttonIndex) {
                   case 0:
                     this.props.navigation.navigate('Order', {
-                      operation: 'TITLE_VIEW_ORDER',
+                      operation: 'TITLE_EDIT_ORDER',
                       order_id: item.order_id,
                       loading_message: 'MESSAGE_UPDATING_CLIENT',
                       isNewRecord: false,

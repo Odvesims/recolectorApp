@@ -2,7 +2,6 @@
 import AddButton from './AddButton';
 import BoldLargeText from './BoldLargeText';
 import ButtonDone from './ButtonDone';
-import ButtonGroup from './ButtonGroup';
 import ContentLoader from './ContentLoader';
 import CustomButton from './CustomButton';
 import CustomPicker from './CustomPicker';
@@ -15,6 +14,7 @@ import SearchBar from './SearchBar';
 import ToastMessage from './ToastMessage';
 import withBadge from './withBadge';
 import ActionButton from './ActionButton';
+import NumberInput from './NumberInput';
 
 export {
   //   ContentCustom,
@@ -22,7 +22,6 @@ export {
   ActionButton,
   BoldLargeText,
   ButtonDone,
-  ButtonGroup,
   ContentLoader,
   CustomButton,
   CustomPicker,
@@ -31,6 +30,7 @@ export {
   InputLogin,
   NavigationHeader,
   NormalText,
+  NumberInput,
   SearchBar,
   ToastMessage,
   withBadge,

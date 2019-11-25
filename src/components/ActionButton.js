@@ -1,11 +1,11 @@
 /*Custom Button*/
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 import {View, Button} from 'native-base';
 import styled from 'styled-components/native';
 import {theme} from '../constants';
 
-const ActionButton = ({cancel, accept}) => {
+const ActionButton = React.memo(({cancel, accept}) => {
   return (
     <View style={styles.actionContainer}>
       <CButton bordered onPress={cancel}>
@@ -18,7 +18,20 @@ const ActionButton = ({cancel, accept}) => {
       </CButton>
     </View>
   );
-};
+});
+
+export default ActionButton;
+
+const CButton = styled(Button)`
+  background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
+  border-color: ${props =>
+    props.bordered ? theme.colors.gray : ' transparent'};
+  border: ${props => (props.bordered ? '3px solid gray' : '#4285f4')};
+  text-transform: uppercase;
+  flex-basis: 48%;
+  justify-content: center;
+`;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -42,15 +55,3 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 });
-
-export default ActionButton;
-
-const CButton = styled(Button)`
-  background: ${props => (props.bordered ? 'transparent' : ' #4285f4')};
-  border-color: ${props =>
-    props.bordered ? theme.colors.gray : ' transparent'};
-  border: ${props => (props.bordered ? '3px solid gray' : '#4285f4')};
-  text-transform: uppercase;
-  flex-basis: 48%;
-  justify-content: center;
-`;

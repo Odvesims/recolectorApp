@@ -1,59 +1,30 @@
-import React, {Component} from 'react';
-import {Text, View, TextInput} from 'react-native';
+import React from 'react';
+import {View, TextInput} from 'react-native';
 import {Icon} from 'native-base';
 import styled from 'styled-components/native';
 import {theme} from '../../constants';
 import proptypes from 'prop-types';
 
-const LabelForm = styled.Text`
-  margin-top: 20px;
-  text-align: left;
-`;
-
-const InputField = styled(TextInput)`
-  flex: 1;
-`;
-
-const InputForm = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding-horizontal: 12px;
-  margin-top: 10px;
-  border-color: #bdbdbd;
-  border-width: 1px;
-  border-radius: 7px;
-  background-color: white;
-`;
-
-const InputIcon = styled(Icon)`
-  color: ${theme.colors.gray2};
-  align-items: center;
-  font-size: 24px;
-  margin-right: 12px;
-`;
-
-export default class InputLogin extends Component {
-  render() {
-    const {
-      inputstyle,
-      iconName,
-      labelStyle,
-      keyboardType,
-      multiline,
-      numberOfLines,
-      onChangeText,
-      onSubmitEditing,
-      blurOnSubmit,
-      placeholder,
-      returnKeyType,
-      secured,
-      label,
-      value,
-      ref,
-      id,
-      ...props
-    } = this.props;
-
+const InputLogin = React.memo(
+  ({
+    inputstyle,
+    iconName,
+    labelStyle,
+    keyboardType,
+    multiline,
+    numberOfLines,
+    onChangeText,
+    onSubmitEditing,
+    blurOnSubmit,
+    placeholder,
+    returnKeyType,
+    secured,
+    label,
+    value,
+    ref,
+    id,
+    ...props
+  }) => {
     return (
       <View>
         <LabelForm style={labelStyle} id={id}>
@@ -81,8 +52,10 @@ export default class InputLogin extends Component {
         </InputForm>
       </View>
     );
-  }
-}
+  },
+);
+
+export default InputLogin;
 
 InputLogin.proptypes = {
   inputstyle: proptypes.style,
@@ -102,3 +75,30 @@ InputLogin.proptypes = {
   ref: proptypes.func,
   id: proptypes.string,
 };
+
+const LabelForm = styled.Text`
+  margin-top: 20px;
+  text-align: left;
+`;
+
+const InputField = styled(TextInput)`
+  flex: 1;
+`;
+
+const InputForm = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-horizontal: 12px;
+  margin-top: 10px;
+  border-color: #bdbdbd;
+  border-width: 1px;
+  border-radius: 7px;
+  background-color: white;
+`;
+
+const InputIcon = styled(Icon)`
+  color: ${theme.colors.gray2};
+  align-items: center;
+  font-size: 24px;
+  margin-right: 12px;
+`;

@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {NavigationActions} from 'react-navigation';
 import {Text, View, StyleSheet, ImageBackground} from 'react-native';
 import {Icon} from 'native-base';
 import {white} from 'ansi-colors';
 import {HorizontalLine} from './HorizontalLine';
 
-export default class DrawerContentComponents extends Component {
+export default class DrawerContentComponents extends PureComponent {
   navigateToScreen = route => () => {
     const navigateAction = NavigationActions.navigate({
       routeName: route,

@@ -234,6 +234,7 @@ export class Route extends Component {
   };
 
   markForDelete = swipeData => {
+    console.log('Route Remove Function', swipeData);
     const {key, value} = swipeData;
     if (value < -375) {
       const filteredData = this.state.data.filter(item => item.id !== key);

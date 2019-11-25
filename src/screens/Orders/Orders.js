@@ -95,7 +95,7 @@ export default class Orders extends Component {
   enterHandler = () => {
     this.setState({
       isLoading: true,
-      loadingMessage: global.translate('MESSAGE_isLoading_ORDERS'),
+      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
     });
     this.storedOrders();
   };
@@ -118,7 +118,7 @@ export default class Orders extends Component {
     this.setState({
       isLoading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_isLoading_ORDERS'),
+      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
     });
     setTimeout(() => {
       if (this.state.isLoading) {
