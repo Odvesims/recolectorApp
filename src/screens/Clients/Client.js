@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {theme} from '../../constants';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {dataOperation} from '../../helpers/apiconnection_helper';
@@ -6,6 +6,8 @@ import {updateClient} from '../../helpers/sql_helper';
 import CustomPicker from '../../components/CustomPicker';
 import usStates from '../../country_states/us.json';
 import drStates from '../../country_states/dr.json';
+import {Formik} from 'formik';
+import * as yup from 'yup';
 
 // import ContentCustom from '../components';
 
@@ -20,10 +22,10 @@ import {
   Right,
   Title,
   Form,
+  Text,
 } from 'native-base';
 
 import {
-  Text,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -31,9 +33,10 @@ import {
   ScrollView,
   FlatList,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 
-export class Client extends Component {
+export class Client extends PureComponent {
   constructor(props) {
     super(props);
     const {
@@ -65,10 +68,9 @@ export class Client extends Component {
     const {} = this.state;
     this.selectedItem = this.selectedItem.bind(this);
   }
-
-  static navigationOptions = {
-    header: null,
-  };
+  // static navigationOptions = {
+  //   header: null,
+  // };
 
   selectedItem(item) {
     this.setState({
@@ -99,7 +101,7 @@ export class Client extends Component {
           name: '',
           address: '',
           city: '',
-          state: '',
+          state: state,
           country: country,
           phone: '',
         });
@@ -114,9 +116,65 @@ export class Client extends Component {
     this.props.navigation.goBack();
   };
 
+  handleSubmit = values => {
+    // if (
+    //   values.name.length > 0 &&
+    //   values.address.length > 0 &&
+    //   values.country.length > 0 &&
+    //   values.state.length > 0 &&
+    //   values.phone.length > 0
+    // )
+    // {
+    //   Alert.alert(JSON.stringify(values));
+    //   // this.props.navigation.navigate('App');
+    // }
+    const {state, country} = this.state;
+    const {name, address, city, phone} = values;
+    let client_data = {
+      // code: code,
+      name: name,
+      address: address,
+      city: city,
+      state: state,
+      country: country,
+      phone: phone,
+      phone_old: phone,
+      country_id: global.country_id,
+      setma_id: global.setma_id,
+    };
+    this.setState({loading: true});
+    dataOperation('CLIENT_OPERATION', client_data).then(res => {
+      updateClient(res.responseObject).then(result => {
+        this.setState({
+          loading: false,
+          code: '',
+          name: '',
+          address: '',
+          city: '',
+          state: state,
+          country: country,
+          phone: '',
+        });
+        alert(global.translate(result));
+      });
+    });
+  };
+
   render() {
+    console.log('STATE ==>', this.state);
     let states = {};
-    const {phone, address, city, state, code, name} = this.state;
+    const {
+      address,
+      city,
+      code,
+      country,
+      loading,
+      loadingMessage,
+      name,
+      phone,
+      state,
+    } = this.state;
+
     switch (global.states_collection) {
       case 'us':
         states = usStates;
@@ -125,13 +183,56 @@ export class Client extends Component {
         states = drStates;
         break;
     }
+
+    let clientCode;
+    console.log('clientCode', code);
+
+    if (code) {
+      clientCode = (
+        <Header style={styles.headerCode}>
+          <Body>
+            <Text style={styles.headerCodeText}>
+              {global.translate('TITLE_CODE')} : {code}
+            </Text>
+          </Body>
+        </Header>
+      );
+    }
+
+    const validationSchema = yup.object().shape({
+      name: yup
+        .string()
+        .label(global.translate('TITLE_NAME'))
+        .max(40, 'Please enter no more than 40 characters')
+        .required('Please enter a name'),
+      address: yup
+        .string()
+        .label(global.translate('TITLE_ADDRESS'))
+        .max(100, 'Please enter no more than 40 characters')
+        .required('Please enter an address'),
+      city: yup
+        .string()
+        .label(global.translate('TITLE_CITY'))
+        .max(40, 'Please enter no more than 40 characters')
+        .required('Please enter a city'),
+      state: yup
+        .string()
+        .label(global.translate('TITLE_STATE'))
+        .required("Please select the client's state"),
+      phone: yup
+        .string()
+        .label(global.translate('TITLE_PHONE'))
+        .required()
+        .min(7, 'Password must have at least 7 characters'),
+    });
+
     return (
       <Container>
         {/* Header */}
         <Header>
           <Spinner
-            visible={this.state.loading}
-            textContent={global.translate(this.state.loadingMessage)}
+            visible={loading}
+            textContent={global.translate(loadingMessage)}
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}
@@ -146,81 +247,131 @@ export class Client extends Component {
               {global.translate(this.props.navigation.state.params.operation)}
             </Title>
           </Body>
-          <Right>
+          {/* <Right>
             <Button transparent onPress={this.execOperation}>
               <Icon name="checkmark" />
               <Text style={{color: 'white', marginLeft: 8}}>
                 {global.translate('TITLE_DONE')}
               </Text>
             </Button>
-          </Right>
+          </Right> */}
         </Header>
         {/* Header */}
-        <Header style={styles.headerCode}>
-          <Body>
-            <Text style={styles.headerCodeText}>
-              {global.translate('TITLE_CODE')} : {code}
-            </Text>
-          </Body>
-        </Header>
+        {clientCode}
 
         <Content style={styles.container}>
           <KeyboardAvoidingView>
-            <Form style={{marginBottom: 24}}>
-              <TextInputForm
-                label={global.translate('TITLE_NAME')}
-                value={name}
-                style={styles.input}
-                placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
-                returnKeyType="go"
-                onChangeText={name => {
-                  this.setState({name: name});
-                }}
-              />
+            <Formik
+              initialValues={{
+                name,
+                address,
+                city,
+                state,
+                phone,
+              }}
+              onSubmit={values => {
+                this.handleSubmit(values);
+              }}
+              validationSchema={validationSchema}>
+              {({
+                values,
+                handleChange,
+                handleSubmit,
+                errors,
+                handleBlur,
+                isValid,
+                touched,
+                setFieldValue,
 
-              <TextInputForm
-                label={global.translate('TITLE_ADDRESS')}
-                value={address}
-                style={styles.input}
-                placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
-                returnKeyType="go"
-                onChangeText={address => {
-                  this.setState({address: address});
-                }}
-              />
+                isSubmitting,
+              }) => (
+                <Form style={{marginBottom: 24}}>
+                  <InputForm
+                    label={global.translate('TITLE_NAME')}
+                    value={values.name}
+                    style={styles.input}
+                    placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
+                    returnKeyType="go"
+                    onChangeText={handleChange('name')}
+                    onBlur={handleBlur('name')}
+                    errorMessage={touched.name && errors.name}
 
-              <TextInputForm
-                label={global.translate('TITLE_CITY')}
-                value={city}
-                style={styles.input}
-                placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
-                returnKeyType="go"
-                onChangeText={city => {
-                  this.setState({city: city});
-                }}
-              />
+                    // onChangeText={name => {
+                    //   this.setState({name: name});
+                    // }}
+                  />
 
-              <View style={styles.paddingBottom}>
-                <CustomPicker
-                  label={global.translate('TITLE_STATE')}
-                  placeholder={state}
-                  items={states}
-                  onSelected={this.selectedItem}
-                />
-              </View>
+                  <InputForm
+                    label={global.translate('TITLE_ADDRESS')}
+                    value={values.address}
+                    style={styles.input}
+                    placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
+                    returnKeyType="go"
+                    onChangeText={handleChange('address')}
+                    onBlur={handleBlur('address')}
+                    errorMessage={touched.address && errors.address}
 
-              <TextInputForm
-                label={global.translate('TITLE_PHONE')}
-                value={phone}
-                style={styles.input}
-                keyboardType="phone-pad"
-                placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
-                returnKeyType="go"
-                onChangeText={phone => {
-                  this.setState({phone: phone});
-                }}
-              />
-            </Form>
+                    // onChangeText={address => {
+                    //   this.setState({address: address});
+                    // }}
+                  />
+
+                  <InputForm
+                    label={global.translate('TITLE_CITY')}
+                    value={values.city}
+                    style={styles.input}
+                    placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
+                    returnKeyType="go"
+                    onChangeText={handleChange('city')}
+                    onBlur={handleBlur('city')}
+                    errorMessage={touched.city && errors.city}
+
+                    // onChangeText={city => {
+                    //   this.setState({city: city});
+                    // }}
+                  />
+
+                  <View style={styles.paddingBottom}>
+                    <CustomPicker
+                      label={global.translate('TITLE_STATE')}
+                      placeholder={state}
+                      items={states}
+                      onSelected={this.selectedItem}
+                      errorMessage={touched.state && errors.state}
+                      selectPlaceholderText={state}
+                    />
+                  </View>
+
+                  <InputForm
+                    label={global.translate('TITLE_PHONE')}
+                    value={values.phone}
+                    style={styles.input}
+                    keyboardType="phone-pad"
+                    placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
+                    returnKeyType="go"
+                    onChangeText={handleChange('phone')}
+                    onBlur={handleBlur('phone')}
+                    errorMessage={touched.phone && errors.phone}
+                    // onChangeText={phone => {
+                    //   this.setState({phone: phone});
+                    // }}
+                  />
+                  <Button
+                    block
+                    onPress={handleSubmit}
+                    disabled={isSubmitting}
+                    style={{
+                      backgroundColor: isValid
+                        ? theme.colors.primary
+                        : theme.colors.gray3,
+                      borderRadius: 4,
+                      marginBottom: 24,
+                    }}>
+                    <Text>Guardar</Text>
+                  </Button>
+                </Form>
+              )}
+            </Formik>
           </KeyboardAvoidingView>
         </Content>
       </Container>
@@ -268,9 +419,15 @@ const styles = StyleSheet.create({
     marginVertical: theme.sizes.p8,
     padding: theme.sizes.p12,
     borderWidth: 1,
-    borderColor: theme.colors.gray2,
+    // borderColor: borderColor,
     borderRadius: 4,
     color: '#000',
+  },
+
+  error: {borderColor: theme.colors.accent},
+
+  default: {
+    borderColor: theme.colors.gray2,
   },
 
   label: {
@@ -288,7 +445,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TextInputForm = ({
+export const InputForm = ({
   onPress,
   placeholder,
   onChangeText,
@@ -297,19 +454,28 @@ export const TextInputForm = ({
   label,
   onBlur,
   value,
+  errorMessage,
 }) => {
+  let isError = errorMessage;
+  if (isError) {
+    errorMessage = (
+      <Text style={{color: 'red', fontSize: 12}}>{errorMessage}</Text>
+    );
+  }
   return (
     <View style={styles.paddingBottom}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         value={value}
-        style={styles.input}
+        style={[styles.input, !isError ? styles.default : styles.error]}
         keyboardType={keyboardType}
         placeholder={placeholder}
         returnKeyType={returnKeyType}
         onChangeText={onChangeText}
         onBlur={onBlur}
+        numberOfLines={1}
       />
+      {errorMessage}
     </View>
   );
 };

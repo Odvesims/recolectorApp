@@ -2,21 +2,31 @@ import PickerModal from 'react-native-picker-modal-view';
 import React from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {Button} from 'native-base';
+import {theme} from '../constants';
 
 const CustomPicker = ({
   disabled,
+  selectPlaceholderText,
   placeholder,
   showAlphabeticalIndex,
   onSelected,
   items,
   label,
   children,
+  errorMessage,
   ...props
 }) => {
   let isLabel = label;
   let labelInfo = <Text>{label}</Text>;
   if (isLabel === null || isLabel === undefined) {
     labelInfo = null;
+  }
+
+  let isError = errorMessage;
+  if (isError) {
+    errorMessage = (
+      <Text style={{color: 'red', fontSize: 12}}>{errorMessage}</Text>
+    );
   }
 
   return (
@@ -27,7 +37,7 @@ const CustomPicker = ({
           renderSelectView={(disabled, selected, showModal) => (
             <Button
               transparent
-              style={styles.input}
+              style={[styles.input, !isError ? styles.default : styles.error]}
               disabled={disabled}
               onPress={showModal}>
               <Text>{placeholder}</Text>
@@ -40,13 +50,14 @@ const CustomPicker = ({
           onSelected={onSelected}
           showAlphabeticalIndex={showAlphabeticalIndex}
           autoGenerateAlphabeticalIndex={true}
-          selectPlaceholderText={''}
+          selectPlaceholderText={selectPlaceholderText}
           requireSelection={false}
           autoSort={false}
           disabled={disabled}
           {...props}
         />
         {children}
+        {errorMessage}
       </View>
     </React.Fragment>
   );
@@ -56,11 +67,16 @@ export default CustomPicker;
 
 const styles = StyleSheet.create({
   input: {
-    marginVertical: 8,
-    padding: 12,
+    marginVertical: theme.sizes.p8,
+    padding: theme.sizes.p12,
     borderWidth: 1,
-    borderColor: '#BDBDBD',
     borderRadius: 4,
     color: '#000',
+  },
+
+  error: {borderColor: theme.colors.accent},
+
+  default: {
+    borderColor: theme.colors.gray2,
   },
 });
