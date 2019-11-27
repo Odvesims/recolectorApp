@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
 import {CustomPicker, NumberInput} from '../../../components';
@@ -24,7 +24,7 @@ import {
   Form,
 } from 'native-base';
 
-export default class Picking extends PureComponent {
+export default class Picking extends Component {
   constructor(props) {
     super(props);
     let {params} = this.props.navigation.state;
@@ -56,7 +56,7 @@ export default class Picking extends PureComponent {
       placeholder: params.detail_description, // params.data.detail_description ||
       total: params.detail_total,
     };
-    this.getArticlesData();
+    // this.getArticlesData();
   }
 
   setArticleHandler(select, symbol) {
@@ -74,36 +74,26 @@ export default class Picking extends PureComponent {
     });
   }
 
-  async getArticlesData() {
-    // const storedCategories = await getStoredCategories();
-    // const storesSubCategories = await getStoredSubcategories(storedCategories);
-    // const storedArticles = await getStoredArticles(storesSubCategories);
-    // const articleHandler = this.setArticleHandler(storedArticles, 'A');
-    // this.setState({
-    //   categories: storedCategories,
-    //   subcategories: storesSubCategories,
-    //   articles: articleHandler,
-    //   picker_data: res,
-    // });
-    getStoredCategories().then(categories => {
-      getStoredSubcategories().then(subcategories => {
-        getStoredArticles().then(articles => {
-          this.setArticleHandler(articles, 'A').then(res => {
-            this.setState({
-              categories,
-              subcategories,
-              articles,
-              picker_data: res,
-            });
-          });
-        });
-      });
+  getArticlesData = async () => {
+    const categories = await getStoredCategories();
+    const subcategories = await getStoredSubcategories();
+    const articles = await getStoredArticles();
+    const articleHandler = await this.setArticleHandler(articles, 'A');
+    this.setState({
+      categories: categories,
+      subcategories: subcategories,
+      articles: articles,
+      picker_data: articleHandler,
     });
+  };
+
+  componentDidMount() {
+    this.getArticlesData();
   }
 
-  changeQuantity(value) {
+  changeQuantity = value => {
     const {theItem, article_price} = this.state;
-    let description = theItem.Name.split('-')[1];
+    const description = theItem.Name.split('-')[1];
 
     this.setState({
       quantity: value,
@@ -117,53 +107,34 @@ export default class Picking extends PureComponent {
         line_id: theItem.Id,
       },
     });
-  }
+  };
 
-  updateIndex = selectedIndex => {
+  groupHandler = async (group, placeholder, i) => {
+    let type = placeholder.substr(0, 1);
+    let res = await this.setArticleHandler(group, type);
+    this.setState({
+      selectedIndex: i,
+      picker_data: res,
+      theItem: {},
+      placeholder: global.translate(`PLACEHOLDER_SELECT_${placeholder}`),
+      article_price: '',
+      type: type,
+      total: 0,
+      quantity: 1,
+    });
+  };
+
+  updateIndex = async selectedIndex => {
     const {articles, categories, subcategories} = this.state;
     switch (selectedIndex) {
       case 0:
-        this.setArticleHandler(categories, 'C').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            selectedItem: {Name: '', Code: ''},
-            placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
-            article_price: '',
-            type: 'C',
-            total: 0,
-            quantity: 1,
-          });
-        });
+        this.groupHandler(categories, 'CATEGORY', selectedIndex);
         break;
       case 1:
-        this.setArticleHandler(subcategories, 'S').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
-            article_price: '',
-            type: 'S',
-            total: 0,
-            quantity: 1,
-          });
-        });
+        this.groupHandler(subcategories, 'SUBCATEGORY', selectedIndex);
         break;
       case 2:
-        this.setArticleHandler(articles, 'A').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-            article_price: '',
-            type: 'A',
-            total: 0,
-            quantity: 1,
-          });
-        });
+        this.groupHandler(articles, 'ARTICLE', selectedIndex);
         break;
     }
   };
@@ -302,9 +273,7 @@ export default class Picking extends PureComponent {
                 rounded
                 iconStyle={{color: 'green'}}
                 value={quantity}
-                onChange={quantity => {
-                  this.changeQuantity(quantity);
-                }}
+                onChange={this.changeQuantity}
                 minValue={1}
                 editable={isEditable}
               />

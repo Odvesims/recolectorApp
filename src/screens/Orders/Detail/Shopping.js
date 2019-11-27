@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
-import {theme} from '../../../constants';
-import styled from 'styled-components/native';
+
+import {styles, BContent, Total} from '../styles';
+
 import {CustomPicker, NumberInput} from '../../../components';
 import {ButtonGroup} from 'react-native-elements';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -9,7 +10,7 @@ import {
   getStoredSubcategories,
   getStoredArticles,
 } from '../../../helpers/sql_helper';
-import {View, StyleSheet, TextInput} from 'react-native';
+import {View, TextInput} from 'react-native';
 import {
   Content,
   Container,
@@ -74,39 +75,39 @@ export default class Shopping extends PureComponent {
     });
   }
 
-  getArticlesData() {
-    getStoredCategories().then(categories => {
-      getStoredSubcategories().then(subcategories => {
-        getStoredArticles().then(articles => {
-          this.setArticleHandler(articles, 'A').then(res => {
-            this.setState({
-              categories: categories,
-              subcategories: subcategories,
-              articles: articles,
-              picker_data: res,
-            });
-          });
-        });
-      });
+  getArticlesData = async () => {
+    const categories = await getStoredCategories();
+    const subcategories = await getStoredSubcategories();
+    const articles = await getStoredArticles();
+    const articleHandler = await this.setArticleHandler(articles, 'A');
+    this.setState({
+      categories: categories,
+      subcategories: subcategories,
+      articles: articles,
+      picker_data: articleHandler,
     });
+  };
+
+  componentDidMount() {
+    this.getArticlesData();
   }
 
-  priceHandler(value) {
+  priceHandler = price => {
     const {quantity} = this.state;
-    let total = parseFloat(value * quantity);
+    let total = parseFloat(price * quantity);
     this.setState(prevState => ({
-      price: value,
+      price: price,
       total: total,
       itemSelected: {
         ...prevState.itemSelected,
-        price: value,
+        price: price,
         total: total,
         quantity: quantity,
       },
     }));
-  }
+  };
 
-  changeQuantity(value) {
+  changeQuantity = value => {
     const {price, quantity} = this.state;
     this.setState(prevState => ({
       quantity: value,
@@ -120,52 +121,34 @@ export default class Shopping extends PureComponent {
         quantity: value,
       },
     }));
-  }
+  };
 
-  updateIndex = selectedIndex => {
-    const {articles, categories, subcategories, quantity} = this.state;
+  groupHandler = async (group, placeholder, i) => {
+    let type = placeholder.substr(0, 1);
+    let res = await this.setArticleHandler(group, type);
+    this.setState({
+      selectedIndex: i,
+      picker_data: res,
+      theItem: {},
+      placeholder: global.translate(`PLACEHOLDER_SELECT_${placeholder}`),
+      article_price: '',
+      type: type,
+      total: 0,
+      quantity: 1,
+    });
+  };
+
+  updateIndex = async selectedIndex => {
+    const {articles, categories, subcategories} = this.state;
     switch (selectedIndex) {
       case 0:
-        this.setArticleHandler(categories, 'C').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
-            article_price: '',
-            type: 'C',
-            total: 0,
-            quantity: quantity,
-          });
-        });
+        this.groupHandler(categories, 'CATEGORY', selectedIndex);
         break;
       case 1:
-        this.setArticleHandler(subcategories, 'S').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
-            article_price: '',
-            type: 'S',
-            total: 0,
-            quantity: quantity,
-          });
-        });
+        this.groupHandler(subcategories, 'SUBCATEGORY', selectedIndex);
         break;
       case 2:
-        this.setArticleHandler(articles, 'A').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-            article_price: '',
-            type: 'A',
-            total: 0,
-            quantity: quantity,
-          });
-        });
+        this.groupHandler(articles, 'ARTICLE', selectedIndex);
         break;
     }
   };
@@ -202,6 +185,8 @@ export default class Shopping extends PureComponent {
   };
 
   render() {
+    console.log(this.state);
+
     const buttons = [
       global.translate('TITLE_CATEGORY'),
       global.translate('TITLE_SUBCATEGORY'),
@@ -279,16 +264,13 @@ export default class Shopping extends PureComponent {
 
               {/* Price */}
               <View style={styles.paddingBottom}>
-                {/* {global.translate('TITLE_QUANTITY')} */}
                 <Text>Precio</Text>
                 <TextInput
                   editable={isEditable}
                   value={price}
                   style={styles.inputNumber}
                   keyboardType="number-pad"
-                  onChangeText={price => {
-                    this.priceHandler(price);
-                  }}
+                  onChangeText={this.priceHandler}
                 />
               </View>
               {/* Quantity */}
@@ -297,9 +279,7 @@ export default class Shopping extends PureComponent {
                 label={global.translate('TITLE_QUANTITY')}
                 iconStyle={{color: 'green'}}
                 value={quantity}
-                onChange={quantity => {
-                  this.changeQuantity(quantity);
-                }}
+                onChange={this.changeQuantity}
                 minValue={1}
                 editable={isEditable}
               />
@@ -318,74 +298,3 @@ export default class Shopping extends PureComponent {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   padding: theme.sizes.padding,
-  // },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-    backgroundColor: 'yellow',
-  },
-
-  inputNumber: {
-    width: '25%',
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p8,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
-  paddingBottom: {
-    paddingBottom: theme.sizes.padding,
-  },
-
-  actionContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    left: 0,
-    flexBasis: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    backgroundColor: 'white',
-  },
-
-  totalPrice: {
-    color: theme.colors.success,
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
-  },
-  totalPriceContainer: {
-    borderColor: theme.colors.success,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    padding: theme.sizes.p12,
-
-    alignItems: 'center',
-    backgroundColor: 'rgba(7, 139, 117, 0.05)',
-  },
-  price: {},
-});
-
-const BContent = styled.View`
-  flex: 1;
-  flex-direction: column;
-  padding: ${theme.sizes.padding}px;
-`;
-const Total = styled.View`
-  flex: 1;
-  flex-direction: column;
-  justify-content: flex-end;
-`;

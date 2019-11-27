@@ -111,6 +111,10 @@ const styles = StyleSheet.create({
     }),
   },
 
+  addPoint: {
+    padding: theme.sizes.padding,
+  },
+
   list: {
     margin: 5,
     flex: 1,
@@ -235,7 +239,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(7, 139, 117, 0.05)',
   },
-
+  totalPrice: {
+    color: theme.colors.success,
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+  },
   hiddenList: {
     margin: 5,
     backgroundColor: '#c3000d',

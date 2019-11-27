@@ -1,12 +1,23 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {ButtonGroup} from 'react-native-elements';
-import styled from 'styled-components/native';
 import CustomPicker from '../../components/CustomPicker';
+
+import styled from 'styled-components/native';
+import {
+  styles,
+  Client,
+  ClientData,
+  ButtonOutlined,
+  TextButton,
+  CurrentDate,
+  DetailContent,
+} from './styles';
+
 import moment from 'moment';
 import _ from 'lodash';
 // import Detail from './Detail';
-import {View, StyleSheet, Alert, Animated} from 'react-native';
+import {View, Alert, Animated} from 'react-native';
 import {
   Container,
   Left,
@@ -75,7 +86,6 @@ export default class Order extends Component {
       placeholderEmployee: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'), //
       //
       operation: 'TITLE_EDIT_ORDER',
-      isNewRecord: isNewRecord,
       order_id: order_id,
       //
       editable: editable,
@@ -227,7 +237,7 @@ export default class Order extends Component {
     }
   };
 
-  execOperation = () => {
+  execOperation = async () => {
     let hasPurchases = 'F';
     const {client, selected_employee, picking, shopping, date} = this.state;
     if (shopping.length > 0) {
@@ -246,10 +256,10 @@ export default class Order extends Component {
       has_purchases: hasPurchases,
       date_register: date,
     };
-    console.log(order_data);
+    // console.log('Order Data ==>', order_data);
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
-      console.log('DataOperation ==>', res);
+      // console.log('DataOperation ==>', res);
       if (res.valid) {
         if (hasPurchases === 'T') {
           if (global.printer_address === '') {
@@ -289,14 +299,13 @@ export default class Order extends Component {
                   );
                 } else {
                   this.setState({loading: false});
-                  Alert.alert('Not connected');
+                  alert('Not connected');
                 }
               });
             });
           }
         }
-        // else {}
-        Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
         setTimeout(() => {
           this.props.navigation.goBack();
         }, 1000);
@@ -382,14 +391,12 @@ export default class Order extends Component {
   updateListPicking = list => {
     this.setState({
       picking: list,
-      reverted: false,
     });
   };
 
   updateListShopping = list => {
     this.setState({
       shopping: list,
-      reverted: false,
     });
   };
 
@@ -417,7 +424,6 @@ export default class Order extends Component {
       client_state,
       client_phone,
       loading,
-      selected_employee,
       loadingMessage,
     } = this.state;
 
@@ -482,66 +488,59 @@ export default class Order extends Component {
           </Header>
           {/* Content */}
           <DetailContent>
-            <View
-              style={{
-                flexDirection: 'column',
-                flex: 1,
-                backgroundColor: theme.colors.lightGray,
-              }}>
-              <ScrollView>
-                <View>
-                  {/* Date Assigned */}
-                  <DateAssigned
-                    label={global.translate('TITLE_DATE')}
-                    details={`: ${this.state.date}`}
+            <ScrollView>
+              <View>
+                {/* Date Assigned */}
+                <DateAssigned
+                  label={global.translate('TITLE_DATE')}
+                  details={`: ${this.state.date}`}
+                />
+                {/*ClientForm*/}
+                <Form style={styles.container}>
+                  <CustomPicker
+                    label={global.translate('TITLE_CLIENT')}
+                    items={clients}
+                    placeholder={placeholder}
+                    onSelected={this.selectedClient}
+                    disabled={!editable}
+                    children={clientInfo}
                   />
-                  {/*ClientForm*/}
-                  <Form style={styles.container}>
-                    <CustomPicker
-                      label={global.translate('TITLE_CLIENT')}
-                      items={clients}
-                      placeholder={placeholder}
-                      onSelected={this.selectedClient}
-                      disabled={!editable}
-                      children={clientInfo}
-                    />
-                    <CustomPicker
-                      label={global.translate('TITLE_COLLECTOR')}
-                      items={employees}
-                      placeholder={placeholderEmployee}
-                      onSelected={this.selectedEmployee}
-                      disabled={!editable}
-                    />
-                  </Form>
-                </View>
+                  <CustomPicker
+                    label={global.translate('TITLE_COLLECTOR')}
+                    items={employees}
+                    placeholder={placeholderEmployee}
+                    onSelected={this.selectedEmployee}
+                    disabled={!editable}
+                  />
+                </Form>
+              </View>
 
-                {/* Details */}
-                <View style={{flex: 1}}>
-                  <View style={styles.addPoint}>
-                    <View style={{paddingBottom: 8}}>
-                      <Text style={styles.detailText}>
-                        {global.translate('TITLE_DETAILS')}
-                      </Text>
-                    </View>
-                    <View>
-                      {/* Tabs */}
-                      <ButtonGroup
-                        onPress={this.updateIndex}
-                        selectedIndex={this.state.selectedIndex}
-                        buttons={detailTabs}
-                        containerStyle={{height: 50}}
-                      />
-                      <ScrollView>
-                        {this.renderDetailTabs(selectedIndex)}
-                        {detail}
-                      </ScrollView>
-                    </View>
-                    {moreDetails}
-                    {/* </ScrollView> */}
+              {/* Details */}
+              <View style={{flex: 1}}>
+                <View style={styles.addPoint}>
+                  <View style={{paddingBottom: 8}}>
+                    <Text style={styles.detailText}>
+                      {global.translate('TITLE_DETAILS')}
+                    </Text>
                   </View>
+                  <View>
+                    {/* Tabs */}
+                    <ButtonGroup
+                      onPress={this.updateIndex}
+                      selectedIndex={this.state.selectedIndex}
+                      buttons={detailTabs}
+                      containerStyle={{height: 50}}
+                    />
+                    <ScrollView>
+                      {this.renderDetailTabs(selectedIndex)}
+                      {detail}
+                    </ScrollView>
+                  </View>
+                  {moreDetails}
+                  {/* </ScrollView> */}
                 </View>
-              </ScrollView>
-            </View>
+              </View>
+            </ScrollView>
           </DetailContent>
         </Container>
       </Root>
@@ -557,88 +556,3 @@ export const DateAssigned = ({label, details}) => {
     </CurrentDate>
   );
 };
-
-const styles = StyleSheet.create({
-  input: {
-    marginVertical: 8,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#BDBDBD',
-    borderRadius: 4,
-    color: '#000',
-    textTransform: 'capitalize',
-  },
-
-  currentDate: {
-    backgroundColor: theme.colors.lightGray,
-    padding: 16,
-    flexDirection: 'row',
-  },
-
-  currentDateText: {color: theme.colors.gray},
-
-  container: {
-    padding: theme.sizes.padding,
-    backgroundColor: theme.colors.white,
-  },
-
-  detailText: {textTransform: 'uppercase', color: theme.colors.gray},
-
-  list: {
-    margin: 5,
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    paddingLeft: 12,
-    elevation: 1,
-  },
-
-  listContainer: {
-    flex: 1,
-    paddingVertical: 12,
-  },
-
-  addPoint: {
-    padding: theme.sizes.padding,
-  },
-});
-
-const Client = styled.Text`
-  font-size: 14px;
-  color: ${theme.colors.darkGray};
-`;
-const ClientData = styled.View`
-  background-color: ${theme.colors.lightGreen};
-  border-color: green;
-  border-width: 1;
-  border-radius: 2;
-  padding-horizontal: 8;
-  padding-vertical: 12;
-`;
-const ButtonOutlined = styled(TouchableOpacity)`
-  flex-direction: row;
-  justify-content: center;
-  border-style: solid;
-  border-color: ${theme.colors.primary};
-  border-width: 1;
-  padding-vertical: 12px;
-  margin-top: 4px;
-  border-radius: 4px;
-  align-items: center;
-`;
-const TextButton = styled.Text`
-  margin-left: 24px;
-  font-size: ${theme.sizes.base};
-  color: ${theme.colors.primary};
-  text-transform: uppercase;
-`;
-const CurrentDate = styled.View`
-  background-color: ${theme.colors.lightGray};
-  padding: 16px;
-  flex-direction: row;
-`;
-const DetailContent = styled.View`
-  flex-direction: column;
-  flex: 1;
-  background-color: ${theme.colors.lightGray};
-`;
