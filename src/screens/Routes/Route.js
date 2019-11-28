@@ -443,7 +443,7 @@ export class Route extends Component {
                 </View>
               </View>
               <CustomPicker
-                label={global.translate('TITLE_COLLECTOR')}
+                label={'TITLE_COLLECTOR'}
                 items={this.state.employees}
                 placeholder={placeholder}
                 onSelected={this.selectedItem}

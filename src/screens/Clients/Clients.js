@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {AddButton, SearchBar, FetchingData} from '../../components';
+import {SearchBar, FetchingData} from '../../components';
 import Toast from 'react-native-easy-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {} from 'react-native-vector-icons';
@@ -25,6 +25,7 @@ import {
   Left,
   Item,
   // Input,
+  Fab,
   Right,
   Title,
   ActionSheet,
@@ -164,6 +165,16 @@ export default class Clients extends Component {
     );
   };
 
+  handlerFab = () => {
+    this.props.navigation.navigate('Client', {
+      operation: 'TITLE_NEW_CLIENT',
+      loading_message: 'MESSAGE_REGISTERING_CLIENT',
+      onGoBack: () => this.refresh(true),
+      new_record: true,
+      state: global.translate('PLACEHOLDER_TYPE_STATE'),
+    });
+  };
+
   searchBarHandler = (data, text) => {
     this.setState({
       data: data,
@@ -293,18 +304,12 @@ export default class Clients extends Component {
           </Content>
 
           {/* Content */}
-          <AddButton
-            style={{position: 'absolute'}}
-            onPress={() =>
-              this.props.navigation.navigate('Client', {
-                operation: 'TITLE_NEW_CLIENT',
-                loading_message: 'MESSAGE_REGISTERING_CLIENT',
-                onGoBack: () => this.refresh(true),
-                new_record: true,
-                state: global.translate('PLACEHOLDER_TYPE_STATE'),
-              })
-            }
-          />
+          <Fab
+            style={{backgroundColor: theme.colors.primary, right: 10}}
+            position="bottomRight"
+            onPress={this.handlerFab}>
+            <Icon name="add" />
+          </Fab>
         </Container>
       </Root>
     );
@@ -349,19 +354,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'gray',
     overflow: 'hidden',
-  },
-
-  fab: {
-    position: 'absolute',
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    right: 20,
-    bottom: 20,
-    backgroundColor: theme.colors.primary,
-    borderRadius: 30,
-    elevation: 8,
   },
 
   more: {

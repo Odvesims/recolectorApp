@@ -54,6 +54,7 @@ import SplashScreen from '../screens/SplashScreen';
 import BluetoothPrinter from '../components/BluetoothManagerComponent';
 //MyRoutes
 import MyRoutes from '../screens/MyRoutes/MyRoutes';
+import RoutesTab from '../screens/Routes/Tabs/RoutesTab';
 import RouteDetail from '../screens/MyRoutes/RouteDetail';
 import Registry from '../screens/MyRoutes/Registry';
 
@@ -111,6 +112,7 @@ const RouteScreen = createStackNavigator(
   {
     Routes: Routes,
     Route: Route,
+    RoutesTab: RoutesTab,
     OrderList: OrderList,
   },
   {

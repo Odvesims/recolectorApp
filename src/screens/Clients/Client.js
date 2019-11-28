@@ -3,7 +3,7 @@ import {theme} from '../../constants';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {dataOperation} from '../../helpers/apiconnection_helper';
 import {updateClient} from '../../helpers/sql_helper';
-import CustomPicker from '../../components/CustomPicker';
+import {CustomPicker, BtnIcon} from '../../components';
 import usStates from '../../country_states/us.json';
 import drStates from '../../country_states/dr.json';
 import {Formik} from 'formik';
@@ -117,17 +117,6 @@ export class Client extends PureComponent {
   };
 
   handleSubmit = values => {
-    // if (
-    //   values.name.length > 0 &&
-    //   values.address.length > 0 &&
-    //   values.country.length > 0 &&
-    //   values.state.length > 0 &&
-    //   values.phone.length > 0
-    // )
-    // {
-    //   Alert.alert(JSON.stringify(values));
-    //   // this.props.navigation.navigate('App');
-    // }
     const {state, country} = this.state;
     const {name, address, city, phone} = values;
     let client_data = {
@@ -238,9 +227,7 @@ export class Client extends PureComponent {
             animation={'slide'}
           />
           <Left>
-            <Button transparent onPress={this.goBack}>
-              <Icon name="arrow-back" />
-            </Button>
+            <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
           </Left>
           <Body>
             <Title>
@@ -248,12 +235,7 @@ export class Client extends PureComponent {
             </Title>
           </Body>
           {/* <Right>
-            <Button transparent onPress={this.execOperation}>
-              <Icon name="checkmark" />
-              <Text style={{color: 'white', marginLeft: 8}}>
-                {global.translate('TITLE_DONE')}
-              </Text>
-            </Button>
+          <BtnIcon label={'TITLE_DONE} iconName={'checkmark'} onPress={this.execOperation} />
           </Right> */}
         </Header>
         {/* Header */}
@@ -287,74 +269,53 @@ export class Client extends PureComponent {
               }) => (
                 <Form style={{marginBottom: 24}}>
                   <InputForm
-                    label={global.translate('TITLE_NAME')}
+                    label={'TITLE_NAME'}
                     value={values.name}
                     style={styles.input}
-                    placeholder={global.translate('PLACEHOLDER_TYPE_NAME')}
-                    returnKeyType="go"
+                    placeholder={'PLACEHOLDER_TYPE_NAME'}
                     onChangeText={handleChange('name')}
                     onBlur={handleBlur('name')}
                     errorMessage={touched.name && errors.name}
-
-                    // onChangeText={name => {
-                    //   this.setState({name: name});
-                    // }}
                   />
 
                   <InputForm
-                    label={global.translate('TITLE_ADDRESS')}
+                    label={'TITLE_ADDRESS'}
                     value={values.address}
                     style={styles.input}
-                    placeholder={global.translate('PLACEHOLDER_TYPE_ADDRESS')}
-                    returnKeyType="go"
+                    placeholder={'PLACEHOLDER_TYPE_ADDRESS'}
                     onChangeText={handleChange('address')}
                     onBlur={handleBlur('address')}
                     errorMessage={touched.address && errors.address}
-
-                    // onChangeText={address => {
-                    //   this.setState({address: address});
-                    // }}
                   />
 
                   <InputForm
-                    label={global.translate('TITLE_CITY')}
+                    label={'TITLE_CITY'}
                     value={values.city}
                     style={styles.input}
-                    placeholder={global.translate('PLACEHOLDER_TYPE_CITY')}
-                    returnKeyType="go"
+                    placeholder={'PLACEHOLDER_TYPE_CITY'}
                     onChangeText={handleChange('city')}
                     onBlur={handleBlur('city')}
                     errorMessage={touched.city && errors.city}
-
-                    // onChangeText={city => {
-                    //   this.setState({city: city});
-                    // }}
                   />
 
-                  <View style={styles.paddingBottom}>
-                    <CustomPicker
-                      label={global.translate('TITLE_STATE')}
-                      placeholder={state}
-                      items={states}
-                      onSelected={this.selectedItem}
-                      errorMessage={touched.state && errors.state}
-                      selectPlaceholderText={state}
-                    />
-                  </View>
+                  <CustomPicker
+                    label={'TITLE_STATE'}
+                    placeholder={state}
+                    items={states}
+                    onSelected={this.selectedItem}
+                    errorMessage={touched.state && errors.state}
+                    selectPlaceholderText={state}
+                  />
 
                   <InputForm
-                    label={global.translate('TITLE_PHONE')}
+                    label={'TITLE_PHONE'}
                     value={values.phone}
                     style={styles.input}
                     keyboardType="phone-pad"
-                    placeholder={global.translate('PLACEHOLDER_TYPE_PHONE')}
-                    returnKeyType="go"
+                    placeholder={'PLACEHOLDER_TYPE_PHONE'}
                     onChangeText={handleChange('phone')}
                     onBlur={handleBlur('phone')}
                     errorMessage={touched.phone && errors.phone}
-                    // onChangeText={phone => {
-                    //   this.setState({phone: phone});
-                    // }}
                   />
                   <Button
                     block
@@ -464,12 +425,12 @@ export const InputForm = ({
   }
   return (
     <View style={styles.paddingBottom}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{global.translate(label)}</Text>
       <TextInput
         value={value}
         style={[styles.input, !isError ? styles.default : styles.error]}
         keyboardType={keyboardType}
-        placeholder={placeholder}
+        placeholder={global.translate(placeholder)}
         returnKeyType={returnKeyType}
         onChangeText={onChangeText}
         onBlur={onBlur}

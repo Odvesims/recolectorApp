@@ -15,6 +15,7 @@ import ToastMessage from './ToastMessage';
 import withBadge from './withBadge';
 import ActionButton from './ActionButton';
 import NumberInput from './NumberInput';
+import BtnIcon from './buttons/BtnIcon';
 
 export {
   //   ContentCustom,
@@ -22,6 +23,7 @@ export {
   ActionButton,
   BoldLargeText,
   ButtonDone,
+  BtnIcon,
   ContentLoader,
   CustomButton,
   CustomPicker,

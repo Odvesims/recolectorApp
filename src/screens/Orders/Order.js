@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {ButtonGroup} from 'react-native-elements';
-import CustomPicker from '../../components/CustomPicker';
+import {CustomPicker, BtnIcon} from '../../components';
 
 import styled from 'styled-components/native';
 import {
@@ -441,9 +441,7 @@ export default class Order extends Component {
     if (isEditable) {
       save = (
         <Right>
-          <Button transparent onPress={this.execOperation} color="white">
-            <Icon name="checkmark" />
-          </Button>
+          <BtnIcon iconName={'checkmark'} onPress={this.execOperation} />
         </Right>
       );
       moreDetails = (
@@ -477,9 +475,7 @@ export default class Order extends Component {
               animation={'slide'}
             />
             <Left>
-              <Button transparent onPress={this.goBack}>
-                <Icon name="arrow-back" />
-              </Button>
+              <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
             </Left>
             <Body>
               <Title>{global.translate(params.operation)}</Title>
@@ -498,7 +494,7 @@ export default class Order extends Component {
                 {/*ClientForm*/}
                 <Form style={styles.container}>
                   <CustomPicker
-                    label={global.translate('TITLE_CLIENT')}
+                    label={'TITLE_CLIENT'}
                     items={clients}
                     placeholder={placeholder}
                     onSelected={this.selectedClient}
@@ -506,7 +502,7 @@ export default class Order extends Component {
                     children={clientInfo}
                   />
                   <CustomPicker
-                    label={global.translate('TITLE_COLLECTOR')}
+                    label={'TITLE_COLLECTOR'}
                     items={employees}
                     placeholder={placeholderEmployee}
                     onSelected={this.selectedEmployee}

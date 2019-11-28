@@ -17,7 +17,7 @@ const CustomPicker = ({
   ...props
 }) => {
   let isLabel = label;
-  let labelInfo = <Text>{label}</Text>;
+  let labelInfo = <Text>{global.translate(label)}</Text>;
   if (isLabel === null || isLabel === undefined) {
     labelInfo = null;
   }
