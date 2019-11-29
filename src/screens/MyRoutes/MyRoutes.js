@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
+
 import {SearchBar, FetchingData, ContentLoader} from '../../components';
+
 import {View, StyleSheet, FlatList} from 'react-native';
 import {
   saveActiveRoutes,
@@ -25,7 +28,6 @@ import {
   Form,
   Root,
   Item,
-  ActionSheet,
   Content,
 } from 'native-base';
 

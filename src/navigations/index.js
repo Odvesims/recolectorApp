@@ -1,7 +1,5 @@
 import React from 'react';
 import {withBadge} from '../components';
-// import {StyleSheet, Platform, StatusBar} from 'react-native';
-
 import {theme} from '../constants';
 import {
   Alert,

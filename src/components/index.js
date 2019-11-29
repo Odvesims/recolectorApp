@@ -1,4 +1,3 @@
-// import ContentCustom from './ContentCustom';
 import AddButton from './AddButton';
 import BoldLargeText from './BoldLargeText';
 import ButtonDone from './ButtonDone';
@@ -16,9 +15,9 @@ import withBadge from './withBadge';
 import ActionButton from './ActionButton';
 import NumberInput from './NumberInput';
 import BtnIcon from './buttons/BtnIcon';
+import InputForm from './InputForm';
 
 export {
-  //   ContentCustom,
   AddButton,
   ActionButton,
   BoldLargeText,
@@ -30,6 +29,7 @@ export {
   CustomTextInput,
   FetchingData,
   InputLogin,
+  InputForm,
   NavigationHeader,
   NormalText,
   NumberInput,

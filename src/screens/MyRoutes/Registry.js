@@ -13,6 +13,7 @@ import {
   ScrollView,
   FlatList,
   CheckBox,
+  Alert,
 } from 'react-native';
 import {
   Header,
@@ -45,6 +46,7 @@ export default class Registry extends Component {
   save = () => {
     let {data, checkItem} = this.state;
     let dataArr = [];
+
     data.map(item => {
       let info = {
         collected_quantity: item.collected_quantity,
@@ -61,9 +63,9 @@ export default class Registry extends Component {
     };
     this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'});
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
-      alert(JSON.stringify(res));
+      Alert.alert(JSON.stringify(res));
       if (res.valid) {
-        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
         this.setState({
           loading: false,
         });
@@ -87,41 +89,51 @@ export default class Registry extends Component {
         <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
         <View
           style={{
-            flexDirection: 'row',
-            flexGrow: 1,
+            alignSelf: 'flex-end',
+            flex: 1,
           }}>
-          <InputValues
-            id={item.orderDetail_id}
-            blurOnSubmit={false}
-            value={item.collected_quantity}
-            onChangeText={text => {
-              item.collected_quantity = text;
-              this.setState({
-                ...item,
-              });
-            }}
-            returnKeyType="next"
-            keyboardType="number-pad"
-          />
-          {/* <InputValues
-            id={item.orderDetail_id}
-            blurOnSubmit={false}
-            value={item.collected_quantity}
-            onChangeText={text => {
-              item.collected_quantity = text;
-              this.setState({
-                ...item,
-              });
-            }}
-            returnKeyType="next"
-            keyboardType="number-pad"
-          /> */}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignContent: 'center',
+            }}>
+            <InputValues
+              id={item.orderDetail_id}
+              blurOnSubmit={false}
+              value={item.collected_quantity}
+              onChangeText={text => {
+                item.collected_quantity = text;
+                this.setState({
+                  ...item,
+                });
+              }}
+              returnKeyType="next"
+              keyboardType="number-pad"
+            />
+            <InputValues
+              style={{marginLeft: 15}}
+              id={item.orderDetail_id}
+              blurOnSubmit={false}
+              value={item.collected_quantity}
+              onChangeText={text => {
+                item.collected_quantity = text;
+                this.setState({
+                  ...item,
+                });
+              }}
+              returnKeyType="next"
+              keyboardType="number-pad"
+            />
+          </View>
         </View>
       </ItemsContainer>
     );
   };
 
   render() {
+    console.log('REGISTRY STATE ==>', this.state);
+
     let {data, checkItem} = this.state;
     const {params} = this.props.navigation.state;
     console.log(checkItem);
@@ -180,39 +192,73 @@ export default class Registry extends Component {
               <Text style={styles.bodyHeader}>Articulos</Text>
               <Text style={styles.bodyHeader}>Recogidos</Text>
             </HeaderItems>
-            <OrderMode>
-              <View
+            <View style={{marginHorizontal: 12}}>
+              <OrderMode>
+                {/* <View
                 style={{
                   flexDirection: 'row',
                   flexGrow: 1.5,
-                }}>
-                <Text style={{flexGrow: 1, textAlign: 'center'}}></Text>
-                <Text style={{flexGrow: 1, textAlign: 'center'}}></Text>
-              </View>
-              <View style={{flexDirection: 'row', flexGrow: 1}}>
-                <Text style={{flexGrow: 1, textAlign: 'center'}}>Picking</Text>
-                <Text style={{flexGrow: 1, textAlign: 'center'}}>Compras</Text>
-              </View>
-            </OrderMode>
-          </View>
-          <KeyboardAwareScrollView>
-            {/* FlatList */}
-            <FlatList
-              data={data}
-              extraData={this.state}
-              keyExtractor={item => item.id.toString()}
-              renderItem={this.renderItem} //item => this.renderItem(item)
-            />
-            <View
-              style={[
-                styles.checkbox,
-                !checkItem ? styles.checkboxDisabled : styles.checkboxSuccess,
-              ]}>
-              <CheckBox value={checkItem} onChange={this.checkboxHandler} />
-              <Text style={styles.bodyHeader}>Cerrar orden</Text>
+                }}> */}
+                {/* <Text style={{flexGrow: 1, textAlign: 'center'}}></Text> */}
+                {/* <Text style={{flexGrow: 1, textAlign: 'center'}}></Text> */}
+                {/* </View> */}
+                <View style={{flex: 1}}>
+                  <View
+                    style={{
+                      alignSelf: 'flex-end',
+                      width: '50%',
+
+                      textAlign: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          paddingHorizontal: 15,
+                          // marginHorizontal: 25,
+                        }}>
+                        Picking
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          paddingHorizontal: 15,
+                          marginLeft: 15,
+                        }}>
+                        Compras
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </OrderMode>
+
+              <KeyboardAwareScrollView>
+                {/* FlatList */}
+                <FlatList
+                  data={data}
+                  extraData={this.state}
+                  keyExtractor={item => item.id.toString()}
+                  renderItem={this.renderItem} //item => this.renderItem(item)
+                />
+                <View
+                  style={[
+                    styles.checkbox,
+                    !checkItem
+                      ? styles.checkboxDisabled
+                      : styles.checkboxSuccess,
+                  ]}>
+                  <CheckBox value={checkItem} onChange={this.checkboxHandler} />
+                  <Text style={styles.bodyHeader}>Cerrar orden</Text>
+                </View>
+              </KeyboardAwareScrollView>
+              {/* End flatList */}
             </View>
-          </KeyboardAwareScrollView>
-          {/* End flatList */}
+          </View>
         </RContent>
       </Container>
     );
@@ -339,7 +385,7 @@ const Head = styled.View`
 `;
 
 const ItemTitle = styled.Text`
-  flex-grow: 1;
+  flex: 1;
   text-align: left;
   ${'' /* width: 180px; */}
   overflow: hidden;
@@ -350,13 +396,13 @@ const ItemsContainer = styled.View`
   flex-direction: row;
   flex: 1;
   padding-vertical: 12;
-  margin-left: 24;
   align-items: center;
 `;
 
 const InputValues = styled(CustomTextInput)`
   flex-basis: 80px;
-  margin-left: 8px;
+  flex-shrink: 42px;
+  ${'' /* margin-left: 8px; */}
   padding: 12px;
   ${'' /* flex-grow: 1; */}
   background-color: #fff;

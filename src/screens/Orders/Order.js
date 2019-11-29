@@ -3,7 +3,6 @@ import {theme} from '../../constants';
 import {ButtonGroup} from 'react-native-elements';
 import {CustomPicker, BtnIcon} from '../../components';
 
-import styled from 'styled-components/native';
 import {
   styles,
   Client,
@@ -16,8 +15,7 @@ import {
 
 import moment from 'moment';
 import _ from 'lodash';
-// import Detail from './Detail';
-import {View, Alert, Animated} from 'react-native';
+import {View, Alert, Animated, ScrollView} from 'react-native';
 import {
   Container,
   Left,
@@ -34,7 +32,8 @@ import {
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import {DetailsTab} from './Tabs';
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {backDialog} from '../../utils';
+
 import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 import {
   getStoredClients,
@@ -96,7 +95,7 @@ export default class Order extends Component {
     if (isNewRecord === false) {
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
-          let orderData = o.arrResponse[0];
+          const orderData = o.arrResponse[0];
           console.log('arrRESPONSE', o.arrResponse[0]);
           this.setState({
             placeholder: orderData.client_name,
@@ -106,9 +105,9 @@ export default class Order extends Component {
             client_city: orderData.city,
             client_state: orderData.state,
             client_phone: orderData.phone_number,
-            loading: false,
             picking: orderData.order_details,
             shopping: orderData.order_purchases_details,
+            loading: false,
           });
         });
       });
@@ -218,22 +217,17 @@ export default class Order extends Component {
 
   goBack = () => {
     const {picking, shopping, client} = this.state;
-    if (!client && !picking.length && !shopping.length) {
-      this.props.navigation.goBack();
+    const isNewRecord = this.props.navigation.state.params.isNewRecord;
+    const {goBack} = this.props.navigation;
+
+    if (isNewRecord === false) {
+      goBack();
     } else {
-      Alert.alert(
-        'Alerta',
-        'Al salir perderá la nueva orden',
-        [
-          {
-            text: 'Permanecer',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'Salir', onPress: () => this.props.navigation.goBack()},
-        ],
-        {cancelable: false},
-      );
+      if (!client && !picking.length && !shopping.length) {
+        goBack();
+      } else {
+        backDialog(goBack);
+      }
     }
   };
 

@@ -3,7 +3,7 @@ import {
   BluetoothManager,
 } from 'react-native-bluetooth-escpos-printer';
 
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 
 export function enableBT() {
   return new Promise((resolve, reject) => {
@@ -62,13 +62,13 @@ export async function printInvoiceText(printArray, printOption) {
         4: Format Type (normal, no-format, columns)
         5: Break line after
     */
-   console.log(printArray);
+  console.log(printArray);
   return new Promise((resolve, reject) => {
-    if(printOption == 1){
+    if (printOption == 1) {
       printArray.invoice_header.map(line => {
         formattedText(line);
       });
-      if(printArray.invoice_collected.length > 0){
+      if (printArray.invoice_collected.length > 0) {
         printArray.invoice_collected.map(line => {
           formattedText(line);
         });
@@ -80,15 +80,15 @@ export async function printInvoiceText(printArray, printOption) {
           fonttype: 1,
         });
         Alert.alert(
-          global.translate("TITLE_PRINT_ORDER"),
-          global.translate("TITLE_CONTINUE_PRINTING"),
+          global.translate('TITLE_PRINT_ORDER'),
+          global.translate('TITLE_CONTINUE_PRINTING'),
           [
             {
-              text: global.translate("TITLE_YES"),
-              onPress: () => {      
+              text: global.translate('TITLE_YES'),
+              onPress: () => {
                 printArray.invoice_header.map(line => {
                   formattedText(line);
-                });        
+                });
                 printArray.invoice_purchased.map(line => {
                   formattedText(line);
                 });
@@ -100,35 +100,35 @@ export async function printInvoiceText(printArray, printOption) {
                   fonttype: 1,
                 });
               },
-            }
-          ]
+            },
+          ],
         );
-      } else{      
+      } else {
         printArray.invoice_purchased.map(line => {
           formattedText(line);
-        });    
+        });
         BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
           encoding: 'GBK',
           codepage: 0,
           widthtimes: 0,
           heigthtimes: 0,
           fonttype: 1,
-        });    
+        });
       }
-    } else{
+    } else {
       printArray.invoice_header.map(line => {
         formattedText(line);
       });
-      if(printArray.invoice_collected.length > 0){
+      if (printArray.invoice_collected.length > 0) {
         printArray.invoice_collected.map(line => {
           formattedText(line);
-        });  
+        });
       }
-      if(printArray.invoice_collected.length > 0){ 
+      if (printArray.invoice_collected.length > 0) {
         printArray.invoice_purchased.map(line => {
           formattedText(line);
         });
-      }   
+      }
       BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n\r\n', {
         encoding: 'GBK',
         codepage: 0,
@@ -141,25 +141,18 @@ export async function printInvoiceText(printArray, printOption) {
   });
 }
 
-export async function formattedText(line){
-  
+export async function formattedText(line) {
   switch (line[3]) {
     case 'left':
-      BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.LEFT,
-      );
+      BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
 
       break;
     case 'center':
-      BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      );
+      BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
 
       break;
     case 'right':
-      BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.RIGHT,
-      );
+      BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.RIGHT);
 
       break;
   }

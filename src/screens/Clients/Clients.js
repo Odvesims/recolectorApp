@@ -170,7 +170,7 @@ export default class Clients extends Component {
       operation: 'TITLE_NEW_CLIENT',
       loading_message: 'MESSAGE_REGISTERING_CLIENT',
       onGoBack: () => this.refresh(true),
-      new_record: true,
+      isNewRecord: true,
       state: global.translate('PLACEHOLDER_TYPE_STATE'),
     });
   };
@@ -215,7 +215,7 @@ export default class Clients extends Component {
                       country: item.country,
                       phone: item.phone_number,
                       loading_message: 'MESSAGE_UPDATING_CLIENT',
-                      new_record: false,
+                      isNewRecord: false,
                       onGoBack: () => this.refresh(false),
                     });
                     break;

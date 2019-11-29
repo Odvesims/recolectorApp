@@ -3,9 +3,13 @@ import {theme} from '../../constants';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {dataOperation} from '../../helpers/apiconnection_helper';
 import {updateClient} from '../../helpers/sql_helper';
-import {CustomPicker, BtnIcon} from '../../components';
-import usStates from '../../country_states/us.json';
-import drStates from '../../country_states/dr.json';
+import {CustomPicker, BtnIcon, InputForm} from '../../components';
+import {usStates, drStates} from '../../utils';
+
+import {backDialog} from '../../utils';
+
+// import usStates from '../../utils/country_states/dr.json';
+// import drStates from '../../utils/country_states/us.json';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 
@@ -25,16 +29,7 @@ import {
   Text,
 } from 'native-base';
 
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  FlatList,
-  KeyboardAvoidingView,
-  Alert,
-} from 'react-native';
+import {StyleSheet, KeyboardAvoidingView, Alert} from 'react-native';
 
 export class Client extends PureComponent {
   constructor(props) {
@@ -42,7 +37,7 @@ export class Client extends PureComponent {
     const {
       params: {
         loading_message,
-        new_record,
+        isNewRecord,
         address,
         country,
         phone,
@@ -56,7 +51,7 @@ export class Client extends PureComponent {
     this.state = {
       loading: false,
       loadingMessage: loading_message,
-      new_record: new_record,
+      new_record: isNewRecord,
       code: code,
       name: name,
       address: address,
@@ -78,49 +73,61 @@ export class Client extends PureComponent {
     });
   }
 
-  execOperation = () => {
-    const {code, name, address, city, state, phone, country} = this.state;
-    let client_data = {
-      code: code,
-      name: name,
-      address: address,
-      city: city,
-      state: state,
-      country: country,
-      phone: phone,
-      phone_old: phone,
-      country_id: global.country_id,
-      setma_id: global.setma_id,
-    };
-    this.setState({loading: true});
-    dataOperation('CLIENT_OPERATION', client_data).then(res => {
-      updateClient(res.responseObject).then(result => {
-        this.setState({
-          loading: false,
-          code: '',
-          name: '',
-          address: '',
-          city: '',
-          state: state,
-          country: country,
-          phone: '',
-        });
-        alert(global.translate(result));
-      });
-    });
-  };
+  // execOperation = () => {
+  //   const {code, name, address, city, state, phone, country} = this.state;
+  //   let client_data = {
+  //     ...this.state,
+  //     phone_old: phone,
+  //     country_id: global.country_id,
+  //     setma_id: global.setma_id,
+  //   };
+  //   this.setState({loading: true});
+  //   dataOperation('CLIENT_OPERATION', client_data).then(res => {
+  //     updateClient(res.responseObject).then(result => {
+  //       this.setState({
+  //         loading: false,
+  //         code: '',
+  //         name: '',
+  //         address: '',
+  //         city: '',
+  //         state: state,
+  //         country: country,
+  //         phone: '',
+  //       });
+  //       Alert.alert(global.translate(result));
+  //     });
+  //   });
+  // };
 
   goBack = () => {
-    let value = this.state.new_record;
-    this.props.navigation.state.params.onGoBack(value);
-    this.props.navigation.goBack();
+    const {goBack} = this.props.navigation;
+    const {name} = this.state;
+    const {isNewRecord, onGoBack} = this.props.navigation.state.params;
+
+    if (isNewRecord === false) {
+      // onGoBack(isNewRecord);
+      goBack();
+    } else {
+      if (name === undefined) {
+        // onGoBack(isNewRecord);
+        goBack();
+      } else {
+        backDialog(goBack);
+      }
+    }
   };
+
+  // goBack = () => {
+  //   const {goBack} = this.props.navigation;
+  //   const {isNewRecord, onGoBack} = this.props.navigation.state.params;
+  //   onGoBack(isNewRecord);
+  //   goBack();
+  // };
 
   handleSubmit = values => {
     const {state, country} = this.state;
     const {name, address, city, phone} = values;
     let client_data = {
-      // code: code,
       name: name,
       address: address,
       city: city,
@@ -144,7 +151,8 @@ export class Client extends PureComponent {
           country: country,
           phone: '',
         });
-        alert(global.translate(result));
+        Alert.alert(global.translate(result));
+        this.props.navigation.goBack();
       });
     });
   };
@@ -174,8 +182,6 @@ export class Client extends PureComponent {
     }
 
     let clientCode;
-    console.log('clientCode', code);
-
     if (code) {
       clientCode = (
         <Header style={styles.headerCode}>
@@ -238,7 +244,6 @@ export class Client extends PureComponent {
           <BtnIcon label={'TITLE_DONE} iconName={'checkmark'} onPress={this.execOperation} />
           </Right> */}
         </Header>
-        {/* Header */}
         {clientCode}
 
         <Content style={styles.container}>
@@ -264,40 +269,33 @@ export class Client extends PureComponent {
                 isValid,
                 touched,
                 setFieldValue,
-
                 isSubmitting,
               }) => (
                 <Form style={{marginBottom: 24}}>
                   <InputForm
                     label={'TITLE_NAME'}
                     value={values.name}
-                    style={styles.input}
                     placeholder={'PLACEHOLDER_TYPE_NAME'}
                     onChangeText={handleChange('name')}
                     onBlur={handleBlur('name')}
                     errorMessage={touched.name && errors.name}
                   />
-
                   <InputForm
                     label={'TITLE_ADDRESS'}
                     value={values.address}
-                    style={styles.input}
                     placeholder={'PLACEHOLDER_TYPE_ADDRESS'}
                     onChangeText={handleChange('address')}
                     onBlur={handleBlur('address')}
                     errorMessage={touched.address && errors.address}
                   />
-
                   <InputForm
                     label={'TITLE_CITY'}
                     value={values.city}
-                    style={styles.input}
                     placeholder={'PLACEHOLDER_TYPE_CITY'}
                     onChangeText={handleChange('city')}
                     onBlur={handleBlur('city')}
                     errorMessage={touched.city && errors.city}
                   />
-
                   <CustomPicker
                     label={'TITLE_STATE'}
                     placeholder={state}
@@ -306,11 +304,9 @@ export class Client extends PureComponent {
                     errorMessage={touched.state && errors.state}
                     selectPlaceholderText={state}
                   />
-
                   <InputForm
                     label={'TITLE_PHONE'}
                     value={values.phone}
-                    style={styles.input}
                     keyboardType="phone-pad"
                     placeholder={'PLACEHOLDER_TYPE_PHONE'}
                     onChangeText={handleChange('phone')}
@@ -359,84 +355,13 @@ const styles = StyleSheet.create({
     padding: theme.sizes.padding,
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  button: {
-    fontSize: theme.sizes.caption,
-    textTransform: 'uppercase',
-    backgroundColor: '#4285F4',
-  },
-
-  textCenter: {
-    alignItems: 'center',
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    // borderColor: borderColor,
-    borderRadius: 4,
-    color: '#000',
-  },
-
   error: {borderColor: theme.colors.accent},
 
   default: {
     borderColor: theme.colors.gray2,
   },
 
-  label: {
-    fontSize: theme.sizes.font,
-    color: theme.colors.darkGray,
-  },
-
-  labelForgot: {
-    color: theme.colors.primary,
-    fontSize: theme.fonts.caption.fontSize,
-    alignSelf: 'flex-end',
-  },
   paddingBottom: {
     paddingBottom: theme.sizes.base,
   },
 });
-
-export const InputForm = ({
-  onPress,
-  placeholder,
-  onChangeText,
-  returnKeyType,
-  keyboardType,
-  label,
-  onBlur,
-  value,
-  errorMessage,
-}) => {
-  let isError = errorMessage;
-  if (isError) {
-    errorMessage = (
-      <Text style={{color: 'red', fontSize: 12}}>{errorMessage}</Text>
-    );
-  }
-  return (
-    <View style={styles.paddingBottom}>
-      <Text style={styles.label}>{global.translate(label)}</Text>
-      <TextInput
-        value={value}
-        style={[styles.input, !isError ? styles.default : styles.error]}
-        keyboardType={keyboardType}
-        placeholder={global.translate(placeholder)}
-        returnKeyType={returnKeyType}
-        onChangeText={onChangeText}
-        onBlur={onBlur}
-        numberOfLines={1}
-      />
-      {errorMessage}
-    </View>
-  );
-};
