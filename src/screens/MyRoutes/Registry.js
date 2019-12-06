@@ -49,10 +49,30 @@ export default class Registry extends Component {
     const shopping = orderType.filter(res => res.pickup_or_purchase === 'C');
 
     this.setState({
-      data: orderType,
+      // data: orderType,
       picking: picking,
+      pickingData: picking,
       shopping: shopping,
+      shoppingData: shopping,
     });
+  };
+
+  onChangePicking = (index, collected) => {
+    console.log('Valores', index, collected);
+    this.setState(
+      (prevState, props) => (
+        {
+          picking: index.collected,
+        },
+        console.log('prevState', this.state.picking)
+      ),
+    );
+  };
+
+  onChangeShopping = (data, id) => {
+    this.setState((prevState, props) => ({
+      picking: [...this.state.picking],
+    }));
   };
 
   save = () => {
@@ -78,6 +98,7 @@ export default class Registry extends Component {
     this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'});
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       Alert.alert(JSON.stringify(res));
+
       if (res.valid) {
         Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
         this.setState({
@@ -104,9 +125,9 @@ export default class Registry extends Component {
     const {picking, shopping, editable} = this.state;
     if (item === 0) {
       return (
-        <Provider value={picking}>
+        <Provider value={this.state}>
           <Picking
-            // tab_data={picking}
+            onChangeHandler={this.onChangePicking}
             navigation={this.props.navigation}
             editable={editable}
             renderView={'Picking'}
@@ -115,9 +136,9 @@ export default class Registry extends Component {
       );
     } else {
       return (
-        <Provider value={shopping}>
+        <Provider value={this.state}>
           <Shopping
-            // tab_data={shopping}
+            onChangeHandler={this.onChangeShopping}
             navigation={this.props.navigation}
             editable={editable}
             renderView={'Shopping'}
@@ -132,7 +153,8 @@ export default class Registry extends Component {
   };
 
   render() {
-    console.log('REGISTRY STATE ==>', this.state);
+    console.log('REGISTRY picking ==>', this.state.picking);
+    console.log('REGISTRY shopping ==>', this.state.shopping);
     // console.log('REGISTRY props ==>', this.props.navigation.state.params);
 
     const detailTabs = [

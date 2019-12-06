@@ -277,7 +277,7 @@ export class Route extends Component {
 
     let orderList = (
       <SwipeListView
-        style={styles.swipeListView}
+        style={styles.swipeList}
         data={data}
         keyExtractor={item => item.id}
         renderItem={({item}) => <SwipeList item={item} />}
@@ -465,10 +465,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  swipeListView: {
+  swipeList: {
     overflow: 'hidden',
     marginBottom: 0,
-    backgroundColor: 'lightGray',
+    backgroundColor: theme.colors.lightGray,
     paddingHorizontal: 24,
   },
 

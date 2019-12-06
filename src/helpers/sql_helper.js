@@ -1004,7 +1004,6 @@ export function updateRouteOrders(route_orders) {
             ${detail.routedetail_id}, 'A')`,
         );
       });
-      console.log('details==>', detail);
       //saveOrders(detail.orders);
       detail.orders.map(order => {
         db.transaction(tx => {
@@ -1052,7 +1051,6 @@ export function updateRouteOrders(route_orders) {
 }
 
 export function getOrderDetails(order_id) {
-  console.log(order_id);
   let arrOrders = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -1060,7 +1058,7 @@ export function getOrderDetails(order_id) {
         `SELECT * FROM order_details WHERE order_id=${order_id} ORDER BY id DESC`,
         [],
         (tx, results) => {
-          console.log('results', results);
+          // console.log('results', results);
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {

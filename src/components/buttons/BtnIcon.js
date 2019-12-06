@@ -6,14 +6,17 @@ import PropTypes from 'prop-types';
 
 const BtnIcon = ({label, iconName, onPress}) => {
   let isLabel = label;
+  let _label;
   if (isLabel) {
-    label = <Text style={styles.text}>{global.translate(label)}</Text>;
+    _label = (
+      <Text style={styles.text}>{label || global.translate(label)}</Text>
+    );
   }
 
   return (
     <Button transparent onPress={onPress}>
       <Icon name={iconName} />
-      {label}
+      {_label}
     </Button>
   );
 };

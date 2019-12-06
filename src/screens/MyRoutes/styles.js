@@ -214,6 +214,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.gray2,
     borderRadius: 4,
     color: '#000',
+    fontSize: 20,
+    width: 100,
   },
 
   quantity: {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {theme} from '../../../constants';
-import {Text, View, FlatList} from 'react-native';
+import {Text, View, FlatList, TextInput} from 'react-native';
 import {styles} from '../styles';
 import {CustomTextInput} from '../../../components';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -9,22 +9,25 @@ import {Consumer} from '../Registry';
 
 import styled from 'styled-components/native';
 
-const Picking = ({renderView}) => {
+const Picking = ({renderView, onChangeHandler}) => {
   const renderItem = ({item}) => {
     return (
       <ItemsContainer>
         <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
         <View>
-          <InputValues
+          <TextInput
             id={item.orderDetail_id}
             value={item.collected_quantity}
             blurOnSubmit={false}
             onChangeText={text => {
+              console.log(item);
               item.collected_quantity = text;
+              // console.log(data(item[item.id].collected_quantity));
+              onChangeHandler(item.collected_quantity, item.id);
             }}
             returnKeyType="next"
             keyboardType="number-pad"
-            style={{fontSize: 20, width: 100}}
+            style={styles.input}
           />
         </View>
       </ItemsContainer>
@@ -43,11 +46,43 @@ const Picking = ({renderView}) => {
             {context => (
               <FlatList
                 style={{overflow: 'hidden'}}
-                data={context}
+                data={context.picking}
                 keyExtractor={item => item.id}
-                renderItem={renderItem}
+                renderItem={({item}) => {
+                  return (
+                    <ItemsContainer>
+                      <ItemTitle numberOfLines={1}>
+                        {item.detail_description}
+                      </ItemTitle>
+                      <View>
+                        <TextInput
+                          id={item.orderDetail_id}
+                          value={item.collected_quantity}
+                          blurOnSubmit={false}
+                          onChangeText={text => {
+                            // console.log(item);
+                            // console.log(data(item[item.id].collected_quantity));
+                            const index = context.picking.findIndex(
+                              i => i.id === item.id,
+                            );
+                            // console.log('index ==>', index);
+                            item.collected_quantity = text;
+                            onChangeHandler(
+                              context.picking[index],
+                              item.collected_quantity,
+                            );
+                          }}
+                          returnKeyType="next"
+                          keyboardType="number-pad"
+                          style={styles.input}
+                        />
+                      </View>
+                    </ItemsContainer>
+                  );
+                }}
                 maxToRenderPerBatch={10}
                 windowSize={10}
+                extraData={context}
               />
             )}
           </Consumer>

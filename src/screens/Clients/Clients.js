@@ -269,7 +269,6 @@ export default class Clients extends Component {
           {/* SearchBar */}
           {show ? (
             <SearchBar
-              arrayData={this.state.arrayData}
               data={this.searchBarHandler}
               visible={this.searchHandler}
               dataValue={this.state.dataAll}

@@ -1,6 +1,6 @@
 import React from 'react';
 import {theme} from '../../../constants';
-import {Text, View, FlatList} from 'react-native';
+import {Text, View, FlatList, TextInput} from 'react-native';
 import {styles} from '../styles';
 import {CustomTextInput} from '../../../components';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -9,22 +9,26 @@ import {Consumer} from '../Registry';
 
 import styled from 'styled-components/native';
 
-const Shopping = ({renderView}) => {
+const Shopping = ({renderView, onChangeHandler}) => {
   const renderItem = ({item}) => {
+    console.log('RenderItem ==>', item);
     return (
       <ItemsContainer>
         <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
         <View>
-          <InputValues
+          <TextInput
             id={item.orderDetail_id}
             value={item.collected_quantity}
             blurOnSubmit={false}
             onChangeText={text => {
+              console.log(item);
               item.collected_quantity = text;
+              // console.log(data(item[item.id].collected_quantity));
+              onChangeHandler(item);
             }}
             returnKeyType="next"
             keyboardType="number-pad"
-            style={{fontSize: 20, width: 100}}
+            style={styles.input}
           />
         </View>
       </ItemsContainer>
@@ -43,11 +47,12 @@ const Shopping = ({renderView}) => {
             {context => (
               <FlatList
                 style={{overflow: 'hidden'}}
-                data={context}
+                data={context.shopping}
                 keyExtractor={item => item.id}
                 renderItem={renderItem}
                 maxToRenderPerBatch={10}
                 windowSize={10}
+                extraData={context}
               />
             )}
           </Consumer>
