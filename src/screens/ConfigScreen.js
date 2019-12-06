@@ -24,8 +24,7 @@ import {
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import NormalText from '../components/NormalText';
-import CustomButton from '../components/CustomButton';
-import CustomTextInput from '../components/TextInput';
+import {CustomButton, CustomInput} from '../components';
 
 import {getUserConfig, saveUserConfig} from '../helpers/sql_helper';
 
@@ -143,7 +142,7 @@ export default class ConfigScreen extends Component {
             <Title>{global.translate('TITLE_CONFIGURATION')}</Title>
           </Body>
         </Header>
-        <Content>
+        <Content style={{paddingHorizontal: 12, paddingVertical: 24}}>
           <KeyboardAwareScrollView
             resetScrollToCoords={{x: 0, y: 0}}
             scrollEnabled>
@@ -151,21 +150,17 @@ export default class ConfigScreen extends Component {
               visible={this.state.loading}
               textContent={this.state.loadingMessage}
             />
-            <NormalText
-              text={global.translate('TITLE_DOMAIN') + ':'}
-              style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
-            />
-            <CustomTextInput
+
+            <CustomInput
+              label={'TITLE_DOMAIN'}
               value={this.state.hostName}
               onChangeText={hostName => {
                 this.setState({hostName: hostName});
               }}
             />
-            <NormalText
-              text={global.translate('TITLE_PORT') + ':'}
-              style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
-            />
-            <CustomTextInput
+
+            <CustomInput
+              label={'TITLE_PORT'}
               keyboardType={'numeric'}
               value={this.state.portNumber}
               onChangeText={portNumber => {

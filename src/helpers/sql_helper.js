@@ -106,7 +106,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC)',
+        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC, pickup_purchase VARCHAR(1))',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, description TEXT, document_id INTEGER, document_acronym VARCHAR, document_number INTEGER, assigned_by VARCHAR(10), assigned_to VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, date_from TEXT, date_to TEXT, status VARCHAR(1))',
@@ -437,6 +437,7 @@ export function saveOrders(orders) {
       tx.executeSql('DELETE FROM orders', [], (tx, results) => {});
       tx.executeSql('DELETE FROM order_details', [], (tx, results) => {});
     });
+    let rowsAffected = 0;
     for (let i = 0; i < orders.length; i++) {
       let order = orders[i];
       db.transaction(tx => {
@@ -452,29 +453,34 @@ export function saveOrders(orders) {
             order.assigned,
           ],
           (tx, results) => {
-            for (let e = 0; e < order.order_details.length; e++) {
-              let order_detail = order.order_details[e];
-              tx.executeSql(
-                'INSERT INTO order_details(order_id, orderdetail_id, detail_id, detail_type, detail_description, detail_quantity, detail_price, collected_quantity, collected_amount) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [
-                  order_detail.order_id,
-                  order_detail.orderdetail_id,
-                  order_detail.detail_id,
-                  order_detail.detail_type,
-                  order_detail.detail_description,
-                  order_detail.quantity,
-                  order_detail.price,
-                  order_detail.collected_quantity,
-                  order_detail.collected_amount,
-                ],
-                (tx, results) => {},
-              );
-            }
+            rowsAffected = JSON.stringify(results);
           },
         );
+        // let orderDetails = [order.order_details, order.order_purchases_details];
+
+        [order.order_details, order.order_purchases_details].map(detail => {
+          detail.map(order_detail => {
+            tx.executeSql(
+              'INSERT INTO order_details(order_id, orderdetail_id, detail_id, detail_type, detail_description, detail_quantity, detail_price, collected_quantity, collected_amount, pickup_purchase) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [
+                order_detail.order_id,
+                order_detail.orderdetail_id,
+                order_detail.detail_id,
+                order_detail.detail_type,
+                order_detail.detail_description,
+                order_detail.quantity,
+                order_detail.price,
+                order_detail.collected_quantity,
+                order_detail.collected_amount,
+                order_detail.pickup_or_purchase,
+              ],
+              (tx, results) => {},
+            );
+          });
+        });
       });
     }
-    resolve(true);
+    resolve(rowsAffected);
   });
 }
 
@@ -776,21 +782,51 @@ export function getAssignedOrders() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT o.id, o.order_id, o.order_document, o.date_register, o.client,o.order_id, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client ORDER BY o.order_id DESC`,
+        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE  c.client_code = o.client ORDER BY o.order_id DESC`,
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {
               id: row.id,
-              order_document: row.order_document,
+              document: row.order_document,
               client: row.client,
               address: row.address,
               name: row.name,
               order_total: row.order_total,
-              order_id: row.order_id,
-              date_register: row.date_register,
+              assigned: row.assigned,
             };
+            // console.log('orderObject Assigned==>', resolve);
+            arrOrders.push(orderObject);
+          }
+          resolve(arrOrders);
+        },
+      );
+    });
+  });
+}
+
+export function getNotAssignedOrders() {
+  return new Promise((resolve, reject) => {
+    let arrOrders = [];
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
+        [],
+        (tx, results) => {
+          for (let i = 0; i < results.rows.length; ++i) {
+            let row = results.rows.item(i);
+            let orderObject = {
+              id: row.id,
+              order_id: row.order_id,
+              order_document: row.order_document,
+              client: row.client,
+              name: row.name,
+              address: row.address,
+              order_total: row.order_total,
+            };
+            // console.log('orderObject notAssigned==>', orderObject);
+
             arrOrders.push(orderObject);
           }
           resolve(arrOrders);
@@ -806,35 +842,6 @@ export function getOrderClient() {
     db.transaction(tx => {
       tx.executeSql(
         'SELECT o.id, o.client_code, o.address, o.city, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
-        [],
-        (tx, results) => {
-          for (let i = 0; i < results.rows.length; ++i) {
-            let row = results.rows.item(i);
-            let orderObject = {
-              id: row.id,
-              order_id: row.order_id,
-              order_document: row.order_document,
-              client: row.client,
-              name: row.name,
-              address: row.address,
-              order_total: row.order_total,
-              date_register: row.date_register,
-            };
-            arrOrders.push(orderObject);
-          }
-          resolve(arrOrders);
-        },
-      );
-    });
-  });
-}
-
-export function getNotAssignedOrders() {
-  return new Promise((resolve, reject) => {
-    let arrOrders = [];
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT o.id, o.order_id, o.order_document, o.date_register, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -952,30 +959,32 @@ export function updateOrderAssigned(orders_list) {
 }
 
 export function updateRouteOrders(route_orders) {
+  // console.log('Adentro', route_orders);
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql(`UPDATE route_id, 
-      description, 
-      document_id, 
-      document_acronym, , 
+      // console.log('RouteOrders', JSON.stringify(route_orders));
+      tx.executeSql(`UPDATE route_id,
+      description,
+      document_id,
+      document_acronym, ,
       assigned_by,
-      assigned_to, supervisor_name, 
-      employee_name, phone_number, 
-      date_from, 
-      date_to, 
+      assigned_to, supervisor_name,
+      employee_name, phone_number,
+      date_from,
+      date_to,
       status
-      VALUES(${route_orders.route_id}, 
-        '${route_orders.description}', 
-        ${route_orders.document_id}, 
-        '${route_orders.document_acronym}', 
-        ${route_orders.document_number}, 
-        ${route_orders.assigned_by}, 
-        ${route_orders.assigned_to}, 
-        '${route_orders.supervisor_name}', 
-        '${route_orders.employee_name}', 
-        '${route_orders.phone_number}', 
-        '${route_orders.date_to}', 
-        '${route_orders.date_from}', 
+      VALUES(${route_orders.route_id},
+        '${route_orders.description}',
+        ${route_orders.document_id},
+        '${route_orders.document_acronym}',
+        ${route_orders.document_number},
+        ${route_orders.assigned_by},
+        ${route_orders.assigned_to},
+        '${route_orders.supervisor_name}',
+        '${route_orders.employee_name}',
+        '${route_orders.phone_number}',
+        '${route_orders.date_to}',
+        '${route_orders.date_from}',
         '${route_orders.status})
       WHERE route_id = ${route_orders.route_id}`);
     });
@@ -984,16 +993,19 @@ export function updateRouteOrders(route_orders) {
         `DELETE FROM route_details WHERE route_id = ${route_orders.route_id}`,
       );
     });
-    //alert(JSON.stringify(route_orders));
+    //alert();
+
     route_orders.route_details.map(detail => {
       db.transaction(tx => {
         tx.executeSql(
           `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(
             ${detail.route_id},
-            ${detail.order_id}, 
+            ${detail.order_id},
             ${detail.routedetail_id}, 'A')`,
         );
       });
+      console.log('details==>', detail);
+      //saveOrders(detail.orders);
       detail.orders.map(order => {
         db.transaction(tx => {
           tx.executeSql(
@@ -1001,35 +1013,38 @@ export function updateRouteOrders(route_orders) {
           );
           tx.executeSql(
             `INSERT INTO orders(order_id, address, order_document, client, date_register, order_total, assigned) VALUES(
-              ${order.order_id}, 
-              '${order.address}', 
-              '${order.order_document}', 
-              ${order.client}, 
-              '${order.date_register}', 
-              ${order.order_total}, 
+              ${order.order_id},
+              '${order.address}',
+              '${order.order_document}',
+              ${order.client},
+              '${order.date_register}',
+              ${order.order_total},
               ${order.assigned})`,
           );
         });
-        order.order_details.map(order_detail => {
-          db.transaction(tx => {
-            tx.executeSql(
-              `DELETE FROM order_details WHERE orderdetail_id = 
+        [order.order_details, order.order_purchases_details].map(
+          order_detail => {
+            db.transaction(tx => {
+              tx.executeSql(
+                `DELETE FROM order_details WHERE orderdetail_id =
               ${order_detail.orderdetail_id}`,
-            );
-            tx.executeSql(
-              `INSERT INTO order_details(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price, detail_description, collected_quantity, collected_amount) VALUES(
-                ${order_detail.order_id}, 
-                ${order_detail.orderdetail_id}, 
-                '${order_detail.detail_type}', 
-                ${order_detail.detail_id}, 
+              );
+              tx.executeSql(
+                `INSERT INTO order_details(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price, detail_description, collected_quantity, collected_amount, pickup_purchase) VALUES(
+                ${order_detail.order_id},
+                ${order_detail.orderdetail_id},
+                '${order_detail.detail_type}',
+                ${order_detail.detail_id},
                 ${order_detail.detail_quantity},
-                ${order_detail.detail_price}, 
-                '${order_detail.detail_description}', 
-                ${order_detail.collected_quantity}, 
-                ${order_detail.collected_amount})`,
-            );
-          });
-        });
+                ${order_detail.detail_price},
+                '${order_detail.detail_description}',
+                ${order_detail.collected_quantity},
+                ${order_detail.collected_amount},
+                '${order_detail.pickup_or_purchase}')`,
+              );
+            });
+          },
+        );
       });
     });
     resolve(route_orders);
@@ -1037,6 +1052,7 @@ export function updateRouteOrders(route_orders) {
 }
 
 export function getOrderDetails(order_id) {
+  console.log(order_id);
   let arrOrders = [];
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -1044,6 +1060,7 @@ export function getOrderDetails(order_id) {
         `SELECT * FROM order_details WHERE order_id=${order_id} ORDER BY id DESC`,
         [],
         (tx, results) => {
+          console.log('results', results);
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {
@@ -1054,7 +1071,7 @@ export function getOrderDetails(order_id) {
               collected_quantity: row.collected_quantity,
               detail_price: row.detail_price,
               detail_quantity: row.detail_quantity,
-              detail_type: row.detail_type,
+              pickup_or_purchase: row.pickup_purchase,
             };
             arrOrders.push(orderObject);
           }

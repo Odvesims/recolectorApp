@@ -3,7 +3,7 @@ import React from 'react';
 import {Text, StyleSheet} from 'react-native';
 import {View, Button} from 'native-base';
 import styled from 'styled-components/native';
-import {theme} from '../constants';
+import {theme} from '../../constants';
 
 const ActionButton = React.memo(({cancel, accept}) => {
   return (

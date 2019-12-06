@@ -1,26 +1,11 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component} from 'react';
 import {theme} from '../constants';
-import nextFrame from 'next-frame';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {
-  View,
-  StyleSheet,
-  NativeModules,
-  Platform,
-  TextInput,
-  Text,
-} from 'react-native';
+import {View, StyleSheet, NativeModules, Platform} from 'react-native';
 import {Container, Header, Right, Button, Icon, Item} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {
-  CustomButton,
-  CustomTextInput,
-  ToastMessage,
-  BoldLargeText,
-  NormalText,
-  InputLogin,
-} from '../components';
+import {CustomButton, ToastMessage, InputLogin} from '../components';
 
 import {getUserConfig, saveUserData} from '../helpers/sql_helper';
 import {getUserLogin} from '../helpers/apiconnection_helper';

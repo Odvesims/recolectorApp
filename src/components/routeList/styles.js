@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import {TouchableOpacity, Platform, StyleSheet, StatusBar} from 'react-native';
 import {theme} from '../../constants';
+import {Button} from 'native-base';
 
 export {
   BContent,
@@ -10,7 +11,9 @@ export {
   ClientForm,
   CurrentDate,
   DetailContent,
+  Description,
   ListBody,
+  More,
   Name,
   Price,
   PriceLabel,
@@ -58,6 +61,11 @@ const Name = styled.Text`
   flex-grow: 2;
   flex-wrap: nowrap;
 `;
+const Description = styled.Text`
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+`;
 const ClientForm = styled.View``;
 const CurrentDate = styled.View`
   background-color: ${theme.colors.lightGray};
@@ -100,6 +108,10 @@ const Total = styled.View`
 const ListBody = styled.View`
   flex-direction: row;
   justify-content: space-between;
+`;
+const More = styled(Button)`
+  position: absolute;
+  right: 0;
 `;
 
 const styles = StyleSheet.create({
@@ -286,6 +298,7 @@ const styles = StyleSheet.create({
 
   listContainer: {
     flex: 1,
+    // paddingVertical: 12,
   },
 
   content: {

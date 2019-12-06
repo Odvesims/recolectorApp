@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import PickerModal from 'react-native-picker-modal-view';
-import CustomPicker from '../../components/CustomPicker';
+import {
+  CustomPicker,
+  CustomInput,
+  BtnIcon,
+  SwipeHiddenList,
+  SwipeList,
+  CustomDatePicker,
+} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
@@ -10,8 +16,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight,
-  TextInput,
   ScrollView,
   Animated,
 } from 'react-native';
@@ -23,12 +27,8 @@ import {
   Title,
   Body,
   Header,
-  Button,
   Icon,
   Form,
-  Item,
-  DatePicker,
-  Picker,
 } from 'native-base';
 import {
   getStoredEmployees,
@@ -250,57 +250,21 @@ export class Route extends Component {
     });
   };
 
-  onClickRevert = id => {
-    this.setState({reverted: true});
-  };
+  // onClickRevert = id => {
+  //   this.setState({reverted: true});
+  // };
 
-  handleUserBeganScrollingParentView() {
-    this.swipeable.recenter();
-  }
-
-  renderItem = ({item}) => (
-    <Item style={[styles.list]} onPress={() => {}}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-        }}>
-        <View key={item.key} style={styles.listContainer}>
-          <Text style={styles.code}>
-            {global.translate('TITLE_CODE')}: {item.order_document}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text numberOfLines={1} style={styles.name}>
-              {item.client} - {item.name}
-            </Text>
-            <Text numberOfLines={1} style={styles.price}>
-              $ {item.order_total}
-            </Text>
-          </View>
-          <Text numberOfLines={1} style={styles.address}>
-            {item.address}
-          </Text>
-        </View>
-      </View>
-    </Item>
-  );
+  // handleUserBeganScrollingParentView() {
+  //   this.swipeable.recenter();
+  // }
 
   render() {
     const {
-      selectedItem,
-      employeeText,
-      leftActionActivated,
-      toggle,
       placeholder,
       chosenDate2,
       chosenDate,
       data,
+      employees,
       route_description,
       loadingMessage,
       loading,
@@ -313,29 +277,15 @@ export class Route extends Component {
 
     let orderList = (
       <SwipeListView
-        style={{
-          overflow: 'hidden',
-          marginBottom: 0,
-          backgroundColor: 'lightGray',
-        }}
+        style={styles.swipeListView}
         data={data}
         keyExtractor={item => item.id}
-        renderItem={this.renderItem}
+        renderItem={({item}) => <SwipeList item={item} />}
         renderHiddenItem={(data, rowMap) => (
-          <TouchableHighlight
-            style={[styles.hiddenList]}
-            onPress={this.onClickRevert}>
-            <View>
-              <Button
-                transparent
-                style={{alignSelf: 'flex-end', marginRight: 12}}>
-                <Icon name="trash" style={{color: 'white'}} />
-                <Text style={{color: 'white', fontFamily: 'Roboto-Medium'}}>
-                  {global.translate('TITLE_DELETED')}
-                </Text>
-              </Button>
-            </View>
-          </TouchableHighlight>
+          <SwipeHiddenList
+            label={'TITLE_DELETED'}
+            onPress={this.onClickRevert}
+          />
         )}
         leftOpenValue={0}
         rightOpenValue={-375}
@@ -355,109 +305,79 @@ export class Route extends Component {
         />
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
+            <BtnIcon
+              iconName={'arrow-back'}
+              onPress={() => this.props.navigation.goBack()}
+            />
           </Left>
           <Body>
             <Title>{global.translate(params.operation)}</Title>
           </Body>
           <Right>
-            <Button transparent onPress={this.saveRoute}>
-              <Icon name="checkmark" />
-              <Text style={{color: 'white', marginLeft: 8}}>
-                {global.translate('TITLE_DONE')}
-              </Text>
-            </Button>
+            <BtnIcon
+              iconName={'checkmark'}
+              label={'TITLE_DONE'}
+              onPress={this.saveRoute}
+            />
           </Right>
         </Header>
         <Content style={{backgroundColor: theme.colors.lightGray}}>
           <View style={styles.container}>
             <Form>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_DESCRIPTION')}
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_DESCRIPTION')}
-                  returnKeyType="go"
-                  value={route_description}
-                  onChangeText={route_description => {
-                    this.setState({route_description: route_description});
-                  }}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_START_DATE')}
-                </Text>
-                <View style={styles.datepicker}>
-                  <DatePicker
-                    defaultDate={
-                      new Date(
-                        chosenDate.split('/')[2],
-                        parseInt(chosenDate.split('/')[1]) - 1,
-                        chosenDate.split('/')[0],
-                      )
-                    }
-                    minimumDate={new Date()}
-                    locale={'es'}
-                    timeZoneOffsetInMinutes={undefined}
-                    modalTransparent={false}
-                    animationType={'fade'}
-                    androidMode={'default'}
-                    textStyle={{color: theme.colors.gray, fontSize: 14}}
-                    onDateChange={this.setDate}
-                    disabled={disabled_date_from}
-                  />
-                </View>
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_END_DATE')}
-                </Text>
-                <View style={styles.datepicker}>
-                  <DatePicker
-                    defaultDate={
-                      new Date(
-                        this.state.chosenDate2.split('/')[2],
-                        parseInt(chosenDate2.split('/')[1]) - 1,
-                        chosenDate2.split('/')[0],
-                      )
-                    }
-                    minimumDate={new Date()}
-                    locale={'es'}
-                    timeZoneOffsetInMinutes={undefined}
-                    modalTransparent={false}
-                    animationType={'fade'}
-                    androidMode={'default'}
-                    textStyle={{color: theme.colors.gray, fontSize: 14}}
-                    placeHolderTextStyle={{
-                      color: theme.colors.gray2,
-                      fontSize: 14,
-                    }}
-                    onDateChange={this.setDate2}
-                    disabled={disabled_date_from}
-                  />
-                </View>
-              </View>
+              <CustomInput
+                label={'TITLE_DESCRIPTION'}
+                style={styles.input}
+                placeholder={'PLACEHOLDER_TYPE_DESCRIPTION'}
+                returnKeyType="go"
+                value={route_description}
+                onChangeText={route_description => {
+                  this.setState({route_description: route_description});
+                }}
+              />
+
+              <CustomDatePicker
+                label={'TITLE_START_DATE'}
+                defaultDate={
+                  new Date(
+                    chosenDate.split('/')[2],
+                    parseInt(chosenDate.split('/')[1]) - 1,
+                    chosenDate.split('/')[0],
+                  )
+                }
+                minimumDate={new Date()}
+                onDateChange={this.setDate}
+                disabled={disabled_date_from}
+              />
+
+              <CustomDatePicker
+                label={'TITLE_END_DATE'}
+                defaultDate={
+                  new Date(
+                    chosenDate2.split('/')[2],
+                    parseInt(chosenDate2.split('/')[1]) - 1,
+                    chosenDate2.split('/')[0],
+                  )
+                }
+                minimumDate={new Date()}
+                onDateChange={this.setDate2}
+                disabled={disabled_date_from}
+              />
+
               <CustomPicker
                 label={'TITLE_COLLECTOR'}
-                items={this.state.employees}
+                items={employees}
                 placeholder={placeholder}
                 onSelected={this.selectedItem}
                 disabled={disabled_date_from}
               />
             </Form>
           </View>
-          <ScrollView style={{marginBottom: 24}}>
+          <ScrollView style={{marginTop: 12}}>
             {/* FLATLIST */}
             {orderList}
           </ScrollView>
 
           <View style={styles.addPoint}>
-            <View>{}</View>
             <TouchableOpacity
               style={styles.buttonGhost}
               onPress={() => {
@@ -466,10 +386,12 @@ export class Route extends Component {
                   updateData: this.updateDataState,
                 });
               }}>
-              <Icon name="add" style={{color: theme.colors.primary}} />
+              <Icon
+                name="add"
+                style={{color: theme.colors.primary, marginRight: 12}}
+              />
               <Text
                 style={{
-                  marginLeft: 12,
                   fontSize: theme.sizes.base,
                   color: theme.colors.primary,
                   textTransform: 'uppercase',
@@ -486,12 +408,6 @@ export class Route extends Component {
 export default Route;
 
 const styles = StyleSheet.create({
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
-  },
-
   container: {
     flex: 1,
     padding: theme.sizes.padding,
@@ -511,19 +427,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4285F4',
   },
 
-  textCenter: {
-    alignItems: 'center',
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
   datepicker: {
     marginVertical: theme.sizes.p8,
     paddingVertical: 4,
@@ -531,17 +434,6 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.gray2,
     borderRadius: 4,
     color: '#000',
-  },
-
-  label: {
-    fontSize: theme.sizes.base,
-    color: theme.colors.darkGray,
-  },
-
-  labelForgot: {
-    color: theme.colors.primary,
-    fontSize: theme.fonts.caption.fontSize,
-    alignSelf: 'flex-end',
   },
 
   paddingBottom: {
@@ -564,23 +456,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     alignItems: 'center',
   },
-  list: {
-    margin: 5,
-    backgroundColor: theme.colors.white,
-    height: 80,
-    elevation: 1,
-  },
-  hiddenList: {
-    margin: 5,
-    backgroundColor: '#c3000d',
-    height: 80,
-    elevation: 1,
-  },
-
-  listContainer: {
-    flex: 1,
-    paddingVertical: 12,
-  },
 
   content: {
     flex: 1,
@@ -590,41 +465,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  code: {
-    textAlign: 'left',
-    fontSize: 14,
-    color: theme.colors.gray,
-    fontWeight: 'bold',
-  },
-
-  numberBox: {
-    marginBottom: theme.sizes.p8,
-  },
-
-  name: {
-    flexBasis: 150,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-    overflow: 'scroll',
-    flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-
-  price: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 14,
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-  },
-
-  address: {
-    fontSize: 12,
-    color: 'gray',
+  swipeListView: {
     overflow: 'hidden',
-    flexWrap: 'nowrap',
+    marginBottom: 0,
+    backgroundColor: 'lightGray',
+    paddingHorizontal: 24,
   },
+
   leftSwipeItem: {
     flex: 1,
     marginTop: 5,

@@ -78,6 +78,7 @@ export default class Orders extends Component {
   }
 
   refresh(value) {
+    // console.log('value ==>', value);
     if (value) {
       this.refreshHandler();
     } else {
@@ -96,6 +97,10 @@ export default class Orders extends Component {
   storedOrders = async () => {
     const notAssigned = await getNotAssignedOrders();
     const assigned = await getAssignedOrders();
+
+    // console.log('not assigned ==>', notAssigned);
+    // console.log('assigned ==>', assigned);
+
     this.setState({
       isLoading: false,
       not_assigned: notAssigned,
@@ -115,9 +120,12 @@ export default class Orders extends Component {
         Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 15000);
+
     getData('GET_ORDERS').then(result => {
+      // console.log('GET ORDERS ==>', result);
+
       if (!this.state.request_timeout) {
-        this.setState({isLoading: false, request_timeout: false});
+        this.setState({request_timeout: false});
         if (result.valid) {
           saveOrders(result.arrResponse).then(res => {
             this.storedOrders();
@@ -136,6 +144,7 @@ export default class Orders extends Component {
   };
 
   render() {
+    // console.log('Orders ==>', this.state);
     const {
       date,
       isLoading,

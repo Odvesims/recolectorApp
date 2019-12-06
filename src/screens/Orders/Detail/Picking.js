@@ -162,7 +162,7 @@ export default class Picking extends Component {
 
   onPressHandler = () => {
     const {quantity, itemSelected} = this.state;
-    console.log('quantity ==>', quantity);
+    // console.log('quantity ==>', quantity);
     if (quantity) {
       this.props.navigation.navigate('Order', {
         itemSelected,

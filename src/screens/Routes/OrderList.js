@@ -73,22 +73,6 @@ export default class OrderList extends Component {
     });
   }
 
-  /*fetchData() {
-    return new Promise((resolve, reject) => {
-      let not_assigned;
-      getNotAssignedOrders().then(not_assigned => {
-        not_assigned = not_assigned.map(item => {
-          item.isSelect = false;
-          item.isChecked = false;
-          item.selectAll = false;
-          item.selectedClass = styles.list;
-          return item;
-        });
-      });
-      resolve(not_assigned);
-    });
-  }*/
-
   fetchData = () => {
     return new Promise((resolve, reject) => {
       this.setState({loading: true});

@@ -1,47 +1,59 @@
 import React, {Component} from 'react';
+
 import {theme} from '../../constants';
-import {CustomTextInput} from '../../components';
+import {BtnIcon} from '../../components';
+
 import {dataOperation} from '../../helpers/apiconnection_helper';
-import styled from 'styled-components/native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {getOrderDetails, updateOrderAssigned} from '../../helpers/sql_helper';
+import {getOrderDetails, getOrders} from '../../helpers/sql_helper';
+
+// import {getData} from '../../helpers/apiconnection_helper';
+
 import Spinner from 'react-native-loading-spinner-overlay';
+import styled from 'styled-components/native';
+import {ButtonGroup} from 'react-native-elements';
+
+import {RegistryTab, Shopping, Picking} from './Tabs';
+// import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
 import {
   Text,
   View,
   StyleSheet,
   ScrollView,
-  FlatList,
   CheckBox,
   Alert,
 } from 'react-native';
-import {
-  Header,
-  Right,
-  Left,
-  Body,
-  Button,
-  Icon,
-  Container,
-  Title,
-  Content,
-} from 'native-base';
+import {Header, Right, Left, Body, Container, Title} from 'native-base';
+
+const RegistryContext = React.createContext({});
+export const Provider = RegistryContext.Provider;
+export const Consumer = RegistryContext.Consumer;
 
 export default class Registry extends Component {
   state = {
     data: [],
     textInputs: [],
     checkItem: false,
+    selectedIndex: 0,
   };
 
   componentDidMount() {
-    const {params} = this.props.navigation.state;
-    getOrderDetails(params.order_id).then(detail => {
-      this.setState({
-        data: detail,
-      });
-    });
+    this.getOrderType();
   }
+
+  getOrderType = async () => {
+    const {order_id} = this.props.navigation.state.params;
+    const orderType = await getOrderDetails(order_id);
+
+    const picking = orderType.filter(res => res.pickup_or_purchase === 'R');
+    const shopping = orderType.filter(res => res.pickup_or_purchase === 'C');
+
+    this.setState({
+      data: orderType,
+      picking: picking,
+      shopping: shopping,
+    });
+  };
 
   save = () => {
     let {data, checkItem} = this.state;
@@ -54,6 +66,7 @@ export default class Registry extends Component {
       };
       dataArr.push(info);
     });
+
     let collectData = {
       collect_data: dataArr,
       order_id: data[0].order_id,
@@ -61,6 +74,7 @@ export default class Registry extends Component {
       employee_code: global.employee_code,
       close_order: checkItem,
     };
+
     this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'});
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       Alert.alert(JSON.stringify(res));
@@ -82,61 +96,51 @@ export default class Registry extends Component {
     });
   };
 
-  renderItem = ({item, index}) => {
-    console.log(item);
-    return (
-      <ItemsContainer>
-        <ItemTitle numberOfLines={1}>{item.detail_description}</ItemTitle>
-        <View
-          style={{
-            alignSelf: 'flex-end',
-            flex: 1,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignContent: 'center',
-            }}>
-            <InputValues
-              id={item.orderDetail_id}
-              blurOnSubmit={false}
-              value={item.collected_quantity}
-              onChangeText={text => {
-                item.collected_quantity = text;
-                this.setState({
-                  ...item,
-                });
-              }}
-              returnKeyType="next"
-              keyboardType="number-pad"
-            />
-            <InputValues
-              style={{marginLeft: 15}}
-              id={item.orderDetail_id}
-              blurOnSubmit={false}
-              value={item.collected_quantity}
-              onChangeText={text => {
-                item.collected_quantity = text;
-                this.setState({
-                  ...item,
-                });
-              }}
-              returnKeyType="next"
-              keyboardType="number-pad"
-            />
-          </View>
-        </View>
-      </ItemsContainer>
-    );
+  updateIndex = selectedIndex => {
+    this.setState({selectedIndex});
+  };
+
+  renderDetailTabs = item => {
+    const {picking, shopping, editable} = this.state;
+    if (item === 0) {
+      return (
+        <Provider value={picking}>
+          <Picking
+            // tab_data={picking}
+            navigation={this.props.navigation}
+            editable={editable}
+            renderView={'Picking'}
+          />
+        </Provider>
+      );
+    } else {
+      return (
+        <Provider value={shopping}>
+          <Shopping
+            // tab_data={shopping}
+            navigation={this.props.navigation}
+            editable={editable}
+            renderView={'Shopping'}
+          />
+        </Provider>
+      );
+    }
+  };
+
+  goBack = () => {
+    this.props.navigation.goBack();
   };
 
   render() {
     console.log('REGISTRY STATE ==>', this.state);
+    // console.log('REGISTRY props ==>', this.props.navigation.state.params);
 
-    let {data, checkItem} = this.state;
-    const {params} = this.props.navigation.state;
-    console.log(checkItem);
+    const detailTabs = [
+      global.translate('PICKING'),
+      global.translate('SHOPPING'),
+    ]; //global.translate('TITLE_CATEGORY')];
+
+    let {checkItem, selectedIndex} = this.state;
 
     return (
       <Container>
@@ -149,115 +153,41 @@ export default class Registry extends Component {
         />
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
+            <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
           </Left>
           <Body>
             <Title>Detalles</Title>
           </Body>
           <Right>
-            <Button transparent onPress={this.save}>
-              <Icon name="checkmark" />
-              <Text
-                style={{
-                  marginLeft: 8,
-                  color: theme.colors.white,
-                  fontSize: 16,
-                }}>
-                Guardar
-              </Text>
-            </Button>
+            <BtnIcon
+              iconName={'checkmark'}
+              label={'Guardar'}
+              onPress={this.save}
+            />
           </Right>
         </Header>
 
         {/* Content */}
         <RContent>
-          <View style={styles.RouteDetails}>
-            <Head>
-              <Key>Numero:</Key>
-              <Label>{params.client}</Label>
-            </Head>
-            <Head>
-              <Key>Cliente:</Key>
-              <Label>{params.name}</Label>
-            </Head>
-            <Head>
-              <Key>Dirección:</Key>
-              <Label>{params.address}</Label>
-            </Head>
+          <View style={{backgroundColor: theme.colors.lightGray}}>
+            <ButtonGroup
+              onPress={this.updateIndex}
+              selectedIndex={this.state.selectedIndex}
+              buttons={detailTabs}
+              containerStyle={{height: 50}}
+            />
           </View>
-          <View>
-            <HeaderItems>
-              <Text style={styles.bodyHeader}>Articulos</Text>
-              <Text style={styles.bodyHeader}>Recogidos</Text>
-            </HeaderItems>
-            <View style={{marginHorizontal: 12}}>
-              <OrderMode>
-                {/* <View
-                style={{
-                  flexDirection: 'row',
-                  flexGrow: 1.5,
-                }}> */}
-                {/* <Text style={{flexGrow: 1, textAlign: 'center'}}></Text> */}
-                {/* <Text style={{flexGrow: 1, textAlign: 'center'}}></Text> */}
-                {/* </View> */}
-                <View style={{flex: 1}}>
-                  <View
-                    style={{
-                      alignSelf: 'flex-end',
-                      width: '50%',
 
-                      textAlign: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          textAlign: 'center',
-                          paddingHorizontal: 15,
-                          // marginHorizontal: 25,
-                        }}>
-                        Picking
-                      </Text>
-                      <Text
-                        style={{
-                          textAlign: 'center',
-                          paddingHorizontal: 15,
-                          marginLeft: 15,
-                        }}>
-                        Compras
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </OrderMode>
+          <ScrollView>{this.renderDetailTabs(selectedIndex)}</ScrollView>
 
-              <KeyboardAwareScrollView>
-                {/* FlatList */}
-                <FlatList
-                  data={data}
-                  extraData={this.state}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={this.renderItem} //item => this.renderItem(item)
-                />
-                <View
-                  style={[
-                    styles.checkbox,
-                    !checkItem
-                      ? styles.checkboxDisabled
-                      : styles.checkboxSuccess,
-                  ]}>
-                  <CheckBox value={checkItem} onChange={this.checkboxHandler} />
-                  <Text style={styles.bodyHeader}>Cerrar orden</Text>
-                </View>
-              </KeyboardAwareScrollView>
-              {/* End flatList */}
-            </View>
+          <View style={{flex: 1, justifyContent: 'flex-end'}}>
+            <OrderConfirmation
+              style={[
+                !checkItem ? styles.checkboxDisabled : styles.checkboxSuccess,
+              ]}>
+              <CheckBox value={checkItem} onChange={this.checkboxHandler} />
+              <Text style={{marginLeft: 8}}>Cerrar orden</Text>
+            </OrderConfirmation>
           </View>
         </RContent>
       </Container>
@@ -351,16 +281,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  checkbox: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.colors.gray3,
-    paddingVertical: theme.sizes.p12,
-  },
-
   checkboxDisabled: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.lightGray,
   },
 
   checkboxSuccess: {
@@ -368,64 +290,16 @@ const styles = StyleSheet.create({
   },
 });
 
-const Key = styled.Text`
-  flex-basis: 70px;
-  overflow: hidden;
-  flex-grow: 0;
-  color: ${theme.colors.gray2};
-`;
-const Label = styled.Text`
-  flex: 1 1 0px;
-  text-align: left;
-  margin-left: 8;
-  color: ${theme.colors.gray};
-`;
-const Head = styled.View`
-  flex-direction: row;
-`;
-
-const ItemTitle = styled.Text`
-  flex: 1;
-  text-align: left;
-  ${'' /* width: 180px; */}
-  overflow: hidden;
-  font-size: 14px;
-`;
-
-const ItemsContainer = styled.View`
-  flex-direction: row;
-  flex: 1;
-  padding-vertical: 12;
-  align-items: center;
-`;
-
-const InputValues = styled(CustomTextInput)`
-  flex-basis: 80px;
-  flex-shrink: 42px;
-  ${'' /* margin-left: 8px; */}
-  padding: 12px;
-  ${'' /* flex-grow: 1; */}
-  background-color: #fff;
-  border-color: #bdbdbd;
-  border-width: 1px;
-  border-radius: 4px;
-`;
-
-const HeaderItems = styled.View`
-  flex-direction: row;
-  flex-grow: 1;
-  padding-vertical: 12px;
-  background-color: ${theme.colors.gray3};
-`;
-
-const OrderMode = styled.View`
-  margin-top: 8px;
-  flex-direction: row;
-  flex-grow: 1;
-`;
-
 const RContent = styled.View`
   flex: 1;
   flex-direction: column;
-  background-color: ${theme.colors.lightGray};
+  background-color: ${theme.colors.white};
+`;
+
+const OrderConfirmation = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: ${theme.colors.gray3};
+  padding-vertical: ${theme.sizes.p12};
 `;

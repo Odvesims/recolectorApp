@@ -29,5 +29,5 @@ const styles = StyleSheet.create({
 
 BtnIcon.propTypes = {
   onPress: PropTypes.func.isRequired,
-  iconName: PropTypes.text,
+  name: PropTypes.string,
 };

@@ -5,6 +5,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
 import {SearchBar, FetchingData, ContentLoader} from '../../components';
+import {Name, ListBody, ListMyRoutes, Address, styles} from './styles';
 
 import {View, StyleSheet, FlatList} from 'react-native';
 import {
@@ -89,11 +90,9 @@ class Order extends Component {
     this.storedRoutes();
   };
 
-  storedRoutes = () => {
-    getStoredRoutes('A').then(active => {
-      this.setState({active: active, loading: false});
-      console.log('Active', active);
-    });
+  storedRoutes = async () => {
+    const routes = await getStoredRoutes('A');
+    this.setState({active: routes, loading: false});
   };
 
   refreshHandler = () => {
@@ -126,7 +125,7 @@ class Order extends Component {
   };
 
   renderItem = ({item}) => {
-    console.log('item', item);
+    // console.log('item', item);
     const {navigate} = this.props.navigation;
     return (
       <Item
@@ -144,28 +143,10 @@ class Order extends Component {
             date_to: item.date_to,
           })
         }>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 12,
-          }}>
-          <View key={item.key} style={styles.listContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text numberOfLines={1} style={styles.name}>
-                {item.description}
-              </Text>
-            </View>
-            <Text numberOfLines={1} style={styles.address}>
-              Hasta: {item.date_to}
-            </Text>
-          </View>
-        </View>
+        <ListMyRoutes>
+          <Name numberOfLines={1}>{item.description}</Name>
+          <Address numberOfLines={1}>Hasta: {item.date_to}</Address>
+        </ListMyRoutes>
       </Item>
     );
   };
@@ -176,14 +157,9 @@ class Order extends Component {
 
   listEmpty = () => {
     return (
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-        }}>
+      <ListBody>
         <Text>No hay resultados</Text>
-      </View>
+      </ListBody>
     );
   };
 
@@ -239,7 +215,7 @@ class Order extends Component {
               data={this.searchBarHandler}
               visible={this.searchHandler}
               dataValue={this.state.dataAll}
-              style={styles.searchbar}
+              style={styles.searchbar}b
               placeholder={'Busque su orden'}
               onPressCancel={() => {
                 this.showHideSearchBar();
@@ -262,38 +238,5 @@ class Order extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  searchbar: {
-    // position: 'absolute',
-    // left: 0,
-    // top: 0,
-    // height: 500,
-  },
-
-  list: {
-    margin: 5,
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    paddingLeft: 12,
-    elevation: 1,
-  },
-
-  listContainer: {
-    flex: 1,
-    paddingVertical: 12,
-  },
-
-  name: {
-    flexBasis: 150,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-    overflow: 'scroll',
-    flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-});
 
 export default Order;

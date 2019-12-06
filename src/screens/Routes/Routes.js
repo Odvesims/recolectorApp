@@ -60,6 +60,7 @@ export default class Routes extends Component {
   }
 
   enterHandler = () => {
+    console.log('enterhandler');
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
@@ -141,6 +142,7 @@ export default class Routes extends Component {
 
   render() {
     const {loading} = this.state;
+    console.log('Routes', this.state);
     return (
       <Container>
         <Spinner

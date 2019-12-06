@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {FetchingData} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { Badge, withBadge } from "react-native-elements";
+import {Badge, withBadge} from 'react-native-elements';
 
 import {
   StyleSheet,
@@ -9,7 +9,11 @@ import {
   DeviceEventEmitter,
   NativeEventEmitter,
   ToastAndroid,
-  Modal, Text, TouchableHighlight, View, Alert,
+  Modal,
+  Text,
+  TouchableHighlight,
+  View,
+  Alert,
 } from 'react-native';
 
 import {
@@ -39,6 +43,7 @@ import {
   clearRoutesDetails,
   saveNotifications,
   getNotifications,
+  saveClient,
 } from '../helpers/sql_helper';
 
 import {getData, dataOperation} from '../helpers/apiconnection_helper';
@@ -49,15 +54,14 @@ import {
   printText,
 } from '../helpers/bluetooth_helper';
 
-
 export default class Home extends Component {
   constructor(props) {
     super(props);
     getNotifications(0).then(n => {
-      if(n.length == 0){
+      if (n.length == 0) {
         this.setState({notifications: '0'});
-      } else{
-        this.setState({notifications: n.length})
+      } else {
+        this.setState({notifications: n.length});
       }
     });
     this.state = {
@@ -71,14 +75,13 @@ export default class Home extends Component {
     let {params} = this.props.navigation.state;
     global.config_from = 'HomeScreen';
     global.fromLogin = false;
-    this.notificationsInterval =   
-    setInterval(this.notificationsHandler, 10000);
-    if(params.first_login !== undefined){
-      if(params.first_login){
+    this.notificationsInterval = setInterval(this.notificationsHandler, 10000);
+    if (params.first_login !== undefined) {
+      if (params.first_login) {
         params.first_login = false;
-       this.refreshHandler();
+        this.refreshHandler();
       }
-    };
+    }
   }
 
   notificationsHandler() {
@@ -104,11 +107,12 @@ export default class Home extends Component {
     })*/
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.notificationsInterval);
   }
 
-  setPrinter = () => {/*
+  setPrinter = () => {
+    /*
     this.setState({loading: true, loadingMessage: 'Testing Printer'});
     if (global.printer_address === '') {
       alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
@@ -135,41 +139,44 @@ export default class Home extends Component {
     }*/
     //this.setModalVisible(true);
     Alert.alert(
-      global.translate("TITLE_PRINT_ORDER"),
-      global.translate("TITLE_PRINT_ORDER_MESSAGE"),
+      global.translate('TITLE_PRINT_ORDER'),
+      global.translate('TITLE_PRINT_ORDER_MESSAGE'),
       [
         {
-          text: global.translate("TITLE_NO_PRINT"), 
+          text: global.translate('TITLE_NO_PRINT'),
           onPress: () => {
-            alert.cancel     
-          }, 
-          style: 'cancel'
+            alert.cancel;
+          },
+          style: 'cancel',
         },
         {
-          text: global.translate("TITLE_PRINT_TOGETHER"),
+          text: global.translate('TITLE_PRINT_TOGETHER'),
           onPress: () => {
-            printText()
+            printText();
           },
         },
         {
-          text: global.translate("TITLE_PRINT_SEPARATE"), 
-          onPress: () => console.log('Ask me later pressed')
+          text: global.translate('TITLE_PRINT_SEPARATE'),
+          onPress: () => console.log('Ask me later pressed'),
         },
       ],
       {cancelable: false},
-    )
+    );
   };
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-  refreshHandler = () => {
+  refreshHandler = async () => {
+    const {request_timeout} = this.state;
+
     this.setState({
       loading: true,
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
     });
+
     setTimeout(() => {
       if (this.state.loading) {
         this.setState({loading: false, request_timeout: true});
@@ -177,73 +184,123 @@ export default class Home extends Component {
         clearTimeout();
       }
     }, 30000);
-    getData('GET_EMPLOYEES').then(emp => {
-      if (!this.state.request_timeout) {
-        saveEmployees(emp.arrResponse).then(res => {
-          getData('GET_CLIENTS').then(cli => {
-            if (!this.state.request_timeout) {
-              saveClients(cli.arrResponse, []).then(res => {
-                getData('GET_ARTICLES_CATEGORIES').then(cat => {
-                  if (!this.state.request_timeout) {
-                    saveCategories(cat.arrResponse).then(res => {
-                      getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
-                        if (!this.state.request_timeout) {
-                          saveSubcategories(sub.arrResponse).then(res => {
-                            getData('GET_ARTICLES').then(art => {
-                              if (!this.state.request_timeout) {
-                                saveArticles(art.arrResponse).then(res => {
-                                  getData('GET_ORDERS').then(ord => {
-                                    if (!this.state.request_timeout) {
-                                      saveOrders(ord.arrResponse).then(res => {
-                                        getData('GET_ROUTES', '&status=A').then(active => {
-                                          if (!this.state.request_timeout) {
-                                            clearRoutesCab('A').then(ca => {
-                                              clearRoutesDetails().then(cd => {
-                                                if (active.arrResponse !== []) {
-                                                  saveActiveRoutes(active.arrResponse).then(res => {
-                                                    getData('GET_ROUTES', '&status=I').then(inactive => {
-                                                      if (!this.state.request_timeout) {
-                                                        clearRoutesCab('I').then(ci => {
-                                                          if (inactive.arrResponse !== []) {
-                                                            saveInactiveRoutes(inactive.arrResponse).then(resi => {
-                                                              this.setState({
-                                                                request_timeout: false,
-                                                                loading: false,
-                                                              });
-                                                            });
-                                                          }
-                                                        })
-                                                      }
-                                                    })
-                                                  })
-                                                }
-                                              })
-                                            })
-                                          }
-                                        });
-                                      });
-                                    }
-                                  });
-                                });
-                              }
-                            });
-                          });
-                        }
-                      });
-                    });
-                  }
-                });
-              });
-            }
-          });
-        });
-      }
-    });
-  };
 
-  static navigationOptions = {
-    header: null,
-  };
+  //   const employees = await data('GET_EMPLOYEES');
+  //   if (!request_timeout) {
+  //     await saveEmployee(employees.arrResponse);
+  //   }
+
+  //   const clients = await getData('GET_CLIENTS');
+  //   if (!request_timeout) {
+  //     await saveClients(clients.arrResponse);
+  //   }
+
+  //   const articleCat = await getData('GET_ARTICLES_CATEGORIES');
+  //   if (!request_timeout) {
+  //     await saveCategories(articleCat.arrResponse);
+  //   }
+
+  //   const articleSubcat = await getData('GET_ARTICLES_SUBCATEGORIES');
+  //   if (!request_timeout) {
+  //     await saveSubcategories(articleSubcat.arrResponse);
+  //   }
+
+  //   const articles = await getData('GET_ARTICLES');
+  //   if (!request_timeout) {
+  //     await saveArticles(articles.arrResponse);
+  //   }
+
+  //   const orders = await getData('GET_ORDERS');
+  //   if (!request_timeout) {
+  //     await saveOrders(orders.arrResponse);
+  //   }
+
+  //   const routes = await getData('GET_ROUTES', '&status=A');
+  //   if (!request_timeout) {
+  //     await clearRoutesCab('A');
+  //     await clearRoutesDetails();
+  //     if (routes.arrResponse !== []) {
+  //       await saveActiveRoutes(routes.arrResponse);
+  //     }
+  //   }
+
+  //   const routesI = await getData('GET_ROUTES', '&status=I');
+  //   if (!request_timeout) {
+  //     await clearRoutesCab('I');
+  //     if (routesI.arrResponse !== []) {
+  //       await saveInactiveRoutes(routesI.arrResponse);
+  //     }
+  //   }
+  //   this.setState({
+  //     request_timeout: false,
+  //     loading: false,
+  //   });
+  // };
+
+
+  getData('GET_EMPLOYEES').then(emp => {
+    if (!this.state.request_timeout) {
+      saveEmployees(emp.arrResponse).then(res => {
+        getData('GET_CLIENTS').then(cli => {
+          if (!this.state.request_timeout) {
+            saveClients(cli.arrResponse, []).then(res => {
+              getData('GET_ARTICLES_CATEGORIES').then(cat => {
+                if (!this.state.request_timeout) {
+                  saveCategories(cat.arrResponse).then(res => {
+                    getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
+                      if (!this.state.request_timeout) {
+                        saveSubcategories(sub.arrResponse).then(res => {
+                          getData('GET_ARTICLES').then(art => {
+                            if (!this.state.request_timeout) {
+                              saveArticles(art.arrResponse).then(res => {
+                                getData('GET_ORDERS').then(ord => {
+                                  if (!this.state.request_timeout) {
+                                    saveOrders(ord.arrResponse).then(res => {
+                                      getData('GET_ROUTES', '&status=A').then(active => {
+                                        if (!this.state.request_timeout) {
+                                          clearRoutesCab('A').then(ca => {
+                                            clearRoutesDetails().then(cd => {
+                                              if (active.arrResponse !== []) {
+                                                saveActiveRoutes(active.arrResponse).then(res => {
+                                                  getData('GET_ROUTES', '&status=I').then(inactive => {
+                                                    if (!this.state.request_timeout) {
+                                                      clearRoutesCab('I').then(ci => {
+                                                        if (inactive.arrResponse !== []) {
+                                                          saveInactiveRoutes(inactive.arrResponse).then(resi => {
+                                                            this.setState({
+                                                              request_timeout: false,
+                                                              loading: false,
+                                                            });
+                                                          });
+                                                        }
+                                                      })
+                                                    }
+                                                  })
+                                                })
+                                              }
+                                            })
+                                          })
+                                        }
+                                      });
+                                    });
+                                  }
+                                });
+                              });
+                            }
+                          });
+                        });
+                      }
+                    });
+                  });
+                }
+              });
+            });
+          }
+        });
+      });
+    }
+  });
+};
 
   openDrawer = props => {
     this.props.navigation.openDrawer();
@@ -251,7 +308,7 @@ export default class Home extends Component {
 
   render() {
     const {loading} = this.state;
-    const BadgedIcon = withBadge(this.state.notifications)(Icon)
+    const BadgedIcon = withBadge(this.state.notifications)(Icon);
     return (
       <Container style={styles.androidHeader}>
         <Header>
@@ -275,8 +332,15 @@ export default class Home extends Component {
             <Button transparent onPress={this.setPrinter}>
               <Icon name="print" />
             </Button>
-            <Button transparent onPress={()=>{this.props.navigation.navigate('Notifications')}}>         
-              <BadgedIcon containerStyle={{width:'30px'}} name="notifications" />
+            <Button
+              transparent
+              onPress={() => {
+                this.props.navigation.navigate('Notifications');
+              }}>
+              <BadgedIcon
+                containerStyle={{width: '30px'}}
+                name="notifications"
+              />
             </Button>
           </Right>
         </Header>
@@ -317,10 +381,10 @@ const styles = StyleSheet.create({
     }),
   },
   badge: {
-    flex:1,
+    flex: 1,
     height: 18,
     minWidth: 0,
-    width: 18,    
+    width: 18,
     fontSize: 5,
   },
 });
