@@ -103,7 +103,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0)',
+        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0),',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC, pickup_purchase VARCHAR(1))',
@@ -560,11 +560,12 @@ export function saveActiveRoutes(routes) {
         let route_detail = route.route_details[e];
         db.transaction(td => {
           td.executeSql(
-            'INSERT INTO route_details(route_id, order_id, routedetail_id) VALUES(?, ?, ?)',
+            'INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(?, ?, ?,?)',
             [
               route_detail.route_id,
               route_detail.order_id,
               route_detail.routedetail_id,
+              route_detail.status,
             ],
             (td, results) => {},
           );
@@ -726,7 +727,7 @@ export function getStoredRoutes(routes_status) {
 export function getRouteDetails(route_id) {
   return new Promise((resolve, reject) => {
     let arrDetails = [];
-    let sqlStr2 = `SELECT r.order_id, r.routedetail_id, o.order_id, o.order_document, o.client, o.address, o.order_total, c.name FROM route_details r, orders o, clients c WHERE route_id = ${route_id} AND o.order_id = r.order_id AND c.client_code = o.client`;
+    let sqlStr2 = `SELECT r.order_id, r.routedetail_id, o.order_id, o.order_document, o.client, o.address, o.order_total, c.name, r.status FROM route_details r, orders o, clients c WHERE route_id = ${route_id} AND o.order_id = r.order_id AND c.client_code = o.client`;
     db.transaction(tx => {
       tx.executeSql(sqlStr2, [], (tx, results_det) => {
         for (let e = 0; e < results_det.rows.length; ++e) {
@@ -741,6 +742,7 @@ export function getRouteDetails(route_id) {
             name: orderRow.name,
             address: orderRow.address,
             order_total: orderRow.order_total,
+            status: orderRow.status,
           };
           arrDetails.push(detObject);
         }
@@ -782,7 +784,7 @@ export function getAssignedOrders() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE  c.client_code = o.client ORDER BY o.order_id DESC`,
+        'SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE  c.client_code = o.client ORDER BY o.order_id DESC',
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {

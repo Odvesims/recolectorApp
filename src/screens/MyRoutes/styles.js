@@ -18,6 +18,7 @@ export {
   PriceLabel,
   PriceQuantity,
   Quantity,
+  HeaderItems,
   styles,
   TextButton,
   Total,
@@ -114,6 +115,14 @@ const ListMyRoutes = styled.View`
   flex: 1;
   flex-direction: column;
   ${'' /* align-items: center; */}
+  padding-horizontal: 12;
+`;
+const HeaderItems = styled.View`
+  flex-direction: row;
+  flex-grow: 1;
+  padding-vertical: 12px;
+  background-color: ${theme.colors.gray3};
+  justify-content: space-between;
   padding-horizontal: 12;
 `;
 
@@ -315,9 +324,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: theme.colors.lightGray,
     paddingHorizontal: 8,
     paddingVertical: 12,
+    backgroundColor: theme.colors.lightGray,
   },
 
   oCode: {

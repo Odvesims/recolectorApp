@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 
 export default class SearchBar extends PureComponent {
   state = {
-    // data: this.props.data,
-    // arrayData: this.props.arrayData,
     value: '',
     query: '',
     error: null,

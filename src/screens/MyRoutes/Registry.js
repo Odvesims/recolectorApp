@@ -3,8 +3,9 @@ import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {BtnIcon} from '../../components';
 
-import {dataOperation} from '../../helpers/apiconnection_helper';
+import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 import {getOrderDetails, getOrders} from '../../helpers/sql_helper';
+1;
 
 // import {getData} from '../../helpers/apiconnection_helper';
 
@@ -12,7 +13,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import styled from 'styled-components/native';
 import {ButtonGroup} from 'react-native-elements';
 
-import {RegistryTab, Shopping, Picking} from './Tabs';
+import {RegistryTab} from './Tabs';
 // import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {
@@ -43,36 +44,49 @@ export default class Registry extends Component {
 
   getOrderType = async () => {
     const {order_id} = this.props.navigation.state.params;
-    const orderType = await getOrderDetails(order_id);
 
+    let orderType = await getOrderDetails(order_id);
     const picking = orderType.filter(res => res.pickup_or_purchase === 'R');
     const shopping = orderType.filter(res => res.pickup_or_purchase === 'C');
 
     this.setState({
-      // data: orderType,
+      data: orderType,
       picking: picking,
-      pickingData: picking,
       shopping: shopping,
-      shoppingData: shopping,
     });
   };
 
-  onChangePicking = (index, collected) => {
-    console.log('Valores', index, collected);
-    this.setState(
-      (prevState, props) => (
-        {
-          picking: index.collected,
-        },
-        console.log('prevState', this.state.picking)
-      ),
-    );
+  onChangePicking = index => {
+    this.setState({
+      ...this.state.picking[index],
+    });
   };
 
-  onChangeShopping = (data, id) => {
-    this.setState((prevState, props) => ({
-      picking: [...this.state.picking],
-    }));
+  onChangeShopping = index => {
+    this.setState({
+      ...this.state.shopping[index],
+    });
+  };
+
+  saveConfirmation = () => {
+    Alert.alert(
+      'Alert Title',
+      'My Alert Msg',
+      [
+        {
+          text: 'no',
+          onPress: () => {
+            '';
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'Guardar',
+          onPress: () => this.save(),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   save = () => {
@@ -122,25 +136,23 @@ export default class Registry extends Component {
   };
 
   renderDetailTabs = item => {
-    const {picking, shopping, editable} = this.state;
+    const {picking, shopping} = this.state;
     if (item === 0) {
       return (
-        <Provider value={this.state}>
-          <Picking
+        <Provider value={picking}>
+          <RegistryTab
             onChangeHandler={this.onChangePicking}
             navigation={this.props.navigation}
-            editable={editable}
             renderView={'Picking'}
           />
         </Provider>
       );
     } else {
       return (
-        <Provider value={this.state}>
-          <Shopping
+        <Provider value={shopping}>
+          <RegistryTab
             onChangeHandler={this.onChangeShopping}
             navigation={this.props.navigation}
-            editable={editable}
             renderView={'Shopping'}
           />
         </Provider>
@@ -153,8 +165,9 @@ export default class Registry extends Component {
   };
 
   render() {
-    console.log('REGISTRY picking ==>', this.state.picking);
-    console.log('REGISTRY shopping ==>', this.state.shopping);
+    // console.log('REGISTRY picking ==>', this.state.picking);
+    // console.log('REGISTRY state ==>', this.state);
+    // console.log('REGISTRY shopping ==>', this.state.shopping);
     // console.log('REGISTRY props ==>', this.props.navigation.state.params);
 
     const detailTabs = [
@@ -184,7 +197,7 @@ export default class Registry extends Component {
             <BtnIcon
               iconName={'checkmark'}
               label={'Guardar'}
-              onPress={this.save}
+              onPress={this.saveConfirmation}
             />
           </Right>
         </Header>

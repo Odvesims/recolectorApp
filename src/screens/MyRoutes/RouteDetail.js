@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import styled from 'styled-components/native';
-import {View, StyleSheet, FlatList, Modal, Alert, Animated} from 'react-native';
+import {View, StyleSheet, FlatList, Alert} from 'react-native';
 import {getData} from '../../helpers/apiconnection_helper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
@@ -22,10 +22,8 @@ import {
   Form,
   Root,
   Item,
-  ActionSheet,
-  Content,
 } from 'native-base';
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default class RouteDetail extends Component {
   constructor(props) {
@@ -50,6 +48,25 @@ export default class RouteDetail extends Component {
     this.arrData = [];
   }
 
+  componentDidMount() {
+    this.getDataHandler();
+    // this.focusListener.remove();
+
+    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
+    //   try {
+    //     let orders = params.orders;
+    //     if (orders !== undefined) {
+    //       this.setState({data: orders, clear_data: orders});
+    //       params.orders = undefined;
+    //     }
+    //   } catch (err) {}
+    // });
+  }
+
+  componentWillUnmount() {
+    // this.focusListener.remove();
+  }
+
   getDataHandler = async () => {
     const {
       params: {route_id, status},
@@ -69,8 +86,17 @@ export default class RouteDetail extends Component {
         'GET_ROUTE',
         `&route_id=${route_id}&status=${status}`,
       );
+
+      console.log('data ==>', data);
       await updateRouteOrders(data.arrResponse[0]);
-      const routeDetails = await getRouteDetails(route_id);
+
+      // const routeDetails = await getRouteDetails(route_id);
+      let routeDetails = await getRouteDetails(route_id);
+
+      const andris = routeDetails.filter(detail => detail.status !== 'C');
+      console.log('route_details ==>', routeDetails);
+      console.log('andris ==>', andris);
+
       this.setState({
         data: routeDetails,
         loading: false,
@@ -79,25 +105,6 @@ export default class RouteDetail extends Component {
       this.setState({loading: false});
     }
   };
-
-  componentDidMount() {
-    this.getDataHandler();
-    // this.focusListener.remove();
-
-    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
-    //   try {
-    //     let orders = params.orders;
-    //     if (orders !== undefined) {
-    //       this.setState({data: orders, clear_data: orders});
-    //       params.orders = undefined;
-    //     }
-    //   } catch (err) {}
-    // });
-  }
-
-  componentWillUnmount() {
-    // this.focusListener.remove();
-  }
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
@@ -144,15 +151,16 @@ export default class RouteDetail extends Component {
   };
 
   render() {
-    const {data} = this.state;
+    console.log('RouteDetail STATE ==>', this.state);
+    const {data, loadingMessage, loading} = this.state;
     const {state, navigate} = this.props.navigation;
     const {params} = this.props.navigation.state;
     return (
       <Root>
         <Container>
           <Spinner
-            visible={this.state.loading}
-            textContent={global.translate(this.state.loadingMessage)}
+            visible={loading}
+            textContent={global.translate(loadingMessage)}
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}

@@ -8,15 +8,10 @@ import {usStates, drStates} from '../../utils';
 
 import {backDialog} from '../../utils';
 
-// import usStates from '../../utils/country_states/dr.json';
-// import drStates from '../../utils/country_states/us.json';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 
-// import ContentCustom from '../components';
-
 import {
-  Icon,
   Button,
   Container,
   Content,
@@ -63,9 +58,6 @@ export class Client extends PureComponent {
     const {} = this.state;
     this.selectedItem = this.selectedItem.bind(this);
   }
-  // static navigationOptions = {
-  //   header: null,
-  // };
 
   selectedItem(item) {
     this.setState({
@@ -73,56 +65,21 @@ export class Client extends PureComponent {
     });
   }
 
-  // execOperation = () => {
-  //   const {code, name, address, city, state, phone, country} = this.state;
-  //   let client_data = {
-  //     ...this.state,
-  //     phone_old: phone,
-  //     country_id: global.country_id,
-  //     setma_id: global.setma_id,
-  //   };
-  //   this.setState({loading: true});
-  //   dataOperation('CLIENT_OPERATION', client_data).then(res => {
-  //     updateClient(res.responseObject).then(result => {
-  //       this.setState({
-  //         loading: false,
-  //         code: '',
-  //         name: '',
-  //         address: '',
-  //         city: '',
-  //         state: state,
-  //         country: country,
-  //         phone: '',
-  //       });
-  //       Alert.alert(global.translate(result));
-  //     });
-  //   });
-  // };
-
   goBack = () => {
     const {goBack} = this.props.navigation;
     const {name} = this.state;
     const {isNewRecord, onGoBack} = this.props.navigation.state.params;
 
     if (isNewRecord === false) {
-      // onGoBack(isNewRecord);
       goBack();
     } else {
       if (name === undefined) {
-        // onGoBack(isNewRecord);
         goBack();
       } else {
         backDialog(goBack);
       }
     }
   };
-
-  // goBack = () => {
-  //   const {goBack} = this.props.navigation;
-  //   const {isNewRecord, onGoBack} = this.props.navigation.state.params;
-  //   onGoBack(isNewRecord);
-  //   goBack();
-  // };
 
   handleSubmit = values => {
     const {state, country} = this.state;
@@ -164,7 +121,6 @@ export class Client extends PureComponent {
       address,
       city,
       code,
-      country,
       loading,
       loadingMessage,
       name,

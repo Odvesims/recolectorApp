@@ -4,13 +4,17 @@ import {theme} from '../../constants';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
-import {SearchBar, FetchingData, ContentLoader} from '../../components';
+import {
+  SearchBar,
+  FetchingData,
+  ContentLoader,
+  EmptyList,
+} from '../../components';
 import {Name, ListBody, ListMyRoutes, Address, styles} from './styles';
 
-import {View, StyleSheet, FlatList} from 'react-native';
+import {FlatList} from 'react-native';
 import {
   saveActiveRoutes,
-  saveInactiveRoutes,
   getStoredRoutes,
   clearRoutesCab,
   clearRoutesDetails,
@@ -74,7 +78,6 @@ class Order extends Component {
   }
 
   showHideSearchBar = () => {
-    // this.setState({show: true});
     if (this.state.show === true) {
       this.setState({show: false});
     } else {
@@ -155,13 +158,7 @@ class Order extends Component {
     this.props.navigation.openDrawer();
   };
 
-  listEmpty = () => {
-    return (
-      <ListBody>
-        <Text>No hay resultados</Text>
-      </ListBody>
-    );
-  };
+  listEmpty = () => <EmptyList />;
 
   // searchBarHandler = (data, text) => {
   //   this.setState({
@@ -171,6 +168,7 @@ class Order extends Component {
   // };
 
   render() {
+    console.log(this.state);
     const {modalVisible, active, loading, show} = this.state;
 
     let content = <ContentLoader />;
@@ -224,15 +222,7 @@ class Order extends Component {
           ) : null} */}
           {/* SearchBar */}
 
-          <Content
-            style={{
-              flexDirection: 'column',
-              flex: 1,
-              backgroundColor: theme.colors.lightGray,
-              padding: 12,
-            }}>
-            {content}
-          </Content>
+          <Content style={styles.content}>{content}</Content>
         </Container>
       </Root>
     );

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {SearchBar, FetchingData} from '../../components';
+import {SearchBar, FetchingData, EmptyList, BtnIcon} from '../../components';
 import Toast from 'react-native-easy-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {} from 'react-native-vector-icons';
@@ -24,19 +24,13 @@ import {
   Body,
   Left,
   Item,
-  // Input,
   Fab,
   Right,
   Title,
   ActionSheet,
 } from 'native-base';
 
-import {
-  getUserConfig,
-  saveClients,
-  getStoredClients,
-  editStoredClient,
-} from '../../helpers/sql_helper';
+import {saveClients, getStoredClients} from '../../helpers/sql_helper';
 import {getData} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
@@ -153,17 +147,7 @@ export default class Clients extends Component {
     this.props.navigation.openDrawer();
   };
 
-  listEmpty = () => {
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Text>No hay items para mostrar</Text>
-      </View>
-    );
-  };
+  listEmpty = () => <EmptyList />;
 
   handlerFab = () => {
     this.props.navigation.navigate('Client', {
@@ -248,21 +232,15 @@ export default class Clients extends Component {
           />
           <Header>
             <Left>
-              <Button transparent onPress={this.openDrawer}>
-                <Icon name="menu" />
-              </Button>
+              <BtnIcon iconName="menu" onPress={this.openDrawer} />
             </Left>
             <Body>
               <Title>{global.translate('TITLE_CLIENTS')}</Title>
             </Body>
             <Right>
               <FetchingData syncData={this.refreshHandler} fetching={loading} />
-              <Button transparent>
-                <Icon name="funnel" />
-              </Button>
-              <Button transparent onPress={this.showHideSearchBar}>
-                <Icon name="search" />
-              </Button>
+              <BtnIcon iconName="funnel" />
+              <BtnIcon iconName="search" onPress={this.showHideSearchBar} />
             </Right>
           </Header>
 
