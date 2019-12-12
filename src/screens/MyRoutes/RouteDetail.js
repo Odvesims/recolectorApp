@@ -94,8 +94,8 @@ export default class RouteDetail extends Component {
       let routeDetails = await getRouteDetails(route_id);
 
       const andris = routeDetails.filter(detail => detail.status !== 'C');
-      console.log('route_details ==>', routeDetails);
-      console.log('andris ==>', andris);
+      // console.log('route_details ==>', routeDetails);
+      // console.log('andris ==>', andris);
 
       this.setState({
         data: routeDetails,

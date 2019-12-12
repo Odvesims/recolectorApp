@@ -9,9 +9,10 @@ const InputList = ({item, context, onChange}) => {
       <View>
         <TextInput
           id={item.orderDetail_id}
-          value={item.collected_quantity}
+          value={String(item.collected_quantity)}
           blurOnSubmit={false}
           onChangeText={text => {
+            console.log('context', context);
             const index = context.findIndex(i => i.id === item.id);
             item.collected_quantity = text;
             const res = context[index];

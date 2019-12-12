@@ -21,7 +21,7 @@ const RegistryTab = ({renderView, onChangeHandler}) => {
                 style={{overflow: 'hidden'}}
                 extraData={context}
                 data={context}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.order_id}
                 renderItem={({item}) => (
                   <InputList
                     item={item}

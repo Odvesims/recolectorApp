@@ -1,11 +1,10 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 
 import {theme} from '../../constants';
 import {BtnIcon} from '../../components';
 
 import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 import {getOrderDetails, getOrders} from '../../helpers/sql_helper';
-1;
 
 // import {getData} from '../../helpers/apiconnection_helper';
 
@@ -16,59 +15,62 @@ import {ButtonGroup} from 'react-native-elements';
 import {RegistryTab} from './Tabs';
 // import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  CheckBox,
-  Alert,
-} from 'react-native';
+import {Text, View, StyleSheet, ScrollView, Alert} from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import {Header, Right, Left, Body, Container, Title} from 'native-base';
 
 const RegistryContext = React.createContext({});
 export const Provider = RegistryContext.Provider;
 export const Consumer = RegistryContext.Consumer;
 
-export default class Registry extends Component {
-  state = {
-    data: [],
-    textInputs: [],
-    checkItem: false,
-    selectedIndex: 0,
+function Registry(props) {
+  const [data, setData] = useState({data: [], picking: [], shopping: []});
+  const [checkItem, setCheckItem] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState();
+
+  useEffect(() => {
+    let isSubscribed = true;
+    try {
+      const {order_id} = props.navigation.state.params;
+      async function getOrderData() {
+        let orderType = await getOrderDetails(order_id);
+        const orderPicking = orderType.filter(
+          res => res.pickup_or_purchase === 'R',
+        );
+        const orderShopping = orderType.filter(
+          res => res.pickup_or_purchase === 'C',
+        );
+        if (isSubscribed) {
+          setData({
+            data: orderType,
+            picking: orderPicking,
+            shopping: orderShopping,
+          });
+        }
+      }
+      getOrderData();
+    } catch (error) {
+      // console.error('getorderType', error);
+    }
+    return () => (isSubscribed = false);
+  });
+
+  const onChangePicking = index => {
+    console.log('picking', index, data.picking);
+    setData(data.picking[index]);
   };
 
-  componentDidMount() {
-    this.getOrderType();
-  }
+  const onChangeShopping = useCallback(
+    index => {
+      setData(data.shopping[index]);
+      console.log('shopping', data.shopping);
+    },
+    [data],
+  );
 
-  getOrderType = async () => {
-    const {order_id} = this.props.navigation.state.params;
-
-    let orderType = await getOrderDetails(order_id);
-    const picking = orderType.filter(res => res.pickup_or_purchase === 'R');
-    const shopping = orderType.filter(res => res.pickup_or_purchase === 'C');
-
-    this.setState({
-      data: orderType,
-      picking: picking,
-      shopping: shopping,
-    });
-  };
-
-  onChangePicking = index => {
-    this.setState({
-      ...this.state.picking[index],
-    });
-  };
-
-  onChangeShopping = index => {
-    this.setState({
-      ...this.state.shopping[index],
-    });
-  };
-
-  saveConfirmation = () => {
+  const saveConfirmation = () => {
     Alert.alert(
       'Alert Title',
       'My Alert Msg',
@@ -82,15 +84,14 @@ export default class Registry extends Component {
         },
         {
           text: 'Guardar',
-          onPress: () => this.save(),
+          onPress: () => save(),
         },
       ],
       {cancelable: false},
     );
   };
 
-  save = () => {
-    let {data, checkItem} = this.state;
+  const save = () => {
     let dataArr = [];
 
     data.map(item => {
@@ -104,55 +105,51 @@ export default class Registry extends Component {
     let collectData = {
       collect_data: dataArr,
       order_id: data[0].order_id,
-      route_id: this.props.navigation.state.params.route_id,
+      route_id: props.navigation.state.params.route_id,
       employee_code: global.employee_code,
       close_order: checkItem,
     };
+    setLoading(true);
+    setLoadingMessage('ALERT_REGISTERING_COLLECT');
 
-    this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'});
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       Alert.alert(JSON.stringify(res));
 
       if (res.valid) {
         Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
-        this.setState({
-          loading: false,
-        });
-        this.props.navigation.goBack();
+        setLoading(false);
+        goBack();
       } else {
-        this.setState({loading: false});
+        setLoading(false);
       }
     });
   };
 
-  checkboxHandler = () => {
-    this.setState({
-      checkItem: !this.state.checkItem,
-    });
+  const checkboxHandler = () => {
+    setCheckItem(!checkItem);
   };
 
-  updateIndex = selectedIndex => {
-    this.setState({selectedIndex});
+  const updateIndex = selectedIndex => {
+    setSelectedIndex(selectedIndex);
   };
 
-  renderDetailTabs = item => {
-    const {picking, shopping} = this.state;
+  const renderDetailTabs = item => {
     if (item === 0) {
       return (
-        <Provider value={picking}>
+        <Provider value={data.picking}>
           <RegistryTab
-            onChangeHandler={this.onChangePicking}
-            navigation={this.props.navigation}
+            onChangeHandler={onChangePicking}
+            navigation={props.navigation}
             renderView={'Picking'}
           />
         </Provider>
       );
     } else {
       return (
-        <Provider value={shopping}>
+        <Provider value={data.shopping}>
           <RegistryTab
-            onChangeHandler={this.onChangeShopping}
-            navigation={this.props.navigation}
+            onChangeHandler={onChangeShopping}
+            navigation={props.navigation}
             renderView={'Shopping'}
           />
         </Provider>
@@ -160,75 +157,68 @@ export default class Registry extends Component {
     }
   };
 
-  goBack = () => {
-    this.props.navigation.goBack();
+  const goBack = () => {
+    props.navigation.goBack();
   };
 
-  render() {
-    // console.log('REGISTRY picking ==>', this.state.picking);
-    // console.log('REGISTRY state ==>', this.state);
-    // console.log('REGISTRY shopping ==>', this.state.shopping);
-    // console.log('REGISTRY props ==>', this.props.navigation.state.params);
+  const detailTabs = [
+    global.translate('PICKING'),
+    global.translate('SHOPPING'),
+  ]; //global.translate('TITLE_CATEGORY')];
 
-    const detailTabs = [
-      global.translate('PICKING'),
-      global.translate('SHOPPING'),
-    ]; //global.translate('TITLE_CATEGORY')];
+  return (
+    <Container>
+      <Spinner
+        visible={loading}
+        textContent={global.translate(loadingMessage)}
+        color={'CE2424'}
+        overlayColor={'rgba(255, 255, 255, 0.4)'}
+        animation={'slide'}
+      />
+      <Header>
+        <Left>
+          <BtnIcon iconName={'arrow-back'} onPress={goBack} />
+        </Left>
+        <Body>
+          <Title>Detalles</Title>
+        </Body>
+        <Right>
+          <BtnIcon
+            iconName={'checkmark'}
+            label={'Guardar'}
+            onPress={saveConfirmation}
+          />
+        </Right>
+      </Header>
 
-    let {checkItem, selectedIndex} = this.state;
+      {/* Content */}
+      <RContent>
+        <View style={{backgroundColor: theme.colors.lightGray}}>
+          <ButtonGroup
+            onPress={updateIndex}
+            selectedIndex={selectedIndex}
+            buttons={detailTabs}
+            containerStyle={{height: 50}}
+          />
+        </View>
 
-    return (
-      <Container>
-        <Spinner
-          visible={this.state.loading}
-          textContent={global.translate(this.state.loadingMessage)}
-          color={'CE2424'}
-          overlayColor={'rgba(255, 255, 255, 0.4)'}
-          animation={'slide'}
-        />
-        <Header>
-          <Left>
-            <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
-          </Left>
-          <Body>
-            <Title>Detalles</Title>
-          </Body>
-          <Right>
-            <BtnIcon
-              iconName={'checkmark'}
-              label={'Guardar'}
-              onPress={this.saveConfirmation}
-            />
-          </Right>
-        </Header>
+        <ScrollView>{renderDetailTabs(selectedIndex)}</ScrollView>
 
-        {/* Content */}
-        <RContent>
-          <View style={{backgroundColor: theme.colors.lightGray}}>
-            <ButtonGroup
-              onPress={this.updateIndex}
-              selectedIndex={this.state.selectedIndex}
-              buttons={detailTabs}
-              containerStyle={{height: 50}}
-            />
-          </View>
-
-          <ScrollView>{this.renderDetailTabs(selectedIndex)}</ScrollView>
-
-          <View style={{flex: 1, justifyContent: 'flex-end'}}>
-            <OrderConfirmation
-              style={[
-                !checkItem ? styles.checkboxDisabled : styles.checkboxSuccess,
-              ]}>
-              <CheckBox value={checkItem} onChange={this.checkboxHandler} />
-              <Text style={{marginLeft: 8}}>Cerrar orden</Text>
-            </OrderConfirmation>
-          </View>
-        </RContent>
-      </Container>
-    );
-  }
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
+          <OrderConfirmation
+            style={[
+              !checkItem ? styles.checkboxDisabled : styles.checkboxSuccess,
+            ]}>
+            <CheckBox value={checkItem} onChange={checkboxHandler} />
+            <Text style={{marginLeft: 8}}>Cerrar orden</Text>
+          </OrderConfirmation>
+        </View>
+      </RContent>
+    </Container>
+  );
 }
+
+export default Registry;
 
 const styles = StyleSheet.create({
   headerCodeText: {

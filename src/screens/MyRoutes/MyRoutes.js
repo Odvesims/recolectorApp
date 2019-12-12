@@ -128,7 +128,7 @@ class Order extends Component {
   };
 
   renderItem = ({item}) => {
-    // console.log('item', item);
+    console.log('item', item);
     const {navigate} = this.props.navigation;
     return (
       <Item
@@ -180,7 +180,7 @@ class Order extends Component {
           keyboardShouldPersistTaps={'handled'}
           data={active}
           extraData={this.state}
-          keyExtractor={item => item.id} //
+          keyExtractor={item => item.route_id.toString()} //
           renderItem={this.renderItem}
         />
       );

@@ -12,6 +12,7 @@ import {
   ScrollView,
   Platform,
   FlatList,
+  Alert,
 } from 'react-native';
 
 import {
@@ -122,7 +123,7 @@ export default class Clients extends Component {
             this.storedClients();
           });
         } else {
-          alert(global.translate(result.response));
+          Alert.alert(global.translate(result.response));
         }
       } else {
         this.setState({request_timeout: false});

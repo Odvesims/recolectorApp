@@ -3,11 +3,11 @@ import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {View} from 'native-base';
 
-const CustomButton = props => {
+const CustomButton = ({customClick, title, style}) => {
   return (
-    <View style={props.style}>
-      <TouchableOpacity style={styles.button} onPress={props.customClick}>
-        <Text style={styles.text}>{props.title}</Text>
+    <View style={style}>
+      <TouchableOpacity style={styles.button} onPress={customClick}>
+        <Text style={styles.text}>{global.translate(title)}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -37,13 +37,8 @@ export default class LoginScreen extends Component {
       request_timeout: false,
     };
     global.deviceLanguage = this.state.deviceLanguage;
-    this.inputs = {};
-    this.inputField = React.createRef();
   }
 
-  focuInputs = () => {
-    this.inputField.current.focus();
-  };
   setLanguage = sLang => {
     if (Platform.OS === 'android') {
       this.setState({
@@ -141,8 +136,27 @@ export default class LoginScreen extends Component {
     header: null,
   };
 
+  userHandler = userName => {
+    this.setState({
+      userName: userName,
+    });
+  };
+
+  passwordHandler = userPassword => {
+    this.setState({
+      userPassword: userPassword,
+    });
+  };
+
   render() {
-    const inputSubmit = this.inputField.current;
+    const {
+      userName,
+      userPassword,
+      loading,
+      loadingMessage,
+      visible,
+      toastMsg,
+    } = this.state;
     return (
       <Container>
         <Header transparent>
@@ -165,42 +179,32 @@ export default class LoginScreen extends Component {
             <AppTitle>RecolectorApp</AppTitle>
             <InputLogin
               iconName="person"
-              label={global.translate('TITLE_USER') + ':'}
-              onChangeText={userName => {
-                this.setState({userName: userName});
-              }}
-              ref={input => {
-                this.inputs = input;
-              }}
+              label={'TITLE_USER'}
+              onChangeText={this.userHandler}
               blurOnSubmit={false}
-              value={this.state.userName}
+              value={userName}
             />
             <InputLogin
               id="password"
               iconName="lock"
-              label={global.translate('TITLE_PASSWORD') + ':'}
-              onChangeText={userPassword => {
-                this.setState({userPassword: userPassword});
-              }}
+              label={'TITLE_PASSWORD'}
+              onChangeText={this.passwordHandler}
               blurOnSubmit={true}
               secured={true}
               returnKeyType={'done'}
-              value={this.state.userPassword}
+              value={userPassword}
             />
 
             <CustomButton
               style={{marginTop: 50}}
               customClick={this.customClickHandler}
-              title={global.translate('TITLE_SIGNIN')}
+              title={'TITLE_SIGNIN'}
             />
             {/* Toast and Spinner */}
-            <ToastMessage
-              visible={this.state.visible}
-              message={this.state.toastMsg}
-            />
+            <ToastMessage visible={visible} message={toastMsg} />
             <Spinner
-              visible={this.state.loading}
-              textContent={this.state.loadingMessage}
+              visible={loading}
+              textContent={loadingMessage}
               color={'CE2424'}
               overlayColor={'rgba(255, 255, 255, 0.4)'}
               animation={'slide'}
