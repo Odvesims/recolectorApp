@@ -184,37 +184,32 @@ export default class Home extends Component {
         clearTimeout();
       }
     }, 30000);
+    
 
   //   const employees = await data('GET_EMPLOYEES');
   //   if (!request_timeout) {
   //     await saveEmployee(employees.arrResponse);
   //   }
-
   //   const clients = await getData('GET_CLIENTS');
   //   if (!request_timeout) {
   //     await saveClients(clients.arrResponse);
   //   }
-
   //   const articleCat = await getData('GET_ARTICLES_CATEGORIES');
   //   if (!request_timeout) {
   //     await saveCategories(articleCat.arrResponse);
   //   }
-
   //   const articleSubcat = await getData('GET_ARTICLES_SUBCATEGORIES');
   //   if (!request_timeout) {
   //     await saveSubcategories(articleSubcat.arrResponse);
   //   }
-
   //   const articles = await getData('GET_ARTICLES');
   //   if (!request_timeout) {
   //     await saveArticles(articles.arrResponse);
   //   }
-
   //   const orders = await getData('GET_ORDERS');
   //   if (!request_timeout) {
   //     await saveOrders(orders.arrResponse);
   //   }
-
   //   const routes = await getData('GET_ROUTES', '&status=A');
   //   if (!request_timeout) {
   //     await clearRoutesCab('A');
@@ -223,7 +218,6 @@ export default class Home extends Component {
   //       await saveActiveRoutes(routes.arrResponse);
   //     }
   //   }
-
   //   const routesI = await getData('GET_ROUTES', '&status=I');
   //   if (!request_timeout) {
   //     await clearRoutesCab('I');
@@ -239,31 +233,32 @@ export default class Home extends Component {
 
 
   getData('GET_EMPLOYEES').then(emp => {
-    if (!this.state.request_timeout) {
+    const {request_timeout} = this.state;
+    if (!request_timeout) {
       saveEmployees(emp.arrResponse).then(res => {
         getData('GET_CLIENTS').then(cli => {
-          if (!this.state.request_timeout) {
+          if (!request_timeout) {
             saveClients(cli.arrResponse, []).then(res => {
               getData('GET_ARTICLES_CATEGORIES').then(cat => {
-                if (!this.state.request_timeout) {
+                if (!request_timeout) {
                   saveCategories(cat.arrResponse).then(res => {
                     getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
-                      if (!this.state.request_timeout) {
+                      if (!request_timeout) {
                         saveSubcategories(sub.arrResponse).then(res => {
                           getData('GET_ARTICLES').then(art => {
-                            if (!this.state.request_timeout) {
+                            if (!request_timeout) {
                               saveArticles(art.arrResponse).then(res => {
                                 getData('GET_ORDERS').then(ord => {
-                                  if (!this.state.request_timeout) {
+                                  if (!request_timeout) {
                                     saveOrders(ord.arrResponse).then(res => {
                                       getData('GET_ROUTES', '&status=A').then(active => {
-                                        if (!this.state.request_timeout) {
+                                        if (!request_timeout) {
                                           clearRoutesCab('A').then(ca => {
                                             clearRoutesDetails().then(cd => {
                                               if (active.arrResponse !== []) {
                                                 saveActiveRoutes(active.arrResponse).then(res => {
                                                   getData('GET_ROUTES', '&status=I').then(inactive => {
-                                                    if (!this.state.request_timeout) {
+                                                    (!request_timeout) {
                                                       clearRoutesCab('I').then(ci => {
                                                         if (inactive.arrResponse !== []) {
                                                           saveInactiveRoutes(inactive.arrResponse).then(resi => {
@@ -301,6 +296,71 @@ export default class Home extends Component {
     }
   });
 };
+ 
+//   getData('GET_EMPLOYEES').then(emp => {
+//     const {request_timeout} = this.state;
+//     if (!request_timeout) {
+//       saveEmployees(emp.arrResponse).then(res => {
+//         getData('GET_CLIENTS').then(cli => {
+//           if (!request_timeout) {
+//             saveClients(cli.arrResponse, []).then(res => {
+//               getData('GET_ARTICLES_CATEGORIES').then(cat => {
+//                 if (!request_timeout) {
+//                   saveCategories(cat.arrResponse).then(res => {
+//                     getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
+//                       if (!request_timeout) {
+//                         saveSubcategories(sub.arrResponse).then(res => {
+//                           getData('GET_ARTICLES').then(art => {
+//                             if (!request_timeout) {
+//                               saveArticles(art.arrResponse).then(res => {
+//                                 getData('GET_ORDERS').then(ord => {
+//                                   if (!request_timeout) {
+//                                     saveOrders(ord.arrResponse).then(res => {
+//                                       getData('GET_ROUTES', '&status=A').then(active => {
+//                                         if (!request_timeout) {
+//                                           clearRoutesCab('A').then(ca => {
+//                                             clearRoutesDetails().then(cd => {
+//                                               if (active.arrResponse !== []) {
+//                                                 saveActiveRoutes(active.arrResponse).then(res => {
+//                                                   getData('GET_ROUTES', '&status=I').then(inactive => {
+//                                                     state.request_timeout) {
+//                                                       clearRoutesCab('I').then(ci => {
+//                                                         if (inactive.arrResponse !== []) {
+//                                                           saveInactiveRoutes(inactive.arrResponse).then(resi => {
+//                                                             this.setState({
+//                                                               request_timeout: false,
+//                                                               loading: false,
+//                                                             });
+//                                                           });
+//                                                         }
+//                                                       })
+//                                                     }
+//                                                   })
+//                                                 })
+//                                               }
+//                                             })
+//                                           })
+//                                         }
+//                                       });
+//                                     });
+//                                   }
+//                                 });
+//                               });
+//                             }
+//                           });
+//                         });
+//                       }
+//                     });
+//                   });
+//                 }
+//               });
+//             });
+//           }
+//         });
+//       });
+//     }
+//   });
+// };
 
   openDrawer = props => {
     this.props.navigation.openDrawer();

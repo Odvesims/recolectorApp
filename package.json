@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@react-native-community/checkbox": "^0.2.2",
+    "@react-native-community/datetimepicker": "^2.1.0",
     "@react-native-community/netinfo": "^5.0.0",
     "formik": "^2.0.7",
     "i18n-js": "^3.5.0",

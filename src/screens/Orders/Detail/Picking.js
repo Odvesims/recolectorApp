@@ -272,7 +272,7 @@ export default class Picking extends Component {
                 label={global.translate('TITLE_QUANTITY')}
                 rounded
                 iconStyle={{color: 'green'}}
-                value={quantity}
+                value={Number(quantity)}
                 onChange={this.changeQuantity}
                 minValue={1}
                 editable={isEditable}

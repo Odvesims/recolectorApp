@@ -62,7 +62,7 @@ export default class DetailsTab extends Component {
                 switch (buttonIndex) {
                   case 0:
                     this.props.navigation.navigate(`${this.props.renderView}`, {
-                      ...this.props.tab_data,
+                      ...this.props.tab_data[0],
                       editable: this.props.editable,
                     });
                     break;

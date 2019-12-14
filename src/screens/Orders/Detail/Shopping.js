@@ -79,12 +79,12 @@ export default class Shopping extends PureComponent {
     const categories = await getStoredCategories();
     const subcategories = await getStoredSubcategories();
     const articles = await getStoredArticles();
-    const articleHandler = await this.setArticleHandler(articles, 'A');
+    const picker_data = await this.setArticleHandler(articles, 'A');
     this.setState({
-      categories: categories,
-      subcategories: subcategories,
-      articles: articles,
-      picker_data: articleHandler,
+      categories,
+      subcategories,
+      articles,
+      picker_data,
     });
   };
 
@@ -115,7 +115,6 @@ export default class Shopping extends PureComponent {
       total: price * value,
       itemSelected: {
         ...prevState.itemSelected,
-
         price: price,
         total: price * quantity,
         quantity: value,
@@ -255,7 +254,7 @@ export default class Shopping extends PureComponent {
                 />
               </View>
               <CustomPicker
-                label={global.translate('TITLE_DESCRIPTION')}
+                label={'TITLE_DESCRIPTION'}
                 placeholder={placeholder}
                 items={picker_data}
                 onSelected={this.selectedItem}
@@ -276,9 +275,9 @@ export default class Shopping extends PureComponent {
               {/* Quantity */}
               <NumberInput
                 rounded
-                label={global.translate('TITLE_QUANTITY')}
+                label={'TITLE_QUANTITY'}
                 iconStyle={{color: 'green'}}
-                value={quantity}
+                value={Number(quantity)}
                 onChange={this.changeQuantity}
                 minValue={1}
                 editable={isEditable}
