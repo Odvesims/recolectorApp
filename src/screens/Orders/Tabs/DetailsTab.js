@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import {theme} from '../../../constants';
 <<<<<<< HEAD
 import {Name, Quantity, ListBody, styles} from '../styles';
-import {SwipeListView} from 'react-native-swipe-list-view';
-import {Text, View, ScrollView, TouchableHighlight} from 'react-native';
+import {View, ScrollView, FlatList} from 'react-native';
 import {Content, Item, Button, ActionSheet, Icon} from 'native-base';
-
 export default class DetailsTab extends Component {
   state = {
     data: this.props.tab_data[0],
@@ -56,23 +54,20 @@ export default class DetailsTab extends Component {
 
 <<<<<<< HEAD
   markForDelete = valor => {
-    const {key, id, value} = valor;
+    const {id} = valor;
     const {tab_data, remove} = this.props;
     let newData;
-    // if (value < -375) {
     newData = tab_data.filter(item => item.id !== id);
-    // this.updateList(filteredData);
-    // }
     remove(newData);
   };
 
   renderItem = ({item}) => {
-    // console.log('DETAILTAB RENDER ==>', item);
+    console.log('DETAILTAB RENDER ==>', item);
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-    const {detail_description, quantity, key} = item;
+    const {detail_description, quantity} = item;
     return (
       <Item style={styles.dList}>
-        <View key={key} style={styles.listContainer}>
+        <View style={styles.listContainer}>
           <ListBody>
             <Name numberOfLines={1}>{detail_description}</Name>
             <Quantity numberOfLines={1}>{quantity}</Quantity>
@@ -140,9 +135,8 @@ export default class DetailsTab extends Component {
                   case 0:
 <<<<<<< HEAD
                     this.props.navigation.navigate(`${this.props.renderView}`, {
-                      ...this.props.tab_data,
+                      ...this.props.tab_data[0],
                       editable: this.props.editable,
-                      // ...this.state.data[0],
                     });
                     break;
                   case 1:
@@ -186,6 +180,7 @@ export default class DetailsTab extends Component {
   };
 
   render() {
+<<<<<<< HEAD
 <<<<<<< HEAD
     // console.log('DETAILTABS TAB_DATA ==>', this.props.tab_data);
     // console.log('DETAILTABS PROPS ==>', this.props);
@@ -238,12 +233,23 @@ export default class DetailsTab extends Component {
             rightOpenValue={-375}
             rightActionActivationDistance={125}
             onSwipeValueChange={this.markForDelete}
+=======
+    // console.log('DETAILTABS PROPS ==>', this.props);
+    return (
+      <Content style={styles.content}>
+        <ScrollView>
+          <FlatList
+            data={this.props.tab_data}
+            keyExtractor={item => item.id}
+            renderItem={this.renderItem}
+>>>>>>> Andris
           />
         </ScrollView>
       </Content>
     );
   }
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 export const SwipeHidden = ({onPress}) => {
@@ -428,3 +434,5 @@ const DetailContent = styled.View`
   background-color: ${theme.colors.lightGray};
 `;
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
+=======
+>>>>>>> Andris

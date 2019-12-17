@@ -1,42 +1,6 @@
 import React, {Component} from 'react';
-import {theme} from '../../constants';
-import {SearchBar, FetchingData} from '../../components';
-import Spinner from 'react-native-loading-spinner-overlay';
-import moment from 'moment';
-
-import {} from 'react-native-vector-icons';
-
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  StatusBar,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-
-// import ContentCustom from '../components';
-
-import {
-  Icon,
-  Button,
-  Container,
-  Content,
-  Header,
-  Body,
-  Left,
-  Item,
-  Input,
-  Right,
-  Title,
-  ActionSheet,
-  Fab,
-  Tabs,
-  Tab,
-} from 'native-base';
 import RoutesTab from './Tabs/RoutesTab';
+import moment from 'moment';
 import {
   saveActiveRoutes,
   saveInactiveRoutes,
@@ -45,6 +9,25 @@ import {
   clearRoutesDetails,
 } from '../../helpers/sql_helper';
 import {getData} from '../../helpers/apiconnection_helper';
+
+import {SearchBar, FetchingData, BtnIcon} from '../../components';
+import {theme} from '../../constants';
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import {Alert} from 'react-native';
+
+import {
+  Icon,
+  Container,
+  Header,
+  Body,
+  Left,
+  Right,
+  Title,
+  Fab,
+  Tabs,
+  Tab,
+} from 'native-base';
 
 export default class Routes extends Component {
   constructor(props) {
@@ -67,10 +50,6 @@ export default class Routes extends Component {
     };
   }
 
-  static navigationOptions = {
-    header: null,
-  };
-
   showHideSearchBar = () => {
     this.setState(previousState => ({show: !previousState.show}));
   };
@@ -91,6 +70,7 @@ export default class Routes extends Component {
   }
 
   enterHandler = () => {
+    console.log('enterhandler');
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
@@ -98,15 +78,14 @@ export default class Routes extends Component {
     this.storedRoutes();
   };
 
-  storedRoutes = () => {
-    getStoredRoutes('A').then(active => {
-      getStoredRoutes('I').then(expired => {
-        this.setState({active: active, expired: expired, loading: false});
-      });
-    });
+  storedRoutes = async () => {
+    const active = await getStoredRoutes('A');
+    const inactive = await getStoredRoutes('I');
+    this.setState({active: active, expired: inactive, loading: false});
   };
 
-  refreshHandler = () => {
+  refreshHandler = async () => {
+    const {loading, request_timeout} = this.state;
     this.setState({
       loading: true,
       request_timeout: false,
@@ -115,11 +94,12 @@ export default class Routes extends Component {
       active: [],
     });
     setTimeout(() => {
-      if (this.state.loading) {
+      if (loading) {
         this.setState({loading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 20000);
+<<<<<<< HEAD
     getData('GET_ROUTES', '&status=A').then(active => {
 <<<<<<< HEAD
       console.log('ROUTES', active);
@@ -145,19 +125,62 @@ export default class Routes extends Component {
             });
           });
         });
+=======
+
+    const active = await getData('GET_ROUTES', '&status=A');
+    if (!request_timeout) {
+      await clearRoutesCab('A');
+      await clearRoutesDetails();
+      if (active.arrResponse !== []) {
+        saveActiveRoutes(active.arrResponse);
+      }
+
+      const inactive = await getData('GET_ROUTES', '&status=I');
+      if (!request_timeout) {
+        await clearRoutesCab('I');
+        if (inactive.arrResponse !== []) {
+          saveInactiveRoutes(inactive.arrResponse);
+        }
+        this.storedRoutes();
+>>>>>>> Andris
       } else {
         this.setState({request_timeout: false});
       }
-    });
+    } else {
+      this.setState({request_timeout: false});
+    }
   };
 
   openDrawer = props => {
     this.props.navigation.openDrawer();
   };
 
+  handlerFab = params => {
+    this.props.navigation.navigate('Route', {
+      operation: 'TITLE_NEW_ROUTE',
+      route_id: '',
+      description: '',
+      document_id: '',
+      document_acronym: '',
+      document_number: '',
+      assigned_by: '',
+      assigned_to: '',
+      supervisor_name: '',
+      employee_name: '',
+      phone_number: '',
+      date_from: moment(new Date()).format('DD/MM/YYYY'),
+      date_to: moment(new Date()).format('DD/MM/YYYY'),
+      status: '',
+      loading_message: 'MESSAGE_REGISTERING_ROUTE',
+      new_record: true,
+      disabled_date_from: false,
+      onGoBack: () => this.refresh(false),
+    });
+  };
+
   render() {
-    const {data} = this.state;
     const {loading} = this.state;
+    console.log('Routes', this.state);
     return (
       <Container>
         <Spinner
@@ -170,9 +193,7 @@ export default class Routes extends Component {
         {/* Header */}
         <Header>
           <Left>
-            <Button transparent onPress={this.openDrawer}>
-              <Icon name="menu" />
-            </Button>
+            <BtnIcon iconName={'menu'} onPress={this.openDrawer} />
           </Left>
           <Body>
             <Title>{global.translate('TITLE_ROUTES')}</Title>
@@ -210,92 +231,12 @@ export default class Routes extends Component {
         </Tabs>
 
         <Fab
-          style={{backgroundColor: theme.colors.primary, right: 20}}
+          style={{backgroundColor: theme.colors.primary, right: 10}}
           position="bottomRight"
-          onPress={() =>
-            this.props.navigation.navigate('Route', {
-              operation: 'TITLE_NEW_ROUTE',
-              route_id: '',
-              description: '',
-              document_id: '',
-              document_acronym: '',
-              document_number: '',
-              assigned_by: '',
-              assigned_to: '',
-              supervisor_name: '',
-              employee_name: '',
-              phone_number: '',
-              date_from: moment(new Date()).format('DD/MM/YYYY'),
-              date_to: moment(new Date()).format('DD/MM/YYYY'),
-              status: '',
-              loading_message: 'MESSAGE_REGISTERING_ROUTE',
-              new_record: true,
-              disabled_date_from: false,
-              onGoBack: () => this.refresh(false),
-            })
-          }>
+          onPress={this.handlerFab}>
           <Icon name="add" />
         </Fab>
       </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  androidHeader: {
-    ...Platform.select({
-      android: {
-        paddingTop: StatusBar.currentHeight,
-      },
-    }),
-  },
-  list: {
-    margin: 5,
-    backgroundColor: 'white',
-    height: 80,
-    paddingLeft: 12,
-    elevation: 1,
-  },
-  content: {
-    backgroundColor: theme.colors.lightGray,
-    paddingHorizontal: 8,
-    paddingTop: 12,
-  },
-  code: {
-    width: 32,
-    textAlign: 'center',
-    fontSize: 16,
-    color: 'gray',
-    fontWeight: 'bold',
-  },
-
-  name: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-
-  address: {
-    fontSize: 12,
-    color: 'gray',
-    overflow: 'hidden',
-  },
-
-  fab: {
-    position: 'absolute',
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    right: 20,
-    bottom: 20,
-    backgroundColor: theme.colors.primary,
-    borderRadius: 30,
-    elevation: 8,
-  },
-
-  more: {
-    position: 'absolute',
-    right: 0,
-  },
-});

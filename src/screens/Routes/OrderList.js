@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import CheckBox from '@react-native-community/checkbox';
 
 import {
   Text,
@@ -10,7 +11,6 @@ import {
   StatusBar,
   FlatList,
   TouchableOpacity,
-  CheckBox,
   ActivityIndicator,
 } from 'react-native';
 
@@ -43,12 +43,10 @@ export default class OrderList extends Component {
   };
 
   componentDidMount() {
+    let {checkedItems} = this.props.navigation.state.params;
     this.fetchData().then(result => {
-      if (this.props.navigation.state.params.checkedItems !== undefined) {
-        this.checkItems(
-          this.props.navigation.state.params.checkedItems,
-          result,
-        ).then(res => {
+      if (checkedItems !== undefined) {
+        this.checkItems(checkedItems, result).then(res => {
           this.setState({
             data: res,
             isChecked: true,
@@ -56,38 +54,20 @@ export default class OrderList extends Component {
             selectedClass: styles.selected,
           });
         });
-        this.props.navigation.state.params.checkedItems = undefined;
+        checkedItems = undefined;
       }
     });
   }
 
-  checkItems(dataList, data) {
+  checkItems(item, data) {
     return new Promise((resolve, reject) => {
-      dataList.map(i => {
-        const index = this.state.data.findIndex(
-          item => i.order_id === item.order_id,
-        );
+      item.map(i => {
+        const index = this.state.data.findIndex(d => i.order_id === d.order_id);
         data[index] = i;
       });
       resolve(data);
     });
   }
-
-  /*fetchData() {
-    return new Promise((resolve, reject) => {
-      let not_assigned;
-      getNotAssignedOrders().then(not_assigned => {
-        not_assigned = not_assigned.map(item => {
-          item.isSelect = false;
-          item.isChecked = false;
-          item.selectAll = false;
-          item.selectedClass = styles.list;
-          return item;
-        });
-      });
-      resolve(not_assigned);
-    });
-  }*/
 
   fetchData = () => {
     return new Promise((resolve, reject) => {
@@ -117,26 +97,23 @@ export default class OrderList extends Component {
     });
   };
 
-  selectItem = dataList => {
+  selectItem = item => {
     const {data} = this.state;
-    dataList.item.isSelect = !dataList.item.isSelect;
-    dataList.item.isChecked = !dataList.item.isChecked;
-    dataList.item.selectedClass = dataList.item.isSelect
-      ? styles.list
-      : styles.list;
+    item.isSelect = !item.isSelect;
+    item.isChecked = !item.isChecked;
+    item.selectedClass = item.isSelect ? styles.list : styles.list;
 
-    const index = this.state.data.findIndex(
-      item => dataList.item.id === item.id,
-    );
+    const index = data.findIndex(d => d.id === item.id);
 
-    data[index] = dataList.item;
+    data[index] = item;
     this.setState({
-      dataSelected: this.state.data,
-      data: this.state.data,
+      dataSelected: data,
+      data: data,
       isChecked: true,
     });
   };
 
+<<<<<<< HEAD
 <<<<<<< HEAD
   // selectAll = dataList => {
   //   dataList.item.isSelect = !dataList.item.isSelect;
@@ -205,18 +182,52 @@ export default class OrderList extends Component {
             }}>
             <Text numberOfLines={1} style={styles.name}>
               {dataList.item.client} - {dataList.item.name}
+=======
+  renderItem = ({item}) => {
+    console.log('renderItem', item);
+
+    return (
+      <Item style={[styles.list, item.selectedClass]} onPress={() => {}}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 12,
+          }}>
+          <CheckBox
+            style={{marginRight: 8}}
+            onChange={() => {
+              this.selectItem(item);
+            }}
+            value={item.isChecked}
+            //   isChecked={isChecked[index]}
+          />
+          <View key={item.key} style={styles.listContainer}>
+            <Text style={styles.code}>
+              {global.translate('TITLE_CODE')}: {item.order_document}
+>>>>>>> Andris
             </Text>
-            <Text numberOfLines={1} style={styles.price}>
-              $ {dataList.item.order_total}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text numberOfLines={1} style={styles.name}>
+                {item.client} - {item.name}
+              </Text>
+              <Text numberOfLines={1} style={styles.price}>
+                $ {item.order_total}
+              </Text>
+            </View>
+            <Text numberOfLines={1} style={styles.address}>
+              {item.address}
             </Text>
           </View>
-          <Text numberOfLines={1} style={styles.address}>
-            {dataList.item.address}
-          </Text>
         </View>
-      </View>
-    </Item>
-  );
+      </Item>
+    );
+  };
 
   onPressHandler = () => {
     let arrSelected = [];
@@ -285,11 +296,9 @@ export default class OrderList extends Component {
         <FlatList
           style={{overflow: 'hidden'}}
           data={data}
-          extraData={this.state}
-          renderItem={item => this.renderItem(item)}
           keyExtractor={item => item.id.toString()}
-          // initialNumToRender={10}
-          // ListHeaderComponent={this.renderHeader}
+          renderItem={this.renderItem}
+          extraData={this.state}
         />
       );
     }
@@ -327,19 +336,6 @@ export default class OrderList extends Component {
                 {global.translate('TITLE_SELECTED')}: {itemNumber}
               </Text>
             </View>
-            {/* 
-            <Text
-              onChange={dataList => {
-                this.selectAll(dataList);
-              }}
-              style={{
-                color: theme.colors.primary,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-              }}>
-              {global.translate('TITLE_SELECTED')}
-            </Text>
-            */}
           </View>
 
           <ScrollView style={{marginBottom: 24}}>

@@ -1,144 +1,58 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {DrawerNavigatorItems} from 'react-navigation-drawer';
 import {theme} from '../constants';
-import {
-  AppRegistry,
-  Image,
-  StatusBar,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  List,
-  ListItem,
-  View,
-  Badge,
-  Icon,
-  Button,
-} from 'native-base';
 
-const primaryRoutes = [
-  {
-    name: 'HomeScreen',
-    icon: 'home',
-    text: 'TITLE_PRINCIPAL',
-  },
-  {
-    name: 'ClientScreen',
-    icon: 'people',
-    text: 'TITLE_CLIENTS',
-  },
-  {
-    name: 'OrderScreen',
-    icon: 'cube',
-    text: 'TITLE_ORDERS',
-  },
-  {
-    name: 'RouteScreen',
-    icon: 'navigate',
-    text: 'TITLE_ROUTES',
-  },
-];
+import {StyleSheet, ScrollView, TouchableOpacity, Alert} from 'react-native';
+import {Text, View, Badge, Icon, Button} from 'native-base';
 
-const secondaryRoutes = [
-  {
-    name: 'ConfigScreen',
-    icon: 'settings',
-    text: 'TITLE_CONFIGURATION',
-  },
-  {
-    name: 'Logout',
-    icon: 'log-out',
-    text: 'TITLE_LOGOUT',
-  },
-];
-
-export default class SideBar extends Component {
-  render() {
-    return (
-      <Container>
-        <View style={styles.content}>
-          <View>
-            <Text style={styles.user}>{global.userDisplayName}</Text>
-            <Badge primary style={styles.role}>
-              <Text>{global.translate(global.userRole)}</Text>
-            </Badge>
-          </View>
-
-          <Button transparent>
-            <Icon
-              name="create"
-              style={{
-                color: theme.colors.primary,
-              }}
-            />
-            {/* <Text style={{color: theme.colors.primary}}>Editar</Text> */}
-          </Button>
+const SideBar = props => {
+  // console.log('props', props);
+  return (
+    <ScrollView>
+      <View style={styles.content}>
+        <View>
+          <Text style={styles.user}>{global.userDisplayName}</Text>
+          <Badge primary style={styles.role}>
+            <Text>{global.translate(global.userRole)}</Text>
+          </Badge>
         </View>
+      </View>
 
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}>
-          <List
-            style={{marginTop: 16}}
-            dataArray={primaryRoutes}
-            renderRow={data => {
-              return (
-                <ListItem
-                  style={{
-                    borderColor: 'transparent',
-                  }}
-                  button
-                  onPress={() => this.props.navigation.navigate(data.name)}>
-                  <Button transparent style={styles.iconContainer}>
-                    <Icon name={data.icon} style={styles.menuIcon} />
-                  </Button>
-                  <Text style={{marginLeft: 8}}>
-                    {global.translate(data.text)}
-                  </Text>
-                </ListItem>
-              );
-            }}
-          />
-          <View
-            style={{
-              justifyContent: 'flex-end',
-            }}>
-            <List
-              style={{
-                marginVertical: 16,
-              }}
-              dataArray={secondaryRoutes}
-              renderRow={data => {
-                return (
-                  <ListItem
-                    style={{
-                      borderColor: 'transparent',
-                    }}
-                    button
-                    onPress={() => this.props.navigation.navigate(data.name)}>
-                    <Button transparent style={styles.iconContainer}>
-                      <Icon name={data.icon} style={styles.menuIcon} />
-                    </Button>
-                    <Text style={{marginLeft: 8}}>
-                      {global.translate(data.text)}
-                    </Text>
-                  </ListItem>
-                );
-              }}
-            />
-          </View>
-        </View>
-      </Container>
-    );
-  }
-}
+      <DrawerNavigatorItems {...props} labelStyle={styles.label} />
+      <TouchableOpacity
+        onPress={() =>
+          Alert.alert(
+            global.translate('TITLE_SIGN_OUT'),
+            global.translate('TITLE_QUESTION_SIGN_OUT'),
+            [
+              {
+                text: global.translate('TITLE_YES'),
+                onPress: () => props.navigation.navigate('Auth'),
+              },
+              {
+                text: global.translate('TITLE_NO'),
+                onPress: () => props.navigation.goBack(null),
+                style: 'cancel',
+              },
+            ],
+            {cancelable: false},
+          )
+        }
+        style={{
+          flexDirection: 'row',
+        }}>
+        <Button transparent style={styles.iconContainer}>
+          <Icon name="log-out" style={styles.menuIcon} />
+        </Button>
+        <Text style={{marginLeft: 8, color: theme.colors.black}}>
+          {global.translate('TITLE_LOGOUT')}
+        </Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+export default SideBar;
 
 const styles = StyleSheet.create({
   content: {
@@ -162,4 +76,6 @@ const styles = StyleSheet.create({
   menuIcon: {
     color: theme.colors.gray,
   },
+  andris: {color: '#7D7D7D'},
+  label: {fontSize: 16, fontWeight: '200'},
 });

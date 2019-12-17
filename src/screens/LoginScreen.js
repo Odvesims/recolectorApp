@@ -1,8 +1,8 @@
 /*Home Screen With buttons to navigate to different options*/
 import React, {Component} from 'react';
 import {theme} from '../constants';
-import nextFrame from 'next-frame';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+<<<<<<< HEAD
 import {
 <<<<<<< HEAD
   View,
@@ -39,6 +39,12 @@ import {
 	InputLogin,
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 } from '../components';
+=======
+import {View, StyleSheet, NativeModules, Platform} from 'react-native';
+import {Container, Header, Right, Button, Icon, Item} from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {CustomButton, ToastMessage, InputLogin} from '../components';
+>>>>>>> Andris
 
 import {getUserConfig, saveUserData} from '../helpers/sql_helper';
 import {getUserLogin} from '../helpers/apiconnection_helper';
@@ -62,7 +68,7 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: 'aramirez', //aramirezs
+      userName: 'aramirez', //aramirez
       userPassword: '101010',
       hostName: '',
       portNumber: 444,
@@ -71,13 +77,8 @@ export default class LoginScreen extends Component {
       request_timeout: false,
     };
     global.deviceLanguage = this.state.deviceLanguage;
-    this.inputs = {};
-    this.inputField = React.createRef();
   }
 
-  focuInputs = () => {
-    this.inputField.current.focus();
-  };
   setLanguage = sLang => {
     if (Platform.OS === 'android') {
       this.setState({
@@ -298,6 +299,7 @@ export default class LoginScreen extends Component {
 		this.props.navigation.navigate('Configuration');
 	};
 
+<<<<<<< HEAD
 	static navigationOptions = {
 		header: null,
 	};
@@ -355,8 +357,29 @@ export default class LoginScreen extends Component {
 						/>
 
 <<<<<<< HEAD
+=======
+  userHandler = userName => {
+    this.setState({
+      userName,
+    });
+  };
+
+  passwordHandler = userPassword => {
+    this.setState({
+      userPassword,
+    });
+  };
+
+>>>>>>> Andris
   render() {
-    const inputSubmit = this.inputField.current;
+    const {
+      userName,
+      userPassword,
+      loading,
+      loadingMessage,
+      visible,
+      toastMsg,
+    } = this.state;
     return (
       <Container>
         <Header transparent>
@@ -379,42 +402,32 @@ export default class LoginScreen extends Component {
             <AppTitle>RecolectorApp</AppTitle>
             <InputLogin
               iconName="person"
-              label={global.translate('TITLE_USER') + ':'}
-              onChangeText={userName => {
-                this.setState({userName: userName});
-              }}
-              ref={input => {
-                this.inputs = input;
-              }}
+              label={'TITLE_USER'}
+              onChangeText={this.userHandler}
               blurOnSubmit={false}
-              value={this.state.userName}
+              value={userName}
             />
             <InputLogin
               id="password"
               iconName="lock"
-              label={global.translate('TITLE_PASSWORD') + ':'}
-              onChangeText={userPassword => {
-                this.setState({userPassword: userPassword});
-              }}
+              label={'TITLE_PASSWORD'}
+              onChangeText={this.passwordHandler}
               blurOnSubmit={true}
               secured={true}
               returnKeyType={'done'}
-              value={this.state.userPassword}
+              value={userPassword}
             />
 
             <CustomButton
               style={{marginTop: 50}}
               customClick={this.customClickHandler}
-              title={global.translate('TITLE_SIGNIN')}
+              title={'TITLE_SIGNIN'}
             />
             {/* Toast and Spinner */}
-            <ToastMessage
-              visible={this.state.visible}
-              message={this.state.toastMsg}
-            />
+            <ToastMessage visible={visible} message={toastMsg} />
             <Spinner
-              visible={this.state.loading}
-              textContent={this.state.loadingMessage}
+              visible={loading}
+              textContent={loadingMessage}
               color={'CE2424'}
               overlayColor={'rgba(255, 255, 255, 0.4)'}
               animation={'slide'}

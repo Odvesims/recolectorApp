@@ -15,7 +15,7 @@ const NumberInput = ({
 }) => {
   return (
     <View style={(style, styles.paddingBottom)}>
-      <Text style={{marginBottom: 8}}>{label}</Text>
+      <Text style={{marginBottom: 8}}>{global.translate(label)}</Text>
       <NumericInput
         iconStyle={iconStyle}
         value={value}

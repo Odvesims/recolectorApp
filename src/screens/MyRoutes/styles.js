@@ -3,6 +3,7 @@ import {TouchableOpacity, Platform, StyleSheet, StatusBar} from 'react-native';
 import {theme} from '../../constants';
 
 export {
+  Address,
   BContent,
   ButtonOutlined,
   Client,
@@ -11,11 +12,13 @@ export {
   CurrentDate,
   DetailContent,
   ListBody,
+  ListMyRoutes,
   Name,
   Price,
   PriceLabel,
   PriceQuantity,
   Quantity,
+  HeaderItems,
   styles,
   TextButton,
   Total,
@@ -49,15 +52,7 @@ const TextButton = styled.Text`
   color: ${theme.colors.primary};
   text-transform: uppercase;
 `;
-const Name = styled.Text`
-  flex-basis: 150;
-  font-size: 16;
-  color: black;
-  font-weight: bold;
-  overflow: scroll;
-  flex-grow: 2;
-  flex-wrap: nowrap;
-`;
+
 const ClientForm = styled.View``;
 const CurrentDate = styled.View`
   background-color: ${theme.colors.lightGray};
@@ -101,6 +96,35 @@ const ListBody = styled.View`
   flex-direction: row;
   justify-content: space-between;
 `;
+const Name = styled.Text`
+  ${'' /* flex-basis: 150; */}
+  font-size: 16;
+  color: black;
+  font-weight: bold;
+  ${'' /* overflow: scroll; */}
+  ${'' /* flex-grow: 2; */}
+  flex-wrap: nowrap;
+`;
+const Address = styled.Text`
+  font-size: 12px;
+  color: gray;
+  ${'' /* overflow: hidden; */}
+  flex-wrap: nowrap;
+`;
+const ListMyRoutes = styled.View`
+  flex: 1;
+  flex-direction: column;
+  ${'' /* align-items: center; */}
+  padding-horizontal: 12;
+`;
+const HeaderItems = styled.View`
+  flex-direction: row;
+  flex-grow: 1;
+  padding-vertical: 12px;
+  background-color: ${theme.colors.gray3};
+  justify-content: space-between;
+  padding-horizontal: 12;
+`;
 
 const styles = StyleSheet.create({
   androidHeader: {
@@ -113,6 +137,12 @@ const styles = StyleSheet.create({
 
   addPoint: {
     padding: theme.sizes.padding,
+  },
+
+  bodyHeader: {
+    textTransform: 'uppercase',
+    // flexGrow: 1,
+    // textAlign: 'center',
   },
 
   list: {
@@ -193,6 +223,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.gray2,
     borderRadius: 4,
     color: '#000',
+    fontSize: 20,
+    width: 100,
   },
 
   quantity: {
@@ -286,14 +318,15 @@ const styles = StyleSheet.create({
 
   listContainer: {
     flex: 1,
+    // paddingVertical: 12,
   },
 
   content: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: theme.colors.lightGray,
     paddingHorizontal: 8,
     paddingVertical: 12,
+    backgroundColor: theme.colors.lightGray,
   },
 
   oCode: {

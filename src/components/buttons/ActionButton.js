@@ -7,7 +7,7 @@ import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {View, Button} from 'native-base';
 import styled from 'styled-components/native';
-import {theme} from '../constants';
+import {theme} from '../../constants';
 
 <<<<<<< HEAD
 const ActionButton = React.memo(({cancel, accept}) => {

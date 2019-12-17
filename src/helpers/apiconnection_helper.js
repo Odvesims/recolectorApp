@@ -17,13 +17,13 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   try {
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();
-    if (JSON.stringify(responseJson) == '{}') {
+    if (JSON.stringify(responseJson) === '{}') {
       returnObject = {
         valid: false,
         responseError: 'ALERT_BLANK_RESPONSE',
       };
     } else {
-      if (responseJson.response != 'valid') {
+      if (responseJson.response !== 'valid') {
         returnObject = {
           valid: false,
           responseError: responseJson.error_message,

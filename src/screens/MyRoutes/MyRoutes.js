@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import {SearchBar, FetchingData, ContentLoader} from '../../components';
@@ -11,9 +12,23 @@ import moment from 'moment';
 import {SearchBar, FetchingData} from '../../components';
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {View, StyleSheet, FlatList} from 'react-native';
+=======
+
+import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
+
+import {
+  SearchBar,
+  FetchingData,
+  ContentLoader,
+  EmptyList,
+} from '../../components';
+import {Name, ListBody, ListMyRoutes, Address, styles} from './styles';
+
+import {FlatList} from 'react-native';
+>>>>>>> Andris
 import {
   saveActiveRoutes,
-  saveInactiveRoutes,
   getStoredRoutes,
   clearRoutesCab,
   clearRoutesDetails,
@@ -32,7 +47,6 @@ import {
   Form,
   Root,
   Item,
-  ActionSheet,
   Content,
 } from 'native-base';
 
@@ -82,7 +96,6 @@ class Order extends Component {
   }
 
   showHideSearchBar = () => {
-    // this.setState({show: true});
     if (this.state.show === true) {
       this.setState({show: false});
     } else {
@@ -98,6 +111,7 @@ class Order extends Component {
     this.storedRoutes();
   };
 
+<<<<<<< HEAD
   storedRoutes = () => {
     getStoredRoutes('A').then(active => {
       this.setState({active: active, loading: false});
@@ -106,6 +120,11 @@ class Order extends Component {
 =======
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     });
+=======
+  storedRoutes = async () => {
+    const routes = await getStoredRoutes('A');
+    this.setState({active: routes, loading: false});
+>>>>>>> Andris
   };
 
   refreshHandler = () => {
@@ -183,28 +202,10 @@ class Order extends Component {
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           })
         }>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 12,
-          }}>
-          <View key={item.key} style={styles.listContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text numberOfLines={1} style={styles.name}>
-                {item.description}
-              </Text>
-            </View>
-            <Text numberOfLines={1} style={styles.address}>
-              Hasta: {item.date_to}
-            </Text>
-          </View>
-        </View>
+        <ListMyRoutes>
+          <Name numberOfLines={1}>{item.description}</Name>
+          <Address numberOfLines={1}>Hasta: {item.date_to}</Address>
+        </ListMyRoutes>
       </Item>
     );
   };
@@ -213,18 +214,7 @@ class Order extends Component {
     this.props.navigation.openDrawer();
   };
 
-  listEmpty = () => {
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-        }}>
-        <Text>No hay resultados</Text>
-      </View>
-    );
-  };
+  listEmpty = () => <EmptyList />;
 
   // searchBarHandler = (data, text) => {
   //   this.setState({
@@ -234,6 +224,7 @@ class Order extends Component {
   // };
 
   render() {
+    console.log(this.state);
     const {modalVisible, active, loading, show} = this.state;
 
 <<<<<<< HEAD
@@ -255,6 +246,7 @@ class Order extends Component {
 <<<<<<< HEAD
           data={active}
           extraData={this.state}
+<<<<<<< HEAD
           keyExtractor={item => item.id} //
 =======
           // style={{overflow: 'hidden'}}
@@ -262,6 +254,9 @@ class Order extends Component {
           extraData={this.state}
           keyExtractor={item => item.id} //.toString()
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
+=======
+          keyExtractor={item => item.route_id.toString()} //
+>>>>>>> Andris
           renderItem={this.renderItem}
         />
       );
@@ -294,7 +289,7 @@ class Order extends Component {
               data={this.searchBarHandler}
               visible={this.searchHandler}
               dataValue={this.state.dataAll}
-              style={styles.searchbar}
+              style={styles.searchbar}b
               placeholder={'Busque su orden'}
               onPressCancel={() => {
                 this.showHideSearchBar();
@@ -303,52 +298,11 @@ class Order extends Component {
           ) : null} */}
           {/* SearchBar */}
 
-          <Content
-            style={{
-              flexDirection: 'column',
-              flex: 1,
-              backgroundColor: theme.colors.lightGray,
-              padding: 12,
-            }}>
-            {content}
-          </Content>
+          <Content style={styles.content}>{content}</Content>
         </Container>
       </Root>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  searchbar: {
-    // position: 'absolute',
-    // left: 0,
-    // top: 0,
-    // height: 500,
-  },
-
-  list: {
-    margin: 5,
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    paddingLeft: 12,
-    elevation: 1,
-  },
-
-  listContainer: {
-    flex: 1,
-    paddingVertical: 12,
-  },
-
-  name: {
-    flexBasis: 150,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-    overflow: 'scroll',
-    flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-});
 
 export default Order;

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {ButtonGroup} from 'react-native-elements';
+<<<<<<< HEAD
 import styled from 'styled-components/native';
 import CustomPicker from '../../components/CustomPicker';
 <<<<<<< HEAD
@@ -20,6 +21,23 @@ import {
   TouchableHighlight,
 } from 'react-native';
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
+=======
+import {CustomPicker, BtnIcon} from '../../components';
+
+import {
+  styles,
+  Client,
+  ClientData,
+  ButtonOutlined,
+  TextButton,
+  CurrentDate,
+  DetailContent,
+} from './styles';
+
+import moment from 'moment';
+import _ from 'lodash';
+import {View, Alert, Animated, ScrollView} from 'react-native';
+>>>>>>> Andris
 import {
   Container,
   Left,
@@ -46,8 +64,13 @@ import {
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import {DetailsTab} from './Tabs';
+<<<<<<< HEAD
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 <<<<<<< HEAD
+=======
+import {backDialog} from '../../utils';
+
+>>>>>>> Andris
 import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 import {
   getStoredClients,
@@ -113,7 +136,6 @@ export default class Order extends Component {
       placeholderEmployee: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'), //
       //
       operation: 'TITLE_EDIT_ORDER',
-      isNewRecord: isNewRecord,
       order_id: order_id,
       //
       editable: editable,
@@ -124,19 +146,19 @@ export default class Order extends Component {
     if (isNewRecord === false) {
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
-          let orderData = o.arrResponse[0];
-          console.log('arrRESPONSE', o.arrResponse[0]);
+          const orderData = o.arrResponse[0];
+          console.log('arrRESPONSE', orderData);
           this.setState({
-            placeholder: orderData.client_name,
             ...orderData,
+            placeholder: orderData.client_name,
             placeholderEmployee: orderData.employee_name || '',
             client_address: orderData.address,
             client_city: orderData.city,
             client_state: orderData.state,
             client_phone: orderData.phone_number,
-            loading: false,
             picking: orderData.order_details,
             shopping: orderData.order_purchases_details,
+            loading: false,
           });
         });
       });
@@ -322,9 +344,13 @@ export default class Order extends Component {
 
   goBack = () => {
     const {picking, shopping, client} = this.state;
-    if (!client && !picking.length && !shopping.length) {
-      this.props.navigation.goBack();
+    const isNewRecord = this.props.navigation.state.params.isNewRecord;
+    const {goBack} = this.props.navigation;
+
+    if (isNewRecord === false) {
+      goBack();
     } else {
+<<<<<<< HEAD
       Alert.alert(
         'Alerta',
         'Al salir perderá la nueva orden',
@@ -350,10 +376,17 @@ export default class Order extends Component {
         <DetailsTab tab_data={shopping} navigation={this.props.navigation} />
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       );
+=======
+      if (!client && !picking.length && !shopping.length) {
+        goBack();
+      } else {
+        backDialog(goBack);
+      }
+>>>>>>> Andris
     }
   };
 
-  execOperation = () => {
+  execOperation = async () => {
     let hasPurchases = 'F';
 <<<<<<< HEAD
     const {client, selected_employee, picking, shopping, date} = this.state;
@@ -383,11 +416,15 @@ export default class Order extends Component {
 =======
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     };
-    console.log(order_data);
+    // console.log('Order Data ==>', order_data);
     this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log('DataOperation ==>', res);
+=======
+      // console.log('DataOperation ==>', res);
+>>>>>>> Andris
       if (res.valid) {
         if (hasPurchases === 'T') {
 =======
@@ -432,6 +469,7 @@ export default class Order extends Component {
                   );
                 } else {
                   this.setState({loading: false});
+<<<<<<< HEAD
                   Alert.alert('Not connected');
 =======
               connectBluetooth(global.printer_name, global.printer_address).then(c => {
@@ -466,14 +504,16 @@ export default class Order extends Component {
                   this.setState({loading: false});
                   alert('Not connected');
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
+=======
+                  alert('Not connected');
+>>>>>>> Andris
                 }
               });
             });
           }
 <<<<<<< HEAD
         }
-        // else {}
-        Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
         setTimeout(() => {
           this.props.navigation.goBack();
         }, 1000);
@@ -607,6 +647,7 @@ export default class Order extends Component {
   updateListPicking = list => {
     this.setState({
       picking: list,
+<<<<<<< HEAD
 =======
       selected_item: item,
     });
@@ -618,6 +659,8 @@ export default class Order extends Component {
       clear_data: list,
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       reverted: false,
+=======
+>>>>>>> Andris
     });
   };
 
@@ -625,7 +668,6 @@ export default class Order extends Component {
   updateListShopping = list => {
     this.setState({
       shopping: list,
-      reverted: false,
     });
   };
 
@@ -668,7 +710,6 @@ export default class Order extends Component {
       client_phone,
 <<<<<<< HEAD
       loading,
-      selected_employee,
       loadingMessage,
     } = this.state;
 
@@ -686,9 +727,7 @@ export default class Order extends Component {
     if (isEditable) {
       save = (
         <Right>
-          <Button transparent onPress={this.execOperation} color="white">
-            <Icon name="checkmark" />
-          </Button>
+          <BtnIcon iconName={'checkmark'} onPress={this.execOperation} />
         </Right>
       );
       moreDetails = (
@@ -739,9 +778,7 @@ export default class Order extends Component {
               animation={'slide'}
             />
             <Left>
-              <Button transparent onPress={this.goBack}>
-                <Icon name="arrow-back" />
-              </Button>
+              <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
             </Left>
             <Body>
               <Title>{global.translate(params.operation)}</Title>
@@ -758,6 +795,7 @@ export default class Order extends Component {
           </Header>
           {/* Content */}
           <DetailContent>
+<<<<<<< HEAD
             <View
               style={{
                 flexDirection: 'column',
@@ -771,52 +809,60 @@ export default class Order extends Component {
                   <DateAssigned
                     label={global.translate('TITLE_DATE')}
                     details={`: ${this.state.date}`}
+=======
+            <ScrollView>
+              <View>
+                {/* Date Assigned */}
+                <DateAssigned
+                  label={global.translate('TITLE_DATE')}
+                  details={`: ${this.state.date}`}
+                />
+                {/*ClientForm*/}
+                <Form style={styles.container}>
+                  <CustomPicker
+                    label={'TITLE_CLIENT'}
+                    items={clients}
+                    placeholder={placeholder}
+                    onSelected={this.selectedClient}
+                    disabled={!editable}
+                    children={clientInfo}
+>>>>>>> Andris
                   />
-                  {/*ClientForm*/}
-                  <Form style={styles.container}>
-                    <CustomPicker
-                      label={global.translate('TITLE_CLIENT')}
-                      items={clients}
-                      placeholder={placeholder}
-                      onSelected={this.selectedClient}
-                      disabled={!editable}
-                      children={clientInfo}
-                    />
-                    <CustomPicker
-                      label={global.translate('TITLE_COLLECTOR')}
-                      items={employees}
-                      placeholder={placeholderEmployee}
-                      onSelected={this.selectedEmployee}
-                      disabled={!editable}
-                    />
-                  </Form>
-                </View>
+                  <CustomPicker
+                    label={'TITLE_COLLECTOR'}
+                    items={employees}
+                    placeholder={placeholderEmployee}
+                    onSelected={this.selectedEmployee}
+                    disabled={!editable}
+                  />
+                </Form>
+              </View>
 
-                {/* Details */}
-                <View style={{flex: 1}}>
-                  <View style={styles.addPoint}>
-                    <View style={{paddingBottom: 8}}>
-                      <Text style={styles.detailText}>
-                        {global.translate('TITLE_DETAILS')}
-                      </Text>
-                    </View>
-                    <View>
-                      {/* Tabs */}
-                      <ButtonGroup
-                        onPress={this.updateIndex}
-                        selectedIndex={this.state.selectedIndex}
-                        buttons={detailTabs}
-                        containerStyle={{height: 50}}
-                      />
-                      <ScrollView>
-                        {this.renderDetailTabs(selectedIndex)}
-                        {detail}
-                      </ScrollView>
-                    </View>
-                    {moreDetails}
-                    {/* </ScrollView> */}
+              {/* Details */}
+              <View style={{flex: 1}}>
+                <View style={styles.addPoint}>
+                  <View style={{paddingBottom: 8}}>
+                    <Text style={styles.detailText}>
+                      {global.translate('TITLE_DETAILS')}
+                    </Text>
                   </View>
+                  <View>
+                    {/* Tabs */}
+                    <ButtonGroup
+                      onPress={this.updateIndex}
+                      selectedIndex={this.state.selectedIndex}
+                      buttons={detailTabs}
+                      containerStyle={{height: 50}}
+                    />
+                    <ScrollView>
+                      {this.renderDetailTabs(selectedIndex)}
+                      {detail}
+                    </ScrollView>
+                  </View>
+                  {moreDetails}
+                  {/* </ScrollView> */}
                 </View>
+<<<<<<< HEAD
 =======
                   {/* CurrentDate */}
                   <CurrentDate>
@@ -887,6 +933,10 @@ export default class Order extends Component {
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
               </ScrollView>
             </View>
+=======
+              </View>
+            </ScrollView>
+>>>>>>> Andris
           </DetailContent>
         </Container>
       </Root>
@@ -903,6 +953,7 @@ export const DateAssigned = ({label, details}) => {
     </CurrentDate>
   );
 };
+<<<<<<< HEAD
 
 const styles = StyleSheet.create({
   input: {
@@ -1030,3 +1081,5 @@ const DetailContent = styled.View`
   flex: 1;
   background-color: ${theme.colors.lightGray};
 `;
+=======
+>>>>>>> Andris

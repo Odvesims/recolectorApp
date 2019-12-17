@@ -286,6 +286,7 @@ const styles = StyleSheet.create({
 
   listContainer: {
     flex: 1,
+    // paddingVertical: 12,
   },
 
   content: {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import {AddButton, SearchBar, FetchingData} from '../../components';
+import {SearchBar, FetchingData, EmptyList, BtnIcon} from '../../components';
 import Toast from 'react-native-easy-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {} from 'react-native-vector-icons';
@@ -12,6 +12,7 @@ import {
   ScrollView,
   Platform,
   FlatList,
+  Alert,
 } from 'react-native';
 
 import {
@@ -24,18 +25,13 @@ import {
   Body,
   Left,
   Item,
-  // Input,
+  Fab,
   Right,
   Title,
   ActionSheet,
 } from 'native-base';
 
-import {
-  getUserConfig,
-  saveClients,
-  getStoredClients,
-  editStoredClient,
-} from '../../helpers/sql_helper';
+import {saveClients, getStoredClients} from '../../helpers/sql_helper';
 import {getData} from '../../helpers/apiconnection_helper';
 
 export default class Clients extends Component {
@@ -122,12 +118,10 @@ export default class Clients extends Component {
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
     });
-    setTimeout(() => {
-      if (loading) {
-        this.setState({loading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
-      }
-    }, 15000);
+    if (loading) {
+      this.setState({loading: false, request_timeout: true});
+      Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+    }
     getData('GET_CLIENTS').then(result => {
       if (!request_timeout) {
         this.setState({loading: false, request_timeout: false});
@@ -136,21 +130,12 @@ export default class Clients extends Component {
             this.storedClients();
           });
         } else {
-          alert(global.translate(result.response));
+          Alert.alert(global.translate(result.response));
         }
       } else {
         this.setState({request_timeout: false});
       }
     });
-  };
-
-  showHideSearchBar = () => {
-    // this.setState({show: true});
-    if (this.state.show === true) {
-      this.setState({show: false});
-    } else {
-      this.setState({show: true});
-    }
   };
 
   goBack = () => {
@@ -161,16 +146,25 @@ export default class Clients extends Component {
     this.props.navigation.openDrawer();
   };
 
-  listEmpty = () => {
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Text>No hay items para mostrar</Text>
-      </View>
-    );
+  listEmpty = () => <EmptyList />;
+
+  handlerFab = () => {
+    this.props.navigation.navigate('Client', {
+      operation: 'TITLE_NEW_CLIENT',
+      loading_message: 'MESSAGE_REGISTERING_CLIENT',
+      onGoBack: () => this.refresh(true),
+      isNewRecord: true,
+      state: global.translate('PLACEHOLDER_TYPE_STATE'),
+    });
+  };
+
+  showHideSearchBar = () => {
+    // this.state.show === true
+    if (this.state.show) {
+      this.setState({show: false});
+    } else {
+      this.setState({show: true});
+    }
   };
 
   searchBarHandler = (data, text) => {
@@ -185,9 +179,13 @@ export default class Clients extends Component {
     return (
       <Item style={styles.list}>
         <Text style={styles.code}>{item.client_code}</Text>
-        <View style={{marginLeft: 8}}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.address}>{item.address}</Text>
+        <View style={{marginLeft: 8, flex: 1}}>
+          <Text style={styles.name} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.address} numberOfLines={1}>
+            {item.address}
+          </Text>
         </View>
         <Button
           transparent
@@ -213,7 +211,7 @@ export default class Clients extends Component {
                       country: item.country,
                       phone: item.phone_number,
                       loading_message: 'MESSAGE_UPDATING_CLIENT',
-                      new_record: false,
+                      isNewRecord: false,
                       onGoBack: () => this.refresh(false),
                     });
                     break;
@@ -231,30 +229,36 @@ export default class Clients extends Component {
   };
 
   render() {
-    const {modalVisible, data, loading, show} = this.state;
+    const {
+      modalVisible,
+      data,
+      loading,
+      show,
+      loadingMessage,
+      dataAll,
+    } = this.state;
 
     return (
       <Root>
         <Container style={styles.androidHeader}>
           {/* Header */}
           <Spinner
-            visible={this.state.loading}
-            textContent={this.state.loadingMessage}
+            visible={loading}
+            textContent={loadingMessage}
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}
           />
           <Header>
             <Left>
-              <Button transparent onPress={this.openDrawer}>
-                <Icon name="menu" />
-              </Button>
+              <BtnIcon iconName="menu" onPress={this.openDrawer} />
             </Left>
             <Body>
               <Title>{global.translate('TITLE_CLIENTS')}</Title>
             </Body>
             <Right>
               <FetchingData syncData={this.refreshHandler} fetching={loading} />
+<<<<<<< HEAD
               {/*<Button transparent>
                 <Icon name="funnel" />
               </Button>
@@ -262,16 +266,19 @@ export default class Clients extends Component {
                 <Icon name="search" />
               </Button>
               */}
+=======
+              <BtnIcon iconName="funnel" />
+              <BtnIcon iconName="search" onPress={this.showHideSearchBar} />
+>>>>>>> Andris
             </Right>
           </Header>
 
           {/* SearchBar */}
           {show ? (
             <SearchBar
-              arrayData={this.state.arrayData}
               data={this.searchBarHandler}
               visible={this.searchHandler}
-              dataValue={this.state.dataAll}
+              dataValue={dataAll}
               style={styles.searchbar}
               placeholder={'Busque su orden'}
               onPressCancel={this.showHideSearchBar}
@@ -292,6 +299,7 @@ export default class Clients extends Component {
 
           {/* Content */}
           <Content style={styles.content}>
+<<<<<<< HEAD
             <ScrollView>
               <FlatList
                 style={{overflow: 'hidden'}}
@@ -368,6 +376,24 @@ export default class Clients extends Component {
               })
             }
           />
+=======
+            <FlatList
+              style={{overflow: 'hidden'}}
+              data={data}
+              ListEmptyComponent={this.listEmpty}
+              renderItem={this.renderItem}
+              keyExtractor={item => item.client_code}
+            />
+          </Content>
+
+          {/* Content */}
+          <Fab
+            style={{backgroundColor: theme.colors.primary, right: 10}}
+            position="bottomRight"
+            onPress={this.handlerFab}>
+            <Icon name="add" />
+          </Fab>
+>>>>>>> Andris
         </Container>
       </Root>
     );
@@ -416,6 +442,7 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
     overflow: 'hidden',
   },
+<<<<<<< HEAD
 
   fab: {
     position: 'absolute',
@@ -431,4 +458,6 @@ const styles = StyleSheet.create({
   },
 
   more: {},
+=======
+>>>>>>> Andris
 });

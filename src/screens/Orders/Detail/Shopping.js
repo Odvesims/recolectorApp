@@ -1,7 +1,13 @@
 import React, {PureComponent} from 'react';
+<<<<<<< HEAD
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
 <<<<<<< HEAD
+=======
+
+import {styles, BContent, Total} from '../styles';
+
+>>>>>>> Andris
 import {CustomPicker, NumberInput} from '../../../components';
 import {ButtonGroup} from 'react-native-elements';
 =======
@@ -19,7 +25,7 @@ import {
   getStoredSubcategories,
   getStoredArticles,
 } from '../../../helpers/sql_helper';
-import {View, StyleSheet, TextInput} from 'react-native';
+import {View, TextInput} from 'react-native';
 import {
   Content,
   Container,
@@ -97,23 +103,24 @@ export default class Shopping extends PureComponent {
     });
   }
 
-  getArticlesData() {
-    getStoredCategories().then(categories => {
-      getStoredSubcategories().then(subcategories => {
-        getStoredArticles().then(articles => {
-          this.setArticleHandler(articles, 'A').then(res => {
-            this.setState({
-              categories: categories,
-              subcategories: subcategories,
-              articles: articles,
-              picker_data: res,
-            });
-          });
-        });
-      });
+  getArticlesData = async () => {
+    const categories = await getStoredCategories();
+    const subcategories = await getStoredSubcategories();
+    const articles = await getStoredArticles();
+    const picker_data = await this.setArticleHandler(articles, 'A');
+    this.setState({
+      categories,
+      subcategories,
+      articles,
+      picker_data,
     });
+  };
+
+  componentDidMount() {
+    this.getArticlesData();
   }
 
+<<<<<<< HEAD
   priceHandler(value) {
 <<<<<<< HEAD
     const {quantity} = this.state;
@@ -122,20 +129,29 @@ export default class Shopping extends PureComponent {
 
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     let total = parseFloat(value * quantity);
+=======
+  priceHandler = price => {
+    const {quantity} = this.state;
+    let total = parseFloat(price * quantity);
+>>>>>>> Andris
     this.setState(prevState => ({
-      price: value,
+      price: price,
       total: total,
       itemSelected: {
         ...prevState.itemSelected,
-        price: value,
+        price: price,
         total: total,
         quantity: quantity,
       },
     }));
-  }
+  };
 
+<<<<<<< HEAD
   changeQuantity(value) {
 <<<<<<< HEAD
+=======
+  changeQuantity = value => {
+>>>>>>> Andris
     const {price, quantity} = this.state;
 =======
     const {theItem, article_price, price, total, quantity} = this.state;
@@ -148,60 +164,45 @@ export default class Shopping extends PureComponent {
       itemSelected: {
         ...prevState.itemSelected,
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
+=======
+>>>>>>> Andris
         price: price,
         total: price * quantity,
         quantity: value,
       },
     }));
-  }
+  };
 
-  updateIndex = selectedIndex => {
-    const {articles, categories, subcategories, quantity} = this.state;
+  groupHandler = async (group, placeholder, i) => {
+    let type = placeholder.substr(0, 1);
+    let res = await this.setArticleHandler(group, type);
+    this.setState({
+      selectedIndex: i,
+      picker_data: res,
+      theItem: {},
+      placeholder: global.translate(`PLACEHOLDER_SELECT_${placeholder}`),
+      article_price: '',
+      type: type,
+      total: 0,
+      quantity: 1,
+    });
+  };
+
+  updateIndex = async selectedIndex => {
+    const {articles, categories, subcategories} = this.state;
     switch (selectedIndex) {
       case 0:
-        this.setArticleHandler(categories, 'C').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
-            article_price: '',
-            type: 'C',
-            total: 0,
-            quantity: quantity,
-          });
-        });
+        this.groupHandler(categories, 'CATEGORY', selectedIndex);
         break;
       case 1:
-        this.setArticleHandler(subcategories, 'S').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
-            article_price: '',
-            type: 'S',
-            total: 0,
-            quantity: quantity,
-          });
-        });
+        this.groupHandler(subcategories, 'SUBCATEGORY', selectedIndex);
         break;
       case 2:
-        this.setArticleHandler(articles, 'A').then(res => {
-          this.setState({
-            selectedIndex,
-            picker_data: res,
-            theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
-            article_price: '',
-            type: 'A',
-            total: 0,
-            quantity: quantity,
-          });
-        });
+        this.groupHandler(articles, 'ARTICLE', selectedIndex);
         break;
     }
   };
@@ -251,6 +252,8 @@ export default class Shopping extends PureComponent {
   };
 
   render() {
+    console.log(this.state);
+
     const buttons = [
       global.translate('TITLE_CATEGORY'),
       global.translate('TITLE_SUBCATEGORY'),
@@ -344,7 +347,7 @@ export default class Shopping extends PureComponent {
                 />
               </View>
               <CustomPicker
-                label={global.translate('TITLE_DESCRIPTION')}
+                label={'TITLE_DESCRIPTION'}
                 placeholder={placeholder}
                 items={picker_data}
                 onSelected={this.selectedItem}
@@ -372,7 +375,6 @@ export default class Shopping extends PureComponent {
 
               {/* Price */}
               <View style={styles.paddingBottom}>
-                {/* {global.translate('TITLE_QUANTITY')} */}
                 <Text>Precio</Text>
                 <TextInput
 <<<<<<< HEAD
@@ -385,21 +387,17 @@ export default class Shopping extends PureComponent {
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
                   style={styles.inputNumber}
                   keyboardType="number-pad"
-                  onChangeText={price => {
-                    this.priceHandler(price);
-                  }}
+                  onChangeText={this.priceHandler}
                 />
               </View>
 <<<<<<< HEAD
               {/* Quantity */}
               <NumberInput
                 rounded
-                label={global.translate('TITLE_QUANTITY')}
+                label={'TITLE_QUANTITY'}
                 iconStyle={{color: 'green'}}
-                value={quantity}
-                onChange={quantity => {
-                  this.changeQuantity(quantity);
-                }}
+                value={Number(quantity)}
+                onChange={this.changeQuantity}
                 minValue={1}
                 editable={isEditable}
               />
@@ -449,6 +447,7 @@ export default class Shopping extends PureComponent {
     );
   }
 }
+<<<<<<< HEAD
 
 const styles = StyleSheet.create({
 <<<<<<< HEAD
@@ -533,3 +532,5 @@ const Total = styled.View`
 `;
 =======
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
+=======
+>>>>>>> Andris

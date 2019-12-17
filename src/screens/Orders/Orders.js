@@ -6,7 +6,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import {} from 'react-native-vector-icons';
 
-import {StyleSheet, Platform, StatusBar} from 'react-native';
+import {Alert} from 'react-native';
 
 // import ContentCustom from '../components';
 
@@ -15,7 +15,6 @@ import {
   Icon,
   Button,
   Container,
-  Content,
   Header,
   Body,
   Left,
@@ -27,7 +26,6 @@ import {
 } from 'native-base';
 
 import {
-  getOrders,
   getAssignedOrders,
   getNotAssignedOrders,
   saveOrders,
@@ -41,8 +39,7 @@ export default class Orders extends Component {
     if (parseInt(day) < 10) {
       day = '0' + day;
     }
-    let month = new Date().getMonth() + 1;
-    let year = new Date().getFullYear();
+
     this.state = {
       data: [],
       show: true,
@@ -60,10 +57,6 @@ export default class Orders extends Component {
     this.availableTab = React.createRef();
     this.notAvailableTab = React.createRef();
   }
-
-  static navigationOptions = {
-    header: null,
-  };
 
   showHideSearchBar = () => {
     this.setState(previousState => ({show: !previousState.show}));
@@ -85,6 +78,7 @@ export default class Orders extends Component {
   }
 
   refresh(value) {
+    // console.log('value ==>', value);
     if (value) {
       this.refreshHandler();
     } else {
@@ -104,6 +98,7 @@ export default class Orders extends Component {
     this.storedOrders();
   };
 
+<<<<<<< HEAD
   storedOrders = () => {
     getNotAssignedOrders().then(not_assigned => {
       getAssignedOrders().then(assigned => {
@@ -119,6 +114,19 @@ export default class Orders extends Component {
           assigned: assigned,
         });
       });
+=======
+  storedOrders = async () => {
+    const notAssigned = await getNotAssignedOrders();
+    const assigned = await getAssignedOrders();
+
+    // console.log('not assigned ==>', notAssigned);
+    // console.log('assigned ==>', assigned);
+
+    this.setState({
+      isLoading: false,
+      not_assigned: notAssigned,
+      assigned: assigned,
+>>>>>>> Andris
     });
   };
 
@@ -131,21 +139,21 @@ export default class Orders extends Component {
     setTimeout(() => {
       if (this.state.isLoading) {
         this.setState({isLoading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 15000);
+
     getData('GET_ORDERS').then(result => {
-      //
-      // console.log('RESULTS ==>', result);
-      ///
+      // console.log('GET ORDERS ==>', result);
+
       if (!this.state.request_timeout) {
-        this.setState({isLoading: false, request_timeout: false});
+        this.setState({request_timeout: false});
         if (result.valid) {
           saveOrders(result.arrResponse).then(res => {
             this.storedOrders();
           });
         } else {
-          alert(global.translate(result.response));
+          Alert.alert(global.translate(result.response));
         }
       } else {
         this.setState({request_timeout: false});
@@ -159,18 +167,24 @@ export default class Orders extends Component {
 
   render() {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    // console.log('Orders ==>', this.state);
+>>>>>>> Andris
     const {
-      data,
       date,
       isLoading,
       not_assigned,
       assigned,
       loadingMessage,
     } = this.state;
+<<<<<<< HEAD
 =======
     const {data, loading, not_assigned, assigned} = this.state;
 >>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+=======
+>>>>>>> Andris
 
     return (
       <Root>
@@ -255,62 +269,3 @@ export default class Orders extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  androidHeader: {
-    ...Platform.select({
-      android: {
-        paddingTop: StatusBar.currentHeight,
-      },
-    }),
-  },
-  list: {
-    margin: 5,
-    backgroundColor: 'white',
-    height: 80,
-    paddingLeft: 12,
-    elevation: 1,
-  },
-  content: {
-    backgroundColor: theme.colors.lightGray,
-    paddingHorizontal: 8,
-    paddingTop: 12,
-  },
-  code: {
-    width: 32,
-    textAlign: 'center',
-    fontSize: 16,
-    color: 'gray',
-    fontWeight: 'bold',
-  },
-
-  name: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-
-  address: {
-    fontSize: 12,
-    color: 'gray',
-    overflow: 'hidden',
-  },
-
-  fab: {
-    position: 'absolute',
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    right: 20,
-    bottom: 20,
-    backgroundColor: theme.colors.primary,
-    borderRadius: 30,
-    elevation: 8,
-  },
-
-  more: {
-    position: 'absolute',
-    right: 0,
-  },
-});

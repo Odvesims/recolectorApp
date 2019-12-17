@@ -29,7 +29,7 @@ const InputLogin = React.memo(
     return (
       <View>
         <LabelForm style={labelStyle} id={id}>
-          {label}
+          {global.translate(label) + ':'}
         </LabelForm>
         <InputForm>
           <InputIcon name={iconName} />

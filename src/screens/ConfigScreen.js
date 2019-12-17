@@ -6,8 +6,8 @@ import {
   StyleSheet,
   Picker,
   StatusBar,
-  Integer,
   Text,
+  Platform,
   TouchableOpacity,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -24,8 +24,7 @@ import {
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import NormalText from '../components/NormalText';
-import CustomButton from '../components/CustomButton';
-import CustomTextInput from '../components/TextInput';
+import {CustomButton, CustomInput} from '../components';
 
 import {getUserConfig, saveUserConfig} from '../helpers/sql_helper';
 
@@ -37,14 +36,18 @@ export default class ConfigScreen extends Component {
     this.state = {
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
-      hostName: '',
-      portNumber: '',
-      usesPrinter: '',
-      printerName: '',
-      printerAddress: '',
-      configDone: false,
     };
-    getUserConfig().then(res => {
+  }
+
+  componentDidMount() {
+    this.configHandler();
+  }
+
+  reload = null;
+
+  configHandler = () => {
+    this.reload = getUserConfig().then(res => {
+      console.log('getuserconfig', res);
       this.setState({
         loading: false,
         hostName: res.host,
@@ -54,30 +57,36 @@ export default class ConfigScreen extends Component {
         printerAddress: res.printer_address,
       });
     });
+  };
+
+  componentWillUnmount() {
+    this.reload = null;
+    console.log('componentWillUnmount', this.reload);
   }
 
-  componentDidMount() {}
-
   saveUser = () => {
+    console.log('saveUser');
+    const {hostName, portNumber, usesPrinter} = this.state;
+    const {printer_name, printer_address} = this.props.navigation.state.params;
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_SAVING_DATA'),
     });
     saveUserConfig(
       1,
-      this.state.hostName,
-      this.state.portNumber,
-      this.state.usesPrinter,
-      this.props.navigation.state.params.printer_name,
-      this.props.navigation.state.params.printer_address,
+      hostName,
+      portNumber,
+      usesPrinter,
+      printer_name,
+      printer_address,
     ).then(res => {
       this.setState({
         loading: false,
         hostName: res.host,
         portNumber: res.port.toString(),
         usesPrinter: res.printer,
-        printerName: res.printer_name,
-        printerAddress: res.printer_address,
+        // printerName: res.printer_name,
+        // printerAddress: res.printer_address,
       });
       if (res) {
         global.printer_address = res.printer_address;
@@ -96,11 +105,8 @@ export default class ConfigScreen extends Component {
     this.props.navigation.navigate(global.config_from);
   };
 
-  static navigationOptions = {
-    header: null,
-  };
-
   IsPrinting(use) {
+    console.log('IsPrinting');
     const uses = use;
     if (uses === 'yes') {
       return (
@@ -116,14 +122,44 @@ export default class ConfigScreen extends Component {
   }
 
   configBTPrinter = () => {
+    console.log('configBTPrinter');
     this.props.navigation.navigate('BluetoothPrinter', {
       printer_name: this.state.printerName,
       printer_address: this.state.printerAddress,
     });
   };
+
+  pickerHandler = usesPrinter => {
+    console.log('pickerHandler');
+    this.setState({usesPrinter});
+  };
+
+  hostHandler = hostName => {
+    console.log('hostHandler');
+    this.setState({
+      hostName,
+    });
+  };
+
+  portHandler = portNumber => {
+    console.log('portHandler');
+    this.setState({
+      portNumber: portNumber,
+    });
+  };
+
   render() {
+    console.log('Config state', this.state);
+    const {
+      usesPrinter,
+      loading,
+      loadingMessage,
+      portNumber,
+      hostName,
+    } = this.state;
     let configPrinter;
-    if (this.state.usesPrinter === 'yes') {
+
+    if (usesPrinter === 'yes') {
       configPrinter = (
         <View>
           <TouchableOpacity
@@ -134,8 +170,9 @@ export default class ConfigScreen extends Component {
         </View>
       );
     } else {
-      configPrinter = <View />;
+      configPrinter = null;
     }
+
     return (
       <Container style={global.fromLogin ? headerStyles.androidHeader : ''}>
         <Header>
@@ -148,53 +185,37 @@ export default class ConfigScreen extends Component {
             <Title>{global.translate('TITLE_CONFIGURATION')}</Title>
           </Body>
         </Header>
-        <Content>
+        <Content style={{paddingHorizontal: 12, paddingVertical: 24}}>
           <KeyboardAwareScrollView
             resetScrollToCoords={{x: 0, y: 0}}
             scrollEnabled>
-            <Spinner
-              visible={this.state.loading}
-              textContent={this.state.loadingMessage}
+            <Spinner visible={loading} textContent={loadingMessage} />
+
+            <CustomInput
+              label={'TITLE_DOMAIN'}
+              value={hostName}
+              onChangeText={this.hostHandler}
             />
-            <NormalText
-              text={global.translate('TITLE_DOMAIN') + ':'}
-              style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
-            />
-            <CustomTextInput
-              value={this.state.hostName}
-              onChangeText={hostName => {
-                this.setState({hostName: hostName});
-              }}
-            />
-            <NormalText
-              text={global.translate('TITLE_PORT') + ':'}
-              style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
-            />
-            <CustomTextInput
+
+            <CustomInput
+              label={'TITLE_PORT'}
               keyboardType={'numeric'}
-              value={this.state.portNumber}
-              onChangeText={portNumber => {
-                this.setState({portNumber: portNumber});
-              }}
+              value={portNumber}
+              onChangeText={this.portHandler}
             />
             <NormalText
               text={global.translate('TITLE_USES_PRINTER') + ':'}
               style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
             />
             <Picker
-              selectedValue={this.state.usesPrinter}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({usesPrinter: itemValue})
-              }>
+              selectedValue={usesPrinter}
+              onValueChange={this.pickerHandler}>
               <Picker.Item label={global.translate('TITLE_YES')} value="yes" />
               <Picker.Item label={global.translate('TITLE_NO')} value="no" />
             </Picker>
             {configPrinter}
             <View>
-              <CustomButton
-                customClick={this.saveUser}
-                title={global.translate('TITLE_SAVE')}
-              />
+              <CustomButton customClick={this.saveUser} title={'TITLE_SAVE'} />
             </View>
           </KeyboardAwareScrollView>
         </Content>

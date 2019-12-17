@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import styled from 'styled-components/native';
-import {View, StyleSheet, FlatList, Modal, Alert, Animated} from 'react-native';
+import {View, StyleSheet, FlatList, Alert} from 'react-native';
 import {getData} from '../../helpers/apiconnection_helper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
@@ -22,10 +22,8 @@ import {
   Form,
   Root,
   Item,
-  ActionSheet,
-  Content,
 } from 'native-base';
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default class RouteDetail extends Component {
   constructor(props) {
@@ -35,6 +33,7 @@ export default class RouteDetail extends Component {
     this.state = {
       data: [],
       modalVisible: false,
+      request_timeout: false,
       show: false,
       date_to: params.date_to,
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
@@ -50,6 +49,7 @@ export default class RouteDetail extends Component {
   }
 
   componentDidMount() {
+<<<<<<< HEAD
     const {params} = this.props.navigation.state;
     this.setState({loading: true, loadingMessage: 'ALERT_GETTING_ROUTE'});
     getData(
@@ -69,6 +69,9 @@ export default class RouteDetail extends Component {
         });
       });
     });
+=======
+    this.getDataHandler();
+>>>>>>> Andris
     // this.focusListener.remove();
 
     // this.focusListener = this.props.navigation.addListener('didFocus', () => {
@@ -86,59 +89,100 @@ export default class RouteDetail extends Component {
     // this.focusListener.remove();
   }
 
+  getDataHandler = async () => {
+    const {
+      params: {route_id, status},
+    } = this.props.navigation.state;
+
+    setTimeout(() => {
+      if (this.state.loading) {
+        this.setState({loading: false, request_timeout: true});
+        Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        clearTimeout();
+      }
+    }, 10000);
+
+    if (!this.state.request_timeout) {
+      this.setState({loading: true, loadingMessage: 'ALERT_GETTING_ROUTE'});
+      const data = await getData(
+        'GET_ROUTE',
+        `&route_id=${route_id}&status=${status}`,
+      );
+
+      // console.log('data ==>', data);
+      await updateRouteOrders(data.arrResponse[0]);
+
+      // const routeDetails = await getRouteDetails(route_id);
+      let routeDetails = await getRouteDetails(route_id);
+
+      const pending = routeDetails.filter(detail => detail.status !== 'C');
+      // console.log('route_details ==>', routeDetails);
+      // console.log('andris ==>', andris);
+
+      this.setState({
+        data: routeDetails,
+        loading: false,
+      });
+    } else {
+      this.setState({loading: false});
+    }
+  };
+
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-  renderItem = ({item}) => (
-    <Item
-      style={styles.list}
-      onPress={() =>
-        this.props.navigation.navigate('Registry', {
-          client: item.client,
-          name: item.name,
-          address: item.address,
-          order_id: item.order_id,
-          route_id: item.route_id,
-        })
-      }>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-        }}>
-        <View style={styles.listContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text numberOfLines={1} style={styles.name}>
-              {item.client} - {item.name}
+  renderItem = ({item}) => {
+    // console.log('item', item);
+    return (
+      <Item
+        style={styles.list}
+        onPress={() =>
+          this.props.navigation.navigate('Registry', {
+            client: item.client,
+            name: item.name,
+            address: item.address,
+            order_id: item.order_id,
+            route_id: item.route_id,
+          })
+        }>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 12,
+          }}>
+          <View style={styles.listContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text numberOfLines={1} style={styles.name}>
+                {item.client} - {item.name}
+              </Text>
+            </View>
+            <Text numberOfLines={1} style={styles.address}>
+              {item.address}
             </Text>
           </View>
-          <Text numberOfLines={1} style={styles.address}>
-            {item.address}
-          </Text>
         </View>
-      </View>
-    </Item>
-  );
+      </Item>
+    );
+  };
 
   render() {
-    const {data} = this.state;
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    console.log('RouteDetail STATE ==>', this.state);
+    const {data, loadingMessage, loading} = this.state;
     const {state, navigate} = this.props.navigation;
     const {params} = this.props.navigation.state;
-    console.log(data);
     return (
       <Root>
         <Container>
           <Spinner
-            visible={this.state.loading}
-            textContent={global.translate(this.state.loadingMessage)}
+            visible={loading}
+            textContent={global.translate(loadingMessage)}
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}
@@ -162,31 +206,16 @@ export default class RouteDetail extends Component {
           </Header>
 
           {/* Content */}
-          <View
-            style={{
-              flexDirection: 'column',
-              flex: 1,
-              backgroundColor: theme.colors.lightGray,
-            }}>
+          <RContent>
             <View style={styles.RouteDetails}>
-              <View style={styles.currentDate}>
-                <Text style={styles.currentDateText}>Ruta</Text>
-                <Text
-                  style={
-                    ({marginLeft: 4, backgroundColor: 'blue'},
-                    styles.currentDateText)
-                  }>
-                  {`: ${params.routeName}`}
-                </Text>
-              </View>
-              <View style={styles.currentDate}>
-                <Text style={styles.currentDateText}>
-                  {global.translate('TITLE_DATE')}
-                </Text>
-                <Text style={({marginLeft: 4}, styles.currentDateText)}>
-                  {`: ${this.state.date_to}`}
-                </Text>
-              </View>
+              <Head>
+                <Key>Ruta:</Key>
+                <Label> {`${params.routeName}`}</Label>
+              </Head>
+              <Head>
+                <Key>{global.translate('TITLE_DATE')}:</Key>
+                <Label> {this.state.date_to}</Label>
+              </Head>
             </View>
 
             <View style={{flex: 1}}>
@@ -195,18 +224,16 @@ export default class RouteDetail extends Component {
                   <Text style={styles.detailText}>Ordenes</Text>
                 </View>
                 <ScrollView>
-                  <View>
-                    <FlatList
-                      style={{overflow: 'hidden', marginBottom: 12}}
-                      data={data}
-                      keyExtractor={item => item.key}
-                      renderItem={this.renderItem}
-                    />
-                  </View>
+                  <FlatList
+                    style={{overflow: 'hidden', marginBottom: 12}}
+                    data={data}
+                    keyExtractor={item => item.key}
+                    renderItem={this.renderItem}
+                  />
                 </ScrollView>
               </View>
             </View>
-          </View>
+          </RContent>
         </Container>
       </Root>
     );
@@ -308,3 +335,27 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
   },
 });
+
+const Key = styled.Text`
+  flex-basis: 70px;
+  overflow: hidden;
+  flex-grow: 0;
+  color: ${theme.colors.black};
+  font-weight: bold;
+`;
+
+const Label = styled.Text`
+  flex: 1 1 0px;
+  text-align: left;
+  margin-left: 8;
+  color: ${theme.colors.gray};
+`;
+const Head = styled.View`
+  flex-direction: row;
+`;
+
+const RContent = styled.View`
+  flex: 1;
+  flex-direction: column;
+  background-color: ${theme.colors.lightGray};
+`;
