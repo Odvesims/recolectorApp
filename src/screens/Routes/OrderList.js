@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-import CheckBox from '@react-native-community/checkbox';
 
 import {
   Text,
@@ -11,6 +10,7 @@ import {
   StatusBar,
   FlatList,
   TouchableOpacity,
+  CheckBox,
   ActivityIndicator,
 } from 'react-native';
 
@@ -43,10 +43,12 @@ export default class OrderList extends Component {
   };
 
   componentDidMount() {
-    let {checkedItems} = this.props.navigation.state.params;
     this.fetchData().then(result => {
-      if (checkedItems !== undefined) {
-        this.checkItems(checkedItems, result).then(res => {
+      if (this.props.navigation.state.params.checkedItems !== undefined) {
+        this.checkItems(
+          this.props.navigation.state.params.checkedItems,
+          result,
+        ).then(res => {
           this.setState({
             data: res,
             isChecked: true,
@@ -54,15 +56,17 @@ export default class OrderList extends Component {
             selectedClass: styles.selected,
           });
         });
-        checkedItems = undefined;
+        this.props.navigation.state.params.checkedItems = undefined;
       }
     });
   }
 
-  checkItems(item, data) {
+  checkItems(dataList, data) {
     return new Promise((resolve, reject) => {
-      item.map(i => {
-        const index = this.state.data.findIndex(d => i.order_id === d.order_id);
+      dataList.map(i => {
+        const index = this.state.data.findIndex(
+          item => i.order_id === item.order_id,
+        );
         data[index] = i;
       });
       resolve(data);
@@ -81,10 +85,6 @@ export default class OrderList extends Component {
             item.selectedClass = styles.list;
             return item;
           });
-<<<<<<< HEAD
-=======
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           this.setState({
             loading: false,
             data: not_assigned,
@@ -97,24 +97,26 @@ export default class OrderList extends Component {
     });
   };
 
-  selectItem = item => {
+  selectItem = dataList => {
     const {data} = this.state;
-    item.isSelect = !item.isSelect;
-    item.isChecked = !item.isChecked;
-    item.selectedClass = item.isSelect ? styles.list : styles.list;
+    dataList.item.isSelect = !dataList.item.isSelect;
+    dataList.item.isChecked = !dataList.item.isChecked;
+    dataList.item.selectedClass = dataList.item.isSelect
+      ? styles.list
+      : styles.list;
 
-    const index = data.findIndex(d => d.id === item.id);
+    const index = this.state.data.findIndex(
+      item => dataList.item.id === item.id,
+    );
 
-    data[index] = item;
+    data[index] = dataList.item;
     this.setState({
-      dataSelected: data,
-      data: data,
+      dataSelected: this.state.data,
+      data: this.state.data,
       isChecked: true,
     });
   };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   // selectAll = dataList => {
   //   dataList.item.isSelect = !dataList.item.isSelect;
   //   dataList.item.isChecked = !dataList.item.isChecked;
@@ -133,26 +135,6 @@ export default class OrderList extends Component {
   //     isSelectedAll: true,
   //   });
   // };
-=======
-  selectAll = dataList => {
-    dataList.item.isSelect = !dataList.item.isSelect;
-    dataList.item.isChecked = !dataList.item.isChecked;
-    dataList.item.isSelectedAll = !dataList.item.isSelectedAll;
-    dataList.item.selectedClass = dataList.item.isSelect
-      ? styles.selected
-      : styles.list;
-
-    const index = this.state.data.findIndex(
-      item => dataList.item.id === item.id,
-    );
-    this.state.data[index] = dataList.item;
-    this.setState({
-      data: this.state.data,
-      isChecked: true,
-      isSelectedAll: true,
-    });
-  };
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
   renderItem = dataList => (
     <Item style={[styles.list, dataList.item.selectedClass]} onPress={() => {}}>
@@ -182,69 +164,25 @@ export default class OrderList extends Component {
             }}>
             <Text numberOfLines={1} style={styles.name}>
               {dataList.item.client} - {dataList.item.name}
-=======
-  renderItem = ({item}) => {
-    console.log('renderItem', item);
-
-    return (
-      <Item style={[styles.list, item.selectedClass]} onPress={() => {}}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 12,
-          }}>
-          <CheckBox
-            style={{marginRight: 8}}
-            onChange={() => {
-              this.selectItem(item);
-            }}
-            value={item.isChecked}
-            //   isChecked={isChecked[index]}
-          />
-          <View key={item.key} style={styles.listContainer}>
-            <Text style={styles.code}>
-              {global.translate('TITLE_CODE')}: {item.order_document}
->>>>>>> Andris
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text numberOfLines={1} style={styles.name}>
-                {item.client} - {item.name}
-              </Text>
-              <Text numberOfLines={1} style={styles.price}>
-                $ {item.order_total}
-              </Text>
-            </View>
-            <Text numberOfLines={1} style={styles.address}>
-              {item.address}
+            <Text numberOfLines={1} style={styles.price}>
+              $ {dataList.item.order_total}
             </Text>
           </View>
+          <Text numberOfLines={1} style={styles.address}>
+            {dataList.item.address}
+          </Text>
         </View>
-      </Item>
-    );
-  };
+      </View>
+    </Item>
+  );
 
   onPressHandler = () => {
     let arrSelected = [];
     this.state.data.map(i => {
       if (i.isChecked) {
         arrSelected.push({
-<<<<<<< HEAD
           ...i,
-=======
-          id: i.id,
-          order_id: i.order_id,
-          order_document: i.order_document,
-          client: i.client,
-          name: i.name,
-          address: i.address,
-          order_total: i.order_total,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           isChecked: true,
           isSelect: true,
         });
@@ -260,17 +198,7 @@ export default class OrderList extends Component {
     this.state.data.map(i => {
       if (i.isChecked) {
         arrSelected.push({
-<<<<<<< HEAD
           ...i,
-=======
-          id: i.id,
-          order_id: i.order_id,
-          order_document: i.order_document,
-          client: i.client,
-          name: i.name,
-          address: i.address,
-          order_total: i.order_total,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           isChecked: true,
           isSelect: true,
         });
@@ -296,18 +224,16 @@ export default class OrderList extends Component {
         <FlatList
           style={{overflow: 'hidden'}}
           data={data}
-          keyExtractor={item => item.id.toString()}
-          renderItem={this.renderItem}
           extraData={this.state}
+          renderItem={item => this.renderItem(item)}
+          keyExtractor={item => item.id.toString()}
+          // initialNumToRender={10}
+          // ListHeaderComponent={this.renderHeader}
         />
       );
     }
 
     // const {isChecked} = this.state;
-<<<<<<< HEAD
-=======
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     return (
       <Container>
         <Header>
@@ -336,15 +262,24 @@ export default class OrderList extends Component {
                 {global.translate('TITLE_SELECTED')}: {itemNumber}
               </Text>
             </View>
+            {/* 
+            <Text
+              onChange={dataList => {
+                this.selectAll(dataList);
+              }}
+              style={{
+                color: theme.colors.primary,
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+              }}>
+              {global.translate('TITLE_SELECTED')}
+            </Text>
+            */}
           </View>
 
           <ScrollView style={{marginBottom: 24}}>
             {/* FLATLIST */}
             {orderList}
-<<<<<<< HEAD
-=======
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             {/* FLATLIST */}
           </ScrollView>
         </Content>

@@ -39,13 +39,8 @@ export default class Clients extends Component {
     super(props);
     this.state = {
       data: [],
-<<<<<<< HEAD
       dataAll: [],
       loading: true,
-=======
-      loading: false,
-      deviceLanguage: 'en',
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
       request_timeout: false,
       show: false,
@@ -100,14 +95,10 @@ export default class Clients extends Component {
   storedClients = () => {
     getStoredClients().then(clients => {
       if (clients.length > 0) {
-<<<<<<< HEAD
         this.setState({data: clients, dataAll: clients, loading: false});
-=======
-        this.setState({data: clients});
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       } else {
+        this.setState({loading: false});
       }
-      this.setState({loading: false});
     });
   };
 
@@ -258,18 +249,8 @@ export default class Clients extends Component {
             </Body>
             <Right>
               <FetchingData syncData={this.refreshHandler} fetching={loading} />
-<<<<<<< HEAD
-              {/*<Button transparent>
-                <Icon name="funnel" />
-              </Button>
-              <Button transparent onPress={this.showHideSearchBar}>
-                <Icon name="search" />
-              </Button>
-              */}
-=======
               <BtnIcon iconName="funnel" />
               <BtnIcon iconName="search" onPress={this.showHideSearchBar} />
->>>>>>> Andris
             </Right>
           </Header>
 
@@ -299,84 +280,6 @@ export default class Clients extends Component {
 
           {/* Content */}
           <Content style={styles.content}>
-<<<<<<< HEAD
-            <ScrollView>
-              <FlatList
-                style={{overflow: 'hidden'}}
-                data={data}
-<<<<<<< HEAD
-                ListEmptyComponent={this.listEmpty}
-                renderItem={this.renderItem}
-=======
-                renderItem={({item}) => (
-                  <Item style={styles.list}>
-                    <Text style={styles.code}>{item.client_code}</Text>
-                    <View style={{marginLeft: 8, flex: 1}}>
-                      <Text style={styles.name} numberOfLines={1}>
-                        {item.name}
-                      </Text>
-                      <Text style={styles.address} numberOfLines={1}>
-                        {item.address}
-                      </Text>
-                    </View>
-                    <Button
-                      transparent
-                      style={styles.more}
-                      onPress={() =>
-                        ActionSheet.show(
-                          {
-                            options: BUTTONS,
-                            cancelButtonIndex: CANCEL_INDEX,
-                            destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                            title: global.translate('TITLE_OPTIONS'),
-                          },
-                          buttonIndex => {
-                            switch (buttonIndex) {
-                              case 0:
-                                this.props.navigation.navigate('Client', {
-                                  operation: 'TITLE_EDIT_CLIENT',
-                                  code: item.client_code,
-                                  name: item.name,
-                                  address: item.address,
-                                  city: item.city,
-                                  state: item.state,
-                                  country: item.country,
-                                  phone: item.phone_number,
-                                  loading_message: 'MESSAGE_UPDATING_CLIENT',
-                                  new_record: false,
-                                  onGoBack: () => this.refresh(false),
-                                });
-                                break;
-                              case 1:
-                                ActionSheet.hide();
-                                break;
-                            }
-                          },
-                        )
-                      }>
-                      <Icon style={{color: 'gray'}} name="more" />
-                    </Button>
-                  </Item>
-                )}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-              />
-            </ScrollView>
-          </Content>
-
-          {/* Content */}
-          <AddButton
-            style={{position: 'absolute', right: 20}}
-            onPress={() =>
-              this.props.navigation.navigate('Client', {
-                operation: 'TITLE_NEW_CLIENT',
-                loading_message: 'MESSAGE_REGISTERING_CLIENT',
-                onGoBack: () => this.refresh(true),
-                new_record: true,
-                state: global.translate('PLACEHOLDER_TYPE_STATE'),
-              })
-            }
-          />
-=======
             <FlatList
               style={{overflow: 'hidden'}}
               data={data}
@@ -393,7 +296,6 @@ export default class Clients extends Component {
             onPress={this.handlerFab}>
             <Icon name="add" />
           </Fab>
->>>>>>> Andris
         </Container>
       </Root>
     );
@@ -439,25 +341,6 @@ const styles = StyleSheet.create({
   address: {
     fontSize: 12,
     color: 'gray',
-    flexWrap: 'nowrap',
     overflow: 'hidden',
   },
-<<<<<<< HEAD
-
-  fab: {
-    position: 'absolute',
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    right: 20,
-    bottom: 20,
-    backgroundColor: theme.colors.primary,
-    borderRadius: 30,
-    elevation: 8,
-  },
-
-  more: {},
-=======
->>>>>>> Andris
 });
