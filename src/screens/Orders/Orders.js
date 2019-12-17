@@ -4,11 +4,7 @@ import {OrdersTab} from './Tabs';
 import {FetchingData} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {} from 'react-native-vector-icons';
-
 import {Alert} from 'react-native';
-
-// import ContentCustom from '../components';
 
 import {
   Root,

@@ -733,7 +733,7 @@ export function getRouteDetails(route_id) {
         for (let e = 0; e < results_det.rows.length; ++e) {
           let orderRow = results_det.rows.item(e);
           let detObject = {
-            id: orderRow.id,
+            id: e + 1,
             route_id: route_id,
             order_id: orderRow.order_id,
             routedetail_id: orderRow.routedetail_id,

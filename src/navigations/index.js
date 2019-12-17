@@ -123,7 +123,6 @@ const Home = createStackNavigator(
 );
 
 export const IconMenu = ({tintColor, focused, name}) => {
-  console.log('tint', tintColor);
   return (
     <Icon name={name} size={24} style={{color: tintColor}} focused={focused} />
   );

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import styled from 'styled-components/native';
-import {View, StyleSheet, FlatList, Alert} from 'react-native';
+import {View, StyleSheet, FlatList, Alert, ScrollView} from 'react-native';
 import {getData} from '../../helpers/apiconnection_helper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
@@ -23,7 +23,6 @@ import {
   Root,
   Item,
 } from 'native-base';
-import {ScrollView} from 'react-native-gesture-handler';
 
 export default class RouteDetail extends Component {
   constructor(props) {
@@ -87,15 +86,10 @@ export default class RouteDetail extends Component {
         `&route_id=${route_id}&status=${status}`,
       );
 
-      // console.log('data ==>', data);
       await updateRouteOrders(data.arrResponse[0]);
 
-      // const routeDetails = await getRouteDetails(route_id);
       let routeDetails = await getRouteDetails(route_id);
-
       const pending = routeDetails.filter(detail => detail.status !== 'C');
-      // console.log('route_details ==>', routeDetails);
-      // console.log('andris ==>', andris);
 
       this.setState({
         data: routeDetails,
@@ -111,7 +105,6 @@ export default class RouteDetail extends Component {
   }
 
   renderItem = ({item}) => {
-    // console.log('item', item);
     return (
       <Item
         style={styles.list}
@@ -124,34 +117,17 @@ export default class RouteDetail extends Component {
             route_id: item.route_id,
           })
         }>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 12,
-          }}>
-          <View style={styles.listContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text numberOfLines={1} style={styles.name}>
-                {item.client} - {item.name}
-              </Text>
-            </View>
-            <Text numberOfLines={1} style={styles.address}>
-              {item.address}
-            </Text>
-          </View>
+        <View style={styles.listContainer}>
+          <Text numberOfLines={1} style={styles.name}>
+            {item.client} - {item.name}
+          </Text>
+          <Text numberOfLines={1}>{item.address}</Text>
         </View>
       </Item>
     );
   };
 
   render() {
-    console.log('RouteDetail STATE ==>', this.state);
     const {data, loadingMessage, loading} = this.state;
     const {state, navigate} = this.props.navigation;
     const {params} = this.props.navigation.state;
@@ -201,14 +177,11 @@ export default class RouteDetail extends Component {
                 <View style={{paddingBottom: 8}}>
                   <Text style={styles.detailText}>Ordenes</Text>
                 </View>
-                <ScrollView>
-                  <FlatList
-                    style={{overflow: 'hidden', marginBottom: 12}}
-                    data={data}
-                    keyExtractor={item => item.key}
-                    renderItem={this.renderItem}
-                  />
-                </ScrollView>
+                <FlatList
+                  data={data}
+                  keyExtractor={item => item.id.toString()}
+                  renderItem={this.renderItem}
+                />
               </View>
             </View>
           </RContent>
@@ -245,17 +218,20 @@ const styles = StyleSheet.create({
   detailText: {textTransform: 'uppercase', color: theme.colors.gray},
 
   list: {
-    margin: 5,
     flex: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
-    paddingLeft: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 22,
+    marginBottom: 12,
+    marginHorizontal: 5,
     elevation: 1,
+    backgroundColor: 'white',
   },
 
   listContainer: {
     flex: 1,
-    paddingVertical: 12,
+    flexWrap: 'nowrap',
+    flexDirection: 'column',
   },
 
   title: {
