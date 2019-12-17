@@ -1,31 +1,7 @@
 import React from 'react';
-import {withBadge} from '../components';
-import {theme} from '../constants';
-import {
-  Alert,
-  AppRegistry,
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-} from 'react-native';
-import {
-  Badge,
-  Button,
-  Container,
-  Content,
-  Icon,
-  List,
-  ListItem,
-  Text,
-  View,
-} from 'native-base';
-import {
-  createDrawerNavigator,
-  DrawerNavigatorItems,
-} from 'react-navigation-drawer';
+
+import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
-// import SideBar from './SideBar';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 
 // Clients
@@ -56,7 +32,9 @@ import RoutesTab from '../screens/Routes/Tabs/RoutesTab';
 import RouteDetail from '../screens/MyRoutes/RouteDetail';
 import Registry from '../screens/MyRoutes/Registry';
 
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import SideBar from './SideBar';
+import {theme} from '../constants';
+import {Icon} from 'native-base';
 
 const ConfigNavigator = createStackNavigator(
   {
@@ -129,7 +107,6 @@ const OrdersScreen = createStackNavigator(
       },
     },
     Order: Order,
-    // Detail: Detail,
     Picking: Picking,
     Shopping: Shopping,
   },
@@ -145,134 +122,177 @@ const Home = createStackNavigator(
   {initialRouteName: 'HomeScreen', headerMode: 'none'},
 );
 
-const AppNavigator = createDrawerNavigator(
-  {
-    HomeScreen: {
-      screen: Home,
-      navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <Icon name="home" size={24} style={{color: tintColor}} />
-        ),
-        drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
-      },
-    },
-    ClientScreen: {
-      screen: ClientScreen,
-      navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <Icon name="people" size={24} style={{color: tintColor}} />
-        ),
-        drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
-      },
-    },
-    RouteScreen: {
-      screen: RouteScreen,
-      navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <Icon name="navigate" size={24} style={{color: tintColor}} />
-        ),
-        drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
-      },
-    },
-    OrderScreen: {
-      screen: OrdersScreen,
-      navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <Icon name="cube" size={24} style={{color: tintColor}} />
-        ),
-        drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
-      },
-    },
-    MyRoutesScreen: {
-      screen: MyRoutesScreen,
-      navigationOptions: {
-        drawerIcon: ({focused, tintColor}) => (
-          <Icon
-            focused={focused}
-            name="list-box"
-            size={24}
-            style={{color: tintColor}}
-          />
-        ),
-        drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
-      },
-    },
-    MyConfigScreen: {
-      screen: ConfigNavigator,
-      navigationOptions: {
-        drawerIcon: ({focused, tintColor}) => (
-          <Icon
-            focused={focused}
-            name="settings"
-            size={24}
-            style={{color: tintColor}}
-          />
-        ),
-        drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
-      },
+export const IconMenu = ({tintColor, focused, name}) => {
+  console.log('tint', tintColor);
+  return (
+    <Icon name={name} size={24} style={{color: tintColor}} focused={focused} />
+  );
+};
+
+let roleSuper = {
+  HomeScreen: {
+    screen: Home,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
     },
   },
-  {
-    // headerMode: 'none',
-    // contentComponent: props => <SideBar {...props} />,
-    contentComponent: props => (
-      <ScrollView>
-        <View style={styles.content}>
-          <View>
-            <Text style={styles.user}>{global.userDisplayName}</Text>
-            <Badge primary style={styles.role}>
-              <Text>{global.translate(global.userRole)}</Text>
-            </Badge>
-          </View>
-          <Button transparent>
-            <Icon
-              name="create"
-              style={{
-                color: theme.colors.primary,
-              }}
-            />
-            {/* <Text style={{color: theme.colors.primary}}>Editar</Text> */}
-          </Button>
-        </View>
+  ClientScreen: {
+    screen: ClientScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'people'} {...props} />,
+      drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
+    },
+  },
+  RouteScreen: {
+    screen: RouteScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
+      drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
+    },
+  },
+  OrderScreen: {
+    screen: OrdersScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'cube'} {...props} />,
+      drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
+    },
+  },
 
-        <DrawerNavigatorItems
-          {...props}
-          labelStyle={{
-            fontSize: 16,
-            fontWeight: '200',
-          }}
-        />
-        <TouchableOpacity
-          onPress={() =>
-            Alert.alert(
-              global.translate('TITLE_SIGN_OUT'),
-              global.translate('TITLE_QUESTION_SIGN_OUT'),
-              [
-                {
-                  text: global.translate('TITLE_YES'),
-                  onPress: () => props.navigation.navigate('Auth'),
-                },
-                {
-                  text: global.translate('TITLE_NO'),
-                  onPress: () => props.navigation.goBack(null),
-                  style: 'cancel',
-                },
-              ],
-              {cancelable: false},
-            )
-          }
-          style={{
-            flexDirection: 'row',
-          }}>
-          <Button transparent style={styles.iconContainer}>
-            <Icon name="log-out" style={styles.menuIcon} />
-          </Button>
-          <Text style={{marginLeft: 8, color: theme.colors.black}}>
-            {global.translate('TITLE_LOGOUT')}
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    ),
+  MyConfigScreen: {
+    screen: ConfigNavigator,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+    },
+  },
+};
+
+let roleAll = {
+  HomeScreen: {
+    screen: Home,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+    },
+  },
+  ClientScreen: {
+    screen: ClientScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'people'} {...props} />,
+      drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
+    },
+  },
+  RouteScreen: {
+    screen: RouteScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
+      drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
+    },
+  },
+  OrderScreen: {
+    screen: OrdersScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'cube'} {...props} />,
+      drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
+    },
+  },
+
+  MyRoutesScreen: {
+    screen: MyRoutesScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'list-box'} {...props} />,
+      drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
+    },
+  },
+
+  MyConfigScreen: {
+    screen: ConfigNavigator,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+    },
+  },
+};
+
+let roleAdmin = {
+  HomeScreen: {
+    screen: Home,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+    },
+  },
+  ClientScreen: {
+    screen: ClientScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'people'} {...props} />,
+      drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
+    },
+  },
+  RouteScreen: {
+    screen: RouteScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
+      drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
+    },
+  },
+  OrderScreen: {
+    screen: OrdersScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'cube'} {...props} />,
+      drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
+    },
+  },
+
+  MyConfigScreen: {
+    screen: ConfigNavigator,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+    },
+  },
+};
+
+let roleRecolector = {
+  HomeScreen: {
+    screen: Home,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+    },
+  },
+  MyRoutesScreen: {
+    screen: MyRoutesScreen,
+    navigationOptions: {
+      drawerIcon: props => <IconMenu name={'list-box'} {...props} />,
+      drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
+    },
+  },
+  MyConfigScreen: {
+    screen: ConfigNavigator,
+    navigationOptions: {
+      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+    },
+  },
+};
+
+let roleConfig;
+
+if (global.userRole === 'ROLE_SUPERVISOR') {
+  roleConfig = roleAll;
+} else if (global.userRole === 'ROLE_ADMIN') {
+  roleConfig = roleAll;
+} else {
+  roleConfig = roleAll;
+}
+
+const AppNavigator = createDrawerNavigator(
+  roleConfig,
+
+  {
+    contentComponent: props => <SideBar {...props} />,
     contentOptions: {
       activeTintColor: theme.colors.primary,
       inactiveTintColor: theme.colors.darkGray,
@@ -298,29 +318,3 @@ const Navigation = createSwitchNavigator(
 );
 
 export default createAppContainer(Navigation);
-
-const styles = StyleSheet.create({
-  content: {
-    backgroundColor: theme.colors.darkGray,
-    paddingHorizontal: theme.sizes.p12,
-    paddingVertical: theme.sizes.padding,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  user: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: theme.sizes.base,
-    paddingBottom: theme.sizes.p8,
-  },
-  role: {borderRadius: 4, backgroundColor: theme.colors.primary},
-  iconContainer: {
-    width: 55,
-    height: 25,
-  },
-  menuIcon: {
-    color: theme.colors.gray,
-  },
-
-  border: {borderColor: 'transparent'},
-});

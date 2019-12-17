@@ -28,7 +28,7 @@ export default class LoginScreen extends Component {
       loading: false,
       loadingMessage: '',
       validLogin: true,
-      userName: 'aramirez', //aramirezs
+      userName: 'aramirez', //aramirez
       userPassword: '101010',
       hostName: '',
       portNumber: 444,
@@ -138,13 +138,13 @@ export default class LoginScreen extends Component {
 
   userHandler = userName => {
     this.setState({
-      userName: userName,
+      userName,
     });
   };
 
   passwordHandler = userPassword => {
     this.setState({
-      userPassword: userPassword,
+      userPassword,
     });
   };
 

@@ -109,12 +109,10 @@ export default class Clients extends Component {
       request_timeout: false,
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
     });
-    setTimeout(() => {
-      if (loading) {
-        this.setState({loading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
-      }
-    }, 15000);
+    if (loading) {
+      this.setState({loading: false, request_timeout: true});
+      Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+    }
     getData('GET_CLIENTS').then(result => {
       if (!request_timeout) {
         this.setState({loading: false, request_timeout: false});
@@ -129,15 +127,6 @@ export default class Clients extends Component {
         this.setState({request_timeout: false});
       }
     });
-  };
-
-  showHideSearchBar = () => {
-    // this.setState({show: true});
-    if (this.state.show === true) {
-      this.setState({show: false});
-    } else {
-      this.setState({show: true});
-    }
   };
 
   goBack = () => {
@@ -160,6 +149,15 @@ export default class Clients extends Component {
     });
   };
 
+  showHideSearchBar = () => {
+    // this.state.show === true
+    if (this.state.show) {
+      this.setState({show: false});
+    } else {
+      this.setState({show: true});
+    }
+  };
+
   searchBarHandler = (data, text) => {
     this.setState({
       data: data,
@@ -172,9 +170,13 @@ export default class Clients extends Component {
     return (
       <Item style={styles.list}>
         <Text style={styles.code}>{item.client_code}</Text>
-        <View style={{marginLeft: 8}}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.address}>{item.address}</Text>
+        <View style={{marginLeft: 8, flex: 1}}>
+          <Text style={styles.name} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.address} numberOfLines={1}>
+            {item.address}
+          </Text>
         </View>
         <Button
           transparent
@@ -218,15 +220,22 @@ export default class Clients extends Component {
   };
 
   render() {
-    const {modalVisible, data, loading, show} = this.state;
+    const {
+      modalVisible,
+      data,
+      loading,
+      show,
+      loadingMessage,
+      dataAll,
+    } = this.state;
 
     return (
       <Root>
         <Container style={styles.androidHeader}>
           {/* Header */}
           <Spinner
-            visible={this.state.loading}
-            textContent={this.state.loadingMessage}
+            visible={loading}
+            textContent={loadingMessage}
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}
@@ -250,7 +259,7 @@ export default class Clients extends Component {
             <SearchBar
               data={this.searchBarHandler}
               visible={this.searchHandler}
-              dataValue={this.state.dataAll}
+              dataValue={dataAll}
               style={styles.searchbar}
               placeholder={'Busque su orden'}
               onPressCancel={this.showHideSearchBar}
@@ -271,14 +280,13 @@ export default class Clients extends Component {
 
           {/* Content */}
           <Content style={styles.content}>
-            <ScrollView>
-              <FlatList
-                style={{overflow: 'hidden'}}
-                data={data}
-                ListEmptyComponent={this.listEmpty}
-                renderItem={this.renderItem}
-              />
-            </ScrollView>
+            <FlatList
+              style={{overflow: 'hidden'}}
+              data={data}
+              ListEmptyComponent={this.listEmpty}
+              renderItem={this.renderItem}
+              keyExtractor={item => item.client_code}
+            />
           </Content>
 
           {/* Content */}
@@ -326,16 +334,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
+    flexWrap: 'nowrap',
+    overflow: 'hidden',
   },
 
   address: {
     fontSize: 12,
     color: 'gray',
     overflow: 'hidden',
-  },
-
-  more: {
-    position: 'absolute',
-    right: 0,
   },
 });

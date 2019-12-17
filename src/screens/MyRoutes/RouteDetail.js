@@ -87,13 +87,13 @@ export default class RouteDetail extends Component {
         `&route_id=${route_id}&status=${status}`,
       );
 
-      console.log('data ==>', data);
+      // console.log('data ==>', data);
       await updateRouteOrders(data.arrResponse[0]);
 
       // const routeDetails = await getRouteDetails(route_id);
       let routeDetails = await getRouteDetails(route_id);
 
-      const andris = routeDetails.filter(detail => detail.status !== 'C');
+      const pending = routeDetails.filter(detail => detail.status !== 'C');
       // console.log('route_details ==>', routeDetails);
       // console.log('andris ==>', andris);
 

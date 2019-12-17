@@ -85,6 +85,7 @@ export class Defeated extends Component {
               style={{overflow: 'hidden'}}
               data={this.props.tab_data}
               renderItem={this.renderHandler}
+              keyExtractor={item => item.route_id.toString()}
             />
           </ScrollView>
         </Content>

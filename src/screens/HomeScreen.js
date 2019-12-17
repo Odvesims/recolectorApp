@@ -72,13 +72,13 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    let {params} = this.props.navigation.state;
+    let {params:{first_login}} = this.props.navigation.state;
     global.config_from = 'HomeScreen';
     global.fromLogin = false;
     this.notificationsInterval = setInterval(this.notificationsHandler, 10000);
-    if (params.first_login !== undefined) {
-      if (params.first_login) {
-        params.first_login = false;
+    if (first_login !== undefined) {
+      if (first_login) {
+        first_login = false;
         this.refreshHandler();
       }
     }
@@ -231,136 +231,70 @@ export default class Home extends Component {
   //   });
   // };
 
-
-  getData('GET_EMPLOYEES').then(emp => {
-    const {request_timeout} = this.state;
-    if (!request_timeout) {
-      saveEmployees(emp.arrResponse).then(res => {
-        getData('GET_CLIENTS').then(cli => {
-          if (!request_timeout) {
-            saveClients(cli.arrResponse, []).then(res => {
-              getData('GET_ARTICLES_CATEGORIES').then(cat => {
-                if (!request_timeout) {
-                  saveCategories(cat.arrResponse).then(res => {
-                    getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
-                      if (!request_timeout) {
-                        saveSubcategories(sub.arrResponse).then(res => {
-                          getData('GET_ARTICLES').then(art => {
-                            if (!request_timeout) {
-                              saveArticles(art.arrResponse).then(res => {
-                                getData('GET_ORDERS').then(ord => {
-                                  if (!request_timeout) {
-                                    saveOrders(ord.arrResponse).then(res => {
-                                      getData('GET_ROUTES', '&status=A').then(active => {
-                                        if (!request_timeout) {
-                                          clearRoutesCab('A').then(ca => {
-                                            clearRoutesDetails().then(cd => {
-                                              if (active.arrResponse !== []) {
-                                                saveActiveRoutes(active.arrResponse).then(res => {
-                                                  getData('GET_ROUTES', '&status=I').then(inactive => {
-                                                    (!request_timeout) {
-                                                      clearRoutesCab('I').then(ci => {
-                                                        if (inactive.arrResponse !== []) {
-                                                          saveInactiveRoutes(inactive.arrResponse).then(resi => {
-                                                            this.setState({
-                                                              request_timeout: false,
-                                                              loading: false,
-                                                            });
-                                                          });
-                                                        }
-                                                      })
-                                                    }
-                                                  })
-                                                })
-                                              }
-                                            })
-                                          })
-                                        }
-                                      });
-                                    });
-                                  }
-                                });
-                              });
-                            }
-                          });
-                        });
-                      }
-                    });
-                  });
-                }
-              });
-            });
-          }
-        });
-      });
-    }
-  });
-};
  
-//   getData('GET_EMPLOYEES').then(emp => {
-//     const {request_timeout} = this.state;
-//     if (!request_timeout) {
-//       saveEmployees(emp.arrResponse).then(res => {
-//         getData('GET_CLIENTS').then(cli => {
-//           if (!request_timeout) {
-//             saveClients(cli.arrResponse, []).then(res => {
-//               getData('GET_ARTICLES_CATEGORIES').then(cat => {
-//                 if (!request_timeout) {
-//                   saveCategories(cat.arrResponse).then(res => {
-//                     getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
-//                       if (!request_timeout) {
-//                         saveSubcategories(sub.arrResponse).then(res => {
-//                           getData('GET_ARTICLES').then(art => {
-//                             if (!request_timeout) {
-//                               saveArticles(art.arrResponse).then(res => {
-//                                 getData('GET_ORDERS').then(ord => {
-//                                   if (!request_timeout) {
-//                                     saveOrders(ord.arrResponse).then(res => {
-//                                       getData('GET_ROUTES', '&status=A').then(active => {
-//                                         if (!request_timeout) {
-//                                           clearRoutesCab('A').then(ca => {
-//                                             clearRoutesDetails().then(cd => {
-//                                               if (active.arrResponse !== []) {
-//                                                 saveActiveRoutes(active.arrResponse).then(res => {
-//                                                   getData('GET_ROUTES', '&status=I').then(inactive => {
-//                                                     state.request_timeout) {
-//                                                       clearRoutesCab('I').then(ci => {
-//                                                         if (inactive.arrResponse !== []) {
-//                                                           saveInactiveRoutes(inactive.arrResponse).then(resi => {
-//                                                             this.setState({
-//                                                               request_timeout: false,
-//                                                               loading: false,
-//                                                             });
-//                                                           });
-//                                                         }
-//                                                       })
-//                                                     }
-//                                                   })
-//                                                 })
-//                                               }
-//                                             })
-//                                           })
-//                                         }
-//                                       });
-//                                     });
-//                                   }
-//                                 });
-//                               });
-//                             }
-//                           });
-//                         });
-//                       }
-//                     });
-//                   });
-//                 }
-//               });
-//             });
-//           }
-//         });
-//       });
-//     }
-//   });
-// };
+  getData('GET_EMPLOYEES').then(emp => {
+      if (!this.state.request_timeout) {
+        saveEmployees(emp.arrResponse).then(res => {
+          getData('GET_CLIENTS').then(cli => {
+            if (!this.state.request_timeout) {
+              saveClients(cli.arrResponse, []).then(res => {
+                getData('GET_ARTICLES_CATEGORIES').then(cat => {
+                  if (!this.state.request_timeout) {
+                    saveCategories(cat.arrResponse).then(res => {
+                      getData('GET_ARTICLES_SUBCATEGORIES').then(sub => {
+                        if (!this.state.request_timeout) {
+                          saveSubcategories(sub.arrResponse).then(res => {
+                            getData('GET_ARTICLES').then(art => {
+                              if (!this.state.request_timeout) {
+                                saveArticles(art.arrResponse).then(res => {
+                                  getData('GET_ORDERS').then(ord => {
+                                    if (!this.state.request_timeout) {
+                                      saveOrders(ord.arrResponse).then(res => {
+                                        getData('GET_ROUTES', '&status=A').then(active => {
+                                          if (!this.state.request_timeout) {
+                                            clearRoutesCab('A').then(ca => {
+                                              clearRoutesDetails().then(cd => {
+                                                if (active.arrResponse !== []) {
+                                                  saveActiveRoutes(active.arrResponse).then(res => {
+                                                    getData('GET_ROUTES', '&status=I').then(inactive => {
+                                                      if (!this.state.request_timeout) {
+                                                        clearRoutesCab('I').then(ci => {
+                                                          if (inactive.arrResponse !== []) {
+                                                            saveInactiveRoutes(inactive.arrResponse).then(resi => {
+                                                              this.setState({
+                                                                request_timeout: false,
+                                                                loading: false,
+                                                              });
+                                                            });
+                                                          }
+                                                        })
+                                                      }
+                                                    })
+                                                  })
+                                                }
+                                              })
+                                            })
+                                          }
+                                        });
+                                      });
+                                    }
+                                  });
+                                });
+                              }
+                            });
+                          });
+                        }
+                      });
+                    });
+                  }
+                });
+              });
+            }
+          });
+        });
+      }
+    });
+  };
 
   openDrawer = props => {
     this.props.navigation.openDrawer();

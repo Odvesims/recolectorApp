@@ -6,6 +6,8 @@ import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
 import 'react-native-gesture-handler';
 
+let roles = `super, recolector, admin`;
+
 global.database_version = 19;
 global.config_from = 'Login';
 global.fromLogin = true;
