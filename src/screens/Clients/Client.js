@@ -104,12 +104,11 @@ export class Client extends PureComponent {
           name: '',
           address: '',
           city: '',
-<<<<<<< HEAD
+<<<<
           state: '',
-<<<<<<< HEAD
-=======
+
           state: state,
->>>>>>> Andris
+
           country: country,
 =======
           country: this.props.navigation.state.params.country,
