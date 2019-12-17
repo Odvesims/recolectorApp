@@ -37,16 +37,6 @@ export default class Routes extends Component {
       data2: [],
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
       show: true,
-<<<<<<< HEAD
-=======
-      BUTTONS: [
-        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
-        {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-        {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
-      ],
-      DESTRUCTIVE_INDEX: 3,
-      CANCEL_INDEX: 4,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     };
   }
 
@@ -99,33 +89,6 @@ export default class Routes extends Component {
         Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
       }
     }, 20000);
-<<<<<<< HEAD
-    getData('GET_ROUTES', '&status=A').then(active => {
-<<<<<<< HEAD
-      console.log('ROUTES', active);
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-      if (!this.state.request_timeout) {
-        clearRoutesCab('A').then(ca => {
-          clearRoutesDetails().then(cd => {
-            if (active.arrResponse !== []) {
-              saveActiveRoutes(active.arrResponse);
-            }
-            getData('GET_ROUTES', '&status=I').then(inactive => {
-              if (!this.state.request_timeout) {
-                clearRoutesCab('I').then(ci => {
-                  if (inactive.arrResponse !== []) {
-                    saveInactiveRoutes(inactive.arrResponse);
-                  }
-                  this.storedRoutes();
-                });
-              } else {
-                this.setState({request_timeout: false});
-              }
-            });
-          });
-        });
-=======
 
     const active = await getData('GET_ROUTES', '&status=A');
     if (!request_timeout) {
@@ -142,7 +105,6 @@ export default class Routes extends Component {
           saveInactiveRoutes(inactive.arrResponse);
         }
         this.storedRoutes();
->>>>>>> Andris
       } else {
         this.setState({request_timeout: false});
       }

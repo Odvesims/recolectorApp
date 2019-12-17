@@ -88,33 +88,12 @@ export default class Orders extends Component {
 
   enterHandler = () => {
     this.setState({
-<<<<<<< HEAD
       isLoading: true,
-=======
-      loading: true,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
     });
     this.storedOrders();
   };
 
-<<<<<<< HEAD
-  storedOrders = () => {
-    getNotAssignedOrders().then(not_assigned => {
-      getAssignedOrders().then(assigned => {
-        // console.log('NOT_ASSIGNED==>', not_assigned);
-        // console.log('ASSIGNED==>', assigned);
-        this.setState({
-<<<<<<< HEAD
-          isLoading: false,
-=======
-          loading: false,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-          not_assigned: not_assigned,
-          assigned: assigned,
-        });
-      });
-=======
   storedOrders = async () => {
     const notAssigned = await getNotAssignedOrders();
     const assigned = await getAssignedOrders();
@@ -126,7 +105,6 @@ export default class Orders extends Component {
       isLoading: false,
       not_assigned: notAssigned,
       assigned: assigned,
->>>>>>> Andris
     });
   };
 
@@ -166,11 +144,7 @@ export default class Orders extends Component {
   };
 
   render() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     // console.log('Orders ==>', this.state);
->>>>>>> Andris
     const {
       date,
       isLoading,
@@ -178,25 +152,13 @@ export default class Orders extends Component {
       assigned,
       loadingMessage,
     } = this.state;
-<<<<<<< HEAD
-=======
-    const {data, loading, not_assigned, assigned} = this.state;
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
-=======
->>>>>>> Andris
 
     return (
       <Root>
         <Container>
           <Spinner
-<<<<<<< HEAD
             visible={isLoading}
             textContent={loadingMessage}
-=======
-            visible={this.state.loading}
-            textContent={this.state.loadingMessage}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             color={'CE2424'}
             overlayColor={'rgba(255, 255, 255, 0.4)'}
             animation={'slide'}
@@ -211,21 +173,16 @@ export default class Orders extends Component {
               <Title>{global.translate('TITLE_ORDERS')}</Title>
             </Body>
             <Right>
-<<<<<<< HEAD
               <FetchingData
                 syncData={this.refreshHandler}
                 fetching={isLoading}
               />
-=======
-              <FetchingData syncData={this.refreshHandler} fetching={loading} />
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             </Right>
           </Header>
 
           {/* Tab */}
           <Tabs hasTabs>
             <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
-<<<<<<< HEAD
               <OrdersTab
                 tab_data={not_assigned}
                 ref={this.notAvailableTab}
@@ -238,12 +195,6 @@ export default class Orders extends Component {
                 ref={this.availableTab}
                 navigation={this.props.navigation}
               />
-=======
-              <OrdersTab tab_data={not_assigned} ref={this.availableTab} />
-            </Tab>
-            <Tab heading={global.translate('TITLE_ASSIGNED')}>
-              <OrdersTab tab_data={assigned} ref={this.notAvailableTab} />
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             </Tab>
           </Tabs>
 

@@ -1,18 +1,5 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
-<<<<<<< HEAD
-<<<<<<< HEAD
-import Spinner from 'react-native-loading-spinner-overlay';
-import moment from 'moment';
-import {SearchBar, FetchingData, ContentLoader} from '../../components';
-=======
-import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
-import Spinner from 'react-native-loading-spinner-overlay';
-import moment from 'moment';
-import {SearchBar, FetchingData} from '../../components';
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-import {View, StyleSheet, FlatList} from 'react-native';
-=======
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
@@ -26,7 +13,6 @@ import {
 import {Name, ListBody, ListMyRoutes, Address, styles} from './styles';
 
 import {FlatList} from 'react-native';
->>>>>>> Andris
 import {
   saveActiveRoutes,
   getStoredRoutes,
@@ -57,11 +43,7 @@ class Order extends Component {
       data: [],
       dataAll: [],
       value: '',
-<<<<<<< HEAD
       loading: false,
-=======
-      isloading: false,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       error: null,
       status: '',
       modalVisible: false,
@@ -111,20 +93,9 @@ class Order extends Component {
     this.storedRoutes();
   };
 
-<<<<<<< HEAD
-  storedRoutes = () => {
-    getStoredRoutes('A').then(active => {
-      this.setState({active: active, loading: false});
-<<<<<<< HEAD
-      console.log('Active', active);
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-    });
-=======
   storedRoutes = async () => {
     const routes = await getStoredRoutes('A');
     this.setState({active: routes, loading: false});
->>>>>>> Andris
   };
 
   refreshHandler = () => {
@@ -156,30 +127,8 @@ class Order extends Component {
     });
   };
 
-<<<<<<< HEAD
   renderItem = ({item}) => {
     console.log('item', item);
-=======
-  // fetchData = () => {
-  //   this.setState({loading: true});
-  //   const url = 'https://jsonplaceholder.typicode.com/users';
-  //   this.setState({loading: true});
-  //   fetch(url)
-  //     .then(res => res.json())
-  //     .then(res => {
-  //       this.setState({
-  //         loading: false,
-  //         data: res,
-  //         dataAll: res,
-  //       });
-  //     })
-  //     .catch(error => {
-  //       this.setState({error, loading: false});
-  //     });
-  // };
-
-  renderItem = ({item}) => {
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     const {navigate} = this.props.navigation;
     return (
       <Item
@@ -193,13 +142,8 @@ class Order extends Component {
             route_id: item.route_id,
             document_id: '',
             phone_number: '',
-<<<<<<< HEAD
             date_from: item.date_from,
             date_to: item.date_to,
-=======
-            date_from: moment(new Date()).format('DD/MM/YYYY'),
-            date_to: moment(new Date()).format('DD/MM/YYYY'),
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           })
         }>
         <ListMyRoutes>
@@ -227,36 +171,16 @@ class Order extends Component {
     console.log(this.state);
     const {modalVisible, active, loading, show} = this.state;
 
-<<<<<<< HEAD
     let content = <ContentLoader />;
-=======
-    let content = (
-      <ContentLoader>
-        <Rect x="0" y="20" rx="5" ry="5" width="250" height="12" />
-        <Rect x="0" y="40" rx="5" ry="5" width="180" height="12" />
-      </ContentLoader>
-    );
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
     if (!loading) {
       content = (
         <FlatList
           ListEmptyComponent={this.listEmpty}
           keyboardShouldPersistTaps={'handled'}
-<<<<<<< HEAD
           data={active}
           extraData={this.state}
-<<<<<<< HEAD
-          keyExtractor={item => item.id} //
-=======
-          // style={{overflow: 'hidden'}}
-          data={active}
-          extraData={this.state}
-          keyExtractor={item => item.id} //.toString()
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-=======
           keyExtractor={item => item.route_id.toString()} //
->>>>>>> Andris
           renderItem={this.renderItem}
         />
       );

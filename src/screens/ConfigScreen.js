@@ -89,7 +89,6 @@ export default class ConfigScreen extends Component {
         // printerAddress: res.printer_address,
       });
       if (res) {
-        global.printer_address = res.printer_address;
         alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
       } else {
         alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
@@ -98,10 +97,6 @@ export default class ConfigScreen extends Component {
   };
 
   goBack = () => {
-<<<<<<< HEAD
-=======
-    console.log(this.props.navigation.goBack());
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     this.props.navigation.navigate(global.config_from);
   };
 

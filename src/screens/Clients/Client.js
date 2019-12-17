@@ -104,15 +104,8 @@ export class Client extends PureComponent {
           name: '',
           address: '',
           city: '',
-<<<<
-          state: '',
-
           state: state,
-
           country: country,
-=======
-          country: this.props.navigation.state.params.country,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           phone: '',
         });
         Alert.alert(global.translate(result));

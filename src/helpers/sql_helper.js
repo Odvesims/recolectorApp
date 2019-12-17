@@ -232,11 +232,7 @@ export function saveUserData(userData) {
 export function saveNotifications(notifications) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-<<<<<<< HEAD
       tx.executeSql('DELETE FROM notifications', [], (tx, results) => {});
-=======
-      //tx.executeSql('DELETE FROM notifications', [], (tx, results) => {});
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     });
     db.transaction(tx => {
       notifications.map(notification => {
@@ -493,8 +489,6 @@ export function saveRoutes(routes, inactiveRoutes) {
     db.transaction(tx => {
       tx.executeSql('DELETE FROM routes', [], (tx, results) => {});
       tx.executeSql('DELETE FROM route_details', [], (tx, results) => {});
-<<<<<<< HEAD
-=======
     });
     resolve(true);
   });
@@ -508,28 +502,11 @@ export function clearRoutesCab(status_route) {
         [],
         (tx, results) => {},
       );
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     });
     resolve(true);
   });
 }
 
-<<<<<<< HEAD
-export function clearRoutesCab(status_route) {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `DELETE FROM routes WHERE status = '${status_route}'`,
-        [],
-        (tx, results) => {},
-      );
-    });
-    resolve(true);
-  });
-}
-
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 export function clearRoutesDetails() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -720,10 +697,6 @@ export function getStoredRoutes(routes_status) {
   return new Promise((resolve, reject) => {
     let arrRoutes = [];
     let sqlStr = `SELECT * FROM routes WHERE status = '${routes_status}' ORDER BY CAST(document_number AS INTEGER) DESC`;
-<<<<<<< HEAD
-=======
-    console.log(sqlStr);
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     db.transaction(tx => {
       tx.executeSql(sqlStr, [], (tx, results) => {
         for (let i = 0; i < results.rows.length; ++i) {
@@ -745,10 +718,6 @@ export function getStoredRoutes(routes_status) {
           };
           arrRoutes.push(routeObject);
         }
-<<<<<<< HEAD
-=======
-        console.log(arrRoutes);
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         resolve(arrRoutes);
       });
     });
@@ -798,10 +767,7 @@ export function getOrders() {
               client: row.client,
               address: row.address,
               order_total: row.order_total,
-<<<<<<< HEAD
               order_id: row.order_id,
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
               assigned: row.assigned,
             };
             arrOrders.push(orderObject);
@@ -809,7 +775,6 @@ export function getOrders() {
         },
       );
       resolve(arrOrders);
-<<<<<<< HEAD
     });
   });
 }
@@ -839,8 +804,6 @@ export function getAssignedOrders() {
           resolve(arrOrders);
         },
       );
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     });
   });
 }
@@ -850,27 +813,15 @@ export function getNotAssignedOrders() {
     let arrOrders = [];
     db.transaction(tx => {
       tx.executeSql(
-<<<<<<< HEAD
-<<<<<<< HEAD
-        'SELECT o.id, o.client_code, o.address, o.city, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
-=======
-        `SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned = 1 AND c.client_code = o.client ORDER BY o.order_id DESC`,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-=======
         'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
->>>>>>> Andris
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {
               id: row.id,
-<<<<<<< HEAD
               order_id: row.order_id,
               order_document: row.order_document,
-=======
-              document: row.order_document,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
               client: row.client,
               name: row.name,
               address: row.address,
@@ -892,15 +843,7 @@ export function getOrderClient() {
     let arrOrders = [];
     db.transaction(tx => {
       tx.executeSql(
-<<<<<<< HEAD
-<<<<<<< HEAD
-        'SELECT o.id, o.order_id, o.order_document, o.date_register, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
-=======
-        'SELECT o.id, o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-=======
         'SELECT o.id, o.client_code, o.address, o.city, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE assigned != 1 AND c.client_code = o.client ORDER BY o.order_id DESC',
->>>>>>> Andris
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
@@ -1021,19 +964,11 @@ export function updateRouteOrders(route_orders) {
   // console.log('Adentro', route_orders);
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      tx.executeSql(`UPDATE route_id, 
-      description, 
-      document_id, 
-      document_acronym, , 
-=======
       // console.log('RouteOrders', JSON.stringify(route_orders));
       tx.executeSql(`UPDATE route_id,
       description,
       document_id,
       document_acronym, ,
->>>>>>> Andris
       assigned_by,
       assigned_to, supervisor_name,
       employee_name, phone_number,
@@ -1053,10 +988,6 @@ export function updateRouteOrders(route_orders) {
         '${route_orders.date_to}',
         '${route_orders.date_from}',
         '${route_orders.status})
-=======
-      tx.executeSql(`UPDATE route_id, description, document_id, document_acronym, , assigned_by, assigned_to, supervisor_name, employee_name, phone_number, date_from, date_to, status
-      VALUES(${route_orders.route_id}, '${route_orders.description}', ${route_orders.document_id}, '${route_orders.document_acronym}', ${route_orders.document_number}, ${route_orders.assigned_by}, ${route_orders.assigned_to}, '${route_orders.supervisor_name}', '${route_orders.employee_name}', '${route_orders.phone_number}', '${route_orders.date_to}', '${route_orders.date_from}', '${route_orders.status})
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       WHERE route_id = ${route_orders.route_id}`);
     });
     db.transaction(tx => {
@@ -1069,14 +1000,10 @@ export function updateRouteOrders(route_orders) {
     route_orders.route_details.map(detail => {
       db.transaction(tx => {
         tx.executeSql(
-<<<<<<< HEAD
           `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(
             ${detail.route_id},
             ${detail.order_id},
             ${detail.routedetail_id}, 'A')`,
-=======
-          `INSERT INTO route_details(route_id, order_id, routedetail_id, status) VALUES(${detail.route_id}, ${detail.order_id}, ${detail.routedetail_id}, 'A')`,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         );
       });
       //saveOrders(detail.orders);
@@ -1086,7 +1013,6 @@ export function updateRouteOrders(route_orders) {
             `DELETE FROM orders WHERE order_id = ${order.order_id}`,
           );
           tx.executeSql(
-<<<<<<< HEAD
             `INSERT INTO orders(order_id, address, order_document, client, date_register, order_total, assigned) VALUES(
               ${order.order_id},
               '${order.address}',
@@ -1095,24 +1021,13 @@ export function updateRouteOrders(route_orders) {
               '${order.date_register}',
               ${order.order_total},
               ${order.assigned})`,
-=======
-            `INSERT INTO orders(order_id, address, order_document, client, date_register, order_total, assigned) VALUES(${order.order_id}, '${order.address}', '${order.order_document}', ${order.client}, '${order.date_register}', ${order.order_total}, ${order.assigned})`,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           );
         });
-<<<<<<< HEAD
-        order.order_details.map(order_detail => {
-          db.transaction(tx => {
-            tx.executeSql(
-<<<<<<< HEAD
-              `DELETE FROM order_details WHERE orderdetail_id = 
-=======
         [order.order_details, order.order_purchases_details].map(
           order_detail => {
             db.transaction(tx => {
               tx.executeSql(
                 `DELETE FROM order_details WHERE orderdetail_id =
->>>>>>> Andris
               ${order_detail.orderdetail_id}`,
               );
               tx.executeSql(
@@ -1122,21 +1037,6 @@ export function updateRouteOrders(route_orders) {
                 '${order_detail.detail_type}',
                 ${order_detail.detail_id},
                 ${order_detail.detail_quantity},
-<<<<<<< HEAD
-                ${order_detail.detail_price}, 
-                '${order_detail.detail_description}', 
-                ${order_detail.collected_quantity}, 
-                ${order_detail.collected_amount})`,
-=======
-              `DELETE FROM order_details WHERE orderdetail_id = ${order_detail.orderdetail_id}`,
-            );
-            tx.executeSql(
-              `INSERT INTO order_details(order_id, orderdetail_id, detail_type, detail_id, detail_quantity, detail_price, detail_description, collected_quantity, collected_amount) VALUES(${order_detail.order_id}, ${order_detail.orderdetail_id}, '${order_detail.detail_type}', ${order_detail.detail_id}, ${order_detail.detail_quantity}, ${order_detail.detail_price}, '${order_detail.detail_description}', ${order_detail.collected_quantity}, ${order_detail.collected_amount})`,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-            );
-          });
-        });
-=======
                 ${order_detail.detail_price},
                 '${order_detail.detail_description}',
                 ${order_detail.collected_quantity},
@@ -1146,7 +1046,6 @@ export function updateRouteOrders(route_orders) {
             });
           },
         );
->>>>>>> Andris
       });
     });
     resolve(route_orders);
@@ -1172,14 +1071,7 @@ export function getOrderDetails(order_id) {
               collected_quantity: row.collected_quantity,
               detail_price: row.detail_price,
               detail_quantity: row.detail_quantity,
-<<<<<<< HEAD
-<<<<<<< HEAD
-              detail_type: row.detail_type,
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-=======
               pickup_or_purchase: row.pickup_purchase,
->>>>>>> Andris
             };
             arrOrders.push(orderObject);
           }
@@ -1201,10 +1093,6 @@ export function getNotifications(status) {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let notificationObject = {
-<<<<<<< HEAD
-=======
-              id: row.id,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
               title: row.title,
               body: row.body,
             };
@@ -1214,21 +1102,5 @@ export function getNotifications(status) {
         },
       );
     });
-<<<<<<< HEAD
-=======
-  });
-}
-
-export function updateNotificationStatus(status, id) {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `UPDATE notifications set read =${status} WHERE id = ${id}`,
-        [],
-        (tx, results) => {},
-      );
-    });
-    resolve(true);
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   });
 }

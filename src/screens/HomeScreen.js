@@ -85,11 +85,7 @@ export default class Home extends Component {
   }
 
   notificationsHandler() {
-<<<<<<< HEAD
     /*getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
-=======
-    getData('GET_NOTIFICATIONS', "&status=new").then(notifications => {
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       //alert(JSON.stringify(notifications));
       if(notifications.valid){
         saveNotifications(notifications.arrResponse).then(count=> {
@@ -108,29 +104,16 @@ export default class Home extends Component {
           }
         })
       }
-<<<<<<< HEAD
     })*/
-=======
-    })
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   }
 
   componentWillUnmount() {
     clearInterval(this.notificationsInterval);
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  setPrinter = () => {/*
-=======
   setPrinter = () => {
     /*
->>>>>>> Andris
     this.setState({loading: true, loadingMessage: 'Testing Printer'});
-=======
-  setPrinter = () => {
-    //this.setState({loading: true, loadingMessage: 'Testing Printer'});
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     if (global.printer_address === '') {
       alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
       this.setState({loading: false});
@@ -138,7 +121,6 @@ export default class Home extends Component {
       enableBT().then(e => {
         connectBluetooth(global.printer_name, global.printer_address).then(c => {
           if (c === true) {
-<<<<<<< HEAD
             dataOperation('GET_ORDER_INVOICE', {order_id: 2}).then(o => {
               if( o.valid){
                 printText(o.responseObject).then(p => {
@@ -148,57 +130,12 @@ export default class Home extends Component {
                 this.setState({loading: false});                  
               }
             })
-=======
-            Alert.alert(
-              global.translate("TITLE_PRINT_ORDER"),
-              global.translate("TITLE_PRINT_ORDER_MESSAGE"),
-              [
-                {
-                  text: global.translate("TITLE_NO_PRINT"), 
-                  onPress: () => {
-                    alert.cancel     
-                  }, 
-                  style: 'cancel'
-                },
-                {
-                  text: global.translate("TITLE_PRINT_TOGETHER"),
-                  onPress: () => {
-                    dataOperation('GET_ORDER_INVOICE', {order_id: 131}).then(o => {
-                      if( o.valid){
-                        printText(o.responseObject, 2).then(p => {
-                          this.setState({loading: false});
-                        });
-                      } else{
-                        this.setState({loading: false});                  
-                      }
-                    });
-                  },
-                },
-                {
-                  text: global.translate("TITLE_PRINT_SEPARATE"), 
-                  onPress: () => {                    
-                    dataOperation('GET_ORDER_INVOICE', {order_id: 131}).then(o => {
-                      if( o.valid){
-                        printText(o.responseObject, 1).then(p => {
-                          this.setState({loading: false});
-                        });
-                      } else{
-                        this.setState({loading: false});                  
-                      }
-                    });
-                  }
-                },
-              ],
-              {cancelable: false},
-            )
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           } else {
             this.setState({loading: false});
             alert('Not connected');
           }
         });
       });
-<<<<<<< HEAD
     }*/
     //this.setModalVisible(true);
     Alert.alert(
@@ -224,15 +161,7 @@ export default class Home extends Component {
         },
       ],
       {cancelable: false},
-<<<<<<< HEAD
-    )
-=======
-    }
-    //this.setModalVisible(true);
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-=======
     );
->>>>>>> Andris
   };
 
   setModalVisible(visible) {

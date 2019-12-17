@@ -76,7 +76,6 @@ export async function getData(apiOption, extraParams) {
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();
     if (JSON.stringify(responseJson) === '{}') {
-<<<<<<< HEAD
       returnObject = {
         valid: false,
         response: 'ALERT_BLANK_RESPONSE',
@@ -89,12 +88,6 @@ export async function getData(apiOption, extraParams) {
           response: responseJson.error_message,
           arrResponse: [],
         };
-=======
-      returnObject = {valid: false, response: 'ALERT_BLANK_RESPONSE', arrResponse: []};
-    } else {
-      if (responseJson.response !== 'valid') {
-        returnObject = {valid: false, response: responseJson.error_message, arrResponse: []};
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       } else {
         returnObject = {
           valid: true,

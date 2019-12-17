@@ -96,10 +96,10 @@ export default class Order extends Component {
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
           const orderData = o.arrResponse[0];
-          console.log('arrRESPONSE', o.arrResponse[0]);
+          console.log('arrRESPONSE', orderData);
           this.setState({
-            placeholder: orderData.client_name,
             ...orderData,
+            placeholder: orderData.client_name,
             placeholderEmployee: orderData.employee_name || '',
             client_address: orderData.address,
             client_city: orderData.city,

@@ -11,10 +11,6 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
-<<<<<<< HEAD
-=======
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {
   Text,
   View,
@@ -23,10 +19,6 @@ import {
   ScrollView,
   Animated,
 } from 'react-native';
-<<<<<<< HEAD
-=======
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {
   Content,
   Container,
@@ -69,10 +61,7 @@ export class Route extends Component {
       chosenDate2: params.date_to,
       disabled_date_from: params.disabled_date_from,
     };
-<<<<<<< HEAD
 
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     if (params.new_record === false) {
       this.rowTranslateAnimatedValues = {};
       getData(
@@ -94,11 +83,7 @@ export class Route extends Component {
                 loading: false,
                 data: clear,
                 clear_data: clear,
-<<<<<<< HEAD
                 // route_description: r.description,
-=======
-                route_description: r.description,
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
                 document_id: r.document_id,
                 document_acronym: r.acronym,
                 document_number: r.document_number,
@@ -117,15 +102,6 @@ export class Route extends Component {
     this.updateDataState = this.updateDataState.bind(this);
   }
 
-<<<<<<< HEAD
-=======
-  state = {};
-
-  static navigationOptions = {
-    header: null,
-  };
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   cleanArr(orders) {
     return new Promise((resolve, reject) => {
       let cArr = [];
@@ -152,12 +128,9 @@ export class Route extends Component {
       } catch (err) {}
     });
   }
-<<<<<<< HEAD
   componentWillUnmount() {
     this.focusListener.remove();
   }
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
   updateDataState(theData) {
     this.setState({data: theData, clear_data: theData});
@@ -166,33 +139,17 @@ export class Route extends Component {
   setEmployeesPicker(employees) {
     return new Promise((resolve, reject) => {
       let arrEmployees = [];
-<<<<<<< HEAD
       employees.map(employee => {
-=======
-      for (let i = 0; i < employees.length; ++i) {
-        let employee = employees[i];
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         arrEmployees.push({
           Name: employee.employee_code + '- ' + employee.name,
           Code: employee.employee_code,
           Phone: employee.phone_number,
         });
-<<<<<<< HEAD
       });
-=======
-      }
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       resolve(arrEmployees);
     });
   }
 
-<<<<<<< HEAD
-=======
-  componentWillUnmount() {
-    this.focusListener.remove();
-  }
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   setDate = newDate => {
     this.setState({chosenDate: moment(newDate).format('DD/MM/YYYY')});
   };
@@ -211,15 +168,10 @@ export class Route extends Component {
       clear_data,
       document_number,
     } = this.state;
-<<<<<<< HEAD
 
     if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
       let ordersArr = [];
 
-=======
-    if (route_description && chosenDate && chosenDate2 && selected_item.Code) {
-      let ordersArr = [];
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       clear_data.map(order => {
         let orderObject = {
           code: order.order_document.split('-')[1],
@@ -227,10 +179,7 @@ export class Route extends Component {
         };
         ordersArr.push(orderObject);
       });
-<<<<<<< HEAD
 
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       let order_data = {
         document_number: document_number,
         setma_id: global.setma_id,
@@ -242,18 +191,12 @@ export class Route extends Component {
         route_state: 'A',
         orders_list: ordersArr,
       };
-<<<<<<< HEAD
 
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       this.setState({
         loading: true,
         loadingMessage: this.props.navigation.state.params.loading_message,
       });
-<<<<<<< HEAD
 
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       dataOperation('ROUTE_OPERATION', order_data).then(res => {
         if (res.valid) {
           updateOrderAssigned(ordersArr).then(up => {
@@ -283,7 +226,6 @@ export class Route extends Component {
     });
   }
 
-<<<<<<< HEAD
   selectedItem = item => {
     this.setState({
       placeholder: item.Name,
@@ -293,15 +235,6 @@ export class Route extends Component {
 
   markForDelete = swipeData => {
     console.log('Route Remove Function', swipeData);
-=======
-  selectedItem(item) {
-    this.setState({
-      selected_item: item,
-    });
-  }
-
-  markForDelete = swipeData => {
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     const {key, value} = swipeData;
     if (value < -375) {
       const filteredData = this.state.data.filter(item => item.id !== key);
@@ -321,58 +254,12 @@ export class Route extends Component {
   //   this.setState({reverted: true});
   // };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  renderItem = ({item}) => (
-    <Item style={[styles.list]} onPress={() => {}}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-        }}>
-        <View key={item.key} style={styles.listContainer}>
-          <Text style={styles.code}>
-            {global.translate('TITLE_CODE')}: {item.order_document}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text numberOfLines={1} style={styles.name}>
-              {item.client} - {item.name}
-            </Text>
-            <Text numberOfLines={1} style={styles.price}>
-              $ {item.order_total}
-            </Text>
-          </View>
-          <Text numberOfLines={1} style={styles.address}>
-            {item.address}
-          </Text>
-        </View>
-      </View>
-    </Item>
-  );
-=======
   // handleUserBeganScrollingParentView() {
   //   this.swipeable.recenter();
   // }
->>>>>>> Andris
 
-=======
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   render() {
     const {
-<<<<<<< HEAD
-      selectedItem,
-      employeeText,
-      leftActionActivated,
-      toggle,
-<<<<<<< HEAD
-=======
->>>>>>> Andris
       placeholder,
       chosenDate2,
       chosenDate,
@@ -388,67 +275,12 @@ export class Route extends Component {
     console.log('Andris', this.state);
     const {params} = this.props.navigation.state;
 
-=======
-    } = this.state;
-    const {params} = this.props.navigation.state;
-
-    let renderItem = ({item}) => (
-      <Item style={[styles.list]} onPress={() => {}}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 12,
-          }}>
-          <View key={item.key} style={styles.listContainer}>
-            <Text style={styles.code}>
-              {global.translate('TITLE_CODE')}: {item.order_document}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text numberOfLines={1} style={styles.name}>
-                {item.client} - {item.name}
-              </Text>
-              <Text numberOfLines={1} style={styles.price}>
-                $ {item.order_total}
-              </Text>
-            </View>
-            <Text numberOfLines={1} style={styles.address}>
-              {item.address}
-            </Text>
-          </View>
-        </View>
-      </Item>
-    );
-
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     let orderList = (
       <SwipeListView
-<<<<<<< HEAD
-        style={{
-          overflow: 'hidden',
-          marginBottom: 0,
-          backgroundColor: 'lightGray',
-        }}
-<<<<<<< HEAD
-        data={data}
-        keyExtractor={item => item.id}
-        renderItem={this.renderItem}
-=======
-        data={this.state.data}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-=======
         style={styles.swipeList}
         data={data}
         keyExtractor={item => item.id}
         renderItem={({item}) => <SwipeList item={item} />}
->>>>>>> Andris
         renderHiddenItem={(data, rowMap) => (
           <SwipeHiddenList
             label={'TITLE_DELETED'}
@@ -465,13 +297,8 @@ export class Route extends Component {
     return (
       <Container style={{flex: 1}}>
         <Spinner
-<<<<<<< HEAD
           visible={loading}
           textContent={global.translate(loadingMessage)}
-=======
-          visible={this.state.loading}
-          textContent={global.translate(this.state.loadingMessage)}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           color={'CE2424'}
           overlayColor={'rgba(255, 255, 255, 0.4)'}
           animation={'slide'}
@@ -497,96 +324,6 @@ export class Route extends Component {
         <Content style={{backgroundColor: theme.colors.lightGray}}>
           <View style={styles.container}>
             <Form>
-<<<<<<< HEAD
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_DESCRIPTION')}
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder={global.translate('PLACEHOLDER_TYPE_DESCRIPTION')}
-                  returnKeyType="go"
-<<<<<<< HEAD
-                  value={route_description}
-=======
-                  value={this.state.route_description}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-                  onChangeText={route_description => {
-                    this.setState({route_description: route_description});
-                  }}
-                />
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_START_DATE')}
-                </Text>
-                <View style={styles.datepicker}>
-                  <DatePicker
-                    defaultDate={
-                      new Date(
-<<<<<<< HEAD
-                        chosenDate.split('/')[2],
-                        parseInt(chosenDate.split('/')[1]) - 1,
-                        chosenDate.split('/')[0],
-=======
-                        this.state.chosenDate.split('/')[2],
-                        parseInt(this.state.chosenDate.split('/')[1]) - 1,
-                        this.state.chosenDate.split('/')[0],
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-                      )
-                    }
-                    minimumDate={new Date()}
-                    locale={'es'}
-                    timeZoneOffsetInMinutes={undefined}
-                    modalTransparent={false}
-                    animationType={'fade'}
-                    androidMode={'default'}
-                    textStyle={{color: theme.colors.gray, fontSize: 14}}
-                    onDateChange={this.setDate}
-<<<<<<< HEAD
-                    disabled={disabled_date_from}
-=======
-                    disabled={this.state.disabled_date_from}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-                  />
-                </View>
-              </View>
-              <View style={styles.paddingBottom}>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_END_DATE')}
-                </Text>
-                <View style={styles.datepicker}>
-                  <DatePicker
-                    defaultDate={
-                      new Date(
-                        this.state.chosenDate2.split('/')[2],
-<<<<<<< HEAD
-                        parseInt(chosenDate2.split('/')[1]) - 1,
-                        chosenDate2.split('/')[0],
-=======
-                        parseInt(this.state.chosenDate2.split('/')[1]) - 1,
-                        this.state.chosenDate2.split('/')[0],
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
-                      )
-                    }
-                    minimumDate={new Date()}
-                    locale={'es'}
-                    timeZoneOffsetInMinutes={undefined}
-                    modalTransparent={false}
-                    animationType={'fade'}
-                    androidMode={'default'}
-                    textStyle={{color: theme.colors.gray, fontSize: 14}}
-                    placeHolderTextStyle={{
-                      color: theme.colors.gray2,
-                      fontSize: 14,
-                    }}
-                    onDateChange={this.setDate2}
-<<<<<<< HEAD
-                    disabled={disabled_date_from}
-                  />
-                </View>
-              </View>
-=======
               <CustomInput
                 label={'TITLE_DESCRIPTION'}
                 style={styles.input}
@@ -626,7 +363,6 @@ export class Route extends Component {
                 disabled={disabled_date_from}
               />
 
->>>>>>> Andris
               <CustomPicker
                 label={'TITLE_COLLECTOR'}
                 items={employees}
@@ -634,33 +370,11 @@ export class Route extends Component {
                 onSelected={this.selectedItem}
                 disabled={disabled_date_from}
               />
-=======
-                    disabled={this.state.disabled_date_from}
-                  />
-                </View>
-              </View>
-              <View>
-                <Text style={styles.label}>
-                  {global.translate('TITLE_COLLECTOR')}
-                </Text>
-                {/* CustomPicker */}
-                <CustomPicker
-                  items={this.state.employees}
-                  placeholder={this.state.placeholder}
-                  selectedItem={this.selectedItem}
-                  disabled={this.state.disabled_date_from}
-                />
-              </View>
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             </Form>
           </View>
           <ScrollView style={{marginTop: 12}}>
             {/* FLATLIST */}
             {orderList}
-<<<<<<< HEAD
-=======
-            {/* FLATLIST */}
->>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           </ScrollView>
 
           <View style={styles.addPoint}>
