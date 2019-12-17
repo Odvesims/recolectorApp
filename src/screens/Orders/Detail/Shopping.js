@@ -1,8 +1,18 @@
 import React, {PureComponent} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
+<<<<<<< HEAD
 import {CustomPicker, NumberInput} from '../../../components';
 import {ButtonGroup} from 'react-native-elements';
+=======
+import NumericInput from 'react-native-numeric-input';
+import {
+  CustomPicker,
+  ButtonGroup,
+  CustomButton,
+  ActionButton,
+} from '../../../components';
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   getStoredCategories,
@@ -27,6 +37,7 @@ import {
 export default class Shopping extends PureComponent {
   constructor(props) {
     super(props);
+<<<<<<< HEAD
     let {params} = this.props.navigation.state;
     let type = params.detail_type;
     switch (type) {
@@ -45,16 +56,28 @@ export default class Shopping extends PureComponent {
     this.state = {
       theItem: {},
       selectedIndex: type,
+=======
+    this.state = {
+      theItem: {},
+      selectedIndex: 2,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       categories: [],
       subcategories: [],
       articles: [],
       picker_data: [],
       article: '',
       article_price: '',
+<<<<<<< HEAD
       quantity: quantity,
       price: params.price,
       total: params.detail_total,
       placeholder: params.detail_description, //global.translate('PLACEHOLDER_SELECT_ARTICLE')
+=======
+      quantity: 1,
+      price: '',
+      // total: '',
+      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     };
     this.getArticlesData();
   }
@@ -92,7 +115,12 @@ export default class Shopping extends PureComponent {
   }
 
   priceHandler(value) {
+<<<<<<< HEAD
     const {quantity} = this.state;
+=======
+    const {theItem, article_price, price, quantity} = this.state;
+
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     let total = parseFloat(value * quantity);
     this.setState(prevState => ({
       price: value,
@@ -107,14 +135,22 @@ export default class Shopping extends PureComponent {
   }
 
   changeQuantity(value) {
+<<<<<<< HEAD
     const {price, quantity} = this.state;
+=======
+    const {theItem, article_price, price, total, quantity} = this.state;
+
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     this.setState(prevState => ({
       quantity: value,
       price: price,
       total: price * value,
       itemSelected: {
         ...prevState.itemSelected,
+<<<<<<< HEAD
 
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         price: price,
         total: price * quantity,
         quantity: value,
@@ -176,10 +212,19 @@ export default class Shopping extends PureComponent {
       this.setState({
         theItem: item,
         article: item.Name,
+<<<<<<< HEAD
         placeholder: item.Name,
         itemSelected: {
           item: item.Name.split('-')[0],
           detail_description: item.Name.split('-')[1],
+=======
+        // article_price: item.Price,
+        // total: price,
+        placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+        itemSelected: {
+          item: item.Name.split('-')[0],
+          description: item.Name.split('-')[1],
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           price: price,
           quantity: quantity,
           total: price,
@@ -192,6 +237,10 @@ export default class Shopping extends PureComponent {
 
   onPressHandler = () => {
     const {quantity, itemSelected} = this.state;
+<<<<<<< HEAD
+=======
+    console.log('DONE ==>', itemSelected);
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     if (quantity) {
       this.props.navigation.navigate('Order', {
         itemSelected: itemSelected,
@@ -207,13 +256,20 @@ export default class Shopping extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
+<<<<<<< HEAD
     //
     const {
       selectedIndex,
+=======
+    const {
+      selectedIndex,
+      article_price,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       quantity,
       placeholder,
       picker_data,
       total,
+<<<<<<< HEAD
       price,
     } = this.state;
     //
@@ -234,6 +290,14 @@ export default class Shopping extends PureComponent {
 
     return (
       <Container>
+=======
+    } = this.state;
+    const {navigation} = this.props;
+
+    return (
+      <Container>
+        {/* header */}
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         <Header>
           <Left>
             <Button
@@ -247,6 +311,7 @@ export default class Shopping extends PureComponent {
             </Button>
           </Left>
           <Body>
+<<<<<<< HEAD
             <Title>Articulos a Comprar</Title>
           </Body>
           {save}
@@ -258,6 +323,14 @@ export default class Shopping extends PureComponent {
               flex: 1,
               justifyContent: 'flex-end',
             }}>
+=======
+            <Title>{global.translate('TITLE_ARTICLES_TO_PURCHASE')}</Title>
+          </Body>
+        </Header>
+        {/* Content */}
+        <Content style={styles.container}>
+          <KeyboardAwareScrollView>
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             <Form>
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_SELECT')}</Text>
@@ -266,6 +339,7 @@ export default class Shopping extends PureComponent {
                   selectedIndex={selectedIndex}
                   buttons={buttons}
                   containerStyle={{height: 40}}
+<<<<<<< HEAD
                   disabled={!isEditable}
                 />
               </View>
@@ -276,14 +350,39 @@ export default class Shopping extends PureComponent {
                 onSelected={this.selectedItem}
                 disabled={!isEditable}
               />
+=======
+                />
+              </View>
+              <View style={styles.paddingBottom}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
+                </View>
+                <CustomPicker
+                  placeholder={placeholder}
+                  selectedHolder={this.selectedItem.Name}
+                  items={picker_data}
+                  selectedItem={this.selectedItem}
+                />
+              </View>
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
               {/* Price */}
               <View style={styles.paddingBottom}>
                 {/* {global.translate('TITLE_QUANTITY')} */}
                 <Text>Precio</Text>
                 <TextInput
+<<<<<<< HEAD
                   editable={isEditable}
                   value={price}
+=======
+                  ref={input => {
+                    this.secondTextInput = input;
+                  }}
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
                   style={styles.inputNumber}
                   keyboardType="number-pad"
                   onChangeText={price => {
@@ -291,6 +390,7 @@ export default class Shopping extends PureComponent {
                   }}
                 />
               </View>
+<<<<<<< HEAD
               {/* Quantity */}
               <NumberInput
                 rounded
@@ -314,16 +414,54 @@ export default class Shopping extends PureComponent {
             </Total>
           </KeyboardAwareScrollView>
         </BContent>
+=======
+              {/* quantity */}
+              <View style={styles.paddingBottom}>
+                <Text style={{marginBottom: 8}}>
+                  {global.translate('TITLE_QUANTITY')}
+                </Text>
+                <NumericInput
+                  rounded
+                  iconStyle={{color: 'green'}}
+                  value={quantity}
+                  onChange={quantity => {
+                    this.changeQuantity(quantity);
+                  }}
+                  minValue={1}
+                />
+              </View>
+            </Form>
+            <View style={styles.totalPriceContainer}>
+              <Text style={styles.totalPrice}>
+                {global.translate('TITLE_TOTAL')}: $ {total || 0}
+              </Text>
+            </View>
+          </KeyboardAwareScrollView>
+        </Content>
+        <ActionButton
+          cancel={() => {
+            navigation.goBack();
+          }}
+          accept={this.onPressHandler}
+        />
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   // container: {
   //   flex: 1,
   //   padding: theme.sizes.padding,
   // },
+=======
+  container: {
+    flex: 1,
+    padding: theme.sizes.padding,
+  },
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
   input: {
     marginVertical: theme.sizes.p8,
@@ -332,7 +470,10 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.gray2,
     borderRadius: 4,
     color: '#000',
+<<<<<<< HEAD
     backgroundColor: 'yellow',
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   },
 
   inputNumber: {
@@ -378,6 +519,7 @@ const styles = StyleSheet.create({
   },
   price: {},
 });
+<<<<<<< HEAD
 
 const BContent = styled.View`
   flex: 1;
@@ -389,3 +531,5 @@ const Total = styled.View`
   flex-direction: column;
   justify-content: flex-end;
 `;
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0

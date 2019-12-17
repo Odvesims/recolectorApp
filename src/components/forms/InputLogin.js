@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import {View, TextInput} from 'react-native';
 import {Icon} from 'native-base';
@@ -75,6 +76,14 @@ InputLogin.proptypes = {
   ref: proptypes.func,
   id: proptypes.string,
 };
+=======
+import React, {Component} from 'react';
+import {Text, View, TextInput} from 'react-native';
+import {Container, Header, Content, Item, Input, Icon} from 'native-base';
+import styled from 'styled-components/native';
+import {theme} from '../../constants';
+import {CustomTextInput} from '../../components';
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
 const LabelForm = styled.Text`
   margin-top: 20px;
@@ -102,3 +111,55 @@ const InputIcon = styled(Icon)`
   font-size: 24px;
   margin-right: 12px;
 `;
+<<<<<<< HEAD
+=======
+
+export default class InputLogin extends Component {
+  render() {
+    const {
+      inputstyle,
+      iconName,
+      labelStyle,
+      keyboardType,
+      multiline,
+      numberOfLines,
+      onChangeText,
+      onSubmitEditing,
+      placeholder,
+      returnKeyType,
+      secured,
+      textLabel,
+      value,
+      id,
+      ...props
+    } = this.props;
+
+    return (
+      <View>
+        <LabelForm style={labelStyle} id={id}>
+          {textLabel}
+        </LabelForm>
+        <InputForm>
+          <InputIcon name={iconName} />
+          <InputField
+            underlineColorAndroid="transparent"
+            placeholder={placeholder}
+            placeholderTextColor="#007FFF"
+            keyboardType={keyboardType}
+            onChangeText={onChangeText}
+            returnKeyType={returnKeyType}
+            numberOfLines={numberOfLines}
+            multiline={multiline}
+            onSubmitEditing={onSubmitEditing}
+            secureTextEntry={secured}
+            blurOnSubmit={false}
+            value={value}
+            {...props}
+            style={inputstyle}
+          />
+        </InputForm>
+      </View>
+    );
+  }
+}
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0

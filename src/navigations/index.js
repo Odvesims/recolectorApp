@@ -45,7 +45,11 @@ import OrderList from '../screens/Routes/OrderList';
 // Orders
 import Orders from '../screens/Orders/Orders';
 import Order from '../screens/Orders/Order';
+<<<<<<< HEAD
 // import Detail from '../screens/Orders/Detail';
+=======
+import Detail from '../screens/Orders/Detail';
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import Picking from '../screens/Orders/Detail/Picking';
 import Shopping from '../screens/Orders/Detail/Shopping';
 // Configuration
@@ -129,7 +133,11 @@ const OrdersScreen = createStackNavigator(
       },
     },
     Order: Order,
+<<<<<<< HEAD
     // Detail: Detail,
+=======
+    Detail: Detail,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     Picking: Picking,
     Shopping: Shopping,
   },

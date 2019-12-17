@@ -20,17 +20,33 @@
   "ALERT_SESSION_TIMEOUT": "Session expirée.",
   "ALERT_SYNC_INCOMPLETE": "Certaines données n'ont pas pu être chargées.",
   "ALERT_UPDATE_FAILED": "Erreur de mise à jour des données.",
+<<<<<<< HEAD
   "ALERT_UPDATE_SUCCESFUL": "Données mises à jour avec succès.",
   "ALERT_USER_BLANK": "L'utilisateur ne peut pas être vide.",
   "ALERT_USER_INVALID": "Nom d'utilisateur n'est pas valide",
 
+=======
+  "ALERT_QUANTITY_BLANK": "La quantité ne peut pas être vide",
+  "ALERT_COMPLETE_DATA": "Certaines données sont nécessaires pour compléter le formulaire",
+  "ALERT_PRINTER_NOT_CONFIGURED": "Vous n'avez configuré aucune imprimante. Vérifiez votre configuration.",
+  "ALERT_NO_ROUTES_FOUND": "Aucun itinéraire trouvé.",
+  "ALERT_GETTING_ROUTE": "Obtenir des informations sur l'itinéraire",
+  "MESSAGE_SIGNIN": "Se Connecter",
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   "MESSAGE_LOADING_CLIENTS": "Chargement des clients",
+  "MESSAGE_LOADING_ORDERS": "Chargement des commandes",
+  "MESSAGE_LOADING_ROUTES": "Chargement des itinéraire",
   "MESSAGE_LOADING_DATA": "Sauvegarde des données",
   "MESSAGE_LOADING_ORDERS": "Chargement des commandes",
   "MESSAGE_LOADING_ROUTES": "Chargement des itinéraire",
   "MESSAGE_REGISTERING_CLIENT": "Client inscrit",
   "MESSAGE_REGISTERING_ORDER": "Command inscrit",
+<<<<<<< HEAD
   "MESSAGE_SAVING_DATA": "Chargement des données",
+=======
+  "MESSAGE_UPDATING_ORDER": "Mise à jour du command",
+  "MESSAGE_UPDATING_ROUTE": "Mise à jour du itinéraire",
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   "MESSAGE_SELECT_STATE": "Sélectionner un état / une province",
   "MESSAGE_SIGNIN": "Se Connecter",
   "MESSAGE_UPDATING_CLIENT": "Mise à jour du client",
@@ -50,8 +66,16 @@
   "PLACEHOLDER_TYPE_DESCRIPTION": "Entrez la description",
   "PLACEHOLDER_TYPE_NAME": "Tapez le nom",
   "PLACEHOLDER_TYPE_PHONE": "Tapez le téléphone",
+<<<<<<< HEAD
   "PLACEHOLDER_TYPE_STATE": "Tapez dans l'état",
 
+=======
+  "PLACEHOLDER_SELECT_CLIENT": "Sélectionner le client",
+  "PLACEHOLDER_SELECT_EMPLOYEE": "Sélectionner le collecteur",
+  "PLACEHOLDER_SELECT_ARTICLE": "Sélectionner le article",
+  "PLACEHOLDER_TYPE_DESCRIPTION": "Entrez la description",
+  "ROLE_SUPERVISOR": "Superviseur",
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   "ROLE_RECOLLECTOR": "Collecteur",
   "ROLE_SUPERVISOR": "Superviseur",
   "ROLE_WAREHOUSE": "Entrepôt",
@@ -72,6 +96,12 @@
   "TITLE_CITY": "Ville",
   "TITLE_CLIENT": "Client",
   "TITLE_CLIENTS": "Les Clients",
+<<<<<<< HEAD
+=======
+  "TITLE_ROUTES": "Itinéraires",
+  "TITLE_ROUTE": "Itinéraire",
+  "TITLE_LOGOUT": "fermer la session",
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   "TITLE_CODE": "Code",
   "TITLE_CONFIGURATION": "Configuration",
   "TITLE_CONFIGURE_PRINTER": "Configurer une imprimante",
@@ -106,6 +136,23 @@
   "TITLE_NOT_ASSIGNED": "Non attribué",
   "TITLE_NOTIFICATIONS": "Les notifications",
   "TITLE_OPTIONS": "Les options",
+<<<<<<< HEAD
+=======
+  "TITLE_DELETE": "Enlever",
+  "TITLE_EDIT": "Éditer",
+  "TITLE_VIEW": "Vue",
+  "TITLE_CANCEL": "Sortir",
+  "TITLE_DONE": "Prêt",
+  "TITLE_NAME": "Nom",
+  "TITLE_ADDRESS": "Adresse",
+  "TITLE_CITY": "Ville",
+  "TITLE_STATE": "Etat",
+  "TITLE_PHONE": "Numéro de téléphone",
+  "TITLE_ORDERS": "Les Commandes",
+  "TITLE_CLIENT": "Client",
+  "TITLE_DETAILS": "Les details",
+  "TITLE_DATE": "Date",
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
   "TITLE_ORDER": "La commande",
   "TITLE_ORDERS": "Les Commandes",
   "TITLE_PASSWORD": "Mot de passe",
@@ -120,6 +167,7 @@
   "TITLE_PRINT_TOGETHER": "Imprimer ensemble",
   "TITLE_PURCHASES": "Achats",
   "TITLE_QUANTITY": "Quantité",
+<<<<<<< HEAD
   "TITLE_QUESTION_SIGN_OUT": "Êtes-vous certain de vouloir vous déconnecter?",
   "TITLE_READ": "Lire",
   "TITLE_REGISTERING_ROUTE": "Enregistrement de l'itinéraire",
@@ -141,4 +189,47 @@
   "TITLE_VIEW_ROUTE": "Vue itinéraire",
   "TITLE_VIEW": "Vue",
   "TITLE_YES": "Oui"
+=======
+  "TITLE_ACCEPT": "Accepter",
+  "TITLE_NEW_ORDER": "Nouvelle commande",
+  "TITLE_NEW_ROUTE": "Nouvelle itinéraire",
+  "TITLE_ASSIGNED": "Assigné",
+  "TITLE_NOT_ASSIGNED": "Non attribué",
+  "TITLE_TOTAL": "Total",
+  "TITLE_AVAILABLE": "Disponible",
+  "TITLE_SELECT_DATE": "Sélectionnez la date",
+  "TITLE_START_DATE": "Date de début",
+  "TITLE_END_DATE": "Date limite",
+  "TITLE_ACTIVE": "Active",
+  "TITLE_EXPIRED": "Expiré",
+  "TITLE_CONFIGURE_PRINTER": "Configurer une imprimante",
+  "TITLE_SIGN_OUT": "Déconnexion",
+  "TITLE_QUESTION_SIGN_OUT": "Êtes-vous certain de vouloir vous déconnecter?",
+  "TITLE_MY_ROUTES": "Mes itinéraires",
+  "TITLE_NEW_ROUTE": "Nouvelle itinéraire",
+  "TITLE_EDIT_ROUTE": "Modifier itinéraire",
+  "TITLE_VIEW_ROUTE": "Vue itinéraire",
+  "TITLE_SELECTED": "Choisie",
+  "TITLE_REGISTERING_ROUTE": "Enregistrement de l'itinéraire",
+  "TITLE_DELETED": "Enlevé",
+  "TITLE_DISCARD": "Défaire",
+  "TITLE_MYROUTES": "Mon itinéraires",
+  "ALERT_REGISTERING_COLLECT": "Enregistrement de ramassage",
+  "TITLE_PRINT_ORDER": "Impression de reçu",
+  "TITLE_PRINT_ORDER_MESSAGE": "Cette commande contient des collections et des achats. Comment voulez-vous imprimer le reçu?",
+  "TITLE_PRINT_SEPARATE": "Imprimer séparément",
+  "TITLE_PRINT_TOGETHER": "Imprimer ensemble",
+  "TITLE_NO_PRINT": "Pas imprimer",
+  "TITLE_NOTIFICATIONS": "Les notifications",
+  "TITLE_READ": "Lire",
+  "TITLE_UNREAD": "Non lu",
+  "NOTIFICATION_QUANTITY_MISMATCH_TITLE": "Inadéquation des Quantités",
+  "TITLE_CONFIRM_CLOSE": "Fermer la commande",
+  "TITLE_CONFIRM_CLOSE_QUESTION": "Êtes-vous sûr de vouloir fermer cette commande?",
+  "TITLE_ARTICLES_TO_PURCHASE": "Articles à acheter",
+  "TITLE_ARTICLES_TO_PICK": "Articles à ramasser",
+  "TITLE_PICKINGS": "Pickups",
+  "TITLE_PURCHASES": "Achats",
+  "TITLE_CONTINUE_PRINTING": "Kontinye enprime"
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 }

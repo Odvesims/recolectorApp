@@ -17,14 +17,18 @@ import {
 
 import {Icon, Button, Content, Item, ActionSheet} from 'native-base';
 
-export class Assigned extends Component {
+export class Available extends Component {
   state = {
     data: [],
     show: true,
     BUTTONS: [
       {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
       {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
-      {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      {
+        text: global.translate('TITLE_CANCEL'),
+        icon: 'close',
+        iconColor: theme.colors.gray,
+      },
     ],
     DESTRUCTIVE_INDEX: 3,
     CANCEL_INDEX: 4,
@@ -36,9 +40,11 @@ export class Assigned extends Component {
 
   componentDidMount() {}
 
-  renderItem = ({item}) => {
-    const {BUTTONS, CANCEL_INDEX, DESTRUCTIVE_INDEX} = this.props;
-    return (
+  render() {
+    const {data} = this.state;
+    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+
+    let renderItem = ({item}) => (
       <Item style={styles.list}>
         <View key={item.key} style={styles.listContainer}>
           <Text style={styles.code}>{item.document}</Text>
@@ -62,10 +68,36 @@ export class Assigned extends Component {
                 options: BUTTONS,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: 'Opciones',
+                title: global.translate('TITLE_OPTIONS'),
               },
               buttonIndex => {
-                this.setState({clicked: BUTTONS[buttonIndex]});
+                switch (buttonIndex) {
+                  case 0:
+                    this.props.navigation.navigate('Order', {
+                      operation: 'VIEW_ORDER_ROUTE',
+                      route_id: item.route_id,
+                      description: item.description,
+                      document_id: item.document_id,
+                      document_acronym: item.acronym,
+                      document_number: item.document_number,
+                      assigned_by: item.assigned_by,
+                      assigned_to: item.assigned_to,
+                      supervisor_name: item.supervisor_name,
+                      employee_name: item.employee_name,
+                      phone_number: item.phone_number,
+                      date_from: item.date_from,
+                      date_to: item.date_to,
+                      status: item.status,
+                      disabled_date_from: true,
+                      loading_message: 'MESSAGE_UPDATING_ROUTE',
+                      new_record: false,
+                      details: item.details,
+                    });
+                    break;
+                  case 1:
+                    ActionSheet.hide();
+                    break;
+                }
               },
             )
           }>
@@ -73,30 +105,25 @@ export class Assigned extends Component {
         </Button>
       </Item>
     );
-  };
-
-  render() {
-    const {data} = this.state;
-    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
     return (
       <Content style={styles.content}>
-        {/* <ScrollView> */}
-        <FlatList
-          style={{overflow: 'hidden'}}
-          data={this.props.tab_data}
-          keyExtractor={item => item.id}
-          renderItem={this.renderItem}
-          maxToRenderPerBatch={10}
-          windowSize={10}
-        />
-        {/* </ScrollView> */}
+        <ScrollView>
+          <FlatList
+            style={{overflow: 'hidden'}}
+            data={this.props.tab_data}
+            keyExtractor={item => item.id}
+            renderItem={renderItem}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+          />
+        </ScrollView>
       </Content>
     );
   }
 }
 
-export default Assigned;
+export default Available;
 
 const styles = StyleSheet.create({
   androidHeader: {

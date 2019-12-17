@@ -100,7 +100,11 @@ export class Client extends Component {
           address: '',
           city: '',
           state: '',
+<<<<<<< HEAD
           country: country,
+=======
+          country: this.props.navigation.state.params.country,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           phone: '',
         });
         alert(global.translate(result));

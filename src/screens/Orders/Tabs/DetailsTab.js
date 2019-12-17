@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../../constants';
+<<<<<<< HEAD
 import {Name, Quantity, ListBody, styles} from '../styles';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import {Text, View, ScrollView, TouchableHighlight} from 'react-native';
@@ -8,6 +9,26 @@ import {Content, Item, Button, ActionSheet, Icon} from 'native-base';
 export default class DetailsTab extends Component {
   state = {
     data: this.props.tab_data[0],
+=======
+import styled from 'styled-components/native';
+import {SwipeListView} from 'react-native-swipe-list-view';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableHighlight,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
+import {Content, Body, Item, Button, ActionSheet, Icon} from 'native-base';
+
+export default class DetailsTab extends Component {
+  state = {
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     show: true,
     BUTTONS: [
       {
@@ -16,11 +37,14 @@ export default class DetailsTab extends Component {
         iconColor: theme.colors.primary,
       },
       {
+<<<<<<< HEAD
         text: 'Eliminar',
         icon: 'trash',
         iconColor: theme.colors.accent,
       },
       {
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         text: global.translate('TITLE_CANCEL'),
         icon: 'close',
         iconColor: theme.colors.gray,
@@ -30,6 +54,7 @@ export default class DetailsTab extends Component {
     CANCEL_INDEX: 4,
   };
 
+<<<<<<< HEAD
   markForDelete = valor => {
     const {key, id, value} = valor;
     const {tab_data, remove} = this.props;
@@ -55,6 +80,53 @@ export default class DetailsTab extends Component {
         </View>
         <Button
           transparent
+=======
+  markForDelete = swipeData => {
+    const {key, value} = swipeData;
+    if (value < -375) {
+      const filteredData = this.props.tab_data.filter(item => item.id !== key);
+      this.updateList(filteredData);
+    }
+  };
+
+  updateList = list => {
+    this.setState({
+      data: list,
+      clear_data: list,
+      reverted: false,
+    });
+  };
+
+  renderItem = ({item}) => {
+    const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    return (
+      <Item style={styles.list}>
+        <View key={item.key} style={styles.listContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <Text numberOfLines={1} style={styles.name}>
+              {item.description}
+            </Text>
+            <Text numberOfLines={1} style={styles.total}>
+              ${item.price * item.quantity}
+            </Text>
+          </View>
+          <View>
+            <Text numberOfLines={1} style={styles.quantity}>
+              {global.translate('TITLE_QUANTITY')} : {item.quantity}
+            </Text>
+            <Text numberOfLines={1} style={styles.price}>
+              {global.translate('TITLE_PRICE')} : ${item.price}
+            </Text>
+          </View>
+        </View>
+        <Button
+          transparent
+          style={styles.more}
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           onPress={() =>
             ActionSheet.show(
               {
@@ -66,6 +138,7 @@ export default class DetailsTab extends Component {
               buttonIndex => {
                 switch (buttonIndex) {
                   case 0:
+<<<<<<< HEAD
                     this.props.navigation.navigate(`${this.props.renderView}`, {
                       ...this.props.tab_data,
                       editable: this.props.editable,
@@ -76,6 +149,30 @@ export default class DetailsTab extends Component {
                     this.markForDelete(item);
                     break;
                   case 2:
+=======
+                    this.props.navigation.navigate('Route', {
+                      operation: 'TITLE_VIEW_ROUTE',
+                      route_id: item.route_id,
+                      description: item.description,
+                      document_id: item.document_id,
+                      document_acronym: item.acronym,
+                      document_number: item.document_number,
+                      assigned_by: item.assigned_by,
+                      assigned_to: item.assigned_to,
+                      supervisor_name: item.supervisor_name,
+                      employee_name: item.employee_name,
+                      phone_number: item.phone_number,
+                      date_from: item.date_from,
+                      date_to: item.date_to,
+                      status: item.status,
+                      disabled_date_from: true,
+                      loading_message: 'MESSAGE_UPDATING_ROUTE',
+                      new_record: false,
+                      details: item.details,
+                    });
+                    break;
+                  case 1:
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
                     ActionSheet.hide();
                     break;
                 }
@@ -89,17 +186,54 @@ export default class DetailsTab extends Component {
   };
 
   render() {
+<<<<<<< HEAD
     // console.log('DETAILTABS TAB_DATA ==>', this.props.tab_data);
     // console.log('DETAILTABS PROPS ==>', this.props);
     //this.props.remove
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     return (
       <Content style={styles.content}>
         <ScrollView>
           <SwipeListView
+<<<<<<< HEAD
             data={this.props.tab_data}
             keyExtractor={item => item.id}
             renderItem={this.renderItem}
             renderHiddenItem={() => <SwipeHidden />}
+=======
+            style={{
+              overflow: 'hidden',
+              marginBottom: 0,
+              backgroundColor: 'lightGray',
+            }}
+            data={this.props.tab_data}
+            keyExtractor={item => item.id}
+            renderItem={this.renderItem}
+            renderHiddenItem={(data, rowMap) => (
+              <TouchableHighlight
+                style={[styles.hiddenList]}
+                onPress={this.onClickRevert}>
+                <View>
+                  <Button
+                    transparent
+                    style={{
+                      alignSelf: 'flex-end',
+                      marginRight: 12,
+                    }}>
+                    <Icon name="trash" style={{color: 'white'}} />
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontFamily: 'Roboto-Medium',
+                      }}>
+                      {global.translate('TITLE_DELETED')}
+                    </Text>
+                  </Button>
+                </View>
+              </TouchableHighlight>
+            )}
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             leftOpenValue={0}
             rightOpenValue={-375}
             rightActionActivationDistance={125}
@@ -110,6 +244,7 @@ export default class DetailsTab extends Component {
     );
   }
 }
+<<<<<<< HEAD
 
 export const SwipeHidden = ({onPress}) => {
   return (
@@ -134,3 +269,162 @@ export const SwipeHidden = ({onPress}) => {
     </TouchableHighlight>
   );
 };
+=======
+const styles = StyleSheet.create({
+  headerCodeText: {
+    color: theme.colors.gray,
+    fontSize: theme.sizes.base,
+    fontWeight: 'bold',
+  },
+
+  currentDate: {
+    // display: 'flex',
+    backgroundColor: theme.colors.lightGray,
+    padding: 16,
+    flexDirection: 'row',
+  },
+  currentDateText: {color: theme.colors.gray},
+
+  container: {
+    // flex: 1,
+    padding: theme.sizes.padding,
+    backgroundColor: theme.colors.white,
+  },
+
+  client_data: {
+    fontSize: 14,
+  },
+
+  detailText: {textTransform: 'uppercase', color: theme.colors.gray},
+
+  list: {
+    margin: 5,
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    paddingLeft: 12,
+    elevation: 1,
+  },
+
+  listContainer: {
+    flex: 1,
+    paddingVertical: 12,
+  },
+
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+
+  button: {
+    fontSize: theme.sizes.caption,
+    textTransform: 'uppercase',
+    backgroundColor: '#4285F4',
+  },
+
+  textCenter: {
+    alignItems: 'center',
+  },
+
+  input: {
+    marginVertical: theme.sizes.p8,
+    padding: theme.sizes.p12,
+    borderWidth: 1,
+    borderColor: theme.colors.gray2,
+    borderRadius: 4,
+    color: '#000',
+  },
+
+  quantity: {
+    flexShrink: 10,
+    color: theme.colors.gray2,
+    fontSize: 14,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
+  },
+
+  price: {
+    flexShrink: 10,
+    color: theme.colors.gray2,
+    fontSize: 14,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
+  },
+
+  total: {
+    flexShrink: 10,
+    color: theme.colors.success,
+    fontSize: 16,
+    fontWeight: 'bold',
+    flexWrap: 'nowrap',
+  },
+
+  leftSwipeItem: {
+    flex: 1,
+    marginTop: 5,
+    marginBottom: 5,
+    height: 50,
+    elevation: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingRight: 20,
+    backgroundColor: '#c3000d',
+  },
+
+  rightSwipeItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 5,
+    backgroundColor: '#c3000d',
+  },
+
+  hiddenList: {
+    margin: 5,
+    backgroundColor: '#c3000d',
+    height: 46,
+    elevation: 1,
+  },
+});
+
+const ButtonOutlined = styled(TouchableOpacity)`
+  flex-direction: row;
+  justify-content: center;
+  border-style: solid;
+  border-color: ${theme.colors.primary};
+  border-width: 1;
+  padding-vertical: 12;
+  border-radius: 4;
+  align-items: center;
+`;
+const TextButton = styled.Text`
+  margin-left: 24;
+  font-size: ${theme.sizes.base};
+  color: ${theme.colors.primary};
+  text-transform: uppercase;
+`;
+const ClientForm = styled.View``;
+const Name = styled.Text`
+  flex-basis: 150;
+  font-size: 16;
+  color: black;
+  font-weight: bold;
+  overflow: scroll;
+  flex-grow: 2;
+  flex-wrap: nowrap;
+`;
+const Quantity = styled.Text`
+  flex-shrink: 10;
+  color: ${theme.colors.success};
+  font-size: 14;
+  font-weight: bold;
+  flex-wrap: nowrap;
+`;
+const CurrentDate = styled.View``;
+const DetailContent = styled.View`
+  flex-direction: column;
+  flex: 1;
+  background-color: ${theme.colors.lightGray};
+`;
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0

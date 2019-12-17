@@ -56,6 +56,10 @@ export default class RouteDetail extends Component {
       'GET_ROUTE',
       `&route_id=${params.route_id}&status=${params.status}`,
     ).then(route => {
+<<<<<<< HEAD
+=======
+      console.log(route.arrResponse[0]);
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       updateRouteOrders(route.arrResponse[0]).then(r => {
         getRouteDetails(params.route_id).then(dets => {
           this.setState({
@@ -217,12 +221,23 @@ const styles = StyleSheet.create({
   },
 
   currentDate: {
+<<<<<<< HEAD
     flexDirection: 'row',
   },
 
   currentDateText: {color: theme.colors.gray},
 
   container: {
+=======
+    // display: 'flex',
+
+    flexDirection: 'row',
+  },
+  currentDateText: {color: theme.colors.gray},
+
+  container: {
+    // flex: 1,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.white,
   },

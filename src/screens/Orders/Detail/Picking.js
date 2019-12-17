@@ -1,15 +1,24 @@
 import React, {PureComponent} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
+<<<<<<< HEAD
 import {CustomPicker, NumberInput} from '../../../components';
 import {ButtonGroup} from 'react-native-elements';
+=======
+import NumericInput from 'react-native-numeric-input';
+import {CustomPicker, ButtonGroup, ActionButton} from '../../../components';
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   getStoredCategories,
   getStoredSubcategories,
   getStoredArticles,
 } from '../../../helpers/sql_helper';
+<<<<<<< HEAD
 import {View, StyleSheet} from 'react-native';
+=======
+import {View, StyleSheet, TextInput} from 'react-native';
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 import {
   Content,
   Container,
@@ -27,6 +36,7 @@ import {
 export default class Picking extends PureComponent {
   constructor(props) {
     super(props);
+<<<<<<< HEAD
     let {params} = this.props.navigation.state;
     let type = params.detail_type;
     switch (type) {
@@ -46,21 +56,43 @@ export default class Picking extends PureComponent {
     this.state = {
       theItem: {},
       selectedIndex: type,
+=======
+    const {params} = this.props.navigation.state;
+    this.state = {
+      theItem: {},
+      selectedIndex: 2,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       categories: [],
       subcategories: [],
       articles: [],
       picker_data: [],
       article: '',
+<<<<<<< HEAD
       article_price: price,
       quantity: params.quantity, //
       placeholder: params.detail_description, // params.data.detail_description ||
       total: params.detail_total,
+=======
+      article_price: '',
+      quantity: 1,
+      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      //
+      //order_selection: params.selection,
+      //order_description: params.description,
+      //placeholder: params.order_name,
+      //chosenQuantity: params.quantity,
+      //order_total: params.total,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     };
     this.getArticlesData();
   }
 
   setArticleHandler(select, symbol) {
+<<<<<<< HEAD
     return new Promise((resolve, reject) => {
+=======
+    return new Promise((resolve, reject, hola) => {
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       let arrSelect = [];
       select.map(item => {
         arrSelect.push({
@@ -74,6 +106,7 @@ export default class Picking extends PureComponent {
     });
   }
 
+<<<<<<< HEAD
   async getArticlesData() {
     // const storedCategories = await getStoredCategories();
     // const storesSubCategories = await getStoredSubcategories(storedCategories);
@@ -85,14 +118,23 @@ export default class Picking extends PureComponent {
     //   articles: articleHandler,
     //   picker_data: res,
     // });
+=======
+  getArticlesData() {
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     getStoredCategories().then(categories => {
       getStoredSubcategories().then(subcategories => {
         getStoredArticles().then(articles => {
           this.setArticleHandler(articles, 'A').then(res => {
             this.setState({
+<<<<<<< HEAD
               categories,
               subcategories,
               articles,
+=======
+              categories: categories,
+              subcategories: subcategories,
+              articles: articles,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
               picker_data: res,
             });
           });
@@ -103,14 +145,22 @@ export default class Picking extends PureComponent {
 
   changeQuantity(value) {
     const {theItem, article_price} = this.state;
+<<<<<<< HEAD
     let description = theItem.Name.split('-')[1];
 
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     this.setState({
       quantity: value,
       total: article_price * value,
       itemSelected: {
+<<<<<<< HEAD
         item: theItem.Id,
         detail_description: description.trim(),
+=======
+        item: theItem.Name.split('-')[0],
+        description: theItem.Name.split('-')[1],
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         price: theItem.Price,
         quantity: value,
         line_type: theItem.Type,
@@ -133,7 +183,11 @@ export default class Picking extends PureComponent {
             article_price: '',
             type: 'C',
             total: 0,
+<<<<<<< HEAD
             quantity: 1,
+=======
+            quantity: '',
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           });
         });
         break;
@@ -147,7 +201,11 @@ export default class Picking extends PureComponent {
             article_price: '',
             type: 'S',
             total: 0,
+<<<<<<< HEAD
             quantity: 1,
+=======
+            quantity: '',
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           });
         });
         break;
@@ -161,7 +219,11 @@ export default class Picking extends PureComponent {
             article_price: '',
             type: 'A',
             total: 0,
+<<<<<<< HEAD
             quantity: 1,
+=======
+            quantity: '',
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           });
         });
         break;
@@ -176,10 +238,17 @@ export default class Picking extends PureComponent {
         article: item.Name,
         article_price: item.Price,
         total: item.Price,
+<<<<<<< HEAD
         placeholder: item.Name,
         itemSelected: {
           item: item.Id,
           detail_description: item.Name.split('-')[1],
+=======
+        placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+        itemSelected: {
+          item: item.Name.split('-')[0],
+          description: item.Name.split('-')[1],
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           price: item.Price,
           quantity: quantity,
           line_type: item.Type,
@@ -191,7 +260,11 @@ export default class Picking extends PureComponent {
 
   onPressHandler = () => {
     const {quantity, itemSelected} = this.state;
+<<<<<<< HEAD
     console.log('quantity ==>', quantity);
+=======
+
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     if (quantity) {
       this.props.navigation.navigate('Order', {
         itemSelected,
@@ -207,9 +280,13 @@ export default class Picking extends PureComponent {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
+<<<<<<< HEAD
     // console.log('Picking ==>', this.props.navigation.state.params);
     console.log('Picking STATE ==>', this.state);
     let {
+=======
+    const {
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       selectedIndex,
       article_price,
       quantity,
@@ -217,6 +294,7 @@ export default class Picking extends PureComponent {
       picker_data,
       total,
     } = this.state;
+<<<<<<< HEAD
 
     //
     const {
@@ -234,6 +312,9 @@ export default class Picking extends PureComponent {
         </Right>
       );
     }
+=======
+    const {navigation} = this.props;
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
     return (
       <Container>
@@ -251,6 +332,7 @@ export default class Picking extends PureComponent {
             </Button>
           </Left>
           <Body>
+<<<<<<< HEAD
             <Title>Articulos a Recoger</Title>
           </Body>
           {save}
@@ -262,6 +344,15 @@ export default class Picking extends PureComponent {
               flex: 1,
               justifyContent: 'flex-end',
             }}>
+=======
+            <Title>{global.translate('TITLE_ARTICLES_TO_PICK')}</Title>
+          </Body>
+        </Header>
+
+        {/* Content */}
+        <Content style={styles.container}>
+          <KeyboardAwareScrollView>
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             <Form>
               <View style={styles.paddingBottom}>
                 <Text>{global.translate('TITLE_SELECT')}</Text>
@@ -270,7 +361,10 @@ export default class Picking extends PureComponent {
                   selectedIndex={selectedIndex}
                   buttons={buttons}
                   containerStyle={{height: 40}}
+<<<<<<< HEAD
                   disabled={!isEditable}
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
                 />
               </View>
 
@@ -286,11 +380,16 @@ export default class Picking extends PureComponent {
                     <PriceLabel>
                       {global.translate('TITLE_PRICE')}: $
                     </PriceLabel>
+<<<<<<< HEAD
                     <PriceQuantity>{article_price}</PriceQuantity>
+=======
+                    <PriceQuantity>{article_price || '0'}</PriceQuantity>
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
                   </Price>
                 </View>
                 <CustomPicker
                   placeholder={placeholder}
+<<<<<<< HEAD
                   items={picker_data}
                   onSelected={this.selectedItem}
                   disabled={!isEditable}
@@ -319,18 +418,66 @@ export default class Picking extends PureComponent {
             </Total>
           </KeyboardAwareScrollView>
         </BContent>
+=======
+                  selectedHolder={this.selectedItem.Name}
+                  items={picker_data}
+                  selectedItem={this.selectedItem}
+                />
+              </View>
+
+              {/* quantity */}
+              <View style={styles.paddingBottom}>
+                <Text style={{marginBottom: 8}}>
+                  {global.translate('TITLE_QUANTITY')}
+                </Text>
+                <NumericInput
+                  rounded
+                  iconStyle={{color: 'green'}}
+                  value={quantity}
+                  onChange={quantity => {
+                    this.changeQuantity(quantity);
+                  }}
+                  minValue={1}
+                />
+              </View>
+            </Form>
+
+            {/* Total */}
+            <View style={styles.totalPriceContainer}>
+              <Text style={styles.totalPrice}>
+                {global.translate('TITLE_TOTAL')}: $ {total || 0}
+              </Text>
+            </View>
+          </KeyboardAwareScrollView>
+        </Content>
+
+        {/* actionButton */}
+        <ActionButton
+          cancel={() => {
+            navigation.goBack();
+          }}
+          accept={this.onPressHandler}
+        />
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   // container: {
   //   flex: 1,
   //   flexDirection: 'column',
   //   padding: theme.sizes.padding,
   //   // backgroundColor: 'green',
   // },
+=======
+  container: {
+    flex: 1,
+    padding: theme.sizes.padding,
+  },
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
   input: {
     marginVertical: theme.sizes.p8,
@@ -354,7 +501,10 @@ const styles = StyleSheet.create({
   totalPriceContainer: {
     borderColor: theme.colors.success,
     borderWidth: 1,
+<<<<<<< HEAD
     justifyContent: 'flex-end',
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     borderStyle: 'solid',
     padding: theme.sizes.p12,
     alignItems: 'center',
@@ -375,6 +525,7 @@ const PriceLabel = styled.Text`
 const Price = styled.Text`
   flex-direction: row;
 `;
+<<<<<<< HEAD
 const BContent = styled.View`
   flex: 1;
   flex-direction: column;
@@ -385,3 +536,5 @@ const Total = styled.View`
   flex-direction: column;
   justify-content: flex-end;
 `;
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0

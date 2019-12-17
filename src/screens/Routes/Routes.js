@@ -54,6 +54,16 @@ export default class Routes extends Component {
       data2: [],
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
       show: true,
+<<<<<<< HEAD
+=======
+      BUTTONS: [
+        {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
+        {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
+        {text: 'Cancel', icon: 'close', iconColor: theme.colors.gray},
+      ],
+      DESTRUCTIVE_INDEX: 3,
+      CANCEL_INDEX: 4,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     };
   }
 
@@ -111,7 +121,10 @@ export default class Routes extends Component {
       }
     }, 20000);
     getData('GET_ROUTES', '&status=A').then(active => {
+<<<<<<< HEAD
       console.log('ROUTES', active);
+=======
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
       if (!this.state.request_timeout) {
         clearRoutesCab('A').then(ca => {
           clearRoutesDetails().then(cd => {

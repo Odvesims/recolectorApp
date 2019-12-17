@@ -101,6 +101,10 @@ export default class OrderList extends Component {
             item.selectedClass = styles.list;
             return item;
           });
+<<<<<<< HEAD
+=======
+
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           this.setState({
             loading: false,
             data: not_assigned,
@@ -133,6 +137,7 @@ export default class OrderList extends Component {
     });
   };
 
+<<<<<<< HEAD
   // selectAll = dataList => {
   //   dataList.item.isSelect = !dataList.item.isSelect;
   //   dataList.item.isChecked = !dataList.item.isChecked;
@@ -151,6 +156,26 @@ export default class OrderList extends Component {
   //     isSelectedAll: true,
   //   });
   // };
+=======
+  selectAll = dataList => {
+    dataList.item.isSelect = !dataList.item.isSelect;
+    dataList.item.isChecked = !dataList.item.isChecked;
+    dataList.item.isSelectedAll = !dataList.item.isSelectedAll;
+    dataList.item.selectedClass = dataList.item.isSelect
+      ? styles.selected
+      : styles.list;
+
+    const index = this.state.data.findIndex(
+      item => dataList.item.id === item.id,
+    );
+    this.state.data[index] = dataList.item;
+    this.setState({
+      data: this.state.data,
+      isChecked: true,
+      isSelectedAll: true,
+    });
+  };
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
 
   renderItem = dataList => (
     <Item style={[styles.list, dataList.item.selectedClass]} onPress={() => {}}>
@@ -198,7 +223,17 @@ export default class OrderList extends Component {
     this.state.data.map(i => {
       if (i.isChecked) {
         arrSelected.push({
+<<<<<<< HEAD
           ...i,
+=======
+          id: i.id,
+          order_id: i.order_id,
+          order_document: i.order_document,
+          client: i.client,
+          name: i.name,
+          address: i.address,
+          order_total: i.order_total,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           isChecked: true,
           isSelect: true,
         });
@@ -214,7 +249,17 @@ export default class OrderList extends Component {
     this.state.data.map(i => {
       if (i.isChecked) {
         arrSelected.push({
+<<<<<<< HEAD
           ...i,
+=======
+          id: i.id,
+          order_id: i.order_id,
+          order_document: i.order_document,
+          client: i.client,
+          name: i.name,
+          address: i.address,
+          order_total: i.order_total,
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
           isChecked: true,
           isSelect: true,
         });
@@ -250,6 +295,10 @@ export default class OrderList extends Component {
     }
 
     // const {isChecked} = this.state;
+<<<<<<< HEAD
+=======
+
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
     return (
       <Container>
         <Header>
@@ -296,6 +345,10 @@ export default class OrderList extends Component {
           <ScrollView style={{marginBottom: 24}}>
             {/* FLATLIST */}
             {orderList}
+<<<<<<< HEAD
+=======
+
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
             {/* FLATLIST */}
           </ScrollView>
         </Content>

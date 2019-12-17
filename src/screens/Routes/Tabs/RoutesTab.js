@@ -51,8 +51,13 @@ export class Defeated extends Component {
     return (
       <Root>
         <Container>
+<<<<<<< HEAD
           <Content style={styles.content}>
             <ScrollView>
+=======
+          <ScrollView>
+            <Content style={styles.content}>
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
               <FlatList
                 style={{overflow: 'hidden'}}
                 data={tab_data}
@@ -126,10 +131,17 @@ export class Defeated extends Component {
                   </Item>
                 )}
               />
+<<<<<<< HEAD
             </ScrollView>
           </Content>
 
           {/* Content */}
+=======
+            </Content>
+
+            {/* Content */}
+          </ScrollView>
+>>>>>>> c28c82ec2a1921b45c79bf65f7b90bdfe49672a0
         </Container>
       </Root>
     );
