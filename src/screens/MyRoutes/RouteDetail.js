@@ -3,6 +3,7 @@ import {theme} from '../../constants';
 import styled from 'styled-components/native';
 import {View, StyleSheet, FlatList, Alert, ScrollView} from 'react-native';
 import {getData} from '../../helpers/apiconnection_helper';
+import {BtnIcon} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
   updateOrderAssigned,
@@ -12,14 +13,10 @@ import {
 import {
   Container,
   Left,
-  Right,
   Title,
   Body,
   Header,
-  Button,
-  Icon,
   Text,
-  Form,
   Root,
   Item,
 } from 'native-base';
@@ -32,7 +29,7 @@ export default class RouteDetail extends Component {
     this.state = {
       data: [],
       modalVisible: false,
-      request_timeout: false,
+      loading: false,
       show: false,
       date_to: params.date_to,
       placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
@@ -44,26 +41,10 @@ export default class RouteDetail extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.arrData = [];
   }
 
   componentDidMount() {
     this.getDataHandler();
-    // this.focusListener.remove();
-
-    // this.focusListener = this.props.navigation.addListener('didFocus', () => {
-    //   try {
-    //     let orders = params.orders;
-    //     if (orders !== undefined) {
-    //       this.setState({data: orders, clear_data: orders});
-    //       params.orders = undefined;
-    //     }
-    //   } catch (err) {}
-    // });
-  }
-
-  componentWillUnmount() {
-    // this.focusListener.remove();
   }
 
   getDataHandler = async () => {
@@ -71,23 +52,13 @@ export default class RouteDetail extends Component {
       params: {route_id, status},
     } = this.props.navigation.state;
 
-    setTimeout(() => {
-      if (this.state.loading) {
-        this.setState({loading: false, request_timeout: true});
-        Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
-        clearTimeout();
-      }
-    }, 10000);
-
-    if (!this.state.request_timeout) {
+    try {
       this.setState({loading: true, loadingMessage: 'ALERT_GETTING_ROUTE'});
       const data = await getData(
         'GET_ROUTE',
         `&route_id=${route_id}&status=${status}`,
       );
-
       await updateRouteOrders(data.arrResponse[0]);
-
       let routeDetails = await getRouteDetails(route_id);
       const pending = routeDetails.filter(detail => detail.status !== 'C');
 
@@ -95,28 +66,29 @@ export default class RouteDetail extends Component {
         data: routeDetails,
         loading: false,
       });
-    } else {
+    } catch (error) {
       this.setState({loading: false});
+      alert(global.translate('ALERT_REQUEST_TIMEOUT'));
     }
   };
 
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
+  flatOnPress = item => {
+    this.props.navigation.navigate('Registry', {
+      client: item.client,
+      name: item.name,
+      address: item.address,
+      order_id: item.order_id,
+      route_id: item.route_id,
+    });
+  };
 
   renderItem = ({item}) => {
     return (
       <Item
         style={styles.list}
-        onPress={() =>
-          this.props.navigation.navigate('Registry', {
-            client: item.client,
-            name: item.name,
-            address: item.address,
-            order_id: item.order_id,
-            route_id: item.route_id,
-          })
-        }>
+        onPress={() => {
+          this.flatOnPress(item);
+        }}>
         <View style={styles.listContainer}>
           <Text numberOfLines={1} style={styles.name}>
             {item.client} - {item.name}
@@ -125,6 +97,10 @@ export default class RouteDetail extends Component {
         </View>
       </Item>
     );
+  };
+
+  goBack = () => {
+    this.props.navigation.goBack();
   };
 
   render() {
@@ -143,20 +119,11 @@ export default class RouteDetail extends Component {
           />
           <Header>
             <Left>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.goBack()}>
-                <Icon name="arrow-back" />
-              </Button>
+              <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
             </Left>
             <Body>
               <Title>{`${params.routeName}`}</Title>
             </Body>
-            <Right>
-              <Button transparent onPress={() => navigate('')}>
-                <Icon name="checkmark" />
-              </Button>
-            </Right>
           </Header>
 
           {/* Content */}
@@ -192,27 +159,6 @@ export default class RouteDetail extends Component {
 }
 
 const styles = StyleSheet.create({
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
-  },
-
-  currentDate: {
-    flexDirection: 'row',
-  },
-
-  currentDateText: {color: theme.colors.gray},
-
-  container: {
-    padding: theme.sizes.padding,
-    backgroundColor: theme.colors.white,
-  },
-
-  client_data: {
-    fontSize: 14,
-  },
-
   RouteDetails: {backgroundColor: 'white', padding: 16},
 
   detailText: {textTransform: 'uppercase', color: theme.colors.gray},
@@ -234,27 +180,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  input: {
-    marginVertical: theme.sizes.p8,
-    padding: theme.sizes.p12,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
-  label: {
-    fontSize: theme.sizes.base,
-    color: theme.colors.darkGray,
-  },
-
   addPoint: {
     padding: theme.sizes.padding,
     marginBottom: 24,
@@ -267,14 +192,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     overflow: 'scroll',
     flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-
-  quantity: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 14,
-    fontWeight: 'bold',
     flexWrap: 'nowrap',
   },
 });

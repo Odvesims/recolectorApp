@@ -230,39 +230,3 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
 });
-
-{
-  /* <NormalText
-              text={global.translate('TITLE_USER') + ':'}
-              style={styles.NormalText}
-            />
-            <Input>
-              <InputIcon name="person" />
-              <CustomTextInput
-                onChangeText={userName => {
-                  this.setState({userName: userName});
-                }}
-                secured={false}
-                returnKeyType="go"
-                value={this.state.userName}
-                style={{flex: 1}}
-              />
-            </Input>
-            <NormalText
-              id="password"
-              text={global.translate('TITLE_PASSWORD') + ':'}
-              style={styles.NormalText}
-            />
-            <Input>
-              <InputIcon name="eye-off" />
-              <CustomTextInput
-                onChangeText={userPassword => {
-                  this.setState({userPassword: userPassword});
-                }}
-                secured={true}
-                returnKeyType="go"
-                value={this.state.userPassword}
-                style={{flex: 1}}
-              />
-            </Input> */
-}
