@@ -784,13 +784,14 @@ export function getAssignedOrders() {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT o.id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE  c.client_code = o.client ORDER BY o.order_id DESC',
+        'SELECT o.id,o.order_id, o.order_document, o.client, o.address, o.order_total, o.assigned, c.name FROM orders o, clients c WHERE  c.client_code = o.client ORDER BY o.order_id DESC',
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; ++i) {
             let row = results.rows.item(i);
             let orderObject = {
               id: row.id,
+              order_id:row.order_id,
               document: row.order_document,
               client: row.client,
               address: row.address,

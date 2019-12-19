@@ -139,15 +139,21 @@ export default class Orders extends Component {
     this.props.navigation.openDrawer();
   };
 
+  onPressFab = () => {
+    this.props.navigation.navigate('Order', {
+      operation: 'TITLE_NEW_ORDER',
+      loading_message: 'MESSAGE_REGISTERING_ORDER',
+      date: this.state.date,
+      onGoBack: () => this.refresh(true),
+      isNewRecord: true,
+      editable: true,
+      loading: false,
+    });
+  };
+
   render() {
     // console.log('Orders ==>', this.state);
-    const {
-      date,
-      isLoading,
-      not_assigned,
-      assigned,
-      loadingMessage,
-    } = this.state;
+    const {isLoading, not_assigned, assigned, loadingMessage} = this.state;
 
     return (
       <Root>
@@ -198,17 +204,7 @@ export default class Orders extends Component {
           <Fab
             style={{backgroundColor: theme.colors.primary}}
             position="bottomRight"
-            onPress={() =>
-              this.props.navigation.navigate('Order', {
-                operation: 'TITLE_NEW_ORDER',
-                loading_message: 'MESSAGE_REGISTERING_ORDER',
-                date: date,
-                onGoBack: () => this.refresh(true),
-                isNewRecord: true,
-                editable: true,
-                loading: false,
-              })
-            }>
+            onPress={this.onPressFab}>
             <Icon name="add" />
           </Fab>
         </Container>

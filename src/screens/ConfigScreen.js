@@ -47,7 +47,6 @@ export default class ConfigScreen extends Component {
 
   configHandler = () => {
     this.reload = getUserConfig().then(res => {
-      console.log('getuserconfig', res);
       this.setState({
         loading: false,
         hostName: res.host,
@@ -101,7 +100,6 @@ export default class ConfigScreen extends Component {
   };
 
   IsPrinting(use) {
-    console.log('IsPrinting');
     const uses = use;
     if (uses === 'yes') {
       return (
@@ -125,19 +123,16 @@ export default class ConfigScreen extends Component {
   };
 
   pickerHandler = usesPrinter => {
-    console.log('pickerHandler');
     this.setState({usesPrinter});
   };
 
   hostHandler = hostName => {
-    console.log('hostHandler');
     this.setState({
       hostName,
     });
   };
 
   portHandler = portNumber => {
-    console.log('portHandler');
     this.setState({
       portNumber: portNumber,
     });

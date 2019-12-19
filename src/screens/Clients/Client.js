@@ -274,7 +274,7 @@ export class Client extends PureComponent {
                       borderRadius: 4,
                       marginBottom: 24,
                     }}>
-                    <Text>Guardar</Text>
+                    <Text>{global.translate('TITLE_SAVE')}</Text>
                   </Button>
                 </Form>
               )}

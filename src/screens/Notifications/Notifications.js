@@ -1,20 +1,15 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
 import NotificationsTab from './Tabs/NotificationsTab';
+
+import {BtnIcon} from '../../components';
 import {
   Body,
-  Button,
   Container,
-  Content,
   Header,
-  Icon,
   Left,
-  List,
-  ListItem,
   Right,
   Tab,
   Tabs,
-  Thumbnail,
   Title,
 } from 'native-base';
 
@@ -30,12 +25,6 @@ export class Notifications extends Component {
       loading: true,
     };
   }
-
-  // isLoading = value => {
-  //   this.setState({
-  //     loading: value,
-  //   });
-  // };
 
   enterHandler = () => {
     setTimeout(() => {
@@ -63,18 +52,17 @@ export class Notifications extends Component {
     this.focusListener.remove();
   }
 
+  goBack = () => {
+    this.props.navigation.goBack();
+  };
+
   render() {
+    const {loading, read, unread} = this.state;
     return (
       <Container>
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigation.goBack();
-              }}>
-              <Icon name="arrow-back" />
-            </Button>
+            <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
           </Left>
           <Body>
             <Title>{global.translate('TITLE_NOTIFICATIONS')}</Title>
@@ -86,15 +74,15 @@ export class Notifications extends Component {
         <Tabs hasTabs>
           <Tab heading={global.translate('TITLE_UNREAD')}>
             <NotificationsTab
-              loading={this.state.loading}
-              tab_data={this.state.unread}
+              loading={loading}
+              tab_data={unread}
               navigation={this.props.navigation}
             />
           </Tab>
           <Tab heading={global.translate('TITLE_READ')}>
             <NotificationsTab
-              loading={this.state.loading}
-              tab_data={this.state.read}
+              loading={loading}
+              tab_data={read}
               navigation={this.props.navigation}
             />
           </Tab>

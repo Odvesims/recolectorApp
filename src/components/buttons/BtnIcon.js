@@ -8,9 +8,7 @@ const BtnIcon = ({label, iconName, onPress}) => {
   let isLabel = label;
   let _label;
   if (isLabel) {
-    _label = (
-      <Text style={styles.text}>{label || global.translate(label)}</Text>
-    );
+    _label = <Text style={styles.text}>{global.translate(label)}</Text>;
   }
 
   return (

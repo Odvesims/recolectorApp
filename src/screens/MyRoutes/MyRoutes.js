@@ -9,8 +9,9 @@ import {
   FetchingData,
   ContentLoader,
   EmptyList,
+  BtnIcon,
 } from '../../components';
-import {Name, ListBody, ListMyRoutes, Address, styles} from './styles';
+import {Name, ListMyRoutes, Address, styles} from './styles';
 
 import {FlatList} from 'react-native';
 import {
@@ -27,10 +28,6 @@ import {
   Title,
   Body,
   Header,
-  Button,
-  Icon,
-  Text,
-  Form,
   Root,
   Item,
   Content,
@@ -148,7 +145,9 @@ class Order extends Component {
         }>
         <ListMyRoutes>
           <Name numberOfLines={1}>{item.description}</Name>
-          <Address numberOfLines={1}>Hasta: {item.date_to}</Address>
+          <Address numberOfLines={1}>
+            {global.translate('DATE_LIMIT')}: {item.date_to}
+          </Address>
         </ListMyRoutes>
       </Item>
     );
@@ -191,9 +190,7 @@ class Order extends Component {
         <Container>
           <Header>
             <Left>
-              <Button transparent onPress={this.openDrawer}>
-                <Icon name="menu" />
-              </Button>
+              <BtnIcon iconName={'menu'} onPress={this.openDrawer} />
             </Left>
             <Body>
               <Title>{global.translate('TITLE_MYROUTES')}</Title>
@@ -220,7 +217,6 @@ class Order extends Component {
               }}
             />
           ) : null} */}
-          {/* SearchBar */}
 
           <Content style={styles.content}>{content}</Content>
         </Container>

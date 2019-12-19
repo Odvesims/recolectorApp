@@ -154,5 +154,8 @@
   "TITLE_USES_PRINTER": "Usa Printer?",
   "TITLE_VIEW_ROUTE": "Ver Ruta",
   "TITLE_VIEW": "Ver",
-  "TITLE_YES": "Si"
+  "TITLE_YES": "Si",
+
+  "DATE_LIMIT": "Fecha Límite",
+  "ARTICLES": "Artículos"
 }

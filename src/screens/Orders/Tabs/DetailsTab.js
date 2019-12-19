@@ -5,7 +5,6 @@ import {View, ScrollView, FlatList} from 'react-native';
 import {Content, Item, Button, ActionSheet, Icon} from 'native-base';
 export default class DetailsTab extends Component {
   state = {
-    data: this.props.tab_data[0],
     show: true,
     BUTTONS: [
       {
@@ -36,9 +35,35 @@ export default class DetailsTab extends Component {
     remove(newData);
   };
 
-  renderItem = ({item}) => {
-    console.log('DETAILTAB RENDER ==>', item);
+  onPressAction = item => {
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+    ActionSheet.show(
+      {
+        options: BUTTONS,
+        cancelButtonIndex: CANCEL_INDEX,
+        destructiveButtonIndex: DESTRUCTIVE_INDEX,
+        title: global.translate('TITLE_OPTIONS'),
+      },
+      buttonIndex => {
+        switch (buttonIndex) {
+          case 0:
+            this.props.navigation.navigate(`${this.props.renderView}`, {
+              ...this.props.tab_data[0],
+              editable: this.props.editable,
+            });
+            break;
+          case 1:
+            this.markForDelete(item);
+            break;
+          case 2:
+            ActionSheet.hide();
+            break;
+        }
+      },
+    );
+  };
+
+  renderItem = ({item}) => {
     const {detail_description, quantity} = item;
     return (
       <Item style={styles.dList}>
@@ -50,32 +75,9 @@ export default class DetailsTab extends Component {
         </View>
         <Button
           transparent
-          onPress={() =>
-            ActionSheet.show(
-              {
-                options: BUTTONS,
-                cancelButtonIndex: CANCEL_INDEX,
-                destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: global.translate('TITLE_OPTIONS'),
-              },
-              buttonIndex => {
-                switch (buttonIndex) {
-                  case 0:
-                    this.props.navigation.navigate(`${this.props.renderView}`, {
-                      ...this.props.tab_data[0],
-                      editable: this.props.editable,
-                    });
-                    break;
-                  case 1:
-                    this.markForDelete(item);
-                    break;
-                  case 2:
-                    ActionSheet.hide();
-                    break;
-                }
-              },
-            )
-          }>
+          onPress={() => {
+            this.onPressAction(item);
+          }}>
           <Icon style={{color: 'gray'}} name="more" />
         </Button>
       </Item>
@@ -89,7 +91,7 @@ export default class DetailsTab extends Component {
         <ScrollView>
           <FlatList
             data={this.props.tab_data}
-            keyExtractor={item => item.id}
+            keyExtractor={item => `${item.id}`}
             renderItem={this.renderItem}
           />
         </ScrollView>

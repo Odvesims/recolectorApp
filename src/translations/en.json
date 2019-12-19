@@ -152,5 +152,9 @@
   "TITLE_USES_PRINTER": "Uses Printer?",
   "TITLE_VIEW_ROUTE": "View Route",
   "TITLE_VIEW": "View",
-  "TITLE_YES": "Yes"
+  "TITLE_YES": "Yes",
+
+  
+  "DATE_LIMIT": "Deadline",
+  "ARTICLES": "Articles"
 }

@@ -140,5 +140,9 @@
   "TITLE_USES_PRINTER": "Utiliser une imprimante?",
   "TITLE_VIEW_ROUTE": "Vue itinéraire",
   "TITLE_VIEW": "Vue",
-  "TITLE_YES": "Oui"
+  "TITLE_YES": "Oui",
+
+  
+  "DATE_LIMIT": "Date limite",
+  "ARTICLES": "Articles"
 }

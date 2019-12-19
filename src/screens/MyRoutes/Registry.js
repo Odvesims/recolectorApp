@@ -132,7 +132,6 @@ export default class Registry extends Component {
           <RegistryTab
             onChangeHandler={this.onChangePicking}
             navigation={this.props.navigation}
-            renderView={'Picking'}
           />
         </Provider>
       );
@@ -142,7 +141,6 @@ export default class Registry extends Component {
           <RegistryTab
             onChangeHandler={this.onChangeShopping}
             navigation={this.props.navigation}
-            renderView={'Shopping'}
           />
         </Provider>
       );
@@ -154,11 +152,6 @@ export default class Registry extends Component {
   };
 
   render() {
-    // console.log('REGISTRY picking ==>', this.state.picking);
-    // console.log('REGISTRY state ==>', this.state);
-    // console.log('REGISTRY shopping ==>', this.state.shopping);
-    // console.log('REGISTRY props ==>', this.props.navigation.state.params);
-
     const detailTabs = [
       global.translate('PICKING'),
       global.translate('SHOPPING'),

@@ -1,19 +1,11 @@
 import React, {Component} from 'react';
-import {Text, View, FlatList, Alert} from 'react-native';
-import {ContentLoader} from '../../../components';
-import {
-  List,
-  Container,
-  Content,
-  Right,
-  Left,
-  Body,
-  Thumbnail,
-  ListItem,
-} from 'native-base';
 import {updateNotificationStatus} from '../../../helpers/sql_helper';
+import {ContentLoader} from '../../../components';
 
-export class NotificationsTab extends Component {
+import {Text, Alert} from 'react-native';
+import {List, Container, Content, Body, ListItem} from 'native-base';
+
+export default class NotificationsTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,7 +19,7 @@ export class NotificationsTab extends Component {
     });
     updateNotificationStatus(1, id);
     const filteredData = this.state.data.filter(item => item.id !== id);
-    this.setState({ data: filteredData });
+    this.setState({data: filteredData});
   }
 
   renderItem = ({item}) => {
@@ -47,19 +39,14 @@ export class NotificationsTab extends Component {
   };
 
   render() {
-    // let content = '';
-
-    const {tab_data, loading} = this.props;
-    console.log(loading);
-
-    // if (!loading) {
+    const {loading} = this.props;
     let content = <ContentLoader />;
 
     if (!loading) {
-      content = <List dataArray={this.state.data} renderItem={this.renderItem} />;
+      content = (
+        <List dataArray={this.state.data} renderItem={this.renderItem} />
+      );
     }
-
-    // }
 
     return (
       <Container>
@@ -68,5 +55,3 @@ export class NotificationsTab extends Component {
     );
   }
 }
-
-export default NotificationsTab;

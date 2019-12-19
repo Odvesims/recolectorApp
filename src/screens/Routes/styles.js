@@ -343,4 +343,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     elevation: 8,
   },
+
+  numberBox: {
+    marginBottom: theme.sizes.p8,
+  },
+
+  selected: {backgroundColor: '#E2FAE8'},
 });

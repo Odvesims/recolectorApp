@@ -1,24 +1,26 @@
 import React from 'react';
 import {Text, View, FlatList} from 'react-native';
-import {styles, HeaderItems} from '../styles';
-import {CustomTextInput, InputList} from '../../../components';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
+import {styles, HeaderItems} from '../styles';
+import {InputList} from '../../../components';
 
 import {Consumer} from '../Registry';
 
-const RegistryTab = ({renderView, onChangeHandler}) => {
+const RegistryTab = ({onChangeHandler}) => {
   return (
     <View style={{flexDirection: 'column'}}>
       <HeaderItems>
-        <Text style={styles.bodyHeader}>Articulos</Text>
-        <Text style={styles.bodyHeader}>{renderView}</Text>
+        <Text style={styles.bodyHeader}>{global.translate('ARTICLES')}</Text>
+        <Text style={styles.bodyHeader}>
+          {global.translate('TITLE_QUANTITY')}
+        </Text>
       </HeaderItems>
       <View style={{marginHorizontal: 12}}>
         <KeyboardAwareScrollView>
           <Consumer>
             {context => (
               <FlatList
-                style={{overflow: 'hidden'}}
                 extraData={context}
                 data={context}
                 keyExtractor={item => item.order_id}

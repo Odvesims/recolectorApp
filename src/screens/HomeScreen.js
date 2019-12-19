@@ -3,6 +3,8 @@ import {FetchingData} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Badge, withBadge} from 'react-native-elements';
 
+import {BtnIcon} from '../components';
+
 import {
   StyleSheet,
   Platform,
@@ -314,18 +316,16 @@ export default class Home extends Component {
             animation={'slide'}
           />
           <Left>
-            <Button transparent onPress={this.openDrawer}>
-              <Icon name="menu" />
-            </Button>
+          <BtnIcon iconName={"menu"} onPress={this.openDrawer}/>
+           
           </Left>
           <Body>
             <Title>{global.translate('TITLE_PRINCIPAL')}</Title>
           </Body>
           <Right>
             <FetchingData syncData={this.refreshHandler} fetching={loading} />
-            <Button transparent onPress={this.setPrinter}>
-              <Icon name="print" />
-            </Button>
+          <BtnIcon iconName={"print"} onPress={this.setPrinter}/>
+          
             <Button
               transparent
               onPress={() => {

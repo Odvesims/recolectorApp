@@ -2,26 +2,20 @@ import React, {Component} from 'react';
 import {theme} from '../../constants';
 import CheckBox from '@react-native-community/checkbox';
 
+import {styles} from './styles';
+
+import {BtnIcon} from '../../components';
 import {
   Text,
   View,
-  StyleSheet,
   ScrollView,
-  Platform,
-  StatusBar,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 
-// import ContentCustom from '../components';
-
 import {
-  Icon,
-  Button,
   Content,
   Item,
-  ActionSheet,
   SearchBar,
   Container,
   Header,
@@ -127,10 +121,9 @@ export default class OrderList extends Component {
               this.selectItem(item);
             }}
             value={item.isChecked}
-            //   isChecked={isChecked[index]}
           />
           <View key={item.key} style={styles.listContainer}>
-            <Text style={styles.code}>
+            <Text style={styles.oCode}>
               {global.translate('TITLE_CODE')}: {item.order_document}
             </Text>
             <View
@@ -138,11 +131,11 @@ export default class OrderList extends Component {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <Text numberOfLines={1} style={styles.name}>
+              <Text numberOfLines={1} style={styles.oName}>
                 {item.client} - {item.name}
               </Text>
               <Text numberOfLines={1} style={styles.price}>
-                $ {item.order_total}
+                {`  $ ${item.order_total}`}
               </Text>
             </View>
             <Text numberOfLines={1} style={styles.address}>
@@ -186,11 +179,8 @@ export default class OrderList extends Component {
   };
 
   render() {
-    const {data, loading, dataSelected} = this.state;
+    const {data, loading} = this.state;
     const itemNumber = data.filter(item => item.isSelect).length;
-    const selectedItems = data.filter(item => {
-      item.isSelect;
-    });
 
     let orderList = (
       <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -199,7 +189,6 @@ export default class OrderList extends Component {
     if (!loading) {
       orderList = (
         <FlatList
-          style={{overflow: 'hidden'}}
           data={data}
           keyExtractor={item => item.id.toString()}
           renderItem={this.renderItem}
@@ -208,25 +197,21 @@ export default class OrderList extends Component {
       );
     }
 
-    // const {isChecked} = this.state;
     return (
       <Container>
         <Header>
           <Left>
-            <Button transparent onPress={this.goBack}>
-              <Icon name="arrow-back" />
-            </Button>
+            <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
           </Left>
           <Body>
             <Title>{global.translate('TITLE_AVAILABLE')}</Title>
           </Body>
           <Right>
-            <Button transparent onPress={this.goBack}>
-              <Icon name="checkmark" />
-              <Text style={{color: 'white', marginLeft: 8}}>
-                {global.translate('TITLE_DONE')}
-              </Text>
-            </Button>
+            <BtnIcon
+              label={'TITLE_DONE'}
+              iconName={'checkmark'}
+              onPress={this.goBack}
+            />
           </Right>
         </Header>
 
@@ -234,7 +219,7 @@ export default class OrderList extends Component {
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={styles.numberBox}>
               <Text style={styles.number}>
-                {global.translate('TITLE_SELECTED')}: {itemNumber}
+                {`${global.translate('TITLE_SELECTED')}: ${itemNumber}`}
               </Text>
             </View>
           </View>
@@ -242,7 +227,6 @@ export default class OrderList extends Component {
           <ScrollView style={{marginBottom: 24}}>
             {/* FLATLIST */}
             {orderList}
-            {/* FLATLIST */}
           </ScrollView>
         </Content>
         {/* Content */}
@@ -250,88 +234,3 @@ export default class OrderList extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  androidHeader: {
-    ...Platform.select({
-      android: {
-        paddingTop: StatusBar.currentHeight,
-      },
-    }),
-  },
-  list: {
-    margin: 5,
-    backgroundColor: theme.colors.white,
-    height: 80,
-    elevation: 1,
-  },
-
-  listContainer: {
-    flex: 1,
-    paddingVertical: 12,
-  },
-
-  content: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: theme.colors.lightGray,
-    paddingHorizontal: 8,
-    paddingVertical: 12,
-  },
-
-  code: {
-    textAlign: 'left',
-    fontSize: 14,
-    color: theme.colors.gray,
-    fontWeight: 'bold',
-  },
-
-  numberBox: {
-    marginBottom: theme.sizes.p8,
-  },
-
-  name: {
-    flexBasis: 150,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-    overflow: 'scroll',
-    flexGrow: 2,
-    flexWrap: 'nowrap',
-  },
-
-  price: {
-    flexShrink: 10,
-    color: theme.colors.success,
-    fontSize: 14,
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-  },
-
-  address: {
-    fontSize: 12,
-    color: 'gray',
-    overflow: 'hidden',
-    flexWrap: 'nowrap',
-  },
-
-  fab: {
-    position: 'absolute',
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    right: 20,
-    bottom: 20,
-    backgroundColor: theme.colors.primary,
-    borderRadius: 30,
-    elevation: 8,
-  },
-
-  more: {
-    position: 'absolute',
-    right: 0,
-  },
-
-  selected: {backgroundColor: '#E2FAE8'},
-});
