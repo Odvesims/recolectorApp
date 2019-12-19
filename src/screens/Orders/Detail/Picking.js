@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../../constants';
 import styled from 'styled-components/native';
-import {CustomPicker, NumberInput} from '../../../components';
+import {CustomPicker, NumberInput, BtnIcon} from '../../../components';
 import {ButtonGroup} from 'react-native-elements';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -172,6 +172,12 @@ export default class Picking extends Component {
     }
   };
 
+  goToOrder = () => {
+    this.props.navigation.navigate('Order', {
+      itemSelected: undefined,
+    });
+  };
+
   render() {
     const buttons = [
       global.translate('TITLE_CATEGORY'),
@@ -199,9 +205,7 @@ export default class Picking extends Component {
     if (isEditable) {
       save = (
         <Right>
-          <Button transparent onPress={this.onPressHandler}>
-            <Icon name="checkmark" />
-          </Button>
+          <BtnIcon iconName={'checkmark'} onPress={this.onPressHandler} />
         </Right>
       );
     }
@@ -211,18 +215,10 @@ export default class Picking extends Component {
         {/* header */}
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() =>
-                this.props.navigation.navigate('Order', {
-                  itemSelected: undefined,
-                })
-              }>
-              <Icon name="arrow-back" />
-            </Button>
+            <BtnIcon iconName={'arrow-back'} onPress={this.goToOrder} />
           </Left>
           <Body>
-            <Title>Articulos a Recoger</Title>
+            <Title>{global.translate('ARTICLES_TO_PICK_UP')}</Title>
           </Body>
           {save}
         </Header>
@@ -269,8 +265,8 @@ export default class Picking extends Component {
               </View>
               {/* Quantity */}
               <NumberInput
-                label={global.translate('TITLE_QUANTITY')}
                 rounded
+                label={'TITLE_QUANTITY'}
                 iconStyle={{color: 'green'}}
                 value={Number(quantity)}
                 onChange={this.changeQuantity}

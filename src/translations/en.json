@@ -63,8 +63,8 @@
   "TITLE_ACTIVE": "Active",
   "TITLE_ADDRESS": "Address",
   "TITLE_ARTICLE": "Article",
-  "TITLE_ARTICLES_TO_PICK": "Articles to Pickup",
-  "TITLE_ARTICLES_TO_PURCHASE": "Articles to Purchase",
+  "TITLE_ARTICLES_TO_PICK": "Items to Pickup",
+  "TITLE_ARTICLES_TO_PURCHASE": "Items to Purchase",
   "TITLE_ASSIGNED": "Assigned",
   "TITLE_AVAILABLE": "Available",
   "TITLE_BLUETOOTH_ENABLED": "Bluetooth enabled: ",
@@ -154,7 +154,8 @@
   "TITLE_VIEW": "View",
   "TITLE_YES": "Yes",
 
-  
   "DATE_LIMIT": "Deadline",
-  "ARTICLES": "Articles"
+  "ARTICLES": "Items",
+  "ARTICLES_TO_BUY": "Items to buy",
+  "ARTICLES_TO_PICK_UP": "Items to pick up"
 }
