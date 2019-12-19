@@ -36,6 +36,9 @@ import SideBar from './SideBar';
 import {theme} from '../constants';
 import {Icon} from 'native-base';
 
+const navOptionHandler = navigation => ({
+  header: null,
+});
 const ConfigNavigator = createStackNavigator(
   {
     Configuration: ConfigScreen,
@@ -287,23 +290,19 @@ if (global.userRole === 'ROLE_SUPERVISOR') {
   roleConfig = roleAll;
 }
 
-const AppNavigator = createDrawerNavigator(
-  roleConfig,
-
-  {
-    contentComponent: props => <SideBar {...props} />,
-    contentOptions: {
-      activeTintColor: theme.colors.primary,
-      inactiveTintColor: theme.colors.darkGray,
-      itemsContainerStyle: {
-        marginBottom: 60,
-      },
-      iconContainerStyle: {
-        color: theme.colors.gray,
-      },
+const AppNavigator = createDrawerNavigator(roleConfig, {
+  contentComponent: SideBar,
+  contentOptions: {
+    activeTintColor: theme.colors.primary,
+    inactiveTintColor: theme.colors.darkGray,
+    itemsContainerStyle: {
+      marginBottom: 60,
+    },
+    iconContainerStyle: {
+      color: theme.colors.gray,
     },
   },
-);
+});
 
 const Navigation = createSwitchNavigator(
   {

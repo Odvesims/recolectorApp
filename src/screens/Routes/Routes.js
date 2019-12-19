@@ -60,7 +60,6 @@ export default class Routes extends Component {
   }
 
   enterHandler = () => {
-    console.log('enterhandler');
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
@@ -135,14 +134,14 @@ export default class Routes extends Component {
       status: '',
       loading_message: 'MESSAGE_REGISTERING_ROUTE',
       new_record: true,
-      disabled_date_from: false,
+      editable: true,
+
       onGoBack: () => this.refresh(false),
     });
   };
 
   render() {
     const {loading} = this.state;
-    console.log('Routes', this.state);
     return (
       <Container>
         <Spinner

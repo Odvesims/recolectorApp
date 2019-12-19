@@ -3,7 +3,8 @@ import {theme} from '../../constants';
 import {SearchBar, FetchingData, EmptyList, BtnIcon} from '../../components';
 import Toast from 'react-native-easy-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {} from 'react-native-vector-icons';
+
+import {styles} from './styles';
 
 import {
   Text,
@@ -73,18 +74,25 @@ export default class Clients extends Component {
   }
 
   componentWillUnmount() {
+    console.log('refresh');
     this.focusListener.remove();
   }
 
   refresh(value) {
+    console.log('refresh');
+
     if (value) {
       this.refreshHandler();
     } else {
+      console.log('refresh');
+
       this.enterHandler();
     }
   }
 
   enterHandler = () => {
+    console.log('refresh');
+
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
@@ -93,6 +101,8 @@ export default class Clients extends Component {
   };
 
   storedClients = () => {
+    console.log('refresh');
+
     getStoredClients().then(clients => {
       if (clients.length > 0) {
         this.setState({data: clients, dataAll: clients, loading: false});
@@ -103,6 +113,7 @@ export default class Clients extends Component {
   };
 
   refreshHandler = () => {
+    console.log('refresh');
     const {loading, request_timeout} = this.state;
     this.setState({
       loading: true,
@@ -114,6 +125,8 @@ export default class Clients extends Component {
       Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
     }
     getData('GET_CLIENTS').then(result => {
+      console.log('refresh');
+
       if (!request_timeout) {
         this.setState({loading: false, request_timeout: false});
         if (result.valid) {
@@ -121,10 +134,14 @@ export default class Clients extends Component {
             this.storedClients();
           });
         } else {
+          console.log('refresh');
+
           Alert.alert(global.translate(result.response));
         }
       } else {
-        this.setState({request_timeout: false});
+        console.log('refresh');
+
+        this.setState({loading: false, request_timeout: false});
       }
     });
   };
@@ -139,7 +156,7 @@ export default class Clients extends Component {
 
   listEmpty = () => <EmptyList />;
 
-  handlerFab = () => {
+  onPressFab = () => {
     this.props.navigation.navigate('Client', {
       operation: 'TITLE_NEW_CLIENT',
       loading_message: 'MESSAGE_REGISTERING_CLIENT',
@@ -165,8 +182,43 @@ export default class Clients extends Component {
     });
   };
 
-  renderItem = ({item}) => {
+  onPressAction = item => {
+    console.log('refresh');
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
+
+    ActionSheet.show(
+      {
+        options: BUTTONS,
+        cancelButtonIndex: CANCEL_INDEX,
+        destructiveButtonIndex: DESTRUCTIVE_INDEX,
+        title: global.translate('TITLE_OPTIONS'),
+      },
+      buttonIndex => {
+        switch (buttonIndex) {
+          case 0:
+            this.props.navigation.navigate('Client', {
+              operation: 'TITLE_EDIT_CLIENT',
+              code: item.client_code,
+              name: item.name,
+              address: item.address,
+              city: item.city,
+              state: item.state,
+              country: item.country,
+              phone: item.phone_number,
+              loading_message: 'MESSAGE_UPDATING_CLIENT',
+              isNewRecord: false,
+              onGoBack: () => this.refresh(false),
+            });
+            break;
+          case 1:
+            ActionSheet.hide();
+            break;
+        }
+      },
+    );
+  };
+
+  renderItem = ({item}) => {
     return (
       <Item style={styles.list}>
         <Text style={styles.code}>{item.client_code}</Text>
@@ -181,38 +233,7 @@ export default class Clients extends Component {
         <Button
           transparent
           style={styles.more}
-          onPress={() =>
-            ActionSheet.show(
-              {
-                options: BUTTONS,
-                cancelButtonIndex: CANCEL_INDEX,
-                destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: global.translate('TITLE_OPTIONS'),
-              },
-              buttonIndex => {
-                switch (buttonIndex) {
-                  case 0:
-                    this.props.navigation.navigate('Client', {
-                      operation: 'TITLE_EDIT_CLIENT',
-                      code: item.client_code,
-                      name: item.name,
-                      address: item.address,
-                      city: item.city,
-                      state: item.state,
-                      country: item.country,
-                      phone: item.phone_number,
-                      loading_message: 'MESSAGE_UPDATING_CLIENT',
-                      isNewRecord: false,
-                      onGoBack: () => this.refresh(false),
-                    });
-                    break;
-                  case 1:
-                    ActionSheet.hide();
-                    break;
-                }
-              },
-            )
-          }>
+          onPress={() => this.onPressAction(item)}>
           <Icon style={{color: 'gray'}} name="more" />
         </Button>
       </Item>
@@ -265,7 +286,6 @@ export default class Clients extends Component {
               onPressCancel={this.showHideSearchBar}
             />
           ) : null}
-          {/* SearchBar */}
 
           <Toast
             ref="toast"
@@ -281,19 +301,17 @@ export default class Clients extends Component {
           {/* Content */}
           <Content style={styles.content}>
             <FlatList
-              style={{overflow: 'hidden'}}
               data={data}
               ListEmptyComponent={this.listEmpty}
               renderItem={this.renderItem}
-              keyExtractor={item => item.client_code}
+              keyExtractor={item => `${item.client_code}`}
             />
           </Content>
 
-          {/* Content */}
           <Fab
             style={{backgroundColor: theme.colors.primary, right: 10}}
             position="bottomRight"
-            onPress={this.handlerFab}>
+            onPress={this.onPressFab}>
             <Icon name="add" />
           </Fab>
         </Container>
@@ -301,46 +319,3 @@ export default class Clients extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  androidHeader: {
-    ...Platform.select({
-      android: {
-        paddingTop: 0,
-      },
-    }),
-  },
-  list: {
-    margin: 5,
-    backgroundColor: 'white',
-    height: 80,
-    paddingLeft: 12,
-    elevation: 1,
-  },
-  content: {
-    backgroundColor: theme.colors.lightGray,
-    paddingHorizontal: 8,
-    paddingVertical: 12,
-  },
-  code: {
-    width: 32,
-    textAlign: 'center',
-    fontSize: 16,
-    color: 'gray',
-    fontWeight: 'bold',
-  },
-
-  name: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-    flexWrap: 'nowrap',
-    overflow: 'hidden',
-  },
-
-  address: {
-    fontSize: 12,
-    color: 'gray',
-    overflow: 'hidden',
-  },
-});

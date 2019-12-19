@@ -6,6 +6,8 @@ import {updateClient} from '../../helpers/sql_helper';
 import {CustomPicker, BtnIcon, InputForm} from '../../components';
 import {usStates, drStates} from '../../utils';
 
+import {styles} from './styles';
+
 import {backDialog} from '../../utils';
 
 import {Formik} from 'formik';
@@ -55,29 +57,22 @@ export class Client extends PureComponent {
       country: country,
       phone: phone,
     };
-    const {} = this.state;
-    this.selectedItem = this.selectedItem.bind(this);
   }
 
-  selectedItem(item) {
+  selectedItem = item => {
     this.setState({
       state: item.Name,
     });
-  }
+  };
 
   goBack = () => {
     const {goBack} = this.props.navigation;
-    const {name} = this.state;
-    const {isNewRecord, onGoBack} = this.props.navigation.state.params;
+    const {isNewRecord} = this.props.navigation.state.params;
 
-    if (isNewRecord === false) {
+    if (isNewRecord === false || isNewRecord === undefined) {
       goBack();
     } else {
-      if (name === undefined) {
-        goBack();
-      } else {
-        backDialog(goBack);
-      }
+      backDialog(goBack);
     }
   };
 
@@ -115,7 +110,6 @@ export class Client extends PureComponent {
   };
 
   render() {
-    console.log('STATE ==>', this.state);
     let states = {};
     const {
       address,
@@ -292,32 +286,3 @@ export class Client extends PureComponent {
   }
 }
 export default Client;
-
-const styles = StyleSheet.create({
-  headerCode: {
-    backgroundColor: theme.colors.lightGray,
-    paddingLeft: 24,
-    elevation: 0,
-  },
-
-  headerCodeText: {
-    color: theme.colors.gray,
-    fontSize: theme.sizes.base,
-    fontWeight: 'bold',
-  },
-
-  container: {
-    flex: 1,
-    padding: theme.sizes.padding,
-  },
-
-  error: {borderColor: theme.colors.accent},
-
-  default: {
-    borderColor: theme.colors.gray2,
-  },
-
-  paddingBottom: {
-    paddingBottom: theme.sizes.base,
-  },
-});

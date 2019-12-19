@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
+import styled from 'styled-components/native';
 import {
   CustomPicker,
   CustomInput,
@@ -41,61 +42,76 @@ import {dataOperation, getData} from '../../helpers/apiconnection_helper';
 export class Route extends Component {
   constructor(props) {
     super(props);
-    const {params} = this.props.navigation.state;
+    const {
+      params: {
+        new_record,
+        description,
+        acronym,
+        employee_name,
+        date_from,
+        date_to,
+        assigned_to,
+        editable,
+        assigned_by,
+        document_id,
+        document_number,
+        route_id,
+        status,
+      },
+    } = this.props.navigation.state;
     this.state = {
       employees: [],
       employee: '',
       data: [],
       clear_data: [],
-      loading: !params.new_record,
+      loading: !new_record,
       loadingMessage: 'ALERT_GETTING_ROUTE',
-      new_record: params.new_record,
-      route_description: params.description,
-      document_id: params.document_id,
-      document_acronym: params.acronym,
-      document_number: params.document_number,
-      assigned_by: params.assigned_by,
-      placeholder: params.employee_name,
-      selected_item: {Name: params.employee_name, Code: params.assigned_to},
-      chosenDate: params.date_from,
-      chosenDate2: params.date_to,
-      disabled_date_from: params.disabled_date_from,
+      new_record: new_record,
+      route_description: description,
+      document_id: document_id,
+      document_acronym: acronym,
+      document_number: document_number,
+      assigned_by: assigned_by,
+      placeholder: employee_name,
+      selected_item: {Name: employee_name, Code: assigned_to},
+      chosenDate: date_from,
+      chosenDate2: date_to,
+      editable: editable,
     };
 
-    if (params.new_record === false) {
+    if (new_record === false) {
       this.rowTranslateAnimatedValues = {};
-      getData(
-        'GET_ROUTE',
-        `&route_id=${params.route_id}&status=${params.status}`,
-      ).then(route => {
-        updateRouteOrders(route.arrResponse[0]).then(r => {
-          getRouteDetails(params.route_id).then(dets => {
-            let dataWithIds = dets.map((item, index) => {
-              item.id = index;
-              item.isChecked = true;
-              item.isSelect = true;
-              this.rowTranslateAnimatedValues[`${index}`] = new Animated.Value(
-                1,
-              );
-            });
-            this.cleanArr(dets).then(clear => {
-              this.setState({
-                loading: false,
-                data: clear,
-                clear_data: clear,
-                // route_description: r.description,
-                document_id: r.document_id,
-                document_acronym: r.acronym,
-                document_number: r.document_number,
-                assigned_by: r.assigned_by,
-                placeholder: r.employee_name,
-                chosenDate: r.date_from,
-                chosenDate2: r.date_to,
+      getData('GET_ROUTE', `&route_id=${route_id}&status=${status}`).then(
+        route => {
+          updateRouteOrders(route.arrResponse[0]).then(r => {
+            getRouteDetails(route_id).then(dets => {
+              let dataWithIds = dets.map((item, index) => {
+                item.id = index;
+                item.isChecked = true;
+                item.isSelect = true;
+                this.rowTranslateAnimatedValues[
+                  `${index}`
+                ] = new Animated.Value(1);
+              });
+              this.cleanArr(dets).then(clear => {
+                this.setState({
+                  loading: false,
+                  data: clear,
+                  clear_data: clear,
+                  // route_description: r.description,
+                  document_id: r.document_id,
+                  document_acronym: r.acronym,
+                  document_number: r.document_number,
+                  assigned_by: r.assigned_by,
+                  placeholder: r.employee_name,
+                  chosenDate: r.date_from,
+                  chosenDate2: r.date_to,
+                });
               });
             });
           });
-        });
-      });
+        },
+      );
     }
     this.selectedItem = this.selectedItem.bind(this);
     this.getEmployeesHandler();
@@ -234,7 +250,6 @@ export class Route extends Component {
   };
 
   markForDelete = swipeData => {
-    console.log('Route Remove Function', swipeData);
     const {key, value} = swipeData;
     if (value < -375) {
       const filteredData = this.state.data.filter(item => item.id !== key);
@@ -257,23 +272,40 @@ export class Route extends Component {
   // handleUserBeganScrollingParentView() {
   //   this.swipeable.recenter();
   // }
+  addOrderHandler = () => {
+    this.props.navigation.navigate('OrderList', {
+      checkedItems: this.state.data,
+      updateData: this.updateDataState,
+    });
+  };
 
   render() {
+    console.log('state', this.state);
     const {
       placeholder,
       chosenDate2,
       chosenDate,
       data,
       employees,
+      editable,
       route_description,
       loadingMessage,
       loading,
-      disabled_date_from,
     } = this.state;
 
-    console.log(this.state);
-    console.log('Andris', this.state);
     const {params} = this.props.navigation.state;
+
+    let isEditable = editable;
+    let addOrderButton;
+
+    if (isEditable) {
+      addOrderButton = (
+        <ButtonOutlined onPress={this.addOrderHandler}>
+          <Icon name="add" style={{color: theme.colors.primary}} />
+          <TextButton>{global.translate('TITLE_ORDER')}</TextButton>
+        </ButtonOutlined>
+      );
+    }
 
     let orderList = (
       <SwipeListView
@@ -333,6 +365,7 @@ export class Route extends Component {
                 onChangeText={route_description => {
                   this.setState({route_description: route_description});
                 }}
+                editable={editable}
               />
 
               <CustomDatePicker
@@ -346,7 +379,7 @@ export class Route extends Component {
                 }
                 minimumDate={new Date()}
                 onDateChange={this.setDate}
-                disabled={disabled_date_from}
+                disabled={!editable}
               />
 
               <CustomDatePicker
@@ -360,7 +393,7 @@ export class Route extends Component {
                 }
                 minimumDate={new Date()}
                 onDateChange={this.setDate2}
-                disabled={disabled_date_from}
+                disabled={!editable}
               />
 
               <CustomPicker
@@ -368,38 +401,13 @@ export class Route extends Component {
                 items={employees}
                 placeholder={placeholder}
                 onSelected={this.selectedItem}
-                disabled={disabled_date_from}
+                disabled={!editable}
               />
             </Form>
           </View>
-          <ScrollView style={{marginTop: 12}}>
-            {/* FLATLIST */}
-            {orderList}
-          </ScrollView>
+          <ScrollView style={{marginTop: 12}}>{orderList}</ScrollView>
 
-          <View style={styles.addPoint}>
-            <TouchableOpacity
-              style={styles.buttonGhost}
-              onPress={() => {
-                this.props.navigation.navigate('OrderList', {
-                  checkedItems: this.state.data,
-                  updateData: this.updateDataState,
-                });
-              }}>
-              <Icon
-                name="add"
-                style={{color: theme.colors.primary, marginRight: 12}}
-              />
-              <Text
-                style={{
-                  fontSize: theme.sizes.base,
-                  color: theme.colors.primary,
-                  textTransform: 'uppercase',
-                }}>
-                {global.translate('TITLE_ORDER')}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <View style={styles.addPoint}>{addOrderButton}</View>
         </Content>
       </Container>
     );
@@ -414,28 +422,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-
-  button: {
-    fontSize: theme.sizes.caption,
-    textTransform: 'uppercase',
-    backgroundColor: '#4285F4',
-  },
-
-  datepicker: {
-    marginVertical: theme.sizes.p8,
-    paddingVertical: 4,
-    borderWidth: 1,
-    borderColor: theme.colors.gray2,
-    borderRadius: 4,
-    color: '#000',
-  },
-
   paddingBottom: {
     paddingBottom: theme.sizes.padding,
   },
@@ -443,18 +429,6 @@ const styles = StyleSheet.create({
   addPoint: {
     padding: theme.sizes.padding,
     backgroundColor: theme.colors.lightGray,
-  },
-
-  buttonGhost: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: theme.colors.primary,
-    borderWidth: 1,
-    paddingVertical: 12,
-    borderRadius: 4,
-    alignItems: 'center',
   },
 
   content: {
@@ -471,22 +445,23 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.lightGray,
     paddingHorizontal: 24,
   },
-
-  leftSwipeItem: {
-    flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    height: 80,
-    elevation: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    paddingRight: 20,
-    backgroundColor: '#c3000d',
-  },
-  rightSwipeItem: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingLeft: 5,
-    backgroundColor: '#c3000d',
-  },
 });
+
+const ButtonOutlined = styled(TouchableOpacity)`
+  flex-direction: row;
+  justify-content: center;
+  border-style: solid;
+  border-color: ${theme.colors.primary};
+  border-width: 1;
+  padding-vertical: 12px;
+  margin-top: 12px;
+  border-radius: 4px;
+  align-items: center;
+`;
+
+const TextButton = styled.Text`
+  margin-left: 24px;
+  font-size: ${theme.sizes.base};
+  color: ${theme.colors.primary};
+  text-transform: uppercase;
+`;

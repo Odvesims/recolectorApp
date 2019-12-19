@@ -9,6 +9,7 @@ const CustomDatePicker = ({
   label,
   onDateChange,
   minimumDate,
+  ...other
 }) => {
   return (
     <View style={styles.paddingBottom}>
@@ -22,6 +23,7 @@ const CustomDatePicker = ({
           textStyle={{color: theme.colors.gray, fontSize: 14}}
           onDateChange={onDateChange}
           disabled={disabled}
+          {...other}
         />
       </View>
     </View>

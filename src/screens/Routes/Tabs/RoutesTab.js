@@ -58,10 +58,10 @@ export class Defeated extends Component {
                     date_from: item.date_from,
                     date_to: item.date_to,
                     status: item.status,
-                    disabled_date_from: true,
                     loading_message: 'MESSAGE_UPDATING_ROUTE',
                     new_record: false,
                     details: item.details,
+                    editable: false,
                   });
                   break;
                 case 1:
@@ -85,7 +85,7 @@ export class Defeated extends Component {
               style={{overflow: 'hidden'}}
               data={this.props.tab_data}
               renderItem={this.renderHandler}
-              keyExtractor={item => item.route_id.toString()}
+              keyExtractor={item => `${item.route_id}`}
             />
           </ScrollView>
         </Content>
