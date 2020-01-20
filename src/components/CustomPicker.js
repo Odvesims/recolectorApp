@@ -17,7 +17,7 @@ const CustomPicker = ({
   ...props
 }) => {
   let isLabel = label;
-  let labelInfo = <Text>{global.translate(label)}</Text>;
+  let labelInfo = <Text style={styles.label}>{global.translate(label)}</Text>;
   if (isLabel === null || isLabel === undefined) {
     labelInfo = null;
   }
@@ -78,5 +78,12 @@ const styles = StyleSheet.create({
 
   default: {
     borderColor: theme.colors.gray2,
+  },
+
+  label: {
+    fontSize: theme.sizes.font,
+    color: theme.colors.darkGray,
+    marginLeft: 8,
+    fontWeight: 'bold',
   },
 });

@@ -4,13 +4,6 @@ import {Header, Item, Input, Icon, Button, Text} from 'native-base';
 import PropTypes from 'prop-types';
 
 export default class SearchBar extends PureComponent {
-  state = {
-    value: '',
-    query: '',
-    error: null,
-    show: false,
-  };
-
   searchFilter = (text, name) => {
     const {dataValue, data} = this.props;
     let newData;
@@ -24,29 +17,26 @@ export default class SearchBar extends PureComponent {
   };
 
   onPressCancel = () => {
-    console.log('Cancel');
     // this.props.onPressCancel;
     this.searchFilter('');
     // this.onPressClear();
   };
 
   onPressClear = () => {
-    console.log('Clear');
     this.searchFilter('');
   };
 
   render() {
-    const {style, placeholder, ...props} = this.props;
+    const {style, placeholder, onPressCancel, ...props} = this.props;
     return (
       <Header searchBar rounded style={style} {...props}>
         <Item>
           <Icon
             name="arrow-back"
             onPress={() => {
-              this.searchFilter(''), this.props.onPressCancel();
+              this.searchFilter(''), onPressCancel();
             }}
           />
-          {console.log()}
           <Input
             placeholder={placeholder}
             onChangeText={text => {

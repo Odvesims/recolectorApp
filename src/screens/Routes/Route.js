@@ -298,6 +298,18 @@ export class Route extends Component {
     let isEditable = editable;
     let addOrderButton;
 
+    const dateFrom = new Date(
+      chosenDate.split('/')[2],
+      parseInt(chosenDate.split('/')[1]) - 1,
+      chosenDate.split('/')[0],
+    );
+
+    const dateTo = new Date(
+      chosenDate.split('/')[2],
+      parseInt(chosenDate2.split('/')[1]) - 1,
+      chosenDate.split('/')[0],
+    );
+
     if (isEditable) {
       addOrderButton = (
         <ButtonOutlined onPress={this.addOrderHandler}>
@@ -370,13 +382,7 @@ export class Route extends Component {
 
               <CustomDatePicker
                 label={'TITLE_START_DATE'}
-                defaultDate={
-                  new Date(
-                    chosenDate.split('/')[2],
-                    parseInt(chosenDate.split('/')[1]) - 1,
-                    chosenDate.split('/')[0],
-                  )
-                }
+                defaultDate={dateFrom}
                 minimumDate={new Date()}
                 onDateChange={this.setDate}
                 disabled={!editable}
@@ -384,13 +390,7 @@ export class Route extends Component {
 
               <CustomDatePicker
                 label={'TITLE_END_DATE'}
-                defaultDate={
-                  new Date(
-                    chosenDate2.split('/')[2],
-                    parseInt(chosenDate2.split('/')[1]) - 1,
-                    chosenDate2.split('/')[0],
-                  )
-                }
+                defaultDate={dateTo}
                 minimumDate={new Date()}
                 onDateChange={this.setDate2}
                 disabled={!editable}

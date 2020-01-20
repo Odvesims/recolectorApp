@@ -184,8 +184,7 @@ export default class Picking extends Component {
       global.translate('TITLE_SUBCATEGORY'),
       global.translate('TITLE_ARTICLE'),
     ];
-    // console.log('Picking ==>', this.props.navigation.state.params);
-    console.log('Picking STATE ==>', this.state);
+
     let {
       selectedIndex,
       article_price,

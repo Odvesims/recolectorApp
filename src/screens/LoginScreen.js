@@ -55,68 +55,82 @@ export default class LoginScreen extends Component {
     }
   };
 
-  customClickHandler = cClick => {
-    let user = this.state.userName;
-    let password = this.state.userPassword;
+  customClickHandler = () => {
+    let {userName, userPassword, request_timeout, loading} = this.state;
+    let user = userName;
+    let password = userPassword;
     if (user) {
+      console.log('user ==>', user);
       if (password) {
+        console.log('password ==>', password);
         this.setState({
           loading: true,
           loadingMessage: global.translate('MESSAGE_SIGNIN'),
           request_timeout: false,
         });
-        getUserConfig().then(res => {
-          setTimeout(() => {
-            if (this.state.loading) {
-              this.setState({loading: false, request_timeout: true});
-              alert(global.translate('ALERT_REQUEST_TIMEOUT'));
-            }
-          }, 10000);
-          getUserLogin(res.host, res.port_number, user, password).then(l => {
-            if (!this.state.request_timeout) {
-              this.setState({loading: false, request_timeout: false});
-              if (l.valid) {
-                global.userName = user;
-                global.userPassword = password;
-                global.apiHost = res.host;
-                global.apiPort = res.port_number;
-                saveUserData(l.user_data).then(usr => {
-                  global.token = l.token;
-                  global.states_collection = l.user_data.country_code;
-                  global.country_id = l.user_data.country_id;
-                  global.setma_id = l.user_data.setma_id;
-                  global.employee_code = l.user_data.employee_code;
-                  this.goHome(
-                    l.user_data.display_name,
-                    l.user_data.employee_cat_label,
-                    l.user_data.first_login,
-                  );
-                });
-              } else {
-                alert(global.translate(l.responseError));
+        getUserConfig()
+          .then(res => {
+            console.log('getUserConfig=>', res);
+
+            setTimeout(() => {
+              if (loading) {
+                this.setState({loading: false, request_timeout: true});
+                alert(global.translate('ALERT_REQUEST_TIMEOUT'));
               }
-            } else {
-              this.setState({request_timeout: false});
-            }
-          });
-        });
+            }, 10000);
+            getUserLogin(res.host, res.port_number, user, password)
+              .then(l => {
+                console.log('getuserlogin=>', l);
+
+                if (!request_timeout) {
+                  this.setState({loading: false, request_timeout: false});
+                  if (l.valid) {
+                    global.userName = user;
+                    global.userPassword = password;
+                    global.apiHost = res.host;
+                    global.apiPort = res.port_number;
+                    saveUserData(l.user_data).then(usr => {
+                      global.token = l.token;
+                      global.states_collection = l.user_data.country_code;
+                      global.country_id = l.user_data.country_id;
+                      global.setma_id = l.user_data.setma_id;
+                      global.employee_code = l.user_data.employee_code;
+                      this.goHome(
+                        l.user_data.display_name,
+                        l.user_data.employee_cat_label,
+                        l.user_data.first_login,
+                      );
+                    });
+                  } else {
+                    alert(global.translate(l.responseError));
+                  }
+                } else {
+                  this.setState({request_timeout: false});
+                }
+              })
+              .catch(err => console.log('getUserLogin error', err));
+          })
+          .catch(alert);
       } else {
+        console.log('user false ==>');
+
         this.setState({
           visible: true,
           toastMsg: global.translate('ALERT_PASSWORD_BLANK'),
         });
         setTimeout(() => {
-          this.setState({visible: false, toastMsg: ''}), 500;
-        });
+          this.setState({visible: false, toastMsg: ''});
+        }, 500);
       }
     } else {
+      console.log('user2 false ==>');
       this.setState({
         visible: true,
         toastMsg: global.translate('ALERT_USER_BLANK'),
       });
       setTimeout(() => {
-        this.setState({visible: false, toastMsg: ''}), 500;
-      });
+        this.setState({visible: false, toastMsg: ''});
+      }, 500);
     }
   };
 
@@ -126,14 +140,10 @@ export default class LoginScreen extends Component {
     this.props.navigation.navigate('HomeScreen', {first_login: firstLogin});
   }
 
-  goConfig = cClick => {
+  goConfig = () => {
     global.config_from = 'Login';
     global.fromLogin = true;
     this.props.navigation.navigate('Configuration');
-  };
-
-  static navigationOptions = {
-    header: null,
   };
 
   userHandler = userName => {

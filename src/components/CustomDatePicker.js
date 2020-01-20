@@ -45,4 +45,11 @@ const styles = StyleSheet.create({
   paddingBottom: {
     paddingBottom: theme.sizes.padding,
   },
+
+  label: {
+    fontSize: theme.sizes.font,
+    color: theme.colors.darkGray,
+    marginLeft: 8,
+    fontWeight: 'bold',
+  },
 });

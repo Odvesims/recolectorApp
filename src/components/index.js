@@ -18,7 +18,7 @@ import RouteList from './routeList/RouteList';
 import SwipeHiddenList from './swipeList/SwipeHiddenList';
 import SwipeList from './swipeList/SwipeList';
 import CustomDatePicker from './CustomDatePicker';
-import InputList from './inputList/InputList';
+// import InputList from './inputList/InputList';
 import EmptyList from './emptyList/EmptyList';
 
 export {
@@ -35,7 +35,7 @@ export {
   EmptyList,
   FetchingData,
   InputForm,
-  InputList,
+  // InputList,
   InputLogin,
   NormalText,
   NumberInput,

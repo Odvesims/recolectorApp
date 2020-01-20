@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {theme} from '../../constants';
 import {OrdersTab} from './Tabs';
-import {FetchingData} from '../../components';
+import {FetchingData, BtnIcon} from '../../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import {Alert} from 'react-native';
@@ -167,9 +167,7 @@ export default class Orders extends Component {
           />
           <Header>
             <Left>
-              <Button transparent onPress={this.openDrawer}>
-                <Icon name="menu" />
-              </Button>
+              <BtnIcon iconName={'menu'} onPress={this.openDrawer} />
             </Left>
             <Body>
               <Title>{global.translate('TITLE_ORDERS')}</Title>

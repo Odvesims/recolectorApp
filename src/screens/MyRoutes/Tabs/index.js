@@ -1,3 +1,3 @@
-import RegistryTab from './RegistryTab';
+// import RegistryTab from './RegistryTab';
 
-export {RegistryTab};
+// export {RegistryTab};

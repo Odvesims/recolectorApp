@@ -10,7 +10,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import styled from 'styled-components/native';
 import {ButtonGroup} from 'react-native-elements';
 
-import {RegistryTab} from './Tabs';
+import RegistryTab from './Tabs/RegistryTab';
+// import {RegistryTab} from './Tabs/RegistryTab';
+
 import CheckBox from '@react-native-community/checkbox';
 import {Text, View, StyleSheet, ScrollView, Alert} from 'react-native';
 import {Header, Right, Left, Body, Container, Title} from 'native-base';
@@ -178,7 +180,7 @@ export default class Registry extends Component {
           <Right>
             <BtnIcon
               iconName={'checkmark'}
-              label={'Guardar'}
+              label={'TITLE_SAVE'}
               onPress={this.saveConfirmation}
             />
           </Right>

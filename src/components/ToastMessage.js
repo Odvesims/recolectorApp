@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
-import {View, ToastAndroid} from 'react-native';
+import React from 'react';
+import {ToastAndroid} from 'react-native';
 
-const Toast = props => {
-  if (props.visible) {
+const Toast = ({visible, message}) => {
+  if (visible) {
     ToastAndroid.showWithGravityAndOffset(
-      props.message,
+      message,
       ToastAndroid.SHORT,
       ToastAndroid.BOTTOM,
       25,
@@ -15,13 +15,8 @@ const Toast = props => {
   return null;
 };
 
-class ToastMessage extends Component {
-  render() {
-    return (
-      <View>
-        <Toast visible={this.props.visible} message={this.props.message} />
-      </View>
-    );
-  }
-}
+const ToastMessage = ({visible, message}) => (
+  <Toast visible={visible} message={message} />
+);
+
 export default ToastMessage;

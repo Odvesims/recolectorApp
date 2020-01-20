@@ -122,7 +122,6 @@ const styles = StyleSheet.create({
     height: 80,
     alignItems: 'center',
 
-    paddingLeft: 12,
     elevation: 1,
   },
 

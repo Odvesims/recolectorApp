@@ -36,9 +36,6 @@ import SideBar from './SideBar';
 import {theme} from '../constants';
 import {Icon} from 'native-base';
 
-const navOptionHandler = navigation => ({
-  header: null,
-});
 const ConfigNavigator = createStackNavigator(
   {
     Configuration: ConfigScreen,
@@ -135,7 +132,7 @@ let roleSuper = {
   HomeScreen: {
     screen: Home,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerIcon: props => <IconMenu name={'home'} {...props} />,
       drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
     },
   },
@@ -164,7 +161,7 @@ let roleSuper = {
   MyConfigScreen: {
     screen: ConfigNavigator,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerIcon: props => <IconMenu name={'settings'} {...props} />,
       drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
     },
   },
@@ -174,7 +171,7 @@ let roleAll = {
   HomeScreen: {
     screen: Home,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerIcon: props => <IconMenu name={'home'} {...props} />,
       drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
     },
   },
@@ -211,7 +208,7 @@ let roleAll = {
   MyConfigScreen: {
     screen: ConfigNavigator,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerIcon: props => <IconMenu name={'settings'} {...props} />,
       drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
     },
   },
@@ -221,7 +218,7 @@ let roleAdmin = {
   HomeScreen: {
     screen: Home,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerIcon: props => <IconMenu name={'home'} {...props} />,
       drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
     },
   },
@@ -260,7 +257,7 @@ let roleRecolector = {
   HomeScreen: {
     screen: Home,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'home'} {...props} />,
+      drawerIcon: props => <IconMenu name={'home'} {...props} />,
       drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
     },
   },
@@ -274,7 +271,7 @@ let roleRecolector = {
   MyConfigScreen: {
     screen: ConfigNavigator,
     navigationOptions: {
-      drawerIcon: props => <Icon name={'settings'} {...props} />,
+      drawerIcon: props => <IconMenu name={'settings'} {...props} />,
       drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
     },
   },

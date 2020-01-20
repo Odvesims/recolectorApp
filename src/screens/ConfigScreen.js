@@ -36,6 +36,12 @@ export default class ConfigScreen extends Component {
     this.state = {
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
+      hostName: '',
+      portNumber: '',
+      usesPrinter: '',
+      printerName: '',
+      printerAddress: '',
+      configDone: false,
     };
   }
 
@@ -43,24 +49,29 @@ export default class ConfigScreen extends Component {
     this.configHandler();
   }
 
-  reload = null;
+  // reload = null;
 
   configHandler = () => {
-    this.reload = getUserConfig().then(res => {
-      this.setState({
-        loading: false,
-        hostName: res.host,
-        portNumber: res.port_number,
-        usesPrinter: res.printer,
-        printerName: res.printer_name,
-        printerAddress: res.printer_address,
-      });
-    });
+    console.log('configHandler');
+    getUserConfig()
+      .then(res => {
+        console.log('getUserConfig', res);
+        this.setState({
+          loading: false,
+          hostName: res.host,
+          portNumber: res.port_number,
+          usesPrinter: res.printer,
+          printerName: res.printer_name,
+          printerAddress: res.printer_address,
+        });
+      })
+      .catch(err => alert(err));
   };
 
   componentWillUnmount() {
-    this.reload = null;
-    console.log('componentWillUnmount', this.reload);
+    // this.reload = null;
+    // console.log('componentWillUnmount', this.reload);
+    console.log('componentWillUnmount');
   }
 
   saveUser = () => {
@@ -84,8 +95,8 @@ export default class ConfigScreen extends Component {
         hostName: res.host,
         portNumber: res.port.toString(),
         usesPrinter: res.printer,
-        // printerName: res.printer_name,
-        // printerAddress: res.printer_address,
+        printerName: res.printer_name,
+        printerAddress: res.printer_address,
       });
       if (res) {
         alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
@@ -139,7 +150,6 @@ export default class ConfigScreen extends Component {
   };
 
   render() {
-    console.log('Config state', this.state);
     const {
       usesPrinter,
       loading,
@@ -147,6 +157,7 @@ export default class ConfigScreen extends Component {
       portNumber,
       hostName,
     } = this.state;
+
     let configPrinter;
 
     if (usesPrinter === 'yes') {

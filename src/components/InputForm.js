@@ -58,6 +58,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: theme.sizes.font,
     color: theme.colors.darkGray,
+    marginLeft: 8,
+    fontWeight: 'bold',
   },
 
   paddingBottom: {

@@ -157,5 +157,6 @@
   "DATE_LIMIT": "Deadline",
   "ARTICLES": "Items",
   "ARTICLES_TO_BUY": "Items to buy",
-  "ARTICLES_TO_PICK_UP": "Items to pick up"
+  "ARTICLES_TO_PICK_UP": "Items to pick up",
+  "ORDERS": "Orders"
 }

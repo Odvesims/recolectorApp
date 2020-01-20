@@ -1,11 +1,10 @@
 import {openDatabase} from 'react-native-sqlite-storage';
-import nextFrame from 'next-frame';
 
-let db = openDatabase({name: 'UserDatabase.db'});
+let db = openDatabase({name: 'UserDatabase.db', location:'default'});
 
 export function tableDatabaseVersion(currentDbVersion) {
   return new Promise((resolve, reject) => {
-    db.transaction(function(txn) {
+    db.transaction(txn => {
       txn.executeSql(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='database_props'",
         [],
@@ -125,10 +124,11 @@ export function setUserTable() {
 export function getUserConfig() {
   return new Promise((resolve, reject) => {
     let userConfig = {};
-    let i = 0;
     db.transaction(tx => {
+      console.log('tx', tx);
       tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
-        for (i = 0; i < results.rows.length; ++i) {
+        console.log('executeSql', results);
+        for (let i = 0; i < results.rows.length; ++i) {
           let row = results.rows.item(i);
           userConfig = {
             port_number: row.port_number.toString(),
@@ -791,7 +791,7 @@ export function getAssignedOrders() {
             let row = results.rows.item(i);
             let orderObject = {
               id: row.id,
-              order_id:row.order_id,
+              order_id: row.order_id,
               document: row.order_document,
               client: row.client,
               address: row.address,

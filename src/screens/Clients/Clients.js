@@ -74,25 +74,18 @@ export default class Clients extends Component {
   }
 
   componentWillUnmount() {
-    console.log('refresh');
     this.focusListener.remove();
   }
 
   refresh(value) {
-    console.log('refresh');
-
     if (value) {
       this.refreshHandler();
     } else {
-      console.log('refresh');
-
       this.enterHandler();
     }
   }
 
   enterHandler = () => {
-    console.log('refresh');
-
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
@@ -101,8 +94,6 @@ export default class Clients extends Component {
   };
 
   storedClients = () => {
-    console.log('refresh');
-
     getStoredClients().then(clients => {
       if (clients.length > 0) {
         this.setState({data: clients, dataAll: clients, loading: false});
@@ -113,7 +104,6 @@ export default class Clients extends Component {
   };
 
   refreshHandler = () => {
-    console.log('refresh');
     const {loading, request_timeout} = this.state;
     this.setState({
       loading: true,
@@ -125,8 +115,6 @@ export default class Clients extends Component {
       Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
     }
     getData('GET_CLIENTS').then(result => {
-      console.log('refresh');
-
       if (!request_timeout) {
         this.setState({loading: false, request_timeout: false});
         if (result.valid) {
@@ -134,13 +122,9 @@ export default class Clients extends Component {
             this.storedClients();
           });
         } else {
-          console.log('refresh');
-
           Alert.alert(global.translate(result.response));
         }
       } else {
-        console.log('refresh');
-
         this.setState({loading: false, request_timeout: false});
       }
     });
@@ -183,7 +167,6 @@ export default class Clients extends Component {
   };
 
   onPressAction = item => {
-    console.log('refresh');
     const {BUTTONS, DESTRUCTIVE_INDEX, CANCEL_INDEX} = this.state;
 
     ActionSheet.show(

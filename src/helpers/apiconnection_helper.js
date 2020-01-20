@@ -1,6 +1,3 @@
-import React from 'react';
-import {Platform} from 'react-native';
-
 export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   let returnObject = {};
   let getUrl =
@@ -16,7 +13,10 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
     userPassword;
   try {
     let response = await fetch(getUrl, {method: 'GET'});
+    console.log('getUserLogin response=>', response);
+
     const responseJson = await response.json();
+    console.log('getUserLogin responseJson=>', responseJson);
     if (JSON.stringify(responseJson) === '{}') {
       returnObject = {
         valid: false,
@@ -39,6 +39,7 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
       }
     }
   } catch (error) {
+    console.log('Login error', error);
     returnObject = {
       valid: false,
       responseError: error.message(),

@@ -8,7 +8,7 @@ import 'react-native-gesture-handler';
 
 let roles = `super, recolector, admin`;
 
-global.database_version = 19;
+global.database_version = 20;
 global.config_from = 'Login';
 global.fromLogin = true;
 global.userDisplayName = '';

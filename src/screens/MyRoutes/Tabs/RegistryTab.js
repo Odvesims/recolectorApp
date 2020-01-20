@@ -3,7 +3,8 @@ import {Text, View, FlatList} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {styles, HeaderItems} from '../styles';
-import {InputList} from '../../../components';
+import InputList from '../../../components/inputList/InputList';
+// import {InputList} from '../../../components/inputList/InputList';
 
 import {Consumer} from '../Registry';
 

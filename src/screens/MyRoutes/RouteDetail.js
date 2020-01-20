@@ -72,7 +72,7 @@ export default class RouteDetail extends Component {
     }
   };
 
-  flatOnPress = item => {
+  detailHandler = item => {
     this.props.navigation.navigate('Registry', {
       client: item.client,
       name: item.name,
@@ -87,7 +87,7 @@ export default class RouteDetail extends Component {
       <Item
         style={styles.list}
         onPress={() => {
-          this.flatOnPress(item);
+          this.detailHandler(item);
         }}>
         <View style={styles.listContainer}>
           <Text numberOfLines={1} style={styles.name}>
@@ -104,9 +104,11 @@ export default class RouteDetail extends Component {
   };
 
   render() {
-    const {data, loadingMessage, loading} = this.state;
+    const {data, loadingMessage, loading, date_to} = this.state;
     const {state, navigate} = this.props.navigation;
-    const {params} = this.props.navigation.state;
+    const {
+      params: {routeName},
+    } = this.props.navigation.state;
     return (
       <Root>
         <Container>
@@ -122,7 +124,7 @@ export default class RouteDetail extends Component {
               <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
             </Left>
             <Body>
-              <Title>{`${params.routeName}`}</Title>
+              <Title>{`${routeName}`}</Title>
             </Body>
           </Header>
 
@@ -130,23 +132,25 @@ export default class RouteDetail extends Component {
           <RContent>
             <View style={styles.RouteDetails}>
               <Head>
-                <Key>Ruta:</Key>
-                <Label> {`${params.routeName}`}</Label>
+                <Key>{`${global.translate('TITLE_ROUTE')}: `}</Key>
+                <Label>{routeName}</Label>
               </Head>
               <Head>
-                <Key>{global.translate('TITLE_DATE')}:</Key>
-                <Label> {this.state.date_to}</Label>
+                <Key>{`${global.translate('TITLE_DATE')}: `}</Key>
+                <Label>{date_to}</Label>
               </Head>
             </View>
 
             <View style={{flex: 1}}>
               <View style={styles.addPoint}>
                 <View style={{paddingBottom: 8}}>
-                  <Text style={styles.detailText}>Ordenes</Text>
+                  <Text style={styles.detailText}>
+                    {global.translate('ORDERS')}
+                  </Text>
                 </View>
                 <FlatList
                   data={data}
-                  keyExtractor={item => item.id.toString()}
+                  keyExtractor={item => `${item.id}`}
                   renderItem={this.renderItem}
                 />
               </View>
