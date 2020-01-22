@@ -1,3 +1,6 @@
+import axios from 'axios';
+import {Platform} from 'react-native';
+
 export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
   let returnObject = {};
   let getUrl =
@@ -12,18 +15,25 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
     '&password=' +
     userPassword;
   try {
-    let response = await fetch(getUrl, {method: 'GET'});
-    console.log('getUserLogin response=>', response);
+    console.log('getUrl ==>', getUrl);
 
-    const responseJson = await response.json();
-    console.log('getUserLogin responseJson=>', responseJson);
-    if (JSON.stringify(responseJson) === '{}') {
+    let andris = await axios.get('https://jsonplaceholder.typicode.com/posts');
+    console.log('andris ==>', andris);
+    let andrisJson = andris.data;
+    console.log('andrisJson ==>', andrisJson);
+
+    let response = await axios.get(getUrl);
+    console.log('response ==>', response);
+    let responseJson = response.data;
+    console.log('responseJson ==>', responseJson);
+    // let responseJson = await response.json();
+    if (JSON.stringify(responseJson) == '{}') {
       returnObject = {
         valid: false,
         responseError: 'ALERT_BLANK_RESPONSE',
       };
     } else {
-      if (responseJson.response !== 'valid') {
+      if (responseJson.response != 'valid') {
         returnObject = {
           valid: false,
           responseError: responseJson.error_message,
@@ -39,7 +49,7 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
       }
     }
   } catch (error) {
-    console.log('Login error', error);
+    console.log(error);
     returnObject = {
       valid: false,
       responseError: error.message(),
@@ -74,8 +84,10 @@ export async function getData(apiOption, extraParams) {
     global.userName +
     extraParams;
   try {
+    console.log('getUrl ==>', getUrl);
     let response = await fetch(getUrl, {method: 'GET'});
     const responseJson = await response.json();
+    console.log('Response ==>', responseJson);
     if (JSON.stringify(responseJson) === '{}') {
       returnObject = {
         valid: false,

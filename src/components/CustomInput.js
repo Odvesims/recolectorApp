@@ -4,12 +4,9 @@ import React from 'react';
 import {theme} from '../constants';
 
 const CustomInput = ({
-  keyboardType,
   onChangeText,
   placeholder,
   returnKeyType,
-  numberOfLines,
-  multiline,
   onSubmitEditing,
   secured,
   style,
@@ -21,16 +18,11 @@ const CustomInput = ({
     <View style={{paddingBottom: 12}}>
       <Text style={styles.label}>{global.translate(label)}</Text>
       <TextInput
-        placeholder={global.translate(placeholder)}
-        keyboardType={keyboardType}
+        // placeholder={global.translate(placeholder)}
         onChangeText={onChangeText}
         returnKeyType={returnKeyType}
-        numberOfLines={numberOfLines}
-        multiline={multiline}
         onSubmitEditing={onSubmitEditing}
-        secureTextEntry={secured}
         style={styles.input}
-        blurOnSubmit={false}
         value={value}
         {...props}
       />

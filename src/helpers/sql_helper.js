@@ -1,10 +1,10 @@
 import {openDatabase} from 'react-native-sqlite-storage';
 
-let db = openDatabase({name: 'UserDatabase.db', location:'default'});
+let db = openDatabase({name: 'UserDatabase.db'});
 
 export function tableDatabaseVersion(currentDbVersion) {
   return new Promise((resolve, reject) => {
-    db.transaction(txn => {
+    db.transaction(function(txn) {
       txn.executeSql(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='database_props'",
         [],
@@ -102,10 +102,10 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0),',
+        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC, pickup_purchase VARCHAR(1))',
+        'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS routes(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER, description TEXT, document_id INTEGER, document_acronym VARCHAR, document_number INTEGER, assigned_by VARCHAR(10), assigned_to VARCHAR(10), supervisor_name VARCHAR, employee_name VARCHAR, phone_number VARCHAR, date_from TEXT, date_to TEXT, status VARCHAR(1))',
@@ -125,9 +125,7 @@ export function getUserConfig() {
   return new Promise((resolve, reject) => {
     let userConfig = {};
     db.transaction(tx => {
-      console.log('tx', tx);
       tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
-        console.log('executeSql', results);
         for (let i = 0; i < results.rows.length; ++i) {
           let row = results.rows.item(i);
           userConfig = {

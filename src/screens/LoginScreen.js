@@ -60,9 +60,7 @@ export default class LoginScreen extends Component {
     let user = userName;
     let password = userPassword;
     if (user) {
-      console.log('user ==>', user);
       if (password) {
-        console.log('password ==>', password);
         this.setState({
           loading: true,
           loadingMessage: global.translate('MESSAGE_SIGNIN'),

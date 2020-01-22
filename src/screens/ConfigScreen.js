@@ -6,8 +6,8 @@ import {
   StyleSheet,
   Picker,
   StatusBar,
+  Integer,
   Text,
-  Platform,
   TouchableOpacity,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -43,16 +43,25 @@ export default class ConfigScreen extends Component {
       printerAddress: '',
       configDone: false,
     };
+    // getUserConfig().then(res => {
+    //   this.setState({
+    //     loading: false,
+    //     hostName: res.host,
+    //     portNumber: res.port_number,
+    //     usesPrinter: res.printer,
+    //     printerName: res.printer_name,
+    //     printerAddress: res.printer_address,
+    //   });
+    // });
   }
 
   componentDidMount() {
     this.configHandler();
   }
 
-  // reload = null;
+  reload = null;
 
   configHandler = () => {
-    console.log('configHandler');
     getUserConfig()
       .then(res => {
         console.log('getUserConfig', res);
@@ -69,15 +78,14 @@ export default class ConfigScreen extends Component {
   };
 
   componentWillUnmount() {
-    // this.reload = null;
-    // console.log('componentWillUnmount', this.reload);
-    console.log('componentWillUnmount');
+    this.reload = null;
+    console.log('componentWillUnmount', this.reload);
   }
 
   saveUser = () => {
     console.log('saveUser');
     const {hostName, portNumber, usesPrinter} = this.state;
-    const {printer_name, printer_address} = this.props.navigation.state.params;
+    //const {printer_name, printer_address} = this.props.navigation.state.params;
     this.setState({
       loading: true,
       loadingMessage: global.translate('MESSAGE_SAVING_DATA'),
@@ -87,16 +95,16 @@ export default class ConfigScreen extends Component {
       hostName,
       portNumber,
       usesPrinter,
-      printer_name,
-      printer_address,
+      //printer_name,
+      //printer_address,
     ).then(res => {
       this.setState({
         loading: false,
         hostName: res.host,
         portNumber: res.port.toString(),
         usesPrinter: res.printer,
-        printerName: res.printer_name,
-        printerAddress: res.printer_address,
+        // printerName: res.printer_name,
+        // printerAddress: res.printer_address,
       });
       if (res) {
         alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
@@ -194,12 +202,14 @@ export default class ConfigScreen extends Component {
 
             <CustomInput
               label={'TITLE_DOMAIN'}
+              // placeholder={'TITLE_DOMAIN'}
               value={hostName}
               onChangeText={this.hostHandler}
             />
 
             <CustomInput
               label={'TITLE_PORT'}
+              // placeholder={'TITLE_PORT'}
               keyboardType={'numeric'}
               value={portNumber}
               onChangeText={this.portHandler}

@@ -20,15 +20,8 @@ export class SplashScreen extends Component {
   performTimeConsumingTask = async () => {
     return new Promise((resolve, reject) => {
       tableDatabaseVersion(global.database_version).then(dbDone => {
-        console.log('dbDone ==>', dbDone);
         if (dbDone) {
           getDatabaseVersion().then(result => {
-            console.log('result ==>', result);
-            console.log(
-              'result comparison ==>',
-              result.currentVersion,
-              result.storedVersion,
-            );
             if (result.currentVersion > result.storedVersion) {
               setUserTable().then(res => {
                 console.log('res ==>', res);
