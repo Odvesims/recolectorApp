@@ -213,19 +213,21 @@ export class Route extends Component {
         loadingMessage: this.props.navigation.state.params.loading_message,
       });
 
-      dataOperation('ROUTE_OPERATION', order_data).then(res => {
-        if (res.valid) {
-          updateOrderAssigned(ordersArr).then(up => {
-            alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
-            this.setState({
-              loading: false,
+      dataOperation('ROUTE_OPERATION', order_data)
+        .then(res => {
+          if (res.valid) {
+            updateOrderAssigned(ordersArr).then(up => {
+              alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+              this.setState({
+                loading: false,
+              });
+              this.props.navigation.goBack();
             });
-            this.props.navigation.goBack();
-          });
-        } else {
-          this.setState({loading: false});
-        }
-      });
+          } else {
+            this.setState({loading: false});
+          }
+        })
+        .catch(err => console.log('error', err));
     } else {
       alert(global.translate('ALERT_COMPLETE_DATA'));
     }
@@ -280,7 +282,6 @@ export class Route extends Component {
   };
 
   render() {
-    console.log('state', this.state);
     const {
       placeholder,
       chosenDate2,

@@ -6,6 +6,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
+    "gradlew-clean": "cd android && /gradlew clean",
     "android-shake": "adb shell input keyevent 82",
     "react-devtools": "react-devtools",
     "android-dev": "adb reverse tcp:8097 tcp:8097 && react-native run-android"

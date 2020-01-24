@@ -50,8 +50,8 @@ export default class Orders extends Component {
       DESTRUCTIVE_INDEX: 3,
       CANCEL_INDEX: 4,
     };
-    this.availableTab = React.createRef();
-    this.notAvailableTab = React.createRef();
+    // this.availableTab = React.createRef();
+    // this.notAvailableTab = React.createRef();
   }
 
   showHideSearchBar = () => {
@@ -91,20 +91,23 @@ export default class Orders extends Component {
   };
 
   storedOrders = async () => {
-    const notAssigned = await getNotAssignedOrders();
-    const assigned = await getAssignedOrders();
+    try {
+      const notAssigned = await getNotAssignedOrders();
+      // console.log('getAssignedOrders ==>', notAssigned);
+      const assigned = await getAssignedOrders();
+      // console.log('getAssignedOrders ==>', assigned);
 
-    // console.log('not assigned ==>', notAssigned);
-    // console.log('assigned ==>', assigned);
-
-    this.setState({
-      isLoading: false,
-      not_assigned: notAssigned,
-      assigned: assigned,
-    });
+      this.setState({
+        isLoading: false,
+        not_assigned: notAssigned,
+        assigned: assigned,
+      });
+    } catch (error) {
+      console.log('storedOrders error ==>', error);
+    }
   };
 
-  refreshHandler = () => {
+  refreshHandler = async () => {
     this.setState({
       isLoading: true,
       request_timeout: false,
@@ -117,22 +120,22 @@ export default class Orders extends Component {
       }
     }, 15000);
 
-    getData('GET_ORDERS').then(result => {
-      // console.log('GET ORDERS ==>', result);
-
-      if (!this.state.request_timeout) {
-        this.setState({request_timeout: false});
-        if (result.valid) {
-          saveOrders(result.arrResponse).then(res => {
-            this.storedOrders();
-          });
-        } else {
-          Alert.alert(global.translate(result.response));
+    const data = await getData('GET_ORDERS');
+    if (!this.state.request_timeout) {
+      this.setState({request_timeout: false});
+      if (data.valid) {
+        try {
+          const save = await saveOrders(data.arrResponse);
+          await this.storedOrders();
+        } catch (error) {
+          console.log('error', error);
         }
       } else {
-        this.setState({request_timeout: false});
+        Alert.alert(global.translate(data.response));
       }
-    });
+    } else {
+      this.setState({request_timeout: false});
+    }
   };
 
   openDrawer = props => {
@@ -185,14 +188,14 @@ export default class Orders extends Component {
             <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
               <OrdersTab
                 tab_data={not_assigned}
-                ref={this.notAvailableTab}
+                // ref={this.notAvailableTab}
                 navigation={this.props.navigation}
               />
             </Tab>
             <Tab heading={global.translate('TITLE_ASSIGNED')}>
               <OrdersTab
                 tab_data={assigned}
-                ref={this.availableTab}
+                // ref={this.availableTab}
                 navigation={this.props.navigation}
               />
             </Tab>

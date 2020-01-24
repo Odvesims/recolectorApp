@@ -96,6 +96,7 @@ export default class Order extends Component {
       getData('GET_ORDER', `&order_id=${order_id}`).then(o => {
         getOrderDetails(order_id).then(dets => {
           const orderData = o.arrResponse[0];
+          console.log('get order =>', o);
           console.log('arrRESPONSE', orderData);
           this.setState({
             ...orderData,

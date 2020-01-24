@@ -68,8 +68,6 @@ export default class LoginScreen extends Component {
         });
         getUserConfig()
           .then(res => {
-            console.log('getUserConfig=>', res);
-
             setTimeout(() => {
               if (loading) {
                 this.setState({loading: false, request_timeout: true});
@@ -78,8 +76,6 @@ export default class LoginScreen extends Component {
             }, 10000);
             getUserLogin(res.host, res.port_number, user, password)
               .then(l => {
-                console.log('getuserlogin=>', l);
-
                 if (!request_timeout) {
                   this.setState({loading: false, request_timeout: false});
                   if (l.valid) {
@@ -110,18 +106,15 @@ export default class LoginScreen extends Component {
           })
           .catch(alert);
       } else {
-        console.log('user false ==>');
-
         this.setState({
           visible: true,
           toastMsg: global.translate('ALERT_PASSWORD_BLANK'),
         });
         setTimeout(() => {
           this.setState({visible: false, toastMsg: ''});
-        }, 500);
+        }, 500);s
       }
     } else {
-      console.log('user2 false ==>');
       this.setState({
         visible: true,
         toastMsg: global.translate('ALERT_USER_BLANK'),

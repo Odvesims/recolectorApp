@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import {I18nManager} from 'react-native';
-import {createAppContainer} from 'react-navigation';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize';
-import 'react-native-gesture-handler';
 
 let roles = `super, recolector, admin`;
 
-global.database_version = 20;
+global.database_version = 24;
 global.config_from = 'Login';
 global.fromLogin = true;
 global.userDisplayName = '';
