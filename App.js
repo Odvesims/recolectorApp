@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
+import './src/translations/i18n';
 import {I18nManager} from 'react-native';
 import * as RNLocalize from 'react-native-localize';
-import i18n from 'i18n-js';
+import i18n from 'i18next';
 import memoize from 'lodash.memoize';
 
+import AppNavigator from './src/navigations/AppNavigator';
 let roles = `super, recolector, admin`;
 
 global.database_version = 24;
@@ -55,8 +57,6 @@ const setI18nConfig = () => {
 
 console.disableYellowBox = true;
 
-import Navigation from './src/navigations/';
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -77,7 +77,7 @@ class App extends Component {
   };
 
   render() {
-    return <Navigation />;
+    return <AppNavigator />;
   }
 }
 export default App;
