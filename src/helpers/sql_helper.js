@@ -1,6 +1,7 @@
 import {openDatabase} from 'react-native-sqlite-storage';
 
 let db = openDatabase({name: 'UserDatabase.db'});
+import axios from 'axios';
 
 export function tableDatabaseVersion(currentDbVersion) {
   return new Promise((resolve, reject) => {
@@ -76,7 +77,7 @@ export function setUserTable() {
       txn.executeSql('DROP TABLE IF EXISTS route_details');
       txn.executeSql('DROP VIEW IF EXISTS view_orders');
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no", printer_name VARCHAR, printer_address VARCHAR)',
+        'CREATE TABLE app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no", printer_name VARCHAR, printer_address VARCHAR);',
       );
       txn.executeSql(
         'INSERT INTO app_configurations(host_name, port_number, printer_name, printer_address) VALUES(?, ?, ?, ?)',
@@ -102,7 +103,7 @@ export function setUserTable() {
         'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, subcategory_id INTEGER, article_id INTEGER, article_code VARCHAR(10), description TEXT, price numeric)',
       );
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0),',
+        'CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, address TEXT, order_document VARCHAR, client VARCHAR, date_register TEXT, order_total TEXT, assigned INTEGER DEFAULT 0)',
       );
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS order_details(id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER, orderdetail_id INTEGER, detail_type VARCHAR, detail_id INTEGER, detail_quantity NUMERIC, detail_price NUMERIC, detail_description TEXT, collected_quantity NUMERIC, collected_amount NUMERIC, pickup_purchase VARCHAR(1))',
@@ -121,13 +122,24 @@ export function setUserTable() {
   });
 }
 
-export function getUserConfig() {
+export async function getUserConfig() {
+  db = openDatabase({name: 'UserDatabase.db'});
   return new Promise((resolve, reject) => {
+    console.log('userConfig');
     let userConfig = {};
-    let i = 0;
     db.transaction(tx => {
+      console.log('userConfig2');
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS app_configurations(id INTEGER PRIMARY KEY AUTOINCREMENT, host_name VARCHAR(100), port_number INT(10), uses_printer VARCHAR DEFAULT "no", printer_name VARCHAR, printer_address VARCHAR);',
+      );
+      tx.executeSql(
+        'INSERT INTO app_configurations(host_name, port_number, printer_name, printer_address) VALUES(?, ?, ?, ?)',
+        ['apimobile.sojaca.net', 444, '', ''],
+        (tx, results) => {},
+      );
       tx.executeSql('SELECT * FROM app_configurations', [], (tx, results) => {
-        for (i = 0; i < results.rows.length; ++i) {
+        console.log('userConfig3');
+        for (let i = 0; i < results.rows.length; ++i) {
           let row = results.rows.item(i);
           userConfig = {
             port_number: row.port_number.toString(),
@@ -137,6 +149,7 @@ export function getUserConfig() {
             printer_address: row.printer_address,
           };
         }
+        console.log('userConfig', userConfig);
         resolve(userConfig);
       });
     });

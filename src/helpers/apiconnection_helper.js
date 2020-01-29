@@ -15,19 +15,27 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
     userPassword;
   try {
     let response = await axios.get(getUrl);
+    console.log('response', response);
+
     const responseJson = await response.data;
+
     if (JSON.stringify(responseJson) === '{}') {
+      console.log('JSON.stringify(responseJson) === {}');
+
       returnObject = {
         valid: false,
         responseError: 'ALERT_BLANK_RESPONSE',
       };
     } else {
       if (responseJson.response !== 'valid') {
+        console.log('responseJson.response !== valid');
         returnObject = {
           valid: false,
           responseError: responseJson.error_message,
         };
       } else {
+        console.log('returnObject');
+
         returnObject = {
           valid: true,
           displayName: responseJson.name,
@@ -38,6 +46,8 @@ export async function getUserLogin(apiHost, apiPort, userName, userPassword) {
       }
     }
   } catch (error) {
+    console.log('returnObject error');
+
     returnObject = {
       valid: false,
       responseError: error.message(),
@@ -73,6 +83,8 @@ export async function getData(apiOption, extraParams) {
     extraParams;
   try {
     let response = await axios.get(getUrl);
+
+    console.log('response', response);
     const responseJson = await response.data;
     if (JSON.stringify(responseJson) === '{}') {
       returnObject = {

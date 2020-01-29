@@ -17,33 +17,31 @@ export class SplashScreen extends Component {
       loadingMessage: 'MESSAGE_INITIAL_CONFIG',
     };
   }
+
   performTimeConsumingTask = async () => {
-    return new Promise((resolve, reject) => {
-      tableDatabaseVersion(global.database_version).then(dbDone => {
-        if (dbDone) {
-          getDatabaseVersion().then(result => {
-            if (result.currentVersion > result.storedVersion) {
-              setUserTable().then(res => {
-                console.log('res ==>', res);
-                updateDatabaseVersion(global.database_version).then(ud => {
-                  console.log('ud ==>', ud);
-                });
-              });
-            }
-            setTimeout(() => {
-              resolve('result');
-            }, 1000);
-          });
-        }
-      });
-    });
+    const tableDb = await tableDatabaseVersion(global.database_version);
+    console.log('dbDone ==>', tableDb);
+
+    if (tableDb) {
+      const dbVersion = await getDatabaseVersion();
+      console.log('dbVersion ==>', dbVersion);
+
+      if (dbVersion.currentVersion > dbVersion.storedVersion) {
+        const setUser = await setUserTable();
+        console.log('res ==>', setUser);
+
+        const updateDB = await updateDatabaseVersion(global.database_version);
+        console.log('ud ==>', updateDB);
+      }
+    }
+    return tableDb;
   };
 
   async componentDidMount() {
     // Preload data from an external API
     // Preload data using AsyncStorage
     const data = await this.performTimeConsumingTask();
-
+    console.log('data', data);
     if (data !== null) {
       this.props.navigation.navigate('Auth');
     }

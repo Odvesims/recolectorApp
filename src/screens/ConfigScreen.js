@@ -61,20 +61,25 @@ export default class ConfigScreen extends Component {
 
   reload = null;
 
-  configHandler = () => {
-    getUserConfig()
-      .then(res => {
-        console.log('getUserConfig', res);
-        this.setState({
-          loading: false,
-          hostName: res.host,
-          portNumber: res.port_number,
-          usesPrinter: res.printer,
-          printerName: res.printer_name,
-          printerAddress: res.printer_address,
-        });
-      })
-      .catch(err => alert(err));
+  configHandler = async () => {
+    // console.log('config');
+    try {
+      console.log('calling getUserConfig');
+      const userConfig = await getUserConfig();
+      console.log('getUserConfig', userConfig);
+      this.setState({
+        loading: false,
+        hostName: userConfig.host,
+        portNumber: userConfig.port_number,
+        usesPrinter: userConfig.printer,
+        printerName: userConfig.printer_name,
+        printerAddress: userConfig.printer_address,
+      });
+
+      // .catch(err => alert(err));
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   componentWillUnmount() {

@@ -3,6 +3,7 @@ import React from 'react';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import {withTranslation} from 'react-i18next';
 
 // Clients
 import Clients from '../screens/Clients/Clients';
@@ -170,47 +171,45 @@ let roleSuper = {
 let roleAll = {
   HomeScreen: {
     screen: Home,
-    navigationOptions: {
+    navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'home'} {...props} />,
-      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
-    },
+      drawerLabel: t('TITLE_PRINCIPAL'), //'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+    }),
   },
   ClientScreen: {
     screen: ClientScreen,
-    navigationOptions: {
+    navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'people'} {...props} />,
-      drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
-    },
+      drawerLabel: t('TITLE_CLIENTS'), //'Clientes', //global.translate('TITLE_CLIENTS'),
+    }),
   },
   RouteScreen: {
     screen: RouteScreen,
-    navigationOptions: {
+    navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
-      drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
-    },
+      drawerLabel: t('TITLE_ROUTES'), //'Rutas', //global.translate('TITLE_ROUTES'),
+    }),
   },
   OrderScreen: {
     screen: OrdersScreen,
-    navigationOptions: {
+    navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'cube'} {...props} />,
-      drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
-    },
+      drawerLabel: t('TITLE_ORDERS'), //'Ordenes', //global.translate('TITLE_ORDERS'),
+    }),
   },
-
   MyRoutesScreen: {
     screen: MyRoutesScreen,
-    navigationOptions: {
+    navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'list-box'} {...props} />,
-      drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
-    },
+      drawerLabel: t('TITLE_MY_ROUTES'), //'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
+    }),
   },
-
   MyConfigScreen: {
     screen: ConfigNavigator,
-    navigationOptions: {
+    navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'settings'} {...props} />,
-      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
-    },
+      drawerLabel: t('TITLE_CONFIGURATION'), //'Configuración', //global.translate('TITLE_MY_ROUTES'),
+    }),
   },
 };
 
@@ -312,4 +311,22 @@ const Navigation = createSwitchNavigator(
   },
 );
 
-export default createAppContainer(Navigation);
+const AppContainer = createAppContainer(Navigation);
+
+class NavigatorApp extends React.Component {
+  render() {
+    const {t, i18n} = this.props;
+    console.log('Props', this.props);
+
+    return (
+      <AppContainer
+        screenProps={{
+          t,
+          i18n,
+        }}
+      />
+    );
+  }
+}
+
+export default withTranslation()(NavigatorApp);
