@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import './src/translations';
+import './src/translations/i18n';
 import NavigatorApp from './src/navigations/';
 
 let roles = `super, recolector, admin`;

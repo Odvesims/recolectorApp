@@ -1,6 +1,5 @@
 import * as RNLocalize from 'react-native-localize';
 import memoize from 'lodash.memoize';
-
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
 // import es from './es.json';
