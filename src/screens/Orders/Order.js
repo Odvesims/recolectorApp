@@ -81,10 +81,10 @@ export default class Order extends Component {
       client_state: null,
       client_phone: null,
       //
-      placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
-      placeholderEmployee: global.translate('PLACEHOLDER_SELECT_EMPLOYEE'), //
+      placeholder: global.translate('form.placeholder.select.client'),
+      placeholderEmployee: global.translate('form.placeholder.select.employee'), //
       //
-      operation: 'TITLE_EDIT_ORDER',
+      operation: 'action.edit.order',
       order_id: order_id,
       //
       editable: editable,
@@ -173,7 +173,7 @@ export default class Order extends Component {
     let {navigate} = this.props.navigation;
     let reset = {
       quantity: 1,
-      detail_description: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      detail_description: global.translate('form.placeholder.select.article'),
       detail_total: 0,
       article_price: 0,
       price: 0,
@@ -252,13 +252,13 @@ export default class Order extends Component {
       date_register: date,
     };
     // console.log('Order Data ==>', order_data);
-    this.setState({loading: true, loadingMessage: 'MESSAGE_REGISTERING_ORDER'});
+    this.setState({loading: true, loadingMessage: 'message.register.order'});
     dataOperation('ORDER_OPERATION', order_data).then(res => {
       // console.log('DataOperation ==>', res);
       if (res.valid) {
         if (hasPurchases === 'T') {
           if (global.printer_address === '') {
-            alert(global.translate('ALERT_PRINTER_NOT_CONFIGURED'));
+            alert(global.translate('print.not_configured'));
           } else {
             enableBT().then(e => {
               connectBluetooth(
@@ -267,24 +267,24 @@ export default class Order extends Component {
               ).then(c => {
                 if (c === true) {
                   Alert.alert(
-                    global.translate('TITLE_PRINT_ORDER'),
-                    global.translate('TITLE_PRINT_ORDER_MESSAGE'),
+                    global.translate('print.order'),
+                    global.translate('print.order_message'),
                     [
                       {
-                        text: global.translate('TITLE_NO_PRINT'),
+                        text: global.translate('print.no_print'),
                         onPress: () => {
                           alert.cancel;
                         },
                         style: 'cancel',
                       },
                       {
-                        text: global.translate('TITLE_PRINT_TOGETHER'),
+                        text: global.translate('print.together'),
                         onPress: () => {
                           printInvoiceText(res.responseObject, 2).then(p => {});
                         },
                       },
                       {
-                        text: global.translate('TITLE_PRINT_SEPARATE'),
+                        text: global.translate('print.separate'),
                         onPress: () => {
                           printInvoiceText(o.responseObject, 1).then(p => {});
                         },
@@ -300,7 +300,7 @@ export default class Order extends Component {
             });
           }
         }
-        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        alert(global.translate('message.success.registry'));
         setTimeout(() => {
           this.props.navigation.goBack();
         }, 1000);
@@ -423,8 +423,8 @@ export default class Order extends Component {
     } = this.state;
 
     const detailTabs = [
-      global.translate('PICKING'),
-      global.translate('SHOPPING'),
+      global.translate('tab.picking'),
+      global.translate('tab.shopping'),
     ]; //global.translate('TITLE_CATEGORY')];
 
     let detail;
@@ -442,7 +442,7 @@ export default class Order extends Component {
       moreDetails = (
         <ButtonOutlined onPress={this.onPressDetailHandler}>
           <Icon name="add" style={{color: theme.colors.primary}} />
-          <TextButton>{global.translate('TITLE_DETAILS')}</TextButton>
+          <TextButton>{global.translate('label.details')}</TextButton>
         </ButtonOutlined>
       );
     }
@@ -483,13 +483,13 @@ export default class Order extends Component {
               <View>
                 {/* Date Assigned */}
                 <DateAssigned
-                  label={global.translate('TITLE_DATE')}
+                  label={global.translate('form.label.date')}
                   details={`: ${this.state.date}`}
                 />
                 {/*ClientForm*/}
                 <Form style={styles.container}>
                   <CustomPicker
-                    label={'TITLE_CLIENT'}
+                    label={'form.label.client'}
                     items={clients}
                     placeholder={placeholder}
                     onSelected={this.selectedClient}
@@ -497,7 +497,7 @@ export default class Order extends Component {
                     children={clientInfo}
                   />
                   <CustomPicker
-                    label={'TITLE_COLLECTOR'}
+                    label={'form.label.collector'}
                     items={employees}
                     placeholder={placeholderEmployee}
                     onSelected={this.selectedEmployee}
@@ -511,7 +511,7 @@ export default class Order extends Component {
                 <View style={styles.addPoint}>
                   <View style={{paddingBottom: 8}}>
                     <Text style={styles.detailText}>
-                      {global.translate('TITLE_DETAILS')}
+                      {global.translate('label.details')}
                     </Text>
                   </View>
                   <View>

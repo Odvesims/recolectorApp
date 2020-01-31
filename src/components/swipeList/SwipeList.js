@@ -15,7 +15,7 @@ const SwipeList = ({item, onPress}) => {
         }}>
         <View key={item.key} style={styles.listContainer}>
           <Text style={styles.code}>
-            {global.translate('TITLE_CODE')}: {item.order_document}
+            {global.translate('label.code')}: {item.order_document}
           </Text>
           <View
             style={{

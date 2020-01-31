@@ -80,11 +80,11 @@ export async function printInvoiceText(printArray, printOption) {
           fonttype: 1,
         });
         Alert.alert(
-          global.translate('TITLE_PRINT_ORDER'),
-          global.translate('TITLE_CONTINUE_PRINTING'),
+          global.translate('print.order'),
+          global.translate('print.continue_printing'),
           [
             {
-              text: global.translate('TITLE_YES'),
+              text: global.translate('picking.yes'),
               onPress: () => {
                 printArray.invoice_header.map(line => {
                   formattedText(line);

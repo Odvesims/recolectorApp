@@ -141,24 +141,24 @@ export default class Home extends Component {
     }*/
     //this.setModalVisible(true);
     Alert.alert(
-      global.translate('TITLE_PRINT_ORDER'),
-      global.translate('TITLE_PRINT_ORDER_MESSAGE'),
+      global.translate('print.order'),
+      global.translate('print.order_message'),
       [
         {
-          text: global.translate('TITLE_NO_PRINT'),
+          text: global.translate('print.no_print'),
           onPress: () => {
             alert.cancel;
           },
           style: 'cancel',
         },
         {
-          text: global.translate('TITLE_PRINT_TOGETHER'),
+          text: global.translate('print.together'),
           onPress: () => {
             printText();
           },
         },
         {
-          text: global.translate('TITLE_PRINT_SEPARATE'),
+          text: global.translate('print.separate'),
           onPress: () => console.log('Ask me later pressed'),
         },
       ],
@@ -176,13 +176,13 @@ export default class Home extends Component {
     this.setState({
       loading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
+      loadingMessage: global.translate('message.loading.data'),
     });
 
     setTimeout(() => {
       if (this.state.loading) {
         this.setState({loading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        alert(global.translate('error.request_timeout'));
         clearTimeout();
       }
     }, 30000);
@@ -320,7 +320,7 @@ export default class Home extends Component {
            
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_PRINCIPAL')}</Title>
+            <Title>{global.translate('links.principal')}</Title>
           </Body>
           <Right>
             <FetchingData syncData={this.refreshHandler} fetching={loading} />

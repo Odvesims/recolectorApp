@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Picker,
   StatusBar,
-  Integer,
+  Platform,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -35,7 +35,7 @@ export default class ConfigScreen extends Component {
     super(props);
     this.state = {
       loading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_DATA'),
+      loadingMessage: global.translate('message.loading.data'),
       hostName: '',
       portNumber: '',
       usesPrinter: '',
@@ -93,7 +93,7 @@ export default class ConfigScreen extends Component {
     //const {printer_name, printer_address} = this.props.navigation.state.params;
     this.setState({
       loading: true,
-      loadingMessage: global.translate('MESSAGE_SAVING_DATA'),
+      loadingMessage: global.translate('message.saving.data'),
     });
     saveUserConfig(
       1,
@@ -112,9 +112,9 @@ export default class ConfigScreen extends Component {
         // printerAddress: res.printer_address,
       });
       if (res) {
-        alert(global.translate('ALERT_UPDATE_SUCCESFUL'));
+        alert(global.translate('message.success.update'));
       } else {
-        alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        alert(global.translate('message.success.registry'));
       }
     });
   };
@@ -129,7 +129,7 @@ export default class ConfigScreen extends Component {
       return (
         <View>
           <TouchableOpacity style={styles.button}>
-            <Text>{global.translate('TITLE_CONFIGURE_PRINTER')}</Text>
+            <Text>{global.translate('print.configure')}</Text>
           </TouchableOpacity>
         </View>
       );
@@ -179,7 +179,7 @@ export default class ConfigScreen extends Component {
           <TouchableOpacity
             style={styles.button}
             onPress={this.configBTPrinter}>
-            <Text>{global.translate('TITLE_CONFIGURE_PRINTER')}</Text>
+            <Text>{global.translate('print.configure')}</Text>
           </TouchableOpacity>
         </View>
       );
@@ -196,7 +196,7 @@ export default class ConfigScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_CONFIGURATION')}</Title>
+            <Title>{global.translate('header.configuration')}</Title>
           </Body>
         </Header>
         <Content style={{paddingHorizontal: 12, paddingVertical: 24}}>
@@ -206,32 +206,41 @@ export default class ConfigScreen extends Component {
             <Spinner visible={loading} textContent={loadingMessage} />
 
             <CustomInput
-              label={'TITLE_DOMAIN'}
+              label={'form.label.domain'}
               // placeholder={'TITLE_DOMAIN'}
               value={hostName}
               onChangeText={this.hostHandler}
             />
 
             <CustomInput
-              label={'TITLE_PORT'}
+              label={'form.label.port'}
               // placeholder={'TITLE_PORT'}
               keyboardType={'numeric'}
               value={portNumber}
               onChangeText={this.portHandler}
             />
             <NormalText
-              text={global.translate('TITLE_USES_PRINTER') + ':'}
+              text={global.translate('print.uses_printer') + ':'}
               style={{marginLeft: 10, marginTop: 20, textAlign: 'left'}}
             />
             <Picker
               selectedValue={usesPrinter}
               onValueChange={this.pickerHandler}>
-              <Picker.Item label={global.translate('TITLE_YES')} value="yes" />
-              <Picker.Item label={global.translate('TITLE_NO')} value="no" />
+              <Picker.Item
+                label={global.translate('form.picking.yes')}
+                value="yes"
+              />
+              <Picker.Item
+                label={global.translate('form.picking.no')}
+                value="no"
+              />
             </Picker>
             {configPrinter}
             <View>
-              <CustomButton customClick={this.saveUser} title={'TITLE_SAVE'} />
+              <CustomButton
+                customClick={this.saveUser}
+                title={'general.save'}
+              />
             </View>
           </KeyboardAwareScrollView>
         </Content>

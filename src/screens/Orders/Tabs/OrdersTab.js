@@ -10,12 +10,12 @@ export default class OrdersTab extends Component {
     show: true,
     BUTTONS: [
       {
-        text: global.translate('TITLE_EDIT'),
+        text: global.translate('general.edit'),
         icon: 'create',
         iconColor: theme.colors.primary,
       },
       {
-        text: global.translate('TITLE_CANCEL'),
+        text: global.translate('general.cancel'),
         icon: 'close',
         iconColor: theme.colors.gray,
       },
@@ -31,7 +31,7 @@ export default class OrdersTab extends Component {
   listEmpty = () => {
     return (
       <View style={styles.listEmpty}>
-        <Text>No hay items para mostrar</Text>
+        <Text>{global.translate('message.empty.items')}</Text>
       </View>
     );
   };
@@ -63,15 +63,15 @@ export default class OrdersTab extends Component {
                 options: BUTTONS,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: global.translate('TITLE_OPTIONS'),
+                title: global.translate('label.options'),
               },
               buttonIndex => {
                 switch (buttonIndex) {
                   case 0:
                     this.props.navigation.navigate('Order', {
-                      operation: 'TITLE_EDIT_ORDER',
+                      operation: 'action.edit.order',
                       order_id: item.order_id,
-                      loading_message: 'MESSAGE_UPDATING_CLIENT',
+                      loading_message: 'message.update.order',
                       isNewRecord: false,
                       editable: false,
                       loading: true,

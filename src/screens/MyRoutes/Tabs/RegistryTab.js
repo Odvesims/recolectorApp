@@ -12,9 +12,11 @@ const RegistryTab = ({onChangeHandler}) => {
   return (
     <View style={{flexDirection: 'column'}}>
       <HeaderItems>
-        <Text style={styles.bodyHeader}>{global.translate('ARTICLES')}</Text>
         <Text style={styles.bodyHeader}>
-          {global.translate('TITLE_QUANTITY')}
+          {global.translate('header.articles')}
+        </Text>
+        <Text style={styles.bodyHeader}>
+          {global.translate('form.label.quantity')}
         </Text>
       </HeaderItems>
       <View style={{marginHorizontal: 12}}>

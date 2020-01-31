@@ -124,7 +124,7 @@ export default class OrderList extends Component {
           />
           <View key={item.key} style={styles.listContainer}>
             <Text style={styles.oCode}>
-              {global.translate('TITLE_CODE')}: {item.order_document}
+              {global.translate('label.code')}: {item.order_document}
             </Text>
             <View
               style={{
@@ -204,11 +204,11 @@ export default class OrderList extends Component {
             <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_AVAILABLE')}</Title>
+            <Title>{global.translate('label.available')}</Title>
           </Body>
           <Right>
             <BtnIcon
-              label={'TITLE_DONE'}
+              label={'action.done'}
               iconName={'checkmark'}
               onPress={this.goBack}
             />
@@ -219,7 +219,7 @@ export default class OrderList extends Component {
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={styles.numberBox}>
               <Text style={styles.number}>
-                {`${global.translate('TITLE_SELECTED')}: ${itemNumber}`}
+                {`${global.translate('label.selected')}: ${itemNumber}`}
               </Text>
             </View>
           </View>

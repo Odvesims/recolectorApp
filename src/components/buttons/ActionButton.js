@@ -10,11 +10,11 @@ const ActionButton = React.memo(({cancel, accept}) => {
     <View style={styles.actionContainer}>
       <CButton bordered onPress={cancel}>
         <Text style={{color: theme.colors.darkGray}}>
-          {global.translate('TITLE_CANCEL')}
+          {global.translate('general.cancel')}
         </Text>
       </CButton>
       <CButton onPress={accept}>
-        <Text>{global.translate('TITLE_ACCEPT')}</Text>
+        <Text>{global.translate('general.accept')}</Text>
       </CButton>
     </View>
   );

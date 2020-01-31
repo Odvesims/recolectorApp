@@ -85,7 +85,7 @@ export default class Orders extends Component {
   enterHandler = () => {
     this.setState({
       isLoading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
+      loadingMessage: global.translate('message.loading.orders'),
     });
     this.storedOrders();
   };
@@ -111,12 +111,12 @@ export default class Orders extends Component {
     this.setState({
       isLoading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_ORDERS'),
+      loadingMessage: global.translate('message.loading.clients'),
     });
     setTimeout(() => {
       if (this.state.isLoading) {
         this.setState({isLoading: false, request_timeout: true});
-        Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        Alert.alert(global.translate('error.request_timeout'));
       }
     }, 15000);
 
@@ -144,8 +144,8 @@ export default class Orders extends Component {
 
   onPressFab = () => {
     this.props.navigation.navigate('Order', {
-      operation: 'TITLE_NEW_ORDER',
-      loading_message: 'MESSAGE_REGISTERING_ORDER',
+      operation: 'action.add.order',
+      loading_message: 'message.register.order',
       date: this.state.date,
       onGoBack: () => this.refresh(true),
       isNewRecord: true,
@@ -173,7 +173,7 @@ export default class Orders extends Component {
               <BtnIcon iconName={'menu'} onPress={this.openDrawer} />
             </Left>
             <Body>
-              <Title>{global.translate('TITLE_ORDERS')}</Title>
+              <Title>{global.translate('label.orders')}</Title>
             </Body>
             <Right>
               <FetchingData
@@ -185,14 +185,14 @@ export default class Orders extends Component {
 
           {/* Tab */}
           <Tabs hasTabs>
-            <Tab heading={global.translate('TITLE_NOT_ASSIGNED')}>
+            <Tab heading={global.translate('tab.not_assigned')}>
               <OrdersTab
                 tab_data={not_assigned}
                 // ref={this.notAvailableTab}
                 navigation={this.props.navigation}
               />
             </Tab>
-            <Tab heading={global.translate('TITLE_ASSIGNED')}>
+            <Tab heading={global.translate('tab.assigned')}>
               <OrdersTab
                 tab_data={assigned}
                 // ref={this.availableTab}

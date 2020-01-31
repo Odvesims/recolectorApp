@@ -116,7 +116,7 @@ export default class Picking extends Component {
       selectedIndex: i,
       picker_data: res,
       theItem: {},
-      placeholder: global.translate(`PLACEHOLDER_SELECT_${placeholder}`),
+      placeholder: global.translate(`form.placeholder.select.${placeholder}`),
       article_price: '',
       type: type,
       total: 0,
@@ -168,7 +168,7 @@ export default class Picking extends Component {
         itemSelected,
       });
     } else {
-      alert(global.translate('ALERT_QUANTITY_BLANK'));
+      alert(global.translate('error.quantity_blank'));
     }
   };
 
@@ -180,9 +180,9 @@ export default class Picking extends Component {
 
   render() {
     const buttons = [
-      global.translate('TITLE_CATEGORY'),
-      global.translate('TITLE_SUBCATEGORY'),
-      global.translate('TITLE_ARTICLE'),
+      global.translate('form.label.category'),
+      global.translate('form.label.subcategory'),
+      global.translate('form.label.article'),
     ];
 
     let {
@@ -217,7 +217,7 @@ export default class Picking extends Component {
             <BtnIcon iconName={'arrow-back'} onPress={this.goToOrder} />
           </Left>
           <Body>
-            <Title>{global.translate('ARTICLES_TO_PICK_UP')}</Title>
+            <Title>{global.translate('label.articles_to_pick_up')}</Title>
           </Body>
           {save}
         </Header>
@@ -230,7 +230,7 @@ export default class Picking extends Component {
             }}>
             <Form>
               <View style={styles.paddingBottom}>
-                <Text>{global.translate('TITLE_SELECT')}</Text>
+                <Text>{global.translate('form.label.select')}</Text>
                 <ButtonGroup
                   onPress={this.updateIndex}
                   selectedIndex={selectedIndex}
@@ -247,10 +247,10 @@ export default class Picking extends Component {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
+                  <Text>{global.translate('form.label.description')}</Text>
                   <Price>
                     <PriceLabel>
-                      {global.translate('TITLE_PRICE')}: $
+                      {global.translate('form.label.price')}: $
                     </PriceLabel>
                     <PriceQuantity>{article_price}</PriceQuantity>
                   </Price>
@@ -265,7 +265,7 @@ export default class Picking extends Component {
               {/* Quantity */}
               <NumberInput
                 rounded
-                label={'TITLE_QUANTITY'}
+                label={'form.label.quantity'}
                 iconStyle={{color: 'green'}}
                 value={Number(quantity)}
                 onChange={this.changeQuantity}
@@ -277,7 +277,7 @@ export default class Picking extends Component {
             <Total>
               <View style={styles.totalPriceContainer}>
                 <Text style={styles.totalPrice}>
-                  {global.translate('TITLE_TOTAL')}: $ {total}
+                  {global.translate('label.total')}: $ {total}
                 </Text>
               </View>
             </Total>

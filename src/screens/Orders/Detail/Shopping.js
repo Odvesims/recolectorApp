@@ -129,7 +129,7 @@ export default class Shopping extends PureComponent {
       selectedIndex: i,
       picker_data: res,
       theItem: {},
-      placeholder: global.translate(`PLACEHOLDER_SELECT_${placeholder}`),
+      placeholder: global.translate(`form.placeholder.select.${placeholder}`),
       article_price: '',
       type: type,
       total: 0,
@@ -179,7 +179,7 @@ export default class Shopping extends PureComponent {
         itemSelected: itemSelected,
       });
     } else {
-      alert(global.translate('ALERT_QUANTITY_BLANK'));
+      alert(global.translate('error.quantity_blank'));
     }
   };
 
@@ -193,9 +193,9 @@ export default class Shopping extends PureComponent {
     console.log(this.state);
 
     const buttons = [
-      global.translate('TITLE_CATEGORY'),
-      global.translate('TITLE_SUBCATEGORY'),
-      global.translate('TITLE_ARTICLE'),
+      global.translate('form.label.category'),
+      global.translate('form.label.subcategory'),
+      global.translate('form.label.article'),
     ];
     //
     const {
@@ -227,7 +227,7 @@ export default class Shopping extends PureComponent {
             <BtnIcon iconName={'arrow-back'} onPress={this.goToOrder} />
           </Left>
           <Body>
-            <Title>{global.translate('ARTICLES_TO_BUY')}</Title>
+            <Title>{global.translate('label.articles_to_buy')}</Title>
           </Body>
           {save}
         </Header>
@@ -240,7 +240,7 @@ export default class Shopping extends PureComponent {
             }}>
             <Form>
               <View style={styles.paddingBottom}>
-                <Text>{global.translate('TITLE_SELECT')}</Text>
+                <Text>{global.translate('form.label.select')}</Text>
                 <ButtonGroup
                   onPress={this.updateIndex}
                   selectedIndex={selectedIndex}
@@ -250,7 +250,7 @@ export default class Shopping extends PureComponent {
                 />
               </View>
               <CustomPicker
-                label={'TITLE_DESCRIPTION'}
+                label={'form.label.description'}
                 placeholder={placeholder}
                 items={picker_data}
                 onSelected={this.selectedItem}
@@ -259,7 +259,7 @@ export default class Shopping extends PureComponent {
 
               {/* Price */}
               <View style={styles.paddingBottom}>
-                <Text>Precio</Text>
+                <Text>{global.translate('form.label.price')}</Text>
                 <TextInput
                   editable={isEditable}
                   value={price}
@@ -271,7 +271,7 @@ export default class Shopping extends PureComponent {
               {/* Quantity */}
               <NumberInput
                 rounded
-                label={'TITLE_QUANTITY'}
+                label={'form.label.quantity'}
                 iconStyle={{color: 'green'}}
                 value={Number(quantity)}
                 onChange={this.changeQuantity}
@@ -283,7 +283,7 @@ export default class Shopping extends PureComponent {
             <Total>
               <View style={styles.totalPriceContainer}>
                 <Text style={styles.totalPrice}>
-                  {global.translate('TITLE_TOTAL')}: $ {total}
+                  {global.translate('label.total')}: $ {total}
                 </Text>
               </View>
             </Total>

@@ -22,15 +22,15 @@ const SideBar = props => {
       <TouchableOpacity
         onPress={() =>
           Alert.alert(
-            global.translate('TITLE_SIGN_OUT'),
-            global.translate('TITLE_QUESTION_SIGN_OUT'),
+            global.translate('message.sign_out'),
+            global.translate('message.close_question'),
             [
               {
-                text: global.translate('TITLE_YES'),
+                text: global.translate('form.picking.yes'),
                 onPress: () => props.navigation.navigate('Auth'),
               },
               {
-                text: global.translate('TITLE_NO'),
+                text: global.translate('form.picking.no'),
                 onPress: () => props.navigation.goBack(null),
                 style: 'cancel',
               },
@@ -45,7 +45,7 @@ const SideBar = props => {
           <Icon name="log-out" style={styles.menuIcon} />
         </Button>
         <Text style={{marginLeft: 8, color: theme.colors.black}}>
-          {global.translate('TITLE_LOGOUT')}
+          {global.translate('links.logout')}
         </Text>
       </TouchableOpacity>
     </ScrollView>

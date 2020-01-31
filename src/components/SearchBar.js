@@ -38,7 +38,7 @@ export default class SearchBar extends PureComponent {
             }}
           />
           <Input
-            placeholder={placeholder}
+            placeholder={global.translate(placeholder)}
             onChangeText={text => {
               this.searchFilter(text);
             }}
@@ -75,6 +75,6 @@ const styles = StyleSheet.create({
 });
 
 SearchBar.propTypes = {
-  onPressRemove: PropTypes.func.isRequired,
-  onPressClear: PropTypes.func.isRequired,
+  onPressRemove: PropTypes.func,
+  onPressClear: PropTypes.func,
 };

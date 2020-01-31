@@ -35,7 +35,7 @@ export default class Routes extends Component {
     this.state = {
       data: [],
       data2: [],
-      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      loadingMessage: global.translate('message.loading.routes'),
       show: true,
     };
   }
@@ -62,7 +62,7 @@ export default class Routes extends Component {
   enterHandler = () => {
     this.setState({
       loading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      loadingMessage: global.translate('message.loading.routes'),
     });
     this.storedRoutes();
   };
@@ -78,14 +78,14 @@ export default class Routes extends Component {
     this.setState({
       loading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      loadingMessage: global.translate('message.loading.routes'),
       expired: [],
       active: [],
     });
     setTimeout(() => {
       if (loading) {
         this.setState({loading: false, request_timeout: true});
-        Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        Alert.alert(global.translate('error.request_timeout'));
       }
     }, 20000);
 
@@ -118,7 +118,7 @@ export default class Routes extends Component {
 
   handlerFab = params => {
     this.props.navigation.navigate('Route', {
-      operation: 'TITLE_NEW_ROUTE',
+      operation: 'action.add.route',
       route_id: '',
       description: '',
       document_id: '',
@@ -132,7 +132,7 @@ export default class Routes extends Component {
       date_from: moment(new Date()).format('DD/MM/YYYY'),
       date_to: moment(new Date()).format('DD/MM/YYYY'),
       status: '',
-      loading_message: 'MESSAGE_REGISTERING_ROUTE',
+      loading_message: 'message.register.route',
       new_record: true,
       editable: true,
 
@@ -157,7 +157,7 @@ export default class Routes extends Component {
             <BtnIcon iconName={'menu'} onPress={this.openDrawer} />
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_ROUTES')}</Title>
+            <Title>{global.translate('header.routes')}</Title>
           </Body>
           <Right>
             <FetchingData syncData={this.refreshHandler} fetching={loading} />
@@ -177,13 +177,13 @@ export default class Routes extends Component {
 
         {/* Tabs */}
         <Tabs hasTabs>
-          <Tab heading={global.translate('TITLE_ACTIVE')}>
+          <Tab heading={global.translate('tab.active')}>
             <RoutesTab
               tab_data={this.state.active}
               navigation={this.props.navigation}
             />
           </Tab>
-          <Tab heading={global.translate('TITLE_EXPIRED')}>
+          <Tab heading={global.translate('tab.expired')}>
             <RoutesTab
               tab_data={this.state.expired}
               navigation={this.props.navigation}

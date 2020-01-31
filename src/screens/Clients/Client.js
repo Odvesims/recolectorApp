@@ -137,7 +137,7 @@ export class Client extends PureComponent {
         <Header style={styles.headerCode}>
           <Body>
             <Text style={styles.headerCodeText}>
-              {global.translate('TITLE_CODE')} : {code}
+              {global.translate('label.code')} : {code}
             </Text>
           </Body>
         </Header>
@@ -147,26 +147,26 @@ export class Client extends PureComponent {
     const validationSchema = yup.object().shape({
       name: yup
         .string()
-        .label(global.translate('TITLE_NAME'))
+        .label(global.translate('form.label.name'))
         .max(40, 'Please enter no more than 40 characters')
         .required('Please enter a name'),
       address: yup
         .string()
-        .label(global.translate('TITLE_ADDRESS'))
+        .label(global.translate('form.label.address'))
         .max(100, 'Please enter no more than 40 characters')
         .required('Please enter an address'),
       city: yup
         .string()
-        .label(global.translate('TITLE_CITY'))
+        .label(global.translate('form.label.city'))
         .max(40, 'Please enter no more than 40 characters')
         .required('Please enter a city'),
       state: yup
         .string()
-        .label(global.translate('TITLE_STATE'))
+        .label(global.translate('form.label.state'))
         .required("Please select the client's state"),
       phone: yup
         .string()
-        .label(global.translate('TITLE_PHONE'))
+        .label(global.translate('form.label.phone'))
         .required()
         .min(7, 'Password must have at least 7 characters'),
     });
@@ -223,31 +223,31 @@ export class Client extends PureComponent {
               }) => (
                 <Form style={{marginBottom: 24}}>
                   <InputForm
-                    label={'TITLE_NAME'}
+                    label={'form.label.name'}
                     value={values.name}
-                    placeholder={'PLACEHOLDER_TYPE_NAME'}
+                    placeholder={'form.placeholder.type.name'}
                     onChangeText={handleChange('name')}
                     onBlur={handleBlur('name')}
                     errorMessage={touched.name && errors.name}
                   />
                   <InputForm
-                    label={'TITLE_ADDRESS'}
+                    label={'form.label.address'}
                     value={values.address}
-                    placeholder={'PLACEHOLDER_TYPE_ADDRESS'}
+                    placeholder={'form.placeholder.type.address'}
                     onChangeText={handleChange('address')}
                     onBlur={handleBlur('address')}
                     errorMessage={touched.address && errors.address}
                   />
                   <InputForm
-                    label={'TITLE_CITY'}
+                    label={'form.label.city'}
                     value={values.city}
-                    placeholder={'PLACEHOLDER_TYPE_CITY'}
+                    placeholder={'form.placeholder.type.name'}
                     onChangeText={handleChange('city')}
                     onBlur={handleBlur('city')}
                     errorMessage={touched.city && errors.city}
                   />
                   <CustomPicker
-                    label={'TITLE_STATE'}
+                    label={'form.label.state'}
                     placeholder={state}
                     items={states}
                     onSelected={this.selectedItem}
@@ -255,10 +255,10 @@ export class Client extends PureComponent {
                     selectPlaceholderText={state}
                   />
                   <InputForm
-                    label={'TITLE_PHONE'}
+                    label={'form.label.phone'}
                     value={values.phone}
                     keyboardType="phone-pad"
-                    placeholder={'PLACEHOLDER_TYPE_PHONE'}
+                    placeholder={'form.placeholder.type.phone'}
                     onChangeText={handleChange('phone')}
                     onBlur={handleBlur('phone')}
                     errorMessage={touched.phone && errors.phone}
@@ -274,7 +274,7 @@ export class Client extends PureComponent {
                       borderRadius: 4,
                       marginBottom: 24,
                     }}>
-                    <Text>{global.translate('TITLE_SAVE')}</Text>
+                    <Text>{global.translate('general.save')}</Text>
                   </Button>
                 </Form>
               )}

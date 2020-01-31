@@ -65,21 +65,21 @@ export class Notifications extends Component {
             <BtnIcon iconName={'arrow-back'} onPress={this.goBack} />
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_NOTIFICATIONS')}</Title>
+            <Title>{global.translate('header.notifications')}</Title>
           </Body>
           <Right />
         </Header>
 
         {/* Tabs */}
         <Tabs hasTabs>
-          <Tab heading={global.translate('TITLE_UNREAD')}>
+          <Tab heading={global.translate('tab.unread')}>
             <NotificationsTab
               loading={loading}
               tab_data={unread}
               navigation={this.props.navigation}
             />
           </Tab>
-          <Tab heading={global.translate('TITLE_READ')}>
+          <Tab heading={global.translate('tab.read')}>
             <NotificationsTab
               loading={loading}
               tab_data={read}

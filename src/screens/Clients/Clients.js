@@ -38,21 +38,22 @@ import {getData} from '../../helpers/apiconnection_helper';
 export default class Clients extends Component {
   constructor(props) {
     super(props);
+    const {t} = props.screenProps;
     this.state = {
       data: [],
       dataAll: [],
       loading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+      loadingMessage: t('message.loading.clients'),
       request_timeout: false,
       show: false,
       BUTTONS: [
         {
-          text: global.translate('TITLE_EDIT'),
+          text: t('general.edit'),
           icon: 'create',
           iconColor: theme.colors.primary,
         },
         {
-          text: global.translate('TITLE_CANCEL'),
+          text: t('general.cancel'),
           icon: 'close',
           iconColor: theme.colors.gray,
         },
@@ -88,7 +89,7 @@ export default class Clients extends Component {
   enterHandler = () => {
     this.setState({
       loading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+      loadingMessage: global.translate('message.loading.clients'),
     });
     this.storedClients();
   };
@@ -108,11 +109,11 @@ export default class Clients extends Component {
     this.setState({
       loading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_CLIENTS'),
+      loadingMessage: global.translate('message.loading.clients'),
     });
     if (loading) {
       this.setState({loading: false, request_timeout: true});
-      Alert.alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      Alert.alert(global.translate('error.request_timeout'));
     }
     getData('GET_CLIENTS').then(result => {
       if (!request_timeout) {
@@ -122,7 +123,7 @@ export default class Clients extends Component {
             this.storedClients();
           });
         } else {
-          Alert.alert(global.translate(result.response));
+          alert(global.translate(result.response));
         }
       } else {
         this.setState({loading: false, request_timeout: false});
@@ -142,11 +143,11 @@ export default class Clients extends Component {
 
   onPressFab = () => {
     this.props.navigation.navigate('Client', {
-      operation: 'TITLE_NEW_CLIENT',
-      loading_message: 'MESSAGE_REGISTERING_CLIENT',
+      operation: 'action.add.client',
+      loading_message: 'message.register.client',
       onGoBack: () => this.refresh(true),
       isNewRecord: true,
-      state: global.translate('PLACEHOLDER_TYPE_STATE'),
+      state: global.translate('form.placeholder.select.state'),
     });
   };
 
@@ -174,13 +175,13 @@ export default class Clients extends Component {
         options: BUTTONS,
         cancelButtonIndex: CANCEL_INDEX,
         destructiveButtonIndex: DESTRUCTIVE_INDEX,
-        title: global.translate('TITLE_OPTIONS'),
+        title: global.translate('label.options'),
       },
       buttonIndex => {
         switch (buttonIndex) {
           case 0:
             this.props.navigation.navigate('Client', {
-              operation: 'TITLE_EDIT_CLIENT',
+              operation: 'action.edit.client',
               code: item.client_code,
               name: item.name,
               address: item.address,
@@ -188,7 +189,7 @@ export default class Clients extends Component {
               state: item.state,
               country: item.country,
               phone: item.phone_number,
-              loading_message: 'MESSAGE_UPDATING_CLIENT',
+              loading_message: 'message.update.client',
               isNewRecord: false,
               onGoBack: () => this.refresh(false),
             });
@@ -233,6 +234,8 @@ export default class Clients extends Component {
       dataAll,
     } = this.state;
 
+    const {t, i18n} = this.props.screenProps;
+
     return (
       <Root>
         <Container style={styles.androidHeader}>
@@ -249,11 +252,11 @@ export default class Clients extends Component {
               <BtnIcon iconName="menu" onPress={this.openDrawer} />
             </Left>
             <Body>
-              <Title>{global.translate('TITLE_CLIENTS')}</Title>
+              <Title>{global.translate('label.clients')}</Title>
             </Body>
             <Right>
               <FetchingData syncData={this.refreshHandler} fetching={loading} />
-              <BtnIcon iconName="funnel" />
+              {/* <BtnIcon iconName="funnel" /> */}
               <BtnIcon iconName="search" onPress={this.showHideSearchBar} />
             </Right>
           </Header>
@@ -264,7 +267,6 @@ export default class Clients extends Component {
               data={this.searchBarHandler}
               visible={this.searchHandler}
               dataValue={dataAll}
-              style={styles.searchbar}
               placeholder={'Busque su orden'}
               onPressCancel={this.showHideSearchBar}
             />

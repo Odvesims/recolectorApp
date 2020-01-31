@@ -277,7 +277,7 @@ export default class BluetoothManagerComponent extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_PRINTER_CONFIG')}</Title>
+            <Title>{global.translate('print.configure')}</Title>
           </Body>
           <Right></Right>
         </Header>
@@ -290,7 +290,7 @@ export default class BluetoothManagerComponent extends Component {
                 backgroundColor: '#eee',
               }}>
               <Text style={styles.title}>
-                {global.translate('TITLE_BLUETOOTH_ENABLED')}
+                {global.translate('label.bluetooth_enabled')}
               </Text>
               <Switch
                 value={this.state.bleOpend}
@@ -349,24 +349,24 @@ export default class BluetoothManagerComponent extends Component {
                 onPress={() => {
                   this._scan();
                 }}>
-                <Text>{global.translate('TITLE_SCAN')}</Text>
+                <Text>{global.translate('label.scan')}</Text>
               </TouchableOpacity>
             </View>
             <Text style={styles.title}>
-              {global.translate('TITLE_CONNECTED')}
+              {global.translate('label.connect')}
               <Text style={{color: 'blue'}}>
                 {!this.state.name ? '0' : this.state.name}
               </Text>
             </Text>
             <Text style={styles.title}>
-              {global.translate('TITLE_FOUND')}(
-              {global.translate('TITLE_TAP_TO_CONNECT')}):
+              {global.translate('label.found')}(
+              {global.translate('label.tap_to_connect')}):
             </Text>
             {this.state.loading ? <ActivityIndicator animating={true} /> : null}
             <View style={{flex: 1, flexDirection: 'column'}}>
               {this._renderRow(this.state.foundDs)}
             </View>
-            <Text style={styles.title}>{global.translate('TITLE_PAIRED')}</Text>
+            <Text style={styles.title}>{global.translate('label.paired')}</Text>
             {this.state.loading ? <ActivityIndicator animating={true} /> : null}
             <View style={{flex: 1, flexDirection: 'column'}}>
               {this._renderRow(this.state.pairedDs)}
@@ -384,7 +384,7 @@ export default class BluetoothManagerComponent extends Component {
                   !(this.state.bleOpend && this.state.boundAddress.length > 0)
                 }
                 onPress={this.sendTextPrinter}>
-                <Text>{global.translate('TITLE_TEST_PRINT')}</Text>
+                <Text>{global.translate('print.test')}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

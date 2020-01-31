@@ -1,0 +1,17 @@
+global.database_version = 32;
+global.config_from = 'Login';
+global.fromLogin = true;
+global.userDisplayName = '';
+global.userRole = '';
+global.userName = '';
+global.userPassword = '';
+global.usesPrinter = 0;
+global.printer_address = '';
+global.printer_name = '';
+global.apiHost = '';
+global.apiPort = '';
+global.token = '';
+global.country_id = 0;
+global.setma_id = 0;
+global.employee_code = 0;
+global.states_collection = {};

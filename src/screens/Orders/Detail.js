@@ -47,7 +47,7 @@ export default class Detail extends Component {
       article: '',
       article_price: '',
       quantity: 1,
-      placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+      placeholder: global.translate('form.placeholder.select.article'),
     };
     this.getArticlesData();
   }
@@ -141,7 +141,7 @@ export default class Detail extends Component {
             picker_data: res,
             theItem: {},
             selectedItem: {Name: '', Code: ''},
-            placeholder: global.translate('PLACEHOLDER_SELECT_CATEGORY'),
+            placeholder: global.translate('form.placeholder.select.category'),
             article_price: '',
             total: 0,
             quantity: '',
@@ -154,7 +154,7 @@ export default class Detail extends Component {
             selectedIndex,
             picker_data: res,
             theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_SUBCATEGORY'),
+            placeholder: global.translate('form.placeholder.select.subcategory'),
             article_price: '',
             total: 0,
             quantity: '',
@@ -167,7 +167,7 @@ export default class Detail extends Component {
             selectedIndex,
             picker_data: res,
             theItem: {},
-            placeholder: global.translate('PLACEHOLDER_SELECT_ARTICLE'),
+            placeholder: global.translate('form.placeholder.select.article'),
             article_price: '',
             total: 0,
             quantity: '',
@@ -204,15 +204,15 @@ export default class Detail extends Component {
         selItem: this.state.selItem,
       });
     } else {
-      alert(global.translate('ALERT_QUANTITY_BLANK'));
+      alert(global.translate('error.quantity_blank'));
     }
   };
 
   render() {
     const buttons = [
-      global.translate('TITLE_CATEGORY'),
-      global.translate('TITLE_SUBCATEGORY'),
-      global.translate('TITLE_ARTICLE'),
+      global.translate('form.label.category'),
+      global.translate('form.label.subcategory'),
+      global.translate('form.label.article'),
     ];
     const {selectedIndex, article_price, quantity} = this.state;
 
@@ -230,7 +230,7 @@ export default class Detail extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{global.translate('TITLE_ARTICLE')}</Title>
+            <Title>{global.translate('header.articles')}</Title>
           </Body>
           <Right />
         </Header>
@@ -239,7 +239,7 @@ export default class Detail extends Component {
           <KeyboardAwareScrollView>
             <Form>
               <View style={styles.paddingBottom}>
-                <Text>{global.translate('TITLE_SELECT')}</Text>
+                <Text>{global.translate('form.label.select')}</Text>
                 <ButtonGroup
                   onPress={this.updateIndex}
                   selectedIndex={selectedIndex}
@@ -253,10 +253,10 @@ export default class Detail extends Component {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text>{global.translate('TITLE_DESCRIPTION')}</Text>
+                  <Text>{global.translate('form.label.description')}</Text>
                   <View style={{flexDirection: 'row'}}>
                     <Text style={{color: theme.colors.success}}>
-                      {global.translate('TITLE_PRICE')}:{' '}
+                      {global.translate('form.label.price')}:{' '}
                     </Text>
                     <Text
                       style={{color: theme.colors.success, fontWeight: 'bold'}}>
@@ -272,7 +272,7 @@ export default class Detail extends Component {
                 />
               </View>
               <View style={styles.paddingBottom}>
-                <Text>{global.translate('TITLE_QUANTITY')}</Text>
+                <Text>{global.translate('form.label.quantity')}</Text>
                 <TextInput
                   ref={input => {
                     this.secondTextInput = input;
@@ -287,7 +287,7 @@ export default class Detail extends Component {
             </Form>
             <View style={styles.totalPriceContainer}>
               <Text style={styles.totalPrice}>
-                {global.translate('TITLE_TOTAL')}: $ {this.state.total}
+                {global.translate('label.total')}: $ {this.state.total}
               </Text>
             </View>
           </KeyboardAwareScrollView>
@@ -299,11 +299,11 @@ export default class Detail extends Component {
               this.props.navigation.goBack();
             }}>
             <Text style={{color: theme.colors.darkGray}}>
-              {global.translate('TITLE_CANCEL')}
+              {global.translate('general.cancel')}
             </Text>
           </CustomButton>
           <CustomButton onPress={this.onPresHandler}>
-            <Text>{global.translate('TITLE_ACCEPT')}</Text>
+            <Text>{global.translate('general.accept')}</Text>
           </CustomButton>
         </View>
       </Container>

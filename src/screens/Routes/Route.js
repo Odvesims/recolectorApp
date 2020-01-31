@@ -65,7 +65,7 @@ export class Route extends Component {
       data: [],
       clear_data: [],
       loading: !new_record,
-      loadingMessage: 'ALERT_GETTING_ROUTE',
+      loadingMessage: 'message.request.route',
       new_record: new_record,
       route_description: description,
       document_id: document_id,
@@ -217,7 +217,7 @@ export class Route extends Component {
         .then(res => {
           if (res.valid) {
             updateOrderAssigned(ordersArr).then(up => {
-              alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+              alert(global.translate('message.success.registry'));
               this.setState({
                 loading: false,
               });
@@ -229,7 +229,7 @@ export class Route extends Component {
         })
         .catch(err => console.log('error', err));
     } else {
-      alert(global.translate('ALERT_COMPLETE_DATA'));
+      alert(global.translate('error.incomplete_data'));
     }
     //} else {
     //  this.props.navigation.goBack();
@@ -315,7 +315,7 @@ export class Route extends Component {
       addOrderButton = (
         <ButtonOutlined onPress={this.addOrderHandler}>
           <Icon name="add" style={{color: theme.colors.primary}} />
-          <TextButton>{global.translate('TITLE_ORDER')}</TextButton>
+          <TextButton>{global.translate('header.order')}</TextButton>
         </ButtonOutlined>
       );
     }
@@ -328,7 +328,7 @@ export class Route extends Component {
         renderItem={({item}) => <SwipeList item={item} />}
         renderHiddenItem={(data, rowMap) => (
           <SwipeHiddenList
-            label={'TITLE_DELETED'}
+            label={'message.success.deleted'}
             onPress={this.onClickRevert}
           />
         )}
@@ -361,7 +361,7 @@ export class Route extends Component {
           <Right>
             <BtnIcon
               iconName={'checkmark'}
-              label={'TITLE_DONE'}
+              label={'action.done'}
               onPress={this.saveRoute}
             />
           </Right>
@@ -370,9 +370,9 @@ export class Route extends Component {
           <View style={styles.container}>
             <Form>
               <CustomInput
-                label={'TITLE_DESCRIPTION'}
+                label={'form.label.description'}
                 style={styles.input}
-                placeholder={'PLACEHOLDER_TYPE_DESCRIPTION'}
+                placeholder={'form.placeholder.type.description'}
                 returnKeyType="go"
                 value={route_description}
                 onChangeText={route_description => {
@@ -382,7 +382,7 @@ export class Route extends Component {
               />
 
               <CustomDatePicker
-                label={'TITLE_START_DATE'}
+                label={'form.label.date_start'}
                 defaultDate={dateFrom}
                 minimumDate={new Date()}
                 onDateChange={this.setDate}
@@ -390,7 +390,7 @@ export class Route extends Component {
               />
 
               <CustomDatePicker
-                label={'TITLE_END_DATE'}
+                label={'form.label.date_end'}
                 defaultDate={dateTo}
                 minimumDate={new Date()}
                 onDateChange={this.setDate2}
@@ -398,7 +398,7 @@ export class Route extends Component {
               />
 
               <CustomPicker
-                label={'TITLE_COLLECTOR'}
+                label={'form.label.collector'}
                 items={employees}
                 placeholder={placeholder}
                 onSelected={this.selectedItem}

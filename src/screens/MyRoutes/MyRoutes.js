@@ -85,7 +85,7 @@ class Order extends Component {
   enterHandler = () => {
     this.setState({
       loading: true,
-      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      loadingMessage: global.translate('message.loading.routes'),
     });
     this.storedRoutes();
   };
@@ -99,13 +99,13 @@ class Order extends Component {
     this.setState({
       loading: true,
       request_timeout: false,
-      loadingMessage: global.translate('MESSAGE_LOADING_ROUTES'),
+      loadingMessage: global.translate('message.loading.routes'),
       active: [],
     });
     setTimeout(() => {
       if (this.state.loading) {
         this.setState({loading: false, request_timeout: true});
-        alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+        alert(global.translate('error.request_timeout'));
       }
     }, 20000);
     getData('GET_ROUTES', '&status=A').then(active => {
@@ -146,7 +146,7 @@ class Order extends Component {
         <ListMyRoutes>
           <Name numberOfLines={1}>{item.description}</Name>
           <Address numberOfLines={1}>
-            {global.translate('DATE_LIMIT')}: {item.date_to}
+            {global.translate('form.label.date_limit')}: {item.date_to}
           </Address>
         </ListMyRoutes>
       </Item>
@@ -193,7 +193,7 @@ class Order extends Component {
               <BtnIcon iconName={'menu'} onPress={this.openDrawer} />
             </Left>
             <Body>
-              <Title>{global.translate('TITLE_MYROUTES')}</Title>
+              <Title>{global.translate('label.my_routes')}</Title>
             </Body>
             <Right>
               <FetchingData syncData={this.refreshHandler} fetching={loading} />

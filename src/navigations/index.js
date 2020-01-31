@@ -134,28 +134,28 @@ let roleSuper = {
     screen: Home,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'home'} {...props} />,
-      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+      drawerLabel: 'Inicio',
     },
   },
   ClientScreen: {
     screen: ClientScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'people'} {...props} />,
-      drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
+      drawerLabel: 'Clientes',
     },
   },
   RouteScreen: {
     screen: RouteScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
-      drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
+      drawerLabel: 'Rutas',
     },
   },
   OrderScreen: {
     screen: OrdersScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'cube'} {...props} />,
-      drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
+      drawerLabel: 'Ordenes',
     },
   },
 
@@ -163,7 +163,7 @@ let roleSuper = {
     screen: ConfigNavigator,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'settings'} {...props} />,
-      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+      drawerLabel: 'Configuración',
     },
   },
 };
@@ -173,42 +173,42 @@ let roleAll = {
     screen: Home,
     navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'home'} {...props} />,
-      drawerLabel: t('TITLE_PRINCIPAL'), //'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+      drawerLabel: t('links.principal'), //'Inicio',
     }),
   },
   ClientScreen: {
     screen: ClientScreen,
     navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'people'} {...props} />,
-      drawerLabel: t('TITLE_CLIENTS'), //'Clientes', //global.translate('TITLE_CLIENTS'),
+      drawerLabel: t('links.clients'), //'Clientes',
     }),
   },
   RouteScreen: {
     screen: RouteScreen,
     navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
-      drawerLabel: t('TITLE_ROUTES'), //'Rutas', //global.translate('TITLE_ROUTES'),
+      drawerLabel: t('links.routes'), //'Rutas',
     }),
   },
   OrderScreen: {
     screen: OrdersScreen,
     navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'cube'} {...props} />,
-      drawerLabel: t('TITLE_ORDERS'), //'Ordenes', //global.translate('TITLE_ORDERS'),
+      drawerLabel: t('links.orders'), //'Ordenes',
     }),
   },
   MyRoutesScreen: {
     screen: MyRoutesScreen,
     navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'list-box'} {...props} />,
-      drawerLabel: t('TITLE_MY_ROUTES'), //'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
+      drawerLabel: t('links.my_routes'), //'Mis Rutas',
     }),
   },
   MyConfigScreen: {
     screen: ConfigNavigator,
     navigationOptions: ({screenProps: {t}}) => ({
       drawerIcon: props => <IconMenu name={'settings'} {...props} />,
-      drawerLabel: t('TITLE_CONFIGURATION'), //'Configuración', //global.translate('TITLE_MY_ROUTES'),
+      drawerLabel: t('links.configuration'), //'Configuración',
     }),
   },
 };
@@ -218,28 +218,28 @@ let roleAdmin = {
     screen: Home,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'home'} {...props} />,
-      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+      drawerLabel: 'Inicio',
     },
   },
   ClientScreen: {
     screen: ClientScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'people'} {...props} />,
-      drawerLabel: 'Clientes', //global.translate('TITLE_CLIENTS'),
+      drawerLabel: 'Clientes',
     },
   },
   RouteScreen: {
     screen: RouteScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'navigate'} {...props} />,
-      drawerLabel: 'Rutas', //global.translate('TITLE_ROUTES'),
+      drawerLabel: 'Rutas',
     },
   },
   OrderScreen: {
     screen: OrdersScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'cube'} {...props} />,
-      drawerLabel: 'Ordenes', //global.translate('TITLE_ORDERS'),
+      drawerLabel: 'Ordenes',
     },
   },
 
@@ -247,7 +247,7 @@ let roleAdmin = {
     screen: ConfigNavigator,
     navigationOptions: {
       drawerIcon: props => <Icon name={'settings'} {...props} />,
-      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+      drawerLabel: 'Configuración',
     },
   },
 };
@@ -257,36 +257,36 @@ let roleRecolector = {
     screen: Home,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'home'} {...props} />,
-      drawerLabel: 'Inicio', //${global.translate('TITLE_PRINCIPAL')}
+      drawerLabel: 'Inicio',
     },
   },
   MyRoutesScreen: {
     screen: MyRoutesScreen,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'list-box'} {...props} />,
-      drawerLabel: 'Mis Rutas', //global.translate('TITLE_MY_ROUTES'),
+      drawerLabel: 'Mis Rutas',
     },
   },
   MyConfigScreen: {
     screen: ConfigNavigator,
     navigationOptions: {
       drawerIcon: props => <IconMenu name={'settings'} {...props} />,
-      drawerLabel: 'Configuración', //global.translate('TITLE_MY_ROUTES'),
+      drawerLabel: 'Configuración',
     },
   },
 };
 
 let roleConfig;
 
-if (global.userRole === 'ROLE_SUPERVISOR') {
+if (global.userRole === 'general.role.supervisor') {
   roleConfig = roleAll;
-} else if (global.userRole === 'ROLE_ADMIN') {
+} else if (global.userRole === 'general.role.warehouse_agent') {
   roleConfig = roleAll;
 } else {
   roleConfig = roleAll;
 }
 
-const AppNavigator = createDrawerNavigator(roleConfig, {
+let drawerOptions = {
   contentComponent: SideBar,
   contentOptions: {
     activeTintColor: theme.colors.primary,
@@ -298,7 +298,9 @@ const AppNavigator = createDrawerNavigator(roleConfig, {
       color: theme.colors.gray,
     },
   },
-});
+};
+
+const AppNavigator = createDrawerNavigator(roleConfig, drawerOptions);
 
 const Navigation = createSwitchNavigator(
   {
@@ -312,11 +314,9 @@ const Navigation = createSwitchNavigator(
 );
 
 const AppContainer = createAppContainer(Navigation);
-
 class NavigatorApp extends React.Component {
   render() {
     const {t, i18n} = this.props;
-    console.log('Props', this.props);
 
     return (
       <AppContainer

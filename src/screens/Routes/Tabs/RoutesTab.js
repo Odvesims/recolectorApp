@@ -12,12 +12,12 @@ export class Defeated extends Component {
     show: true,
     BUTTONS: [
       {
-        text: global.translate('TITLE_VIEW'),
+        text: global.translate('general.view'),
         icon: 'eye',
         iconColor: theme.colors.primary,
       },
       {
-        text: global.translate('TITLE_CANCEL'),
+        text: global.translate('general.cancel'),
         icon: 'close',
         iconColor: theme.colors.gray,
       },
@@ -34,13 +34,13 @@ export class Defeated extends Component {
         options: BUTTONS,
         cancelButtonIndex: CANCEL_INDEX,
         destructiveButtonIndex: DESTRUCTIVE_INDEX,
-        title: global.translate('TITLE_OPTIONS'),
+        title: global.translate('label.options'),
       },
       buttonIndex => {
         switch (buttonIndex) {
           case 0:
             this.props.navigation.navigate('Route', {
-              operation: 'TITLE_VIEW_ROUTE',
+              operation: 'action.view.route',
               route_id: item.route_id,
               description: item.description,
               document_id: item.document_id,
@@ -54,7 +54,7 @@ export class Defeated extends Component {
               date_from: item.date_from,
               date_to: item.date_to,
               status: item.status,
-              loading_message: 'MESSAGE_UPDATING_ROUTE',
+              loading_message: 'message.update.route',
               new_record: false,
               details: item.details,
               editable: false,
@@ -72,7 +72,7 @@ export class Defeated extends Component {
     return (
       <RouteList
         item={item}
-        label={'TITLE_COLLECTOR'}
+        label={'form.label.collector'}
         onPress={() => {
           this.onPressAction(item);
         }}

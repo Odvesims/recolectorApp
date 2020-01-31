@@ -8,7 +8,7 @@ export default class DetailsTab extends Component {
     show: true,
     BUTTONS: [
       {
-        text: global.translate('TITLE_VIEW'),
+        text: global.translate('general.view'),
         icon: 'eye',
         iconColor: theme.colors.primary,
       },
@@ -18,7 +18,7 @@ export default class DetailsTab extends Component {
         iconColor: theme.colors.accent,
       },
       {
-        text: global.translate('TITLE_CANCEL'),
+        text: global.translate('general.cancel'),
         icon: 'close',
         iconColor: theme.colors.gray,
       },
@@ -42,7 +42,7 @@ export default class DetailsTab extends Component {
         options: BUTTONS,
         cancelButtonIndex: CANCEL_INDEX,
         destructiveButtonIndex: DESTRUCTIVE_INDEX,
-        title: global.translate('TITLE_OPTIONS'),
+        title: global.translate('label.options'),
       },
       buttonIndex => {
         switch (buttonIndex) {

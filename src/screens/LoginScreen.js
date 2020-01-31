@@ -64,7 +64,7 @@ export default class LoginScreen extends Component {
       if (password) {
         this.setState({
           loading: true,
-          loadingMessage: global.translate('MESSAGE_SIGNIN'),
+          loadingMessage: global.translate('message.loading.signin'),
           request_timeout: false,
         });
         try {
@@ -74,7 +74,7 @@ export default class LoginScreen extends Component {
               setTimeout(() => {
                 if (loading) {
                   this.setState({loading: false, request_timeout: true});
-                  alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+                  alert(global.translate('error.request_timeout'));
                 }
               }, 10000);
               getUserLogin(res.host, res.port_number, user, password)
@@ -116,7 +116,7 @@ export default class LoginScreen extends Component {
       } else {
         this.setState({
           visible: true,
-          toastMsg: global.translate('ALERT_PASSWORD_BLANK'),
+          toastMsg: global.translate('login.error.password_blank'),
         });
         setTimeout(() => {
           this.setState({visible: false, toastMsg: ''});
@@ -125,7 +125,7 @@ export default class LoginScreen extends Component {
     } else {
       this.setState({
         visible: true,
-        toastMsg: global.translate('ALERT_USER_BLANK'),
+        toastMsg: global.translate('login.error.user_blank'),
       });
       setTimeout(() => {
         this.setState({visible: false, toastMsg: ''});
@@ -189,7 +189,7 @@ export default class LoginScreen extends Component {
             <AppTitle>RecolectorApp</AppTitle>
             <InputLogin
               iconName="person"
-              label={'TITLE_USER'}
+              label={'login.user'}
               onChangeText={this.userHandler}
               blurOnSubmit={false}
               value={userName}
@@ -197,7 +197,7 @@ export default class LoginScreen extends Component {
             <InputLogin
               id="password"
               iconName="lock"
-              label={'TITLE_PASSWORD'}
+              label={'login.password'}
               onChangeText={this.passwordHandler}
               blurOnSubmit={true}
               secured={true}
@@ -208,7 +208,7 @@ export default class LoginScreen extends Component {
             <CustomButton
               style={{marginTop: 50}}
               customClick={this.customClickHandler}
-              title={'TITLE_SIGNIN'}
+              title={'login.signin'}
             />
             {/* Toast and Spinner */}
             <ToastMessage visible={visible} message={toastMsg} />

@@ -100,12 +100,12 @@ export default class Registry extends Component {
       close_order: checkItem,
     };
 
-    this.setState({loading: true, loadingMessage: 'ALERT_REGISTERING_COLLECT'});
+    this.setState({loading: true, loadingMessage: 'message.register.collect'});
     dataOperation('COLLECT_OPERATION', collectData).then(res => {
       Alert.alert(JSON.stringify(res));
 
       if (res.valid) {
-        Alert.alert(global.translate('ALERT_REGISTER_SUCCESFUL'));
+        Alert.alert(global.translate('message.success.registry'));
         this.setState({
           loading: false,
         });
@@ -155,8 +155,8 @@ export default class Registry extends Component {
 
   render() {
     const detailTabs = [
-      global.translate('PICKING'),
-      global.translate('SHOPPING'),
+      global.translate('tab.picking'),
+      global.translate('tab.shopping'),
     ]; //global.translate('TITLE_CATEGORY')];
 
     let {checkItem, selectedIndex} = this.state;
@@ -180,7 +180,7 @@ export default class Registry extends Component {
           <Right>
             <BtnIcon
               iconName={'checkmark'}
-              label={'TITLE_SAVE'}
+              label={'general.save'}
               onPress={this.saveConfirmation}
             />
           </Right>

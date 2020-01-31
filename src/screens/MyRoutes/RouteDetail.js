@@ -32,7 +32,7 @@ export default class RouteDetail extends Component {
       loading: false,
       show: false,
       date_to: params.date_to,
-      placeholder: global.translate('PLACEHOLDER_SELECT_CLIENT'),
+      placeholder: global.translate('form.placeholder.select.client'),
       BUTTONS: [
         {text: 'Delete', icon: 'trash', iconColor: theme.colors.accent},
         {text: 'Edit', icon: 'create', iconColor: theme.colors.primary},
@@ -53,7 +53,7 @@ export default class RouteDetail extends Component {
     } = this.props.navigation.state;
 
     try {
-      this.setState({loading: true, loadingMessage: 'ALERT_GETTING_ROUTE'});
+      this.setState({loading: true, loadingMessage: 'message.request.route'});
       const data = await getData(
         'GET_ROUTE',
         `&route_id=${route_id}&status=${status}`,
@@ -68,7 +68,7 @@ export default class RouteDetail extends Component {
       });
     } catch (error) {
       this.setState({loading: false});
-      alert(global.translate('ALERT_REQUEST_TIMEOUT'));
+      alert(global.translate('error.request_timeout'));
     }
   };
 
@@ -132,11 +132,11 @@ export default class RouteDetail extends Component {
           <RContent>
             <View style={styles.RouteDetails}>
               <Head>
-                <Key>{`${global.translate('TITLE_ROUTE')}: `}</Key>
+                <Key>{`${global.translate('label.route')}: `}</Key>
                 <Label>{routeName}</Label>
               </Head>
               <Head>
-                <Key>{`${global.translate('TITLE_DATE')}: `}</Key>
+                <Key>{`${global.translate('form.label.date')}: `}</Key>
                 <Label>{date_to}</Label>
               </Head>
             </View>
@@ -145,7 +145,7 @@ export default class RouteDetail extends Component {
               <View style={styles.addPoint}>
                 <View style={{paddingBottom: 8}}>
                   <Text style={styles.detailText}>
-                    {global.translate('ORDERS')}
+                    {global.translate('label.orders')}
                   </Text>
                 </View>
                 <FlatList
