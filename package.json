@@ -24,7 +24,7 @@
     "i18next": "^19.1.0",
     "lodash": "^4.17.15",
     "lodash.memoize": "^4.1.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "native-base": "^2.13.8",
     "next-frame": "^0.2.3",
     "prop-types": "^15.7.2",
